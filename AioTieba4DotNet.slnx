@@ -1,4 +1,0 @@
-﻿<Solution>
-  <Project Path="AioTieba4DotNet.Tests\AioTieba4DotNet.Tests.csproj" Type="Classic C#" />
-  <Project Path="AioTieba4DotNet\AioTieba4DotNet.csproj" Type="Classic C#" />
-</Solution>
