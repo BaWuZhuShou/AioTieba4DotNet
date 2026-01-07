@@ -1,4 +1,5 @@
 ﻿using AioTieba4DotNet.Api.Block;
+using AioTieba4DotNet.Api.Entities;
 using AioTieba4DotNet.Api.GetFid;
 using AioTieba4DotNet.Api.GetForumDetail;
 using AioTieba4DotNet.Api.GetForumDetail.Entities;
@@ -10,6 +11,7 @@ using AioTieba4DotNet.Api.GetUInfoPanel;
 using AioTieba4DotNet.Api.GetUInfoPanel.Entities;
 using AioTieba4DotNet.Api.GetUInfoUserJson;
 using AioTieba4DotNet.Api.GetUInfoUserJson.Entities;
+using AioTieba4DotNet.Api.GetUserContents.Entities;
 using AioTieba4DotNet.Api.Login;
 using AioTieba4DotNet.Api.Login.Entities;
 using AioTieba4DotNet.Api.Profile.GetUInfoProfile;
@@ -378,6 +380,25 @@ public class Client
         return await block.RequestAsync(fid, portrait, day, reason);
     }
 
+    /// <summary>
+    /// 获取本账户信息
+    /// </summary>
+    /// <returns></returns>
+    public async Task<UserInfo> GetSelfInfo(ReqUInfo require)
+    {
+        if ((User == null || User.UserId == 0) && require == ReqUInfo.Basic)
+        {
+            await _login();
+        }
+
+        if ((User == null || ((UserInfo)User).UserId == 0) && require == ReqUInfo.Basic)
+        {
+            await _login();
+        }
+
+        return null;
+    }
+
     private async Task _initTbs()
     {
         if (Account is { Tbs: not null })
@@ -394,5 +415,10 @@ public class Client
         var (userInfoLogin, tbs) = await login.RequestAsync();
         User = userInfoLogin;
         Account!.Tbs = tbs;
+    }
+
+    private async Task<UserPostss> GetSelfPosts()
+    {
+        return null;
     }
 }

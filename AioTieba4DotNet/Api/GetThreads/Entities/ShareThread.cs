@@ -1,4 +1,5 @@
 ﻿using AioTieba4DotNet.Api.Entities;
+using AioTieba4DotNet.Api.Entities.Contents;
 
 namespace AioTieba4DotNet.Api.GetThreads.Entities;
 

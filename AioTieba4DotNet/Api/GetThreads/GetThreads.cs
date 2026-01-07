@@ -25,9 +25,9 @@ public class GetThreads(HttpCore httpCore)
                     ClientVersion = Const.MainVersion
                 },
                 Kw = fname,
-                Pn = pn,
+                Pn = pn == 1 ? 0 : pn,
                 Rn = rn,
-                RnNeed = 10,
+                RnNeed = rn + 5,
                 IsGood = isGood,
                 SortType = sort,
                 LoadType = 1,
@@ -49,13 +49,18 @@ public class GetThreads(HttpCore httpCore)
 
         return Threads.FromTbData(dataForum);
     }
+
     /// <summary>
     /// 异步请求
     /// </summary>
     /// <param name="fname">贴吧名</param>
     /// <param name="pn">页码</param>
     /// <param name="rn">每页条数</param>
-    /// <param name="sort">排序</param>
+    /// <param name="sort">
+    /// 排序
+    ///对于有热门分区的贴吧 0热门排序(HOT) 1按发布时间(CREATE) 2关注的人(FOLLOW) 34热门排序(HOT) >=5是按回复时间(REPLY)\n
+    ///对于无热门分区的贴吧 0按回复时间(REPLY) 1按发布时间(CREATE) 2关注的人(FOLLOW) >=3按回复时间(REPLY)
+    /// </param>
     /// <param name="isGood">是否精品贴</param>
     /// <returns></returns>
     public async Task<Threads> RequestAsync(string fname, int pn, int rn, int sort, int isGood)

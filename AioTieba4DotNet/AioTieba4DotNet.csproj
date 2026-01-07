@@ -7,7 +7,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <UserSecretsId>8bd67551-0cb1-4639-b33c-d5f2f082615d</UserSecretsId>
-        <Version>0.1.0</Version>
+        <Version>0.1.1</Version>
         <Description>贴吧操作库</Description>
         <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/BaWuZhuShou/AioTieba4DotNet.git</RepositoryUrl>
@@ -17,32 +17,36 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
         <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
         <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DebugType>full</DebugType>
-      <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-      <DebugSymbols>true</DebugSymbols>
-      <DocumentationFile>bin\Release\AioTieba4DotNet.xml</DocumentationFile>
+        <DebugType>full</DebugType>
+        <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+        <DebugSymbols>true</DebugSymbols>
+        <DocumentationFile>bin\Release\AioTieba4DotNet.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Google.Protobuf" Version="3.29.3" />
-      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.1" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-      <PackageReference Include="System.IO.Hashing" Version="9.0.1" />
+        <PackageReference Include="Google.Protobuf" Version="3.33.2" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+        <PackageReference Include="System.IO.Hashing" Version="10.0.1" />
     </ItemGroup>
-    
+
     <ItemGroup>
         <None Include="../README.md" Pack="true" PackagePath="\"/>
         <None Include="..\assets\icon.png">
-          <Pack>True</Pack>
-          <PackagePath>\</PackagePath>
-          <Link>icon.png</Link>
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+            <Link>icon.png</Link>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Script\"/>
     </ItemGroup>
 
 </Project>

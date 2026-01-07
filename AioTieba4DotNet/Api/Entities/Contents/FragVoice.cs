@@ -28,6 +28,18 @@ public class FragVoice : IFrag
     }
 
     /// <summary>
+    /// 从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataProto"></param>
+    /// <returns>FragVoice</returns>
+    public static FragVoice FromTbData(PostInfoList.Types.PostInfoContent.Types.Abstract dataProto)
+    {
+        var md5 = dataProto.VoiceMd5;
+        var duration = int.Parse(dataProto.DuringTime) / 1000;
+        return new FragVoice { Md5 = md5, Duration = duration };
+    }
+
+    /// <summary>
     /// 是否存在音频
     /// </summary>
     /// <returns>bool</returns>

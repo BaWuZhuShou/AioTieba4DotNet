@@ -1,6 +1,4 @@
-﻿using AioTieba4DotNet.Api.Entities.Contents;
-
-namespace AioTieba4DotNet.Api.GetThreads.Entities;
+﻿namespace AioTieba4DotNet.Api.Entities.Contents;
 
 /// <summary>
 /// 内容碎片列表
@@ -297,6 +295,72 @@ public class Content
             Frags = frags,
             Voice = voice,
             Video = video,
+        };
+    }
+
+    public static Content FromTbData(PostInfoList.Types.PostInfoContent postInfoContent)
+
+
+    {
+        var postContent = postInfoContent.PostContent;
+        var texts = new List<FragText>();
+        var emojis = new List<FragEmoji>();
+        var images = new List<FragImage>();
+        var ats = new List<FragAt>();
+        var links = new List<FragLink>();
+        var tiebaPluses = new List<FragTiebaPlus>();
+        var frags = new List<IFrag>();
+        var video = new FragVideo();
+        var voice = new FragVoice();
+        var typeHandlers = new Dictionary<uint[], Action<PostInfoList.Types.PostInfoContent.Types.Abstract>>
+        {
+            {
+                [0, 4], content =>
+                {
+                    var text = FragText.FromTbData(content);
+                    texts.Add(text);
+                    frags.Add(text);
+                }
+            },
+            {
+                [1], content =>
+                {
+                    var link = FragLink.FromTbData(content);
+                    links.Add(link);
+                    frags.Add(link);
+                }
+            },
+            {
+                [10], content =>
+                {
+                     voice = FragVoice.FromTbData(content);
+                }
+            }
+        };
+        foreach (var content in postContent)
+        {
+            var type = (uint)content!.Type;
+            // 处理字典中定义的类型
+            var handled = typeHandlers
+                .Where(kv => kv.Key.Contains(type))
+                .Select(kv =>
+                {
+                    kv.Value(content);
+                    return true;
+                })
+                .FirstOrDefault();
+
+            if (handled) continue;
+            Console.WriteLine($"Unknown fragment type. type: {type}");
+
+        }
+
+        return new Content()
+        {
+            Texts = texts,
+            Links = links,
+            Frags = frags,
+            Voice = voice,
         };
     }
 

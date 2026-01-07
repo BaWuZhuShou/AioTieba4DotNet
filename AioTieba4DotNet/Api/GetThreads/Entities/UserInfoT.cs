@@ -1,32 +1,13 @@
-﻿using AioTieba4DotNet.Enums;
+﻿using AioTieba4DotNet.Api.Entities;
+using AioTieba4DotNet.Enums;
 
 namespace AioTieba4DotNet.Api.GetThreads.Entities;
 
 /// <summary>
 /// 用户信息
 /// </summary>
-public class UserInfoT
+public class UserInfoT : UserInfo
 {
-    /// <summary>
-    /// user_id
-    /// </summary>
-    public long UserId { get; init; }
-
-    /// <summary>
-    /// portrait
-    /// </summary>
-    public string Portrait { get; init; } = "";
-
-    /// <summary>
-    /// 用户名
-    /// </summary>
-    public string UserName { get; init; } = "";
-
-    /// <summary>
-    /// 新版昵称
-    /// </summary>
-    public string NickNameNew { get; init; } = "";
-
     /// <summary>
     /// 等级
     /// </summary>
@@ -71,22 +52,6 @@ public class UserInfoT
     /// 帖子评论权限
     /// </summary>
     public PrivReply PrivReply { get; init; }
-
-    /// <summary>
-    /// 用户昵称
-    /// </summary>
-    public string NickName => NickNameNew;
-
-    /// <summary>
-    /// 显示名称
-    /// </summary>
-    public string ShowName => NickNameNew == "" ? UserName : NickNameNew;
-
-    /// <summary>
-    /// 用于在日志中记录用户信息
-    /// </summary>
-    public string LogName =>
-        UserName != "" ? UserName : Portrait != "" ? $"{NickNameNew}/{Portrait}" : UserId.ToString();
 
     /// <summary>
     /// 从贴吧原始数据转换

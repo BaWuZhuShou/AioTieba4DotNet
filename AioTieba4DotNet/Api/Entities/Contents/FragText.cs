@@ -20,6 +20,17 @@ public class FragText : IFrag
         var text = dataProto.Text;
         return new FragText { Text = text };
     }
+    /// <summary>
+    /// 从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataProto"></param>
+    /// <returns></returns>
+    public static FragText FromTbData(PostInfoList.Types.PostInfoContent.Types.Abstract dataProto)
+    {
+        var text = dataProto.Text;
+        return new FragText { Text = text };
+    }
+
 
     /// <summary>
     /// 碎片类型

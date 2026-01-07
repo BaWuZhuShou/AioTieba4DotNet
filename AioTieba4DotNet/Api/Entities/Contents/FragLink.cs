@@ -51,6 +51,19 @@ public class FragLink : IFrag
         var rawUrl = new Uri(text);
         return new FragLink { Text = text, Title = title, RawUrl = rawUrl };
     }
+    
+    /// <summary>
+    /// 从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataProto"></param>
+    /// <returns></returns>
+    public static FragLink FromTbData(PostInfoList.Types.PostInfoContent.Types.Abstract dataProto)
+    {
+        var text = dataProto.Link;
+        var title = dataProto.Text;
+        var rawUrl = new Uri(text);
+        return new FragLink { Text = text, Title = title, RawUrl = rawUrl };
+    }
 
     /// <summary>
     /// 碎片类型

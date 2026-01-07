@@ -3,8 +3,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Login.Entities;
 
-public class UserInfoLogin:BaseUser
+public class UserInfoLogin : BaseUser
 {
+    /// <summary>
+    /// user_id
+    /// </summary>
     public long UserId { get; init; }
 
     public static UserInfoLogin FromTbData(JObject data)
@@ -21,6 +24,7 @@ public class UserInfoLogin:BaseUser
     {
         return $"{nameof(UserId)}: {UserId}, {nameof(Portrait)}: {Portrait}, {nameof(UserName)}: {UserName}";
     }
+
     protected bool Equals(UserInfoLogin other)
     {
         return UserId == other.UserId;

@@ -17,10 +17,11 @@ public class GetThreadsTest
     {
         var httpCore = new HttpCore();
         var getThreads = new AioTieba4DotNet.Api.GetThreads.GetThreads(httpCore);
-        var requestAsync = getThreads.RequestAsync("路由器",1,30,1,0);
+        var requestAsync = getThreads.RequestAsync("",1,30,5,0);
         requestAsync.Wait();
         var requestAsyncResult = requestAsync.Result;
         var obj = requestAsyncResult.Objs[4];
+        Console.WriteLine(requestAsyncResult.Objs.Count);
         foreach (var frag in obj.Content.Frags)
         {
             switch (frag)

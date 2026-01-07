@@ -18,9 +18,9 @@ public class GetUInfoProfile<T>(HttpCore httpCore) : BaseApiRequest<T, UserInfoP
 
         var reqProto = new ProfileReqIdl()
         {
-            Data = new()
+            Data = new ProfileReqIdl.Types.DataReq
             {
-                Common = new()
+                Common = new CommonReq
                 {
                     ClientType = 2,
                     ClientVersion = Const.MainVersion,
