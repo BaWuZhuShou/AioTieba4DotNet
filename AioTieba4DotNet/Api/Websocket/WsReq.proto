@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+
+message WSReq {
+    int32 cmd = 1;
+    int32 req_id = 2;
+
+    message Payload {
+        bytes data = 1;
+    }
+
+    Payload payload = 3;
+}

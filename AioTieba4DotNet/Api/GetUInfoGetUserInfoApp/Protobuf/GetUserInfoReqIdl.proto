@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+message GetUserInfoReqIdl {
+    message DataReq {
+        int64 user_id = 2;
+    }
+    DataReq data = 1;
+}

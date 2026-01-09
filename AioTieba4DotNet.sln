@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioTieba4DotNet.Tests", "AioTieba4DotNet.Tests\AioTieba4DotNet.Tests.csproj", "{2C0F482A-EE96-3056-6121-BFC54D1565A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioTieba4DotNet", "AioTieba4DotNet\AioTieba4DotNet.csproj", "{44F54383-4B37-F6E0-73FE-5F3574ED2B97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoGenerator", "ProtoGenerator\ProtoGenerator.csproj", "{2C3FBA57-0791-4058-BB93-E60ACD7A6EC5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C0F482A-EE96-3056-6121-BFC54D1565A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C0F482A-EE96-3056-6121-BFC54D1565A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C0F482A-EE96-3056-6121-BFC54D1565A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C0F482A-EE96-3056-6121-BFC54D1565A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44F54383-4B37-F6E0-73FE-5F3574ED2B97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44F54383-4B37-F6E0-73FE-5F3574ED2B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44F54383-4B37-F6E0-73FE-5F3574ED2B97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44F54383-4B37-F6E0-73FE-5F3574ED2B97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C3FBA57-0791-4058-BB93-E60ACD7A6EC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C3FBA57-0791-4058-BB93-E60ACD7A6EC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C3FBA57-0791-4058-BB93-E60ACD7A6EC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C3FBA57-0791-4058-BB93-E60ACD7A6EC5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

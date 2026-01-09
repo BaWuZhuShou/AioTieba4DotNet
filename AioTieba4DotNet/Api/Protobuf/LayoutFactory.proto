@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message LayoutFactory {
+    string layout = 1;
+    message FeedLayout {
+        message FeedKV {
+            string key = 1;
+            string value = 2;
+        }
+        repeated FeedKV business_info = 5;
+    }
+    FeedLayout feed = 2;
+   
+}
