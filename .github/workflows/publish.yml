@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
@@ -23,11 +25,27 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Extract version
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
       - name: Build the project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore -p:Version=${{ env.VERSION }}
 
       - name: Pack the project
-        run: dotnet pack --configuration Release --no-build --output ./nupkg
+        run: dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=${{ env.VERSION }}
 
       - name: Push to NuGet
         run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./nupkg/*.nupkg
+            ./nupkg/*.snupkg
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

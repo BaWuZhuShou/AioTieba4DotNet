@@ -1,4 +1,6 @@
-﻿namespace AioTieba4DotNet.Core;
+﻿using System.Reflection;
+
+namespace AioTieba4DotNet.Core;
 
 public static class Const
 {
@@ -8,7 +10,7 @@ public static class Const
     public const string AppInsecureScheme = "http";
     public const string AppBaseHost = "tiebac.baidu.com";
     public const string WebBaseHost = "tieba.baidu.com";
-    public const string Version = "4.4.9";
+    public static readonly string Version = typeof(Const).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "0.0.0";
     public const int TbcAndroidIdSize = 16;
     public const int TbcMd5HashSize = 16;
     public const int TbcMd5StrSize = (TbcMd5HashSize * 2);
