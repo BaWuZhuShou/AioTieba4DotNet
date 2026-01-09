@@ -6,34 +6,9 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetUInfoGetUserInfoApp;
 
-public class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : BaseApiRequest<int, UserInfoGuInfoApp, byte[]>
+public class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
 {
     private const int Cmd = 303024;
-
-    public override async Task<UserInfoGuInfoApp> RequestAsync(int userId)
-    {
-        var data = PackProto(userId);
-        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getuserinfo")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
-        var responseMessage = await httpCore.PackProtoRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsByteArrayAsync();
-        return ParseBody(result);
-    }
-
-    public override UserInfoGuInfoApp ParseBody(byte[] body)
-    {
-        var resProto = GetUserInfoResIdl.Parser.ParseFrom(body);
-        var code = resProto.Error.Errorno;
-        if (code != 0)
-        {
-            throw new TieBaServerException(code, resProto.Error.Errmsg ?? string.Empty);
-        }
-
-        var dataUser = resProto.Data.User;
-        return UserInfoGuInfoApp.FromTbData(dataUser);
-    }
 
     private static byte[] PackProto(int userId)
     {
@@ -42,6 +17,27 @@ public class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : BaseApiRequest<in
             Data = new() { UserId = userId }
         };
         return reqProto.ToByteArray();
+    }
+
+    private static UserInfoGuInfoApp ParseBody(byte[] body)
+    {
+        var resProto = GetUserInfoResIdl.Parser.ParseFrom(body);
+        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
+
+        var dataUser = resProto.Data.User;
+        return UserInfoGuInfoApp.FromTbData(dataUser);
+    }
+
+    public async Task<UserInfoGuInfoApp> RequestAsync(int userId)
+    {
+        var data = PackProto(userId);
+        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getuserinfo")
+        {
+            Query = $"cmd={Cmd}"
+        }.Uri;
+        var responseMessage = await HttpCore.PackProtoRequestAsync(requestUri, data);
+        var result = await responseMessage.Content.ReadAsByteArrayAsync();
+        return ParseBody(result);
     }
 }
 

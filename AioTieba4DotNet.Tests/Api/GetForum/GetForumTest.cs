@@ -14,7 +14,7 @@ public class GetForumTest : TestBase
     public async Task TestRequest()
     {
         var getForum = new GetForumApi(HttpCore);
-        var result = await getForum.RequestAsync(new AioTieba4DotNet.Api.GetForum.GetFormParams("测试"));
+        var result = await getForum.RequestAsync("测试");
         Console.WriteLine(result);
         Assert.AreEqual("测试", result.Fname);
     }

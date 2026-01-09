@@ -8,15 +8,12 @@ public class Content
     /// <summary>
     /// 文本内容
     /// </summary>
-    public string Text
-    {
-        get { return Texts.Aggregate("", (current, t) => current + t.Text); }
-    }
+    public string Text => string.Concat(Frags.Select(f => f.Text));
 
     /// <summary>
     /// 纯文本碎片列表
     /// </summary>
-    public List<FragText> Texts { get; private init; } = [];
+    public List<FragText> Texts { get; init; } = [];
 
     /// <summary>
     /// 表情碎片列表
@@ -46,12 +43,12 @@ public class Content
     /// <summary>
     /// 视频碎片
     /// </summary>
-    public FragVideo? Video { get; init; }
+    public FragVideo? Video { get; set; }
 
     /// <summary>
     /// 音频碎片
     /// </summary>
-    public FragVoice? Voice { get; init; }
+    public FragVoice? Voice { get; set; }
 
     /// <summary>
     /// 所有原始碎片
@@ -77,7 +74,7 @@ public class Content
         var typeHandlers = new Dictionary<uint[], Action<PbContent>>
         {
             {
-                [0, 9, 18, 27], content =>
+                [0, 4, 9, 18, 27, 44], content =>
                 {
                     var text = FragText.FromTbData(content);
                     texts.Add(text);
@@ -85,7 +82,23 @@ public class Content
                 }
             },
             {
-                [2, 11], content =>
+                [1], content =>
+                {
+                    var link = FragLink.FromTbData(content);
+                    links.Add(link);
+                    frags.Add(link);
+                }
+            },
+            {
+                [2], content =>
+                {
+                    var at = FragAt.FromTbData(content);
+                    ats.Add(at);
+                    frags.Add(at);
+                }
+            },
+            {
+                [11], content =>
                 {
                     var emoji = FragEmoji.FromTbData(content);
                     emojis.Add(emoji);
@@ -98,6 +111,13 @@ public class Content
                     var image = FragImage.FromTbData(content);
                     images.Add(image);
                     frags.Add(image);
+                }
+            },
+            {
+                [10], content =>
+                {
+                    voice = FragVoice.FromTbData(content);
+                    if (voice != null) frags.Add(voice);
                 }
             },
             {
@@ -157,11 +177,13 @@ public class Content
         if (threadInfo.VideoInfo != null)
         {
             video = FragVideo.FromTbData(threadInfo.VideoInfo);
+            frags.Add(video);
         }
 
         if (threadInfo.VoiceInfo is { Count: > 0 })
         {
             voice = FragVoice.FromTbData(threadInfo.VoiceInfo[0]);
+            frags.Add(voice);
         }
 
         return new Content()
@@ -207,12 +229,12 @@ public class Content
         var links = new List<FragLink>();
         var tiebaPluses = new List<FragTiebaPlus>();
         var frags = new List<IFrag>();
-        var video = new FragVideo();
-        var voice = new FragVoice();
+        FragVideo? video = null;
+        FragVoice? voice = null;
         var typeHandlers = new Dictionary<uint[], Action<PbContent>>
         {
             {
-                [0, 9, 18, 27], content =>
+                [0, 4, 9, 18, 27, 44], content =>
                 {
                     var text = FragText.FromTbData(content);
                     texts.Add(text);
@@ -220,7 +242,23 @@ public class Content
                 }
             },
             {
-                [2, 11], content =>
+                [1], content =>
+                {
+                    var link = FragLink.FromTbData(content);
+                    links.Add(link);
+                    frags.Add(link);
+                }
+            },
+            {
+                [2], content =>
+                {
+                    var at = FragAt.FromTbData(content);
+                    ats.Add(at);
+                    frags.Add(at);
+                }
+            },
+            {
+                [11], content =>
                 {
                     var emoji = FragEmoji.FromTbData(content);
                     emojis.Add(emoji);
@@ -260,20 +298,6 @@ public class Content
             if (handled) continue;
             switch (type)
             {
-                case 4:
-                {
-                    var at = FragAt.FromTbData(content);
-                    ats.Add(at);
-                    frags.Add(at);
-                    break;
-                }
-                case 1:
-                {
-                    var link = FragLink.FromTbData(content);
-                    links.Add(link);
-                    frags.Add(link);
-                    break;
-                }
                 case 10:
                 // video
                 case 5:
@@ -292,11 +316,13 @@ public class Content
         if (threadInfo.VideoInfo != null)
         {
             video = FragVideo.FromTbData(threadInfo.VideoInfo);
+            frags.Add(video);
         }
 
         if (threadInfo.VoiceInfo is { Count: > 0 })
         {
             voice = FragVoice.FromTbData(threadInfo.VoiceInfo[0]);
+            frags.Add(voice);
         }
 
         return new Content()
@@ -325,12 +351,12 @@ public class Content
         var links = new List<FragLink>();
         var tiebaPluses = new List<FragTiebaPlus>();
         var frags = new List<IFrag>();
-        var video = new FragVideo();
-        var voice = new FragVoice();
+        FragVideo? video = null;
+        FragVoice? voice = null;
         var typeHandlers = new Dictionary<uint[], Action<PostInfoList.Types.PostInfoContent.Types.Abstract>>
         {
             {
-                [0, 4], content =>
+                [0, 4, 9, 18, 27, 44], content =>
                 {
                     var text = FragText.FromTbData(content);
                     texts.Add(text);
@@ -346,9 +372,18 @@ public class Content
                 }
             },
             {
+                [2, 11], content =>
+                {
+                    var emoji = new FragEmoji { Id = content.Text, Desc = "" };
+                    emojis.Add(emoji);
+                    frags.Add(emoji);
+                }
+            },
+            {
                 [10], content =>
                 {
-                     voice = FragVoice.FromTbData(content);
+                     voice = new FragVoice { Md5 = content.VoiceMd5, Duration = (int)(double.TryParse(content.DuringTime, out var d) ? d / 1000 : 0) };
+                     if (voice != null) frags.Add(voice);
                 }
             }
         };
@@ -373,10 +408,54 @@ public class Content
         return new Content()
         {
             Texts = texts,
+            Emojis = emojis,
+            Images = images,
+            Ats = ats,
             Links = links,
+            TiebaPluses = tiebaPluses,
             Frags = frags,
             Voice = voice,
+            Video = video
         };
+    }
+
+    /// <summary>
+    /// 从用户内容列表数据转换
+    /// </summary>
+    /// <param name="dataRes"></param>
+    /// <returns>Content</returns>
+    public static Content FromTbData(PostInfoList dataRes)
+    {
+        var content = FromTbData(dataRes.FirstPostContent);
+
+        if (dataRes.Media is { Count: > 0 })
+        {
+            foreach (var m in dataRes.Media)
+            {
+                if (m.Type != 5)
+                {
+                    var image = FragImage.FromTbData(m);
+                    content.Images.Add(image);
+                    content.Frags.Add(image);
+                }
+            }
+        }
+
+        if (dataRes.VideoInfo != null && dataRes.VideoInfo.VideoWidth > 0)
+        {
+            var video = FragVideo.FromTbData(dataRes.VideoInfo);
+            content.Frags.Add(video);
+            content.Video = video;
+        }
+
+        if (dataRes.VoiceInfo is { Count: > 0 })
+        {
+            var voice = FragVoice.FromTbData(dataRes.VoiceInfo[0]);
+            content.Frags.Add(voice);
+            content.Voice = voice;
+        }
+
+        return content;
     }
 
     /// <summary>
@@ -384,7 +463,7 @@ public class Content
     /// </summary>
     /// <param name="contentProtos"></param>
     /// <returns>Content</returns>
-    public static Content FromTbData(IEnumerable<global::PbContent>? contentProtos)
+    public static Content FromTbData(IEnumerable<PbContent>? contentProtos)
     {
         if (contentProtos == null)
         {
@@ -417,10 +496,11 @@ public class Content
             switch (type)
             {
                 case 0:
+                case 4:
                 case 9:
                 case 18:
                 case 27:
-                case 40:
+                case 44:
                 {
                     var text = FragText.FromTbData(content);
                     texts.Add(text);
@@ -428,6 +508,12 @@ public class Content
                     break;
                 }
                 case 2:
+                {
+                    var at = FragAt.FromTbData(content);
+                    ats.Add(at);
+                    frags.Add(at);
+                    break;
+                }
                 case 11:
                 {
                     var emoji = FragEmoji.FromTbData(content);
@@ -452,13 +538,6 @@ public class Content
                     frags.Add(tiebaPlus);
                     break;
                 }
-                case 4:
-                {
-                    var at = FragAt.FromTbData(content);
-                    ats.Add(at);
-                    frags.Add(at);
-                    break;
-                }
                 case 1:
                 {
                     var link = FragLink.FromTbData(content);
@@ -469,13 +548,13 @@ public class Content
                 case 10:
                 {
                     voice = FragVoice.FromTbData(content);
-                    frags.Add(voice);
+                    if (voice != null) frags.Add(voice);
                     break;
                 }
                 case 5:
                 {
                     video = FragVideo.FromTbData(content);
-                    frags.Add(video);
+                    if (video != null) frags.Add(video);
                     break;
                 }
             }

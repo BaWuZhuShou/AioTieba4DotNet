@@ -36,6 +36,11 @@ public class FragVideo : IFrag
     public int ViewNum { get; init; }
 
     /// <summary>
+    /// 文本内容
+    /// </summary>
+    public string Text => "";
+
+    /// <summary>
     /// 从贴吧原始数据转换
     /// </summary>
     /// <param name="dataProto"></param>

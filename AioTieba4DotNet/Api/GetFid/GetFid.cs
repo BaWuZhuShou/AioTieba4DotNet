@@ -5,16 +5,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetFid;
 
-public class GetFid(ITiebaHttpCore httpCore)
+public class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    public  ulong ParseBody(string body)
+    private static ulong ParseBody(string body)
     {
-        var o = JObject.Parse(body);
-        var code = o.GetValue("no")?.ToObject<int>();
-        if (code != null && code != 0)
-        {
-            throw new TieBaServerException(code ?? -1, o.GetValue("error")?.ToObject<string>() ?? string.Empty);
-        }
+        var o = JsonApiBase.ParseBody(body, "no", "error");
 
         var fid = o.GetValue("data")!.ToObject<JObject>()!.GetValue("fid")!.ToObject<ulong>();
         if (fid == 0)
@@ -25,7 +20,7 @@ public class GetFid(ITiebaHttpCore httpCore)
         return fid;
     }
 
-    public  async Task<ulong> RequestAsync(string fname)
+    public async Task<ulong> RequestAsync(string fname)
     {
         var data = new List<KeyValuePair<string, string>>()
         {
@@ -34,9 +29,8 @@ public class GetFid(ITiebaHttpCore httpCore)
         };
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/f/commit/share/fnameShareApi").Uri;
 
-        var responseMessage = await httpCore.PackWebGetRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackWebGetRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsStringAsync();
         return ParseBody(result);
     }
 }
-

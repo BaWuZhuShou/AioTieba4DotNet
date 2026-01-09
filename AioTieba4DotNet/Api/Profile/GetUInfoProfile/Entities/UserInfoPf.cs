@@ -10,8 +10,12 @@ public class UserInfoPf : UserInfoGuInfoApp
     public static UserInfoPf FromTbData(ProfileResIdl.Types.DataRes dataProto)
     {
         var userProto = dataProto.User;
+        if (userProto == null)
+        {
+            throw new InvalidOperationException("Profile response data.User is null.");
+        }
         var antiStatProto = dataProto.AntiStat;
-        var portrait = userProto.Portrait;
+        var portrait = userProto.Portrait ?? string.Empty;
         if (portrait.Contains('?'))
         {
             portrait = portrait[..^13];
@@ -21,26 +25,26 @@ public class UserInfoPf : UserInfoGuInfoApp
         {
             UserId = userProto.Id,
             Portrait = portrait,
-            UserName = userProto.Name,
-            NickNameNew = userProto.NameShow,
+            UserName = userProto.Name ?? string.Empty,
+            NickNameNew = userProto.NameShow ?? string.Empty,
             TiebaUid = string.IsNullOrEmpty(userProto.TiebaUid) ? 0 : long.Parse(userProto.TiebaUid),
-            GLevel = (int)userProto.UserGrowth.LevelId,
+            GLevel = userProto.UserGrowth != null ? (int)userProto.UserGrowth.LevelId : 0,
             Gender = (Gender)userProto.Gender,
             Age = string.IsNullOrEmpty(userProto.TbAge) ? 0 : float.Parse(userProto.TbAge),
             PostNum = userProto.PostNum,
-            AgreeNum = (int)dataProto.UserAgreeInfo.TotalAgreeNum,
+            AgreeNum = dataProto.UserAgreeInfo != null ? (int)dataProto.UserAgreeInfo.TotalAgreeNum : 0,
             FanNum = userProto.FansNum,
             FollowNum = userProto.ConcernNum,
             ForumNum = userProto.MyLikeNum,
-            Sign = userProto.Intro,
-            Ip = userProto.IpAddress,
-            Icons = userProto.Iconinfo.Where(i => !string.IsNullOrEmpty(i.Name)).Select(i => i.Name).ToList(),
+            Sign = userProto.Intro ?? string.Empty,
+            Ip = userProto.IpAddress ?? string.Empty,
+            Icons = userProto.Iconinfo != null ? userProto.Iconinfo.Where(i => !string.IsNullOrEmpty(i.Name)).Select(i => i.Name).ToList() : [],
             VImage = VirtualImagePf.FromTbData(userProto.VirtualImageInfo),
-            IsVip = userProto.NewTshowIcon.Count != 0,
-            IsGod = userProto.NewGodData.Status == 1,
-            IsBlocked = antiStatProto.BlockStat != 0 && antiStatProto.HideStat != 0 && antiStatProto.DaysTofree > 30,
-            PrivLike = userProto.PrivSets.Like != 0 ? (PrivLike)userProto.PrivSets.Like : PrivLike.Public,
-            PrivReply = userProto.PrivSets.Reply != 0 ? (PrivReply)userProto.PrivSets.Reply : PrivReply.All,
+            IsVip = userProto.NewTshowIcon != null && userProto.NewTshowIcon.Count != 0,
+            IsGod = userProto.NewGodData != null && userProto.NewGodData.Status == 1,
+            IsBlocked = antiStatProto != null && antiStatProto.BlockStat != 0 && antiStatProto.HideStat != 0 && antiStatProto.DaysTofree > 30,
+            PrivLike = userProto.PrivSets != null && userProto.PrivSets.Like != 0 ? (PrivLike)userProto.PrivSets.Like : PrivLike.Public,
+            PrivReply = userProto.PrivSets != null && userProto.PrivSets.Reply != 0 ? (PrivReply)userProto.PrivSets.Reply : PrivReply.All,
         };
     }
 }

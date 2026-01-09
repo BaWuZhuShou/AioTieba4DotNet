@@ -10,6 +10,11 @@ public interface IFrag
     /// </summary>
     /// <returns></returns>
     public string GetFragType();
+    
+    /// <summary>
+    /// 文本内容
+    /// </summary>
+    public string Text { get; }
 
     /// <summary>
     /// 转换为字典用于序列化

@@ -6,7 +6,7 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 
-public class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : BaseApiRequest<T, UserInfoPf, byte[]>
+public class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
 {
     private const int Cmd = 303012;
 
@@ -43,29 +43,25 @@ public class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : BaseApiRequest<T, Use
 
         return reqProto.ToByteArray();
     }
-    
 
-    public override UserInfoPf ParseBody(byte[] body)
+
+    private static UserInfoPf ParseBody(byte[] body)
     {
         var resProto = ProfileResIdl.Parser.ParseFrom(body);
-        var code = resProto.Error.Errorno;
-        if (code != 0)
-        {
-            throw new TieBaServerException(code, resProto.Error.Errmsg ?? string.Empty);
-        }
+        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var resProtoData = resProto.Data;
         return UserInfoPf.FromTbData(resProtoData);
     }
 
-    public override async Task<UserInfoPf> RequestAsync(T requestParams)
+    public async Task<UserInfoPf> RequestAsync(T requestParams)
     {
         var data = PackProto(requestParams);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/profile")
         {
             Query = $"cmd={Cmd}"
         }.Uri;
-        var responseMessage = await httpCore.PackProtoRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackProtoRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsByteArrayAsync();
         return ParseBody(result);
     }

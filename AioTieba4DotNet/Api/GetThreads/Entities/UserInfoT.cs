@@ -50,6 +50,7 @@ public class UserInfoT : UserInfo
             PrivReply = dataProto.PrivSets != null && dataProto.PrivSets.Reply != 0
                 ? (PrivReply)dataProto.PrivSets.Reply
                 : PrivReply.All,
+            Ip = dataProto.IpAddress,
         };
     }
 }

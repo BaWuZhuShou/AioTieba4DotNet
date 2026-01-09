@@ -22,6 +22,7 @@ public class UserInfoGuInfoApp : UserInfo
             Gender = (Gender)dataProto.Gender,
             IsVip = dataProto.VipInfo.VStatus != 0,
             IsGod = dataProto.NewGodData.Status != 0,
+            Ip = dataProto.IpAddress,
         };
     }
 }

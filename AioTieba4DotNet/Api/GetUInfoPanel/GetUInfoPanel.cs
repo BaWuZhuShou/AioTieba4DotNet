@@ -6,16 +6,12 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetUInfoPanel;
 
-public class GetUInfoPanel(ITiebaHttpCore httpCore) : BaseApiRequest<string, UserInfoPanel>
+public class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    public override UserInfoPanel ParseBody(string body)
+    private static UserInfoPanel ParseBody(string body)
     {
-        var o = JObject.Parse(body);
-        var code = o.GetValue("no")?.ToObject<int>();
-        if (code != null && code != 0)
-        {
-            throw new TieBaServerException(code ?? -1, o.GetValue("error")?.ToObject<string>() ?? string.Empty);
-        }
+        var o = JsonApiBase.ParseBody(body, "no", "error");
+        
         var data = o.GetValue("data")?.ToObject<JObject>();
         if (data == null)
         {
@@ -25,7 +21,7 @@ public class GetUInfoPanel(ITiebaHttpCore httpCore) : BaseApiRequest<string, Use
         return UserInfoPanel.FromTbData(data);
     }
 
-    public override async Task<UserInfoPanel> RequestAsync(string nameOrPortrait)
+    public async Task<UserInfoPanel> RequestAsync(string nameOrPortrait)
     {
         var data = new List<KeyValuePair<string, string>>
         {
@@ -34,7 +30,7 @@ public class GetUInfoPanel(ITiebaHttpCore httpCore) : BaseApiRequest<string, Use
                 : new KeyValuePair<string, string>("un", nameOrPortrait)
         };
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/home/get/panel").Uri;
-        var responseMessage = await httpCore.PackAppFormRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsStringAsync();
         return ParseBody(result);
     }

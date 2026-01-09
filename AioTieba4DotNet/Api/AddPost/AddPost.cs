@@ -7,16 +7,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.AddPost;
 
-public class AddPost(ITiebaHttpCore httpCore)
+public class AddPost(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    private static long ParseBody(string body)
+    private new static long ParseBody(string body)
     {
-        var resJson = JObject.Parse(body);
-        var code = resJson.GetValue("error_code")?.ToObject<int>();
-        if (code != null && code != 0)
-        {
-            throw new TieBaServerException(code ?? -1, resJson.GetValue("error_msg")?.ToObject<string>() ?? string.Empty);
-        }
+        var resJson = JsonApiBase.ParseBody(body);
 
         return resJson["data"]?["pid"]?.ToObject<long>() ?? 0;
     }
@@ -27,7 +22,7 @@ public class AddPost(ITiebaHttpCore httpCore)
         
         var data = new List<KeyValuePair<string, string>>()
         {
-            new("BDUSS", httpCore.Account!.Bduss),
+            new("BDUSS", HttpCore.Account!.Bduss),
             new("_client_version", Const.MainVersion),
             new("anonymous", "0"),
             new("content", contentJson),
@@ -36,7 +31,7 @@ public class AddPost(ITiebaHttpCore httpCore)
             new("tid", tid.ToString()),
             new("is_ad", "0"),
             new("new_vcode", "1"),
-            new("tbs", httpCore.Account!.Tbs!),
+            new("tbs", HttpCore.Account!.Tbs!),
             new("vcode_tag", "12"),
         };
 
@@ -50,7 +45,7 @@ public class AddPost(ITiebaHttpCore httpCore)
         }
 
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/post/add").Uri;
-        var responseMessage = await httpCore.PackAppFormRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsStringAsync();
         return ParseBody(result);
     }

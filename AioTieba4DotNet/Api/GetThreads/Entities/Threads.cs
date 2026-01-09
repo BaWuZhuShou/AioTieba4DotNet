@@ -18,13 +18,13 @@ public class Threads
     public static Threads FromTbData(FrsPageResIdl.Types.DataRes dataRes)
     {
         var forum = ForumT.FromTbData(dataRes);
-        var threads = dataRes.ThreadList.Select(p => Thread.FromTbData(p)).ToList();
-        var users = dataRes.UserList.ToDictionary(u => u.Id, u => UserInfoT.FromTbData(u));
+        var threads = dataRes.ThreadList.Select(Thread.FromTbData).ToList();
+        var users = dataRes.UserList.ToDictionary(u => u.Id, UserInfoT.FromTbData);
         foreach (var thread in threads)
         {
             thread.Fname = forum.Fname;
             thread.Fid = forum.Fid;
-            thread.User = users[thread.AuthorId];
+            thread.User = users.GetValueOrDefault(thread.AuthorId) ?? new UserInfoT();
         }
 
         return new Threads()

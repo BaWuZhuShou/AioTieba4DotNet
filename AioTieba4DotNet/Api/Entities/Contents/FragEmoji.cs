@@ -16,6 +16,11 @@ public class FragEmoji : IFrag
     public string Desc { get; init; } = "";
 
     /// <summary>
+    /// 文本内容
+    /// </summary>
+    public string Text => "";
+
+    /// <summary>
     /// 从贴吧原始数据转换
     /// </summary>
     /// <param name="dataProto"></param>

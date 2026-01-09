@@ -5,17 +5,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Block;
 
-public class Block(ITiebaHttpCore httpCore)
+public class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)
     {
-        var o = JObject.Parse(body);
-        var code = o.GetValue("error_code")?.ToObject<int>();
-        if (code != null && code != 0)
-        {
-            throw new TieBaServerException(code ?? -1, o.GetValue("error_msg")?.ToObject<string>() ?? string.Empty);
-        }
-
+        JsonApiBase.ParseBody(body);
         return true;
     }
 
@@ -25,20 +19,20 @@ public class Block(ITiebaHttpCore httpCore)
         var isSvipBlock = specialDays.Contains(day) ? "0" : "1";
         var data = new List<KeyValuePair<string, string>>()
         {
-            new("BDUSS", httpCore!.Account!.Bduss),
+            new("BDUSS", HttpCore.Account!.Bduss),
             new("day", day.ToString()),
             new("fid", fid.ToString()),
             new("is_loop_ban", isSvipBlock),
             new("ntn", "banid"),
             new("portrait", portrait),
             new("reason", reason),
-            new("tbs", httpCore!.Account!.Tbs!),
+            new("tbs", HttpCore.Account!.Tbs!),
             new("word", "-"),
             new("z", "6"),
         };
         var requestUri = new UriBuilder(Const.AppSecureScheme, Const.AppBaseHost, 443, "/c/c/bawu/commitprison").Uri;
 
-        var responseMessage = await httpCore.PackAppFormRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsStringAsync();
         return ParseBody(result);
     }

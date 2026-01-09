@@ -12,7 +12,7 @@ public class Thread
     /// <summary>
     /// 文本内容
     /// </summary>
-    public string Text => Title != "" ? $"{Title}\n{Content.Texts}" : Content.Texts.ToString() ?? "";
+    public string Text => Title != "" ? $"{Title}\n{Content.Text}" : Content.Text;
 
     /// <summary>
     /// 正文内容碎片列表
@@ -172,11 +172,11 @@ public class Thread
             TabId = threadInfo.TabId,
             IsGood = threadInfo.IsGood == 1,
             IsTop = threadInfo.IsTop == 1,
-            IsShare = threadInfo.IsShareThread == 1,
+            IsShare = threadInfo.IsShareThread == 1 && threadInfo.OriginThreadInfo is { Pid: > 0 },
             IsHide = threadInfo.IsFrsMask == 1,
             IsLivePost = threadInfo.IsLivepost == 1,
             VoteInfo = threadInfo.PollInfo != null ? VoteInfo.FromTbData(threadInfo.PollInfo) : null,
-            ShareOrigin = threadInfo is { IsShareThread: 1, OriginThreadInfo.Pid: 0 }
+            ShareOrigin = threadInfo is { IsShareThread: 1, OriginThreadInfo.Pid: > 0 }
                 ? ShareThread.FromTbData(threadInfo.OriginThreadInfo)
                 : null,
             ViewNum = threadInfo.ViewNum,

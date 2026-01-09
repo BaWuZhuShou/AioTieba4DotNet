@@ -14,6 +14,7 @@ namespace AioTieba4DotNet.Api.GetThreads;
 /// <param name="wsCore"></param>
 /// <param name="mode"></param>
 public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
+    : ProtoApiWsBase<Threads>(httpCore, wsCore, mode)
 {
     private const int Cmd = 301001;
 
@@ -29,7 +30,6 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
                     ClientVersion = Const.MainVersion
                 },
                 Kw = fname,
-                Pn = pn == 1 ? 0 : pn,
                 Rn = rn,
                 RnNeed = rn + 5,
                 IsGood = isGood,
@@ -37,17 +37,17 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
                 LoadType = 1,
             }
         };
+        if (pn!=1)
+        {
+            frsPageResIdl.Data.Pn = pn;
+        }
         return frsPageResIdl.ToByteArray();
     }
 
     private static Threads ParseBody(byte[] body)
     {
         var resProto = FrsPageResIdl.Parser.ParseFrom(body);
-        var code = resProto.Error.Errorno;
-        if (code != 0)
-        {
-            throw new TieBaServerException(code, resProto.Error.Errmsg ?? string.Empty);
-        }
+        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var dataForum = resProto.Data;
 
@@ -69,19 +69,10 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
     /// <returns></returns>
     public async Task<Threads> RequestAsync(string fname, int pn, int rn, int sort, int isGood)
     {
-        if (mode == TiebaRequestMode.Websocket)
-        {
-            try
-            {
-                return await RequestWsAsync(fname, pn, rn, sort, isGood);
-            }
-            catch (NotImplementedException)
-            {
-                // 强制要求ws但是未实现，回退http
-            }
-        }
-
-        return await RequestHttpAsync(fname, pn, rn, sort, isGood);
+        return await ExecuteAsync(
+            () => RequestHttpAsync(fname, pn, rn, sort, isGood),
+            () => RequestWsAsync(fname, pn, rn, sort, isGood)
+        );
     }
 
     public async Task<Threads> RequestHttpAsync(string fname, int pn, int rn, int sort, int isGood)
@@ -92,7 +83,7 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
             Query = $"cmd={Cmd}"
         }.Uri;
 
-        var responseMessage = await httpCore.PackProtoRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackProtoRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsByteArrayAsync();
         return ParseBody(result);
     }
@@ -100,7 +91,7 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
     public async Task<Threads> RequestWsAsync(string fname, int pn, int rn, int sort, int isGood)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);
-        var response = await wsCore.SendAsync(Cmd, data);
+        var response = await WsCore.SendAsync(Cmd, data);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

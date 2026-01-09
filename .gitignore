@@ -269,3 +269,5 @@ __pycache__/
 # tools/
 
 aiotieba
+
+.output.txt

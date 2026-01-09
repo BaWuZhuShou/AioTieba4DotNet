@@ -7,11 +7,17 @@ public class UserInfoLogin : UserInfo
 {
     public static UserInfoLogin FromTbData(JObject data)
     {
+        var portrait = data.GetValue("portrait")?.Value<string>() ?? "";
+        if (portrait.Contains('?'))
+        {
+            portrait = portrait[..^13];
+        }
+
         return new UserInfoLogin
         {
-            UserId = data.GetValue("id")!.Value<long>(),
-            Portrait = data.GetValue("portrait")!.Value<string>()!,
-            UserName = data.GetValue("name")!.Value<string>()!,
+            UserId = data.GetValue("id")?.Value<long>() ?? 0,
+            Portrait = portrait,
+            UserName = data.GetValue("name")?.Value<string>() ?? "",
         };
     }
 }

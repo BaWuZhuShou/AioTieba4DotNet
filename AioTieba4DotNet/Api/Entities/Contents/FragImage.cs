@@ -48,6 +48,11 @@ public partial class FragImage : IFrag
     public string Hash { get; init; } = "";
 
     /// <summary>
+    /// 文本内容
+    /// </summary>
+    public string Text => "";
+
+    /// <summary>
     /// 从贴吧原始数据转换
     /// </summary>
     /// <param name="dataProto"></param>
@@ -60,8 +65,42 @@ public partial class FragImage : IFrag
         var originSize = dataProto.OriginSize;
 
         var bSize = dataProto.Bsize.Split(',');
-        var showWidth = int.Parse(bSize[0]);
-        var showHeight = int.Parse(bSize[1]);
+        int showWidth = 0;
+        int showHeight = 0;
+        if (bSize.Length >= 2)
+        {
+            _ = int.TryParse(bSize[0], out showWidth);
+            _ = int.TryParse(bSize[1], out showHeight);
+        }
+
+        var hash = ImageHashExp.Match(src).Groups[1].Value;
+
+        return new FragImage
+        {
+            Src = src,
+            BigSrc = bigSrc,
+            OriginSrc = originSrc,
+            OriginSize = originSize,
+            ShowWidth = showWidth,
+            ShowHeight = showHeight,
+            Hash = hash
+        };
+    }
+
+    /// <summary>
+    /// 从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataProto"></param>
+    /// <returns>FragImage</returns>
+    public static FragImage FromTbData(Media dataProto)
+    {
+        var src = dataProto.SmallPic;
+        var bigSrc = dataProto.BigPic;
+        var originSrc = dataProto.OriginPic;
+        var originSize = dataProto.OriginSize;
+
+        var showWidth = (int)dataProto.Width;
+        var showHeight = (int)dataProto.Height;
 
         var hash = ImageHashExp.Match(src).Groups[1].Value;
 

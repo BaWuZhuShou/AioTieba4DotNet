@@ -27,7 +27,7 @@ public class InitZIdTest : TestBase
         var reqBody = "{\"module_section\":[{\"zid\":\"" + xyus + "\"}]}";
         var reqBodyBytes = Encoding.UTF8.GetBytes(reqBody);
         var reqBodyCompressed =AioTieba4DotNet.Api.InitZId.InitZId.Compress(reqBodyBytes);
-        var padding = Utils.ApplyPkcs7Padding(reqBodyCompressed, 32);
+        var padding = Utils.ApplyPkcs7Padding(reqBodyCompressed, 16);
         var cryptoTransform = account.AesCbcCipher!.CreateEncryptor(account.AesCbcCipher.Key, account.AesCbcCipher.IV);
         var transformFinalBlock = cryptoTransform.TransformFinalBlock(padding, 0, padding.Length);
         var reqBodyMd5 = MD5.HashData(reqBodyCompressed);

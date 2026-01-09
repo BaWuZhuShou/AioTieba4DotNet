@@ -11,8 +11,9 @@
 
 - **现代工程化**：支持 .NET 8/9/10，原生支持依赖注入 (DI) 和 IHttpClientFactory。
 - **高性能**：全面采用异步编程模式，底层使用 Protobuf 序列化，性能优异。
-- **模块化设计**：按业务功能拆分为 `Forums`, `Threads`, `Users` 等模块，入口清晰。
-- **密码学一致性**：与 [aiotieba](https://github.com/lumina37/aiotieba) 高度一致的签名和加解密算法。
+- **模块化设计**：按业务功能拆分为 `Forums`, `Threads`, `Users`, `Client` 等模块，入口清晰。
+- **功能丰富**：支持查看帖子、发布内容、点赞、签到、封禁等常用功能。
+- **多协议支持**：支持 HTTP 和 WebSocket 双协议切换。
 
 ---
 
@@ -41,30 +42,20 @@ var clientWithAccount = new TiebaClient("你的BDUSS", "你的STOKEN");
 var fid = await client.Forums.GetFidAsync("csharp");
 Console.WriteLine($"贴吧ID: {fid}");
 
-// 获取帖子列表 (默认使用 HTTP)
+// 签到
+await clientWithAccount.Forums.SignAsync("csharp");
+
+// 获取帖子列表
 var threads = await client.Threads.GetThreadsAsync("csharp");
-foreach (var thread in threads.ThreadList)
+foreach (var thread in threads.Objs)
 {
-    Console.WriteLine($"标题: {thread.Title} | 作者: {thread.Author.ShowName}");
+    Console.WriteLine($"标题: {thread.Title} | 作者: {thread.User?.ShowName}");
 }
 ```
 
-### 2. 高级配置 (WebSocket 支持)
+### 2. 依赖注入模式 (推荐生产环境)
 
-```csharp
-using AioTieba4DotNet.Enums;
-
-// 全局设置使用 WebSocket 模式
-var client = new TiebaClient { RequestMode = TiebaRequestMode.Websocket };
-
-// 或者在具体请求时临时指定模式
-var threads = await client.Threads.GetThreadsAsync("csharp", mode: TiebaRequestMode.Http);
-```
-
-### 3. 依赖注入模式 (推荐生产环境)
-
-在 `Program.cs` 或 `Startup.cs` 中注册：
-
+在 `Program.cs` 注册：
 ```csharp
 services.AddAioTiebaClient(options =>
 {
@@ -74,7 +65,6 @@ services.AddAioTiebaClient(options =>
 ```
 
 在服务中使用：
-
 ```csharp
 public class MyService(ITiebaClient tiebaClient)
 {
@@ -88,20 +78,39 @@ public class MyService(ITiebaClient tiebaClient)
 
 ---
 
-## 🛠️ 功能模块说明
+## 📖 详细文档
+
+为了保持 README 简洁，更多详细内容请参阅：
+
+- [功能模块详细说明](./docs/modules.md) - 包含 Forum, Thread, User 模块的所有 API 列表。
+- [高级用法](./docs/advanced.md) - 包含 WebSocket 配置、依赖注入细节、自定义 HttpClient 等。
+
+---
+
+## 🛠️ 功能模块概览
 
 ### 贴吧模块 (`client.Forums`)
-- `GetFidAsync(fname)`: 通过吧名获取 ID
-- `GetFnameAsync(fid)`: 通过 ID 获取吧名
-- `GetDetailAsync(fid/fname)`: 获取贴吧详细资料
+- 吧资料获取 (fid, fname, detail, forumInfo)
+- 关注/取消关注 (`LikeAsync`, `UnlikeAsync`)
+- 签到 (`SignAsync`)
+- 吧务管理 (`DelBaWuAsync`)
 
 ### 帖子模块 (`client.Threads`)
-- `GetThreadsAsync(fname/fid, pn, rn, sort, isGood, mode)`: 分页获取帖子列表。`mode` 可选 `Http` 或 `Websocket`，若 WS 未实现会自动回退。
+- 帖子列表、回复列表、楼中楼获取
+- 点赞/点踩 (`AgreeAsync`, `DisagreeAsync`)
+- 发布主题帖、回复帖子 (`AddThreadAsync`, `AddPostAsync`)
+- 删除帖子、删除回复 (`DelThreadAsync`, `DelPostAsync`)
 
 ### 用户模块 (`client.Users`)
-- `GetProfileAsync(userId/portrait)`: 获取用户详细资料
-- `GetBasicInfoAsync(userId)`: 获取用户基础信息
-- `BlockAsync(fid, portrait, day, reason)`: 封禁用户
+- 用户详细资料、基础信息、面板信息获取
+- 关注/取消关注用户、关注列表获取
+- 用户发表的主题/回复列表获取
+- 登录与 TBS 获取 (`LoginAsync`, `GetTbsAsync`)
+- 封禁用户 (`BlockAsync`)
+
+### 客户端模块 (`client.Client`)
+- ZID 初始化
+- 客户端配置同步 (ClientId, SampleId)
 
 ---
 

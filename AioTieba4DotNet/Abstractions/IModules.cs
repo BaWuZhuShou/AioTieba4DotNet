@@ -1,10 +1,15 @@
 ﻿using AioTieba4DotNet.Api.GetForumDetail.Entities;
+using AioTieba4DotNet.Api.GetForum.Entities;
 using AioTieba4DotNet.Api.Entities.Contents;
 using AioTieba4DotNet.Api.GetThreads.Entities;
 using AioTieba4DotNet.Api.GetThreadPosts.Entities;
-using AioTieba4DotNet.Api.GetComments.Entities;
 using AioTieba4DotNet.Api.GetUInfoGetUserInfoApp.Entities;
+using AioTieba4DotNet.Api.GetUInfoPanel.Entities;
+using AioTieba4DotNet.Api.GetUInfoUserJson.Entities;
+using AioTieba4DotNet.Api.Login.Entities;
 using AioTieba4DotNet.Api.Profile.GetUInfoProfile.Entities;
+using AioTieba4DotNet.Api.GetUserContents.Entities;
+using AioTieba4DotNet.Api.Entities;
 using AioTieba4DotNet.Enums;
 
 namespace AioTieba4DotNet.Abstractions;
@@ -19,6 +24,8 @@ public interface IForumModule
     Task<bool> LikeAsync(string fname);
     Task<bool> UnlikeAsync(string fname);
     Task<bool> SignAsync(string fname);
+    Task<Forum> GetForumAsync(string fname);
+    Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType);
 }
 
 public interface IThreadModule
@@ -47,6 +54,7 @@ public interface IThreadModule
 
 public interface IUserModule
 {
+    TiebaRequestMode RequestMode { get; set; }
     Task<string> GetTbsAsync();
     Task<UserInfoGuInfoApp> GetBasicInfoAsync(int userId);
     Task<UserInfoPf> GetProfileAsync(int userId);
@@ -55,6 +63,20 @@ public interface IUserModule
     Task<bool> BlockAsync(string fname, string portrait, int day = 1, string reason = "");
     Task<bool> FollowAsync(string portrait);
     Task<bool> UnfollowAsync(string portrait);
+
+    Task<UserList> GetFollowsAsync(long userId, int pn = 1);
+    Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait);
+    Task<UserInfoJson> GetUserInfoJsonAsync(string username);
+    Task<(UserInfoLogin User, string Tbs)> LoginAsync();
+
+    Task<UserPostss> GetPostsAsync(int userId, uint pn = 1, uint rn = 20, string version = "8.9.8.5", TiebaRequestMode? mode = null);
+    Task<UserThreads> GetThreadsAsync(int userId, uint pn = 1, bool publicOnly = true, TiebaRequestMode? mode = null);
+}
+
+public interface IClientModule
+{
+    Task<string> InitZIdAsync();
+    Task<(string ClientId, string SampleId)> SyncAsync();
 }
 
 
@@ -65,5 +87,6 @@ public interface ITiebaClient
     IForumModule Forums { get; }
     IThreadModule Threads { get; }
     IUserModule Users { get; }
+    IClientModule Client { get; }
     ITiebaWsCore WsCore { get; }
 }

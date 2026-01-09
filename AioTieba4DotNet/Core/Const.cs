@@ -2,7 +2,7 @@
 
 public static class Const
 {
-    public const string MainVersion = "12.72.1.0";
+    public const string MainVersion = "12.64.1.1";
     public const string PostVersion = "12.35.1.0";
     public const string AppSecureScheme = "https";
     public const string AppInsecureScheme = "http";

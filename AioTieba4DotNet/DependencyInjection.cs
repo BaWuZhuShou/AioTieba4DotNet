@@ -41,6 +41,7 @@ public static class DependencyInjection
 
         services.AddScoped<ITiebaClient, TiebaClient>();
         services.AddScoped<IForumModule, ForumModule>();
+        services.AddScoped<IClientModule, ClientModule>();
         services.AddScoped<IThreadModule>(sp =>
         {
             var httpCore = sp.GetRequiredService<ITiebaHttpCore>();
@@ -52,7 +53,17 @@ public static class DependencyInjection
                 RequestMode = options.RequestMode
             };
         });
-        services.AddScoped<IUserModule, UserModule>();
+        services.AddScoped<IUserModule>(sp =>
+        {
+            var httpCore = sp.GetRequiredService<ITiebaHttpCore>();
+            var forums = sp.GetRequiredService<IForumModule>();
+            var wsCore = sp.GetRequiredService<ITiebaWsCore>();
+            var options = sp.GetRequiredService<IOptions<TiebaOptions>>().Value;
+            return new UserModule(httpCore, forums, wsCore)
+            {
+                RequestMode = options.RequestMode
+            };
+        });
         services.AddScoped<ITiebaWsCore>(sp =>
         {
             var httpCore = sp.GetRequiredService<ITiebaHttpCore>();

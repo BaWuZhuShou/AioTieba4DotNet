@@ -16,6 +16,11 @@ public class FragVoice : IFrag
     public int Duration { get; init; }
 
     /// <summary>
+    /// 文本内容
+    /// </summary>
+    public string Text => "";
+
+    /// <summary>
     /// 从贴吧原始数据转换
     /// </summary>
     /// <param name="dataProto"></param>
@@ -44,7 +49,7 @@ public class FragVoice : IFrag
     /// </summary>
     /// <param name="dataProto"></param>
     /// <returns>FragVoice</returns>
-    public static FragVoice FromTbData(global::PbContent dataProto)
+    public static FragVoice FromTbData(PbContent dataProto)
     {
         return new FragVoice
         {

@@ -6,11 +6,11 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetForumDetail;
 
-public class GetForumDetail(ITiebaHttpCore httpCore)
+public class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
 {
     private const int Cmd = 303021;
 
-    public static byte[] PackProto(long fid)
+    private static byte[] PackProto(long fid)
     {
         var reqIdl = new GetForumDetailReqIdl()
         {
@@ -30,11 +30,7 @@ public class GetForumDetail(ITiebaHttpCore httpCore)
     private static ForumDetail ParseBody(byte[] body)
     {
         var resProto = GetForumDetailResIdl.Parser.ParseFrom(body);
-        var code = resProto.Error.Errorno;
-        if (code != 0)
-        {
-            throw new TieBaServerException(code, resProto.Error.Errmsg ?? string.Empty);
-        }
+        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var dataForum = resProto.Data;
        
@@ -49,10 +45,9 @@ public class GetForumDetail(ITiebaHttpCore httpCore)
             Query = $"cmd={Cmd}"
         }.Uri;
 
-        var responseMessage = await httpCore.PackProtoRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackProtoRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsByteArrayAsync();
         return ParseBody(result);
     }
-    
 }
 

@@ -1,20 +1,20 @@
-using AioTieba4DotNet.Abstractions;
-using Google.Protobuf;
+﻿using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.GetUserContents.Entities;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
 using AioTieba4DotNet.Exceptions;
+using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetUserContents;
 
-public class GetPosts(
+public class GetUserThreads(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore,
-    TiebaRequestMode mode = TiebaRequestMode.Http) : ProtoApiWsBase<UserPostss>(httpCore, wsCore, mode)
+    TiebaRequestMode mode = TiebaRequestMode.Http) : ProtoApiWsBase<UserThreads>(httpCore, wsCore, mode)
 {
     private const int Cmd = 303002;
 
-    private static byte[] PackProto(Account account, int userId, uint pn, uint rn, string version)
+    private static byte[] PackProto(Account account, int userId, uint pn, bool publicOnly)
     {
         var userPostReqIdl = new UserPostReqIdl()
         {
@@ -24,37 +24,37 @@ public class GetPosts(
                 {
                     ClientType = 2,
                     BDUSS = account.Bduss,
-                    ClientVersion = version,
+                    ClientVersion = Const.MainVersion,
                 },
                 UserId = userId,
                 Pn = pn,
-                Rn = rn,
-                NeedContent = 1
+                IsThread = 1,
+                NeedContent = 1,
+                IsViewCard = publicOnly ? 2 : 1
             }
         };
         return userPostReqIdl.ToByteArray();
     }
 
-    private static UserPostss ParseBody(byte[] body)
+    private static UserThreads ParseBody(byte[] body)
     {
         var resProto = UserPostResIdl.Parser.ParseFrom(body);
         CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
-        var dataForum = resProto.Data;
-        return UserPostss.FromTbData(dataForum);
+        return UserThreads.FromTbData(resProto.Data);
     }
 
-    public async Task<UserPostss> RequestAsync(int userId, uint pn, uint rn, string version)
+    public async Task<UserThreads> RequestAsync(int userId, uint pn, bool publicOnly)
     {
         return await ExecuteAsync(
-            () => RequestHttpAsync(userId, pn, rn, version),
-            () => RequestWsAsync(userId, pn, rn, version)
+            () => RequestHttpAsync(userId, pn, publicOnly),
+            () => RequestWsAsync(userId, pn, publicOnly)
         );
     }
 
-    public async Task<UserPostss> RequestHttpAsync(int userId, uint pn, uint rn, string version)
+    public async Task<UserThreads> RequestHttpAsync(int userId, uint pn, bool publicOnly)
     {
-        var data = PackProto(HttpCore.Account!, userId, pn, rn, version);
+        var data = PackProto(HttpCore.Account!, userId, pn, publicOnly);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/userpost")
         {
             Query = $"cmd={Cmd}"
@@ -65,9 +65,9 @@ public class GetPosts(
         return ParseBody(result);
     }
 
-    public async Task<UserPostss> RequestWsAsync(int userId, uint pn, uint rn, string version)
+    public async Task<UserThreads> RequestWsAsync(int userId, uint pn, bool publicOnly)
     {
-        var data = PackProto(WsCore.Account!, userId, pn, rn, version);
+        var data = PackProto(WsCore.Account!, userId, pn, publicOnly);
         var response = await WsCore.SendAsync(Cmd, data);
         return ParseBody(response.Payload.Data.ToByteArray());
     }

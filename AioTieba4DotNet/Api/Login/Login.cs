@@ -6,16 +6,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Login;
 
-public class Login(ITiebaHttpCore httpCore) : BaseApiRequest<ValueTuple<UserInfoLogin, string>>
+public class Login(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    public override ValueTuple<UserInfoLogin, string> ParseBody(string body)
+    private static (UserInfoLogin User, string Tbs) ParseBody(string body)
     {
-        var resJson = JObject.Parse(body);
-        var code = resJson.GetValue("error_code")?.ToObject<int>();
-        if (code != null && code != 0)
-        {
-            throw new TieBaServerException(code ?? -1, resJson.GetValue("error_msg")?.ToObject<string>() ?? string.Empty);
-        }
+        var resJson = JsonApiBase.ParseBody(body);
 
         var userDict = resJson.GetValue("user")?.ToObject<JObject>()!;
         var user = UserInfoLogin.FromTbData(userDict);
@@ -23,15 +18,15 @@ public class Login(ITiebaHttpCore httpCore) : BaseApiRequest<ValueTuple<UserInfo
         return (user, tbs);
     }
 
-    public override async Task<ValueTuple<UserInfoLogin, string>> RequestAsync()
+    public async Task<(UserInfoLogin User, string Tbs)> RequestAsync()
     {
         var data = new List<KeyValuePair<string, string>>()
         {
             new("_client_version", Const.MainVersion),
-            new("bdusstoken", httpCore!.Account!.Bduss)
+            new("bdusstoken", HttpCore.Account!.Bduss)
         };
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/s/login").Uri;
-        var responseMessage = await httpCore.PackAppFormRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsStringAsync();
         return ParseBody(result);
     }

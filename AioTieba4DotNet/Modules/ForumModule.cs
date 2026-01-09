@@ -2,6 +2,9 @@
 using AioTieba4DotNet.Api.GetFid;
 using AioTieba4DotNet.Api.GetForumDetail;
 using AioTieba4DotNet.Api.GetForumDetail.Entities;
+using AioTieba4DotNet.Api.GetForum;
+using AioTieba4DotNet.Api.GetForum.Entities;
+using AioTieba4DotNet.Api.DelBawu;
 using AioTieba4DotNet.Api.LikeForum;
 using AioTieba4DotNet.Api.UnlikeForum;
 using AioTieba4DotNet.Api.Sign;
@@ -67,5 +70,18 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
         var fid = await GetFidAsync(fname);
         var api = new Sign(httpCore);
         return await api.RequestAsync(fname, fid);
+    }
+
+    public async Task<Forum> GetForumAsync(string fname)
+    {
+        var api = new GetForum(httpCore);
+        return await api.RequestAsync(fname);
+    }
+
+    public async Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType)
+    {
+        var fid = await GetFidAsync(fname);
+        var api = new DelBaWu(httpCore);
+        return await api.RequestAsync((int)fid, portrait, baWuType);
     }
 }

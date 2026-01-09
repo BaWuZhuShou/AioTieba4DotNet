@@ -39,7 +39,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
         return await api.RequestAsync(tid, pn, rn, (int)sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree);
     }
 
-    public async Task<AioTieba4DotNet.Api.GetComments.Entities.Comments> GetCommentsAsync(long tid, long pid, int pn = 1, bool isComment = false, TiebaRequestMode? mode = null)
+    public async Task<Comments> GetCommentsAsync(long tid, long pid, int pn = 1, bool isComment = false, TiebaRequestMode? mode = null)
     {
         var api = new GetComments(httpCore, wsCore, mode ?? RequestMode);
         return await api.RequestAsync(tid, pid, pn, isComment);

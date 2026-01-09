@@ -8,16 +8,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetFollows;
 
-public class GetFollows(ITiebaHttpCore httpCore)
+public class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static UserList ParseBody(string body)
     {
-        var resJson = JObject.Parse(body);
-        var code = resJson.GetValue("error_code")?.ToObject<int>() ?? 0;
-        if (code != 0)
-        {
-            throw new TieBaServerException(code, resJson.GetValue("error_msg")?.ToObject<string>() ?? string.Empty);
-        }
+        var resJson = JsonApiBase.ParseBody(body);
 
         var followList = resJson.GetValue("follow_list")?.ToObject<JArray>() ?? [];
         var objs = followList.Select(m => UserInfo.FromTbData((JObject)m)).ToList();
@@ -41,14 +36,14 @@ public class GetFollows(ITiebaHttpCore httpCore)
     {
         var data = new List<KeyValuePair<string, string>>
         {
-            new("BDUSS", httpCore.Account?.Bduss ?? ""),
+            new("BDUSS", HttpCore.Account?.Bduss ?? ""),
             new("_client_version", Const.MainVersion),
             new("pn", pn.ToString()),
             new("uid", userId.ToString())
         };
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/follow/followList").Uri;
-        var responseMessage = await httpCore.PackAppFormRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsStringAsync();
         return ParseBody(result);
     }

@@ -6,18 +6,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetForum;
 
-public record GetFormParams(string Fname);
-
-public class GetForum(ITiebaHttpCore httpCore) : BaseApiRequest<GetFormParams, Forum>
+public class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    public override Forum ParseBody(string body)
+    private static Forum ParseBody(string body)
     {
-        var o = JObject.Parse(body);
-        var code = o.GetValue("error_code")?.ToObject<int>();
-        if (code != null && code != 0)
-        {
-            throw new TieBaServerException(code ?? -1, o.GetValue("error_msg")?.ToObject<string>() ?? string.Empty);
-        }
+        var o = JsonApiBase.ParseBody(body);
 
         var forumDict = o.GetValue("forum")?.ToObject<Dictionary<string, object>>();
         if (forumDict == null)
@@ -28,15 +21,15 @@ public class GetForum(ITiebaHttpCore httpCore) : BaseApiRequest<GetFormParams, F
         return Forum.FromTbData(forumDict);
     }
 
-    public override async Task<Forum> RequestAsync(GetFormParams requestParams)
+    public async Task<Forum> RequestAsync(string fname)
     {
         var data = new List<KeyValuePair<string, string>>()
         {
-            new("kw", requestParams.Fname)
+            new("kw", fname)
         };
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/c/f/frs/frsBottom").Uri;
 
-        var responseMessage = await httpCore.PackAppFormRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsStringAsync();
         return ParseBody(result);
     }

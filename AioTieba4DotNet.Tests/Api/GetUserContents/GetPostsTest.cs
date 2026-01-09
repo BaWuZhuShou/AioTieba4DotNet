@@ -13,7 +13,7 @@ public class GetPostsTest : TestBase
     [TestMethod]
     public async Task TestRequest()
     {
-        var getPosts = new GetPosts(HttpCore);
+        var getPosts = new GetPosts(HttpCore, WebsocketCore);
         var result = await getPosts.RequestAsync(1, 1, 20, "8.9.8.5");
         
         Assert.IsNotNull(result);

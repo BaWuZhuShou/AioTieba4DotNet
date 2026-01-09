@@ -107,17 +107,22 @@ public class Comment
             if (f1 is FragAt a1) content.Ats.Remove(a1);
             content.Frags.RemoveRange(0, 2);
             
-            if (content.Texts.Count > 0)
+            if (content.Frags.Count > 0 && content.Frags[0] is FragText firstFragText && firstFragText.Text.StartsWith(" :"))
             {
-                var firstText = content.Texts[0];
-                if (firstText.Text.StartsWith(" :"))
+                var trimmedText = firstFragText.Text[2..];
+                if (string.IsNullOrEmpty(trimmedText))
                 {
-                    var newFirstText = new FragText { Text = firstText.Text[2..] };
-                    content.Texts[0] = newFirstText;
-                    var indexInFrags = content.Frags.IndexOf(firstText);
-                    if (indexInFrags != -1)
+                    content.Frags.RemoveAt(0);
+                    content.Texts.Remove(firstFragText);
+                }
+                else
+                {
+                    var newFirstText = new FragText { Text = trimmedText };
+                    content.Frags[0] = newFirstText;
+                    var indexInTexts = content.Texts.IndexOf(firstFragText);
+                    if (indexInTexts != -1)
                     {
-                        content.Frags[indexInFrags] = newFirstText;
+                        content.Texts[indexInTexts] = newFirstText;
                     }
                 }
             }

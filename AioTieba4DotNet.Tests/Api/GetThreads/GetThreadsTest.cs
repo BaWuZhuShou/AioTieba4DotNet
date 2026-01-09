@@ -17,7 +17,7 @@ public class GetThreadsTest : TestBase
         var getThreads = new AioTieba4DotNet.Api.GetThreads.GetThreads(HttpCore, WebsocketCore);
         
         // 调用接口获取“地下城与勇士”吧的主题帖
-        var result = await getThreads.RequestWsAsync("DNF吧", 1, 30, 5, 0);
+        var result = await getThreads.RequestWsAsync("DNF", 1, 30, 5, 0);
         
         // 验证结果
         Assert.IsNotNull(result, "返回结果不应为空");

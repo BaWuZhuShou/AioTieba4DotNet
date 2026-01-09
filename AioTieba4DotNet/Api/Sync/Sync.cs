@@ -5,16 +5,11 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Sync;
 
-public class Sync(ITiebaHttpCore httpCore) : BaseApiRequest<ValueTuple<string, string>>
+public class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    public override ValueTuple<string,string> ParseBody(string body)
+    private static (string ClientId, string SampleId) ParseBody(string body)
     {
-        var o = JObject.Parse(body);
-        var code = o.GetValue("error_code")?.ToObject<int>();
-        if (code != null && code != 0)
-        {
-            throw new TieBaServerException(code ?? -1, o.GetValue("error_msg")?.ToObject<string>() ?? string.Empty);
-        }
+        var o = JsonApiBase.ParseBody(body);
 
         var clientId = o.GetValue("client")!.ToObject<JObject>()!.GetValue("client_id")!.ToObject<string>()!;
         var sampleId = o.GetValue("wl_config")!.ToObject<JObject>()!.GetValue("sample_id")!.ToObject<string>()!;
@@ -22,16 +17,16 @@ public class Sync(ITiebaHttpCore httpCore) : BaseApiRequest<ValueTuple<string, s
         return (clientId, sampleId);
     }
 
-    public override async Task<ValueTuple<string,string>> RequestAsync()
+    public async Task<(string ClientId, string SampleId)> RequestAsync()
     {
         var data = new List<KeyValuePair<string, string>>()
         {
-            new("BDUSS", httpCore!.Account!.Bduss),
+            new("BDUSS", HttpCore.Account!.Bduss),
             new("_client_version", Const.MainVersion),
-            new("cuid", httpCore.Account.CuidGalaxy2)
+            new("cuid", HttpCore.Account.CuidGalaxy2)
         };
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/s/sync").Uri;
-        var responseMessage = await httpCore.PackAppFormRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsStringAsync();
         return ParseBody(result);
     }

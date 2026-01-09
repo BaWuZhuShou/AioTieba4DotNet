@@ -14,6 +14,7 @@ namespace AioTieba4DotNet.Api.GetThreadPosts;
 /// <param name="wsCore"></param>
 /// <param name="mode"></param>
 public class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
+    : ProtoApiWsBase<Posts>(httpCore, wsCore, mode)
 {
     private const int Cmd = 302001;
 
@@ -45,11 +46,7 @@ public class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaR
     private static Posts ParseBody(byte[] body)
     {
         var resProto = PbPageResIdl.Parser.ParseFrom(body);
-        var code = resProto.Error.Errorno;
-        if (code != 0)
-        {
-            throw new TieBaServerException(code, resProto.Error.Errmsg ?? string.Empty);
-        }
+        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         return Posts.FromTbData(resProto.Data);
     }
@@ -68,38 +65,29 @@ public class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaR
     /// <returns></returns>
     public async Task<Posts> RequestAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments, int commentRn, bool commentSortByAgree)
     {
-        if (mode == TiebaRequestMode.Websocket)
-        {
-            try
-            {
-                return await RequestWsAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree);
-            }
-            catch (NotImplementedException)
-            {
-                // 回退 http
-            }
-        }
-
-        return await RequestHttpAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree);
+        return await ExecuteAsync(
+            () => RequestHttpAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree),
+            () => RequestWsAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree)
+        );
     }
 
     public async Task<Posts> RequestHttpAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments, int commentRn, bool commentSortByAgree)
     {
-        var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree, httpCore.Account?.Bduss);
+        var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree, HttpCore.Account?.Bduss);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/pb/page")
         {
             Query = $"cmd={Cmd}"
         }.Uri;
 
-        var responseMessage = await httpCore.PackProtoRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackProtoRequestAsync(requestUri, data);
         var result = await responseMessage.Content.ReadAsByteArrayAsync();
         return ParseBody(result);
     }
 
     public async Task<Posts> RequestWsAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments, int commentRn, bool commentSortByAgree)
     {
-        var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree, wsCore.Account?.Bduss);
-        var response = await wsCore.SendAsync(Cmd, data);
+        var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree, WsCore.Account?.Bduss);
+        var response = await WsCore.SendAsync(Cmd, data);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

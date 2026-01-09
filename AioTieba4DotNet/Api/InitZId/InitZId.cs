@@ -8,22 +8,22 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.InitZId;
 
-public class InitZId(ITiebaHttpCore httpCore) : BaseApiRequest<string>
+public class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
 {
     private const string AppKey = "200033"; // Get by p/5/aio
     private const string SecKey = "ea737e4f435b53786043369d2e5ace4f";
 
 
-    public override async Task<string> RequestAsync()
+    public async Task<string> RequestAsync()
     {
-        var account = httpCore.Account!;
-        var xyus = GetMd5Hash(account.AndroidId + account.Uuid);
+        var account = HttpCore.Account!;
+        var xyus = GetMd5Hash(account.AndroidId + account.Uuid) + "|0";
         var xyusMd5Str = GetMd5Hash(xyus).ToLower();
         var currentTs = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         var reqBody = "{\"module_section\":[{\"zid\":\"" + xyus + "\"}]}";
         var reqBodyBytes = Encoding.UTF8.GetBytes(reqBody);
         var reqBodyCompressed = Compress(reqBodyBytes);
-        var padding = Utils.ApplyPkcs7Padding(reqBodyCompressed, 32);
+        var padding = Utils.ApplyPkcs7Padding(reqBodyCompressed, 16);
         var cryptoTransform = account.AesCbcCipher!.CreateEncryptor(account.AesCbcCipher.Key, account.AesCbcCipher.IV);
         var reqBodyAes = cryptoTransform.TransformFinalBlock(padding, 0, padding.Length);
         var reqBodyMd5 = MD5.HashData(reqBodyCompressed);
@@ -31,7 +31,7 @@ public class InitZId(ITiebaHttpCore httpCore) : BaseApiRequest<string>
         Buffer.BlockCopy(reqBodyAes, 0, payload, 0, reqBodyAes.Length);
         Buffer.BlockCopy(reqBodyMd5, 0, payload, reqBodyAes.Length, reqBodyMd5.Length);
         var pathCombine = AppKey + currentTs + SecKey;
-        var pathCombineMd5 = GetMd5Hash(pathCombine);
+        var pathCombineMd5 = GetMd5Hash(pathCombine).ToLower();
         var rc4 = new Rc4(Encoding.UTF8.GetBytes(xyusMd5Str));
         var reqQuerySkey = Convert.ToBase64String(rc4.Crypt(account.AesCbcSecKey));
         var uri = new UriBuilder("https", Const.SofireHost, 443, $"/c/11/z/100/{AppKey}/{currentTs}/{pathCombineMd5}"
@@ -41,16 +41,17 @@ public class InitZId(ITiebaHttpCore httpCore) : BaseApiRequest<string>
         request.Headers.TryAddWithoutValidation("User-Agent", $"x6/{AppKey}/{Const.MainVersion}/4.4.1.3");
         request.Headers.Add("x-plu-ver", "x6/4.4.1.3");
         request.Content = new ByteArrayContent(payload);
-        var httpResponseMessage = await httpCore.HttpClient.SendAsync(request);
+        request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
+        var httpResponseMessage = await HttpCore.HttpClient.SendAsync(request);
         var result = await httpResponseMessage.Content.ReadAsStringAsync();
         var token = ParseBody(result);
         return token;
     }
 
-    public override string ParseBody(string body)
+    private string ParseBody(string body)
     {
-        var account = httpCore.Account!;
-        var xyus = GetMd5Hash(account.AndroidId + account.Uuid);
+        var account = HttpCore.Account!;
+        var xyus = GetMd5Hash(account.AndroidId + account.Uuid) + "|0";
         var xyusMd5Str = GetMd5Hash(xyus).ToLower();
         var resJson = JObject.Parse(body);
         var resQuerySkey = Convert.FromBase64String(resJson.GetValue("skey")!.Value<string>()!);
@@ -65,7 +66,7 @@ public class InitZId(ITiebaHttpCore httpCore) : BaseApiRequest<string>
         var cryptoTransform = aes.CreateDecryptor(aes.Key, aes.IV);
         var decryptedResData = cryptoTransform.TransformFinalBlock(resData, 0, resData.Length);
         decryptedResData = decryptedResData.Take(decryptedResData.Length - 16).ToArray();
-        var removePkcs7Padding = Utils.RemovePkcs7Padding(decryptedResData, 32);
+        var removePkcs7Padding = Utils.RemovePkcs7Padding(decryptedResData, 16);
         var format = Encoding.UTF8.GetString(removePkcs7Padding);
         var formatJson = JObject.Parse(format);
 

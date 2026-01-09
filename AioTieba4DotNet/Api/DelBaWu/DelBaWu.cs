@@ -3,46 +3,30 @@ using AioTieba4DotNet.Core;
 
 namespace AioTieba4DotNet.Api.DelBawu;
 
-// 定义ClearBawuTeamRequest的参数类型
-public class ClearBawuTeamParams
+public class DelBaWu(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    public int Fid { get; set; }
-    public string Portrait { get; set; } = "";
-    public string BaWuType { get; set; } = "";
-}
-
-public class DelBaWu(ITiebaHttpCore httpCore) : BaseApiRequest<ClearBawuTeamParams, bool>
-{
-    public override bool ParseBody(string body)
+    private static bool ParseBody(string body)
     {
-        // var jsonResponse = JsonConvert.DeserializeObject(body);
-        // if (jsonResponse)
-        // {
-        //     // throw new TiebaServerError(jsonResponse["no"], jsonResponse["error"]);
-        // }
+        JsonApiBase.ParseBody(body);
         return true;
     }
 
-
-    // 实现请求方法
-    public override async Task<bool> RequestAsync(ClearBawuTeamParams requestParams)
+    public async Task<bool> RequestAsync(int fid, string portrait, string baWuType)
     {
         var data = new List<KeyValuePair<string, string>>
         {
             new("fn", "-"),
-            new("fid", requestParams.Fid.ToString()),
+            new("fid", fid.ToString()),
             new("team_un", "-"),
-            new("team_uid", requestParams.Portrait),
-            new("bawu_type", requestParams.BaWuType)
+            new("team_uid", portrait),
+            new("bawu_type", baWuType)
         };
 
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/mo/q/bawuteamclear").Uri;
-        var request = await httpCore.PackWebFormRequestAsync(requestUri, data);
+        var responseMessage = await HttpCore.PackWebFormRequestAsync(requestUri, data);
+        var result = await responseMessage.Content.ReadAsStringAsync();
 
-        // var body = await core.NetCore.SendRequestAsync(request);
-        // ParseBody(body);
-
-        return true;
+        return ParseBody(result);
     }
 }
 
