@@ -282,7 +282,7 @@ public class Content
                 }
             }
         };
-        foreach (var content in threadInfo.FirstPostContent)
+        foreach (var content in threadInfo!.FirstPostContent)
         {
             var type = content.Type;
             // 处理字典中定义的类型

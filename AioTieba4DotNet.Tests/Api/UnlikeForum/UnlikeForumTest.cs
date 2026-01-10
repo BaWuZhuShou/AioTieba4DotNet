@@ -5,7 +5,7 @@ using LikeForumApi = AioTieba4DotNet.Api.LikeForum.LikeForum;
 using GetTbsApi = AioTieba4DotNet.Api.GetTbs.GetTbs;
 using JetBrains.Annotations;
 
-namespace AioTieba4DotNet.Tests.Api.LikeForum;
+namespace AioTieba4DotNet.Tests.Api.UnlikeForum;
 
 [TestClass]
 [TestSubject(typeof(LikeForumApi))]
@@ -22,7 +22,7 @@ public class LikeForumTest : TestBase
 
         var getTbs = new GetTbsApi(HttpCore);
         HttpCore!.Account!.Tbs = await getTbs.RequestAsync();
-        
+
         var likeForum = new LikeForumApi(HttpCore);
 
         try
