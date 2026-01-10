@@ -32,11 +32,19 @@ dotnet add package AioTieba4DotNet
 ```csharp
 using AioTieba4DotNet;
 
-// 1. 无账号初始化
+// 1. 无账号初始化 (仅限读操作)
 var client = new TiebaClient();
 
 // 2. 带账号初始化 (推荐)
 var clientWithAccount = new TiebaClient("你的BDUSS", "你的STOKEN");
+
+// 3. 多账户简单用法 (快速脚本/少量账户)
+using var clientA = new TiebaClient("BDUSS_A");
+using var clientB = new TiebaClient("BDUSS_B");
+await Task.WhenAll(
+    clientA.Forums.SignAsync("csharp"),
+    clientB.Forums.SignAsync("dotnet")
+);
 
 // 获取贴吧信息
 var fid = await client.Forums.GetFidAsync("csharp");
@@ -100,9 +108,8 @@ public class MyBot(ITiebaClientFactory factory)
 ## 📖 详细文档
 
 为了保持 README 简洁，更多详细内容请参阅：
-
 - [功能模块详细说明](./docs/modules.md) - 包含 Forum, Thread, User 模块的所有 API 列表。
-- [高级用法](./docs/advanced.md) - 包含 WebSocket 配置、依赖注入细节、自定义 HttpClient 等。
+- [高级用法](./docs/advanced.md) - 包含 WebSocket 配置、多账户模式、**异常处理**、自定义 HttpClient 等。
 
 ---
 

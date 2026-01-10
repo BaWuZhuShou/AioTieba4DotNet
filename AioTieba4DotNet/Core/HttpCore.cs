@@ -5,12 +5,26 @@ using AioTieba4DotNet.Abstractions;
 
 namespace AioTieba4DotNet.Core;
 
+/// <summary>
+/// HTTP 核心实现类，负责底层网络请求的打包、签名与发送
+/// </summary>
 public class HttpCore : ITiebaHttpCore
 {
+    /// <summary>
+    /// 当前绑定的账户信息
+    /// </summary>
     public Account? Account { get; private set; }
 
+    /// <summary>
+    /// 用于发送请求的 HttpClient 实例
+    /// </summary>
     public HttpClient HttpClient { get; }
 
+    /// <summary>
+    /// 对请求参数进行签名
+    /// </summary>
+    /// <param name="items">待签名的参数列表</param>
+    /// <returns>包含签名后的参数列表</returns>
     public static List<KeyValuePair<string, string>> Sign(List<KeyValuePair<string, string>> items)
     {
         var list = items.Select(item => new KeyValuePair<string, string>(item.Key, item.Value)).ToList();
@@ -18,6 +32,10 @@ public class HttpCore : ITiebaHttpCore
         return list;
     }
 
+    /// <summary>
+    /// 初始化 HttpCore
+    /// </summary>
+    /// <param name="httpClient">可选的 HttpClient 实例，若不提供则自动创建一个</param>
     public HttpCore(HttpClient? httpClient = null)
     {
         if (httpClient == null)
@@ -35,9 +53,14 @@ public class HttpCore : ITiebaHttpCore
         {
             HttpClient = httpClient;
         }
+
+        // 注册 GBK 等编码支持，部分旧版 Web API 依赖
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
     }
 
+    /// <summary>
+    /// 设置 App 端请求通用 Header
+    /// </summary>
     private static void SetAppHeaders(HttpRequestMessage request)
     {
         request.Headers.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
@@ -45,6 +68,9 @@ public class HttpCore : ITiebaHttpCore
         request.Headers.Add("Host", Const.AppBaseHost);
     }
 
+    /// <summary>
+    /// 设置 App 端 Protobuf 请求通用 Header
+    /// </summary>
     private static void SetAppProtoHeaders(HttpRequestMessage request)
     {
         request.Headers.Add("User-Agent", $"aiotieba/{Const.Version}");
@@ -54,6 +80,9 @@ public class HttpCore : ITiebaHttpCore
         request.Headers.Add("Host", Const.AppBaseHost);
     }
 
+    /// <summary>
+    /// 设置 Web 端请求通用 Header
+    /// </summary>
     private static void SetWebHeaders(HttpRequestMessage request)
     {
         request.Headers.Add("User-Agent", $"aiotieba/{Const.Version}");
@@ -65,15 +94,20 @@ public class HttpCore : ITiebaHttpCore
         };
         request.Headers.Connection.Add("keep-alive");
         request.Headers.Accept.ParseAdd("*/*");
-
     }
 
+    /// <summary>
+    /// 绑定账户信息
+    /// </summary>
+    /// <param name="newAccount">账户实例</param>
     public void SetAccount(Account newAccount)
     {
         Account = newAccount;
     }
-
-    // 发送APP请求
+    
+    /// <summary>
+    /// 发送 App 端表单请求（自动添加签名）
+    /// </summary>
     public async Task<HttpResponseMessage> PackAppFormRequestAsync(Uri uri, List<KeyValuePair<string, string>> data)
     {
         var content = new FormUrlEncodedContent(Sign(data));
@@ -85,6 +119,9 @@ public class HttpCore : ITiebaHttpCore
         return await HttpClient.SendAsync(request);
     }
 
+    /// <summary>
+    /// 发送 App 端 Protobuf 请求（自动添加签名）
+    /// </summary>
     public async Task<HttpResponseMessage> PackProtoRequestAsync(Uri uri, byte[] data)
     {
         var byteArrayContent = new ByteArrayContent(data);
@@ -101,7 +138,11 @@ public class HttpCore : ITiebaHttpCore
         return await HttpClient.SendAsync(request);
     }
 
-    public async Task<HttpResponseMessage> PackWebGetRequestAsync(Uri uri, List<KeyValuePair<string, string>> parameters)
+    /// <summary>
+    /// 发送 Web 端 GET 请求
+    /// </summary>
+    public async Task<HttpResponseMessage> PackWebGetRequestAsync(Uri uri,
+        List<KeyValuePair<string, string>> parameters)
     {
         var formUrlEncodedContent = new FormUrlEncodedContent(parameters);
         var readAsStringAsync = await formUrlEncodedContent.ReadAsStringAsync();
@@ -111,6 +152,9 @@ public class HttpCore : ITiebaHttpCore
         return await HttpClient.SendAsync(request);
     }
 
+    /// <summary>
+    /// 发送 Web 端表单请求
+    /// </summary>
     public async Task<HttpResponseMessage> PackWebFormRequestAsync(Uri uri, List<KeyValuePair<string, string>> data)
     {
         var content = new FormUrlEncodedContent(data);

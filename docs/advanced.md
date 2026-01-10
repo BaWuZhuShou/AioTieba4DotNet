@@ -73,9 +73,25 @@ builder.Services.AddHttpClient("TiebaClient")
 
 ## 4. 多账户支持 (Multi-Account)
 
-在需要同时操作多个账号（如吧务机器人、批量处理）的场景下，推荐使用 `ITiebaClientFactory`。
+`AioTieba4DotNet` 提供了两种方式来支持多账户操作。
 
-### 使用工厂创建客户端
+### 4.1 简单模式 (手动实例化)
+
+对于简单的脚本或工具，你可以直接 `new` 多个 `TiebaClient` 实例。
+
+```csharp
+using var clientA = new TiebaClient("BDUSS_A");
+using var clientB = new TiebaClient("BDUSS_B");
+```
+
+**优点**：代码直观，无需配置 DI 容器。
+**缺点**：每个实例都会创建独立的 `HttpClient` 和连接池。如果账户数量非常多（例如超过 100 个），可能会导致内存占用过高或套接字耗尽。
+
+> **重要**: 务必对手动创建的 `TiebaClient` 使用 `using` 语句或手动调用 `Dispose()`，以释放底层的 WebSocket 连接和 HTTP 资源。
+
+### 4.2 工厂模式 (推荐生产环境)
+
+在需要同时操作大量账号（如吧务机器人、批量处理）的场景下，推荐使用 `ITiebaClientFactory`。
 
 `ITiebaClientFactory` 是单例服务，它可以利用 DI 容器中统一配置的 `IHttpClientFactory` 来高效管理网络连接，同时为每个账户创建独立的 `ITiebaClient` 实例。
 
@@ -122,4 +138,61 @@ var contents = new List<IFrag>
 };
 
 await client.Threads.AddThreadAsync("csharp", "标题", contents);
+```
+
+## 6. 拦截器 (Interceptors)
+`AioTieba4DotNet` 支持 API 请求拦截器。你可以通过实现 `ITiebaApiInterceptor` 接口来在请求前后注入自定义逻辑，例如日志记录、性能监控、错误处理或自动重试。
+### 实现拦截器
+```csharp
+using AioTieba4DotNet.Abstractions;
+using System.Text.Json;
+
+public class MyLoggerInterceptor : ITiebaApiInterceptor
+{
+    public Task BeforeRequestAsync(string apiName, object? args)
+    {
+        Console.WriteLine($"[API 开始] {apiName}");
+        return Task.CompletedTask;
+    }
+
+    public Task AfterRequestAsync(string apiName, object? result)
+    {
+        Console.WriteLine($"[API 成功] {apiName}");
+        return Task.CompletedTask;
+    }
+
+    public Task OnErrorAsync(string apiName, Exception ex)
+    {
+        Console.WriteLine($"[API 错误] {apiName}, 异常: {ex.Message}");
+        return Task.CompletedTask;
+    }
+}
+```
+### 注册拦截器 (DI 模式)
+在 DI 注册时，所有的 `ITiebaApiInterceptor` 实现都会被自动发现并注入到 `HttpCore` 中：
+```csharp
+services.AddScoped<ITiebaApiInterceptor, MyLoggerInterceptor>();
+services.AddAioTiebaClient(...);
+```
+### 手动注册 (简单模式)
+```csharp
+var client = new TiebaClient("BDUSS");
+client.HttpCore.Interceptors.Add(new MyLoggerInterceptor());
+```
+
+## 7. 身份验证与错误处理
+### 自动身份验证检查
+SDK 内部对需要登录的 API（如发帖、点赞、封禁等）进行了标记。如果当前客户端未配置有效的 `BDUSS` 就调用这些 API，会直接抛出 `NotLoggedInException`。
+这避免了无效的网络请求，并能让开发者在第一时间定位配置问题。
+### 业务异常 (TieBaServerException)
+当百度贴吧服务器返回非 0 的 `error_code` 时，SDK 会抛出 `TieBaServerException`。你可以从中获取具体的错误码和错误消息。
+```csharp
+try 
+{
+    await client.Forums.SignAsync("某个不存在的吧");
+}
+catch (TieBaServerException ex)
+{
+    Console.WriteLine($"错误码: {ex.Code}, 消息: {ex.Message}");
+}
 ```

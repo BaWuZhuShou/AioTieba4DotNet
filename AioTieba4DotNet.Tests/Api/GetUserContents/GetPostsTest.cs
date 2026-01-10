@@ -13,6 +13,12 @@ public class GetPostsTest : TestBase
     [TestMethod]
     public async Task TestRequest()
     {
+        if (!IsAuthenticated)
+        {
+            Assert.Inconclusive("BDUSS not provided");
+            return;
+        }
+
         var getPosts = new GetPosts(HttpCore, WebsocketCore);
         var result = await getPosts.RequestAsync(1, 1, 20, "8.9.8.5");
         

@@ -13,6 +13,12 @@ public class GetUserThreadsTest : TestBase
     [TestMethod]
     public async Task TestRequest()
     {
+        if (!IsAuthenticated)
+        {
+            Assert.Inconclusive("BDUSS not provided");
+            return;
+        }
+
         var getUserThreads = new GetUserThreads(HttpCore, WebsocketCore);
         var result = await getUserThreads.RequestAsync(1, 1, true);
         

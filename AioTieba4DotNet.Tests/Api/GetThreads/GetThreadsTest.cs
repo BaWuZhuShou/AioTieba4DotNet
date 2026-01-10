@@ -14,10 +14,10 @@ public class GetThreadsTest : TestBase
     [TestMethod]
     public async Task TestRequest()
     {
-        var getThreads = new AioTieba4DotNet.Api.GetThreads.GetThreads(HttpCore, WebsocketCore);
+        var getThreads = new AioTieba4DotNet.Api.GetThreads.GetThreads(HttpCore, WebsocketCore, mode: AioTieba4DotNet.Enums.TiebaRequestMode.Websocket);
         
         // 调用接口获取“地下城与勇士”吧的主题帖
-        var result = await getThreads.RequestWsAsync("DNF", 1, 30, 5, 0);
+        var result = await getThreads.RequestAsync("DNF", 1, 30, 5, 0);
         
         // 验证结果
         Assert.IsNotNull(result, "返回结果不应为空");
