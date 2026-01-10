@@ -1,0 +1,7 @@
+﻿name: "Custom CodeQL config"
+
+paths-ignore:
+  - '**/Protobuf/**'
+  - '**/protobuf/**'
+  - 'AioTieba4DotNet.Tests/**'
+  - 'ProtoGenerator/**'

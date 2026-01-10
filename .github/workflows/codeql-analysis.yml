@@ -39,6 +39,7 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         queries: security-extended,security-and-quality
+        config-file: .github/codeql/config.yml
 
     - name: Build
       run: |
@@ -58,6 +59,8 @@ jobs:
         patterns: |
           -**/Protobuf/**
           -**/protobuf/**
+          -AioTieba4DotNet.Tests/**
+          -ProtoGenerator/**
         input: ${{ runner.temp }}/codeql-sarif/${{ matrix.language }}.sarif
         output: ${{ runner.temp }}/codeql-sarif/${{ matrix.language }}.sarif
 
