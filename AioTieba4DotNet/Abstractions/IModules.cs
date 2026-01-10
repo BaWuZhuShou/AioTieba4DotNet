@@ -14,6 +14,9 @@ using AioTieba4DotNet.Enums;
 
 namespace AioTieba4DotNet.Abstractions;
 
+/// <summary>
+/// 贴吧/吧务模块接口
+/// </summary>
 public interface IForumModule
 {
     Task<ulong> GetFidAsync(string fname);
@@ -28,8 +31,14 @@ public interface IForumModule
     Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType);
 }
 
+/// <summary>
+/// 帖子/回复模块接口
+/// </summary>
 public interface IThreadModule
 {
+    /// <summary>
+    /// 当前模块默认请求模式
+    /// </summary>
     TiebaRequestMode RequestMode { get; set; }
     Task<Threads> GetThreadsAsync(string fname, int pn = 1, int rn = 30, ThreadSortType sort = ThreadSortType.Reply, bool isGood = false, TiebaRequestMode? mode = null);
     Task<Threads> GetThreadsAsync(ulong fid, int pn = 1, int rn = 30, ThreadSortType sort = ThreadSortType.Reply, bool isGood = false, TiebaRequestMode? mode = null);
@@ -52,8 +61,14 @@ public interface IThreadModule
     Task<bool> DelPostAsync(string fname, long tid, long pid);
 }
 
+/// <summary>
+/// 用户/社交模块接口
+/// </summary>
 public interface IUserModule
 {
+    /// <summary>
+    /// 当前模块默认请求模式
+    /// </summary>
     TiebaRequestMode RequestMode { get; set; }
     Task<string> GetTbsAsync();
     Task<UserInfoGuInfoApp> GetBasicInfoAsync(int userId);
@@ -73,6 +88,9 @@ public interface IUserModule
     Task<UserThreads> GetThreadsAsync(int userId, uint pn = 1, bool publicOnly = true, TiebaRequestMode? mode = null);
 }
 
+/// <summary>
+/// 客户端底层模块接口
+/// </summary>
 public interface IClientModule
 {
     Task<string> InitZIdAsync();
@@ -80,13 +98,64 @@ public interface IClientModule
 }
 
 
-public interface ITiebaClient
+/// <summary>
+/// 贴吧客户端接口，提供各功能模块的访问入口
+/// </summary>
+public interface ITiebaClient : IDisposable
 {
+    /// <summary>
+    /// 获取或设置全局请求模式（HTTP 或 WebSocket）
+    /// </summary>
     TiebaRequestMode RequestMode { get; set; }
+
+    /// <summary>
+    /// HTTP 核心组件
+    /// </summary>
     ITiebaHttpCore HttpCore { get; }
+
+    /// <summary>
+    /// 贴吧/吧务模块
+    /// </summary>
     IForumModule Forums { get; }
+
+    /// <summary>
+    /// 帖子/回复模块
+    /// </summary>
     IThreadModule Threads { get; }
+
+    /// <summary>
+    /// 用户/社交模块
+    /// </summary>
     IUserModule Users { get; }
+
+    /// <summary>
+    /// 客户端底层模块
+    /// </summary>
     IClientModule Client { get; }
+
+    /// <summary>
+    /// WebSocket 核心组件
+    /// </summary>
     ITiebaWsCore WsCore { get; }
+}
+
+/// <summary>
+/// 贴吧客户端工厂接口，用于在依赖注入模式下动态创建多账号实例
+/// </summary>
+public interface ITiebaClientFactory
+{
+    /// <summary>
+    /// 使用配置项创建客户端
+    /// </summary>
+    /// <param name="options">配置参数</param>
+    /// <returns>贴吧客户端实例</returns>
+    ITiebaClient CreateClient(TiebaOptions options);
+
+    /// <summary>
+    /// 使用账号信息创建客户端
+    /// </summary>
+    /// <param name="bduss">BDUSS 凭证</param>
+    /// <param name="stoken">STOKEN 凭证（可选）</param>
+    /// <returns>贴吧客户端实例</returns>
+    ITiebaClient CreateClient(string bduss, string stoken = "");
 }

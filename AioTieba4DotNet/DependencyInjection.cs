@@ -70,6 +70,8 @@ public static class DependencyInjection
             return new WebsocketCore(httpCore.Account);
         });
 
+        services.AddSingleton<ITiebaClientFactory, TiebaClientFactory>();
+
         return services;
     }
 }

@@ -17,10 +17,11 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
 {
     private readonly ClientWebSocket _ws = new();
     public Account? Account { get; private set; }
-    private const string WsEndpoint = "ws://im.tieba.baidu.com:8000/";
+    private const string WsEndpoint = "ws://im.tieba.baidu.com:8000";
     private const string RsaPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwQpwBZxXJV/JVRF/uNfyMSdu7YWwRNLM8+2xbniGp2iIQHOikPpTYQjlQgMi1uvq1kZpJ32rHo3hkwjy2l0lFwr3u4Hk2Wk7vnsqYQjAlYlK0TCzjpmiI+OiPOUNVtbWHQiLiVqFtzvpvi4AU7C1iKGvc/4IS45WjHxeScHhnZZ7njS4S1UgNP/GflRIbzgbBhyZ9kEW5/OO5YfG1fy6r4KSlDJw4o/mw5XhftyIpL+5ZBVBC6E1EIiP/dd9AbK62VV1PByfPMHMixpxI3GM2qwcmFsXcCcgvUXJBa9k6zP8dDQ3csCM2QNT+CQAOxthjtp/TFWaD7MzOdsIYb3THwIDAQAB";
 
     private readonly SemaphoreSlim _connectLock = new(1, 1);
+    private readonly SemaphoreSlim _sendLock = new(1, 1);
     private readonly CancellationTokenSource _cts = new();
     private Task? _heartbeatTask;
     private Task? _listenTask;
@@ -125,7 +126,15 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
         await ConnectAsync(cancellationToken);
         var data = req.Payload?.Data?.ToByteArray() ?? [];
         var buffer = PackWsBytes(data, req.Cmd, req.ReqId);
-        await _ws.SendAsync(buffer, WebSocketMessageType.Binary, true, cancellationToken);
+        await _sendLock.WaitAsync(cancellationToken);
+        try
+        {
+            await _ws.SendAsync(buffer, WebSocketMessageType.Binary, true, cancellationToken);
+        }
+        finally
+        {
+            _sendLock.Release();
+        }
     }
 
     public async Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true, CancellationToken cancellationToken = default)
@@ -139,7 +148,15 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
         try
         {
             var buffer = PackWsBytes(data, cmd, reqId, encrypt);
-            await _ws.SendAsync(buffer, WebSocketMessageType.Binary, true, cancellationToken);
+            await _sendLock.WaitAsync(cancellationToken);
+            try
+            {
+                await _ws.SendAsync(buffer, WebSocketMessageType.Binary, true, cancellationToken);
+            }
+            finally
+            {
+                _sendLock.Release();
+            }
             
             await using var registration = cancellationToken.Register(() => tcs.TrySetCanceled());
             return await tcs.Task;
@@ -293,6 +310,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
         _cts.Dispose();
         _ws.Dispose();
         _connectLock.Dispose();
+        _sendLock.Dispose();
         _disposed = true;
         GC.SuppressFinalize(this);
     }

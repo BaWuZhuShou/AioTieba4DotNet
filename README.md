@@ -9,7 +9,7 @@
 
 ## ✨ 项目特色
 
-- **现代工程化**：支持 .NET 8/9/10，原生支持依赖注入 (DI) 和 IHttpClientFactory。
+- **现代工程化**：支持 .NET 8/9/10，原生支持依赖注入 (DI)，内置 `ITiebaClientFactory` 支持多账户动态管理。
 - **高性能**：全面采用异步编程模式，底层使用 Protobuf 序列化，性能优异。
 - **模块化设计**：按业务功能拆分为 `Forums`, `Threads`, `Users`, `Client` 等模块，入口清晰。
 - **功能丰富**：支持查看帖子、发布内容、点赞、签到、封禁等常用功能。
@@ -72,6 +72,25 @@ public class MyService(ITiebaClient tiebaClient)
     {
         var profile = await tiebaClient.Users.GetProfileAsync("某个ID");
         // ...
+    }
+}
+```
+
+### 3. 多账户模式 (推荐机器人/多账号场景)
+
+通过 `ITiebaClientFactory` 可以动态创建多个隔离的客户端：
+
+```csharp
+public class MyBot(ITiebaClientFactory factory)
+{
+    public async Task Run()
+    {
+        var client1 = factory.CreateClient("BDUSS_1");
+        var client2 = factory.CreateClient("BDUSS_2");
+        
+        // client1 和 client2 拥有完全隔离的连接和账号状态
+        await client1.Forums.SignAsync("csharp");
+        await client2.Forums.SignAsync("dotnet");
     }
 }
 ```

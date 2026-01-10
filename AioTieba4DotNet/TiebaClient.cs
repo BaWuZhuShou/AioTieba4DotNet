@@ -61,4 +61,9 @@ public class TiebaClient : ITiebaClient
         Client = client;
         WsCore = wsCore;
     }
+
+    public void Dispose()
+    {
+        (WsCore as IDisposable)?.Dispose();
+    }
 }
