@@ -1,5 +1,5 @@
 ﻿version: "1.0"
-image: jetbrains/qodana-cdnet:2025.2-eap-privileged
+image: jetbrains/qodana-cdnet:2025.3-eap-privileged
 bootstrap: dotnet restore
 dotnet:
   solution: AioTieba4DotNet.sln
