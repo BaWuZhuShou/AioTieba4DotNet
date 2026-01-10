@@ -9,8 +9,8 @@
 #################################################################################
 version: "1.0"
 
-# 使用针对 .NET 的 Qodana Linter (支持 .NET 8/9/10)
-linter: jetbrains/qodana-dotnet:latest
+# 使用针对 .NET 的 Qodana Community Linter (支持 .NET 8/9/10)
+linter: jetbrains/qodana-cdnet:latest
 
 # 检查配置
 profile:
