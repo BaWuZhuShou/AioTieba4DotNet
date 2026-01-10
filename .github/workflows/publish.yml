@@ -1,51 +1,57 @@
 ﻿name: Publish to NuGet
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'  # 监听以 v 开头的标签推送
+    push:
+        tags:
+            - 'v*.*.*'  # 监听以 v 开头的标签推送
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    publish:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v6
+                with:
+                    fetch-depth: 0
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: |
-            8.x
-            9.x
-            10.x
+            -   name: Setup .NET SDK
+                uses: actions/setup-dotnet@v5
+                with:
+                    dotnet-version: |
+                        8.x
+                        9.x
+                        10.x
+                    cache: true
 
-      - name: Restore dependencies
-        run: dotnet restore
+            -   name: Extract version
+                shell: bash
+                run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
 
-      - name: Extract version
-        shell: bash
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+            -   name: Restore dependencies
+                run: dotnet restore --nologo
 
-      - name: Build the project
-        run: dotnet build --configuration Release --no-restore -p:Version=${{ env.VERSION }}
+            -   name: Build the project
+                run: dotnet build --configuration Release --no-restore -p:Version=${{ env.VERSION }} --nologo
 
-      - name: Pack the project
-        run: dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=${{ env.VERSION }}
+            -   name: Pack the project
+                run: dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=${{ env.VERSION }} --nologo
 
-      - name: Push to NuGet
-        run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+            -   name: Push to NuGet
+                run: dotnet nuget push ./nupkg/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+                env:
+                    NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            ./nupkg/*.nupkg
-            ./nupkg/*.snupkg
-          generate_release_notes: true
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            -   name: Create Release
+                uses: softprops/action-gh-release@v2
+                with:
+                    files: |
+                        ./nupkg/*.nupkg
+                        ./nupkg/*.snupkg
+                    generate_release_notes: true
+                    draft: false
+                    prerelease: false
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
