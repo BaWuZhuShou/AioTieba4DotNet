@@ -50,6 +50,7 @@ jobs:
       with:
         category: "/language:${{matrix.language}}"
         upload: failure-only
+        output: ${{ runner.temp }}/codeql-sarif
 
     - name: Filter SARIF
       uses: advanced-security/filter-sarif@v1
