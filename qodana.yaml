@@ -1,5 +1,6 @@
 ﻿version: "1.0"
-linter: qodana-cdnet
+linter: jetbrains/qodana-cdnet:2025.3-eap-privileged
+bootstrap: dotnet restore
 dotnet:
   solution: AioTieba4DotNet.sln
   configuration: Release
