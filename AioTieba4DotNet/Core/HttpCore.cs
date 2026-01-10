@@ -147,7 +147,7 @@ public class HttpCore : ITiebaHttpCore
         var formUrlEncodedContent = new FormUrlEncodedContent(parameters);
         var readAsStringAsync = await formUrlEncodedContent.ReadAsStringAsync();
         var builder = new UriBuilder(uri) { Query = readAsStringAsync };
-        var request = new HttpRequestMessage(HttpMethod.Get, builder.Uri);
+        using var request = new HttpRequestMessage(HttpMethod.Get, builder.Uri);
         SetWebHeaders(request);
         return await HttpClient.SendAsync(request);
     }
