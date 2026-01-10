@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <!-- 自动将 protoc 复制到输出目录，实现彻底独立运行 -->
-  <Target Name="CopyProtoc" AfterTargets="Build">
+  <Target Name="CopyProtoc" AfterTargets="Build" Condition="'$(TargetFramework)' != ''">
     <PropertyGroup>
       <Protoc_OS Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))">windows_x64</Protoc_OS>
       <Protoc_OS Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))">linux_x64</Protoc_OS>
