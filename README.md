@@ -3,6 +3,7 @@
 🚀 C# 版本的高性能贴吧异步操作库。基于 [aiotieba](https://github.com/lumina37/aiotieba) 的理念重新构建，提供更现代的软件工程体验。
 
 [![NuGet version (AioTieba4DotNet)](https://img.shields.io/nuget/v/AioTieba4DotNet.svg?style=flat-square)](https://www.nuget.org/packages/AioTieba4DotNet/)
+[![Qodana](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/code_quality.yml/badge.svg)](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/code_quality.yml)
 [![QQ Group](https://img.shields.io/badge/QQ%E7%BE%A4-278662447-blue)](https://qm.qq.com/q/a0I1RepoA2)
 
 ---
@@ -95,7 +96,7 @@ public class MyBot(ITiebaClientFactory factory)
     {
         var client1 = factory.CreateClient("BDUSS_1");
         var client2 = factory.CreateClient("BDUSS_2");
-        
+
         // client1 和 client2 拥有完全隔离的连接和账号状态
         await client1.Forums.SignAsync("csharp");
         await client2.Forums.SignAsync("dotnet");
@@ -137,6 +138,15 @@ public class MyBot(ITiebaClientFactory factory)
 ### 客户端模块 (`client.Client`)
 - ZID 初始化
 - 客户端配置同步 (ClientId, SampleId)
+
+---
+
+## 🛠️ 开发与贡献
+
+如果你想为本项目贡献代码，请注意以下事项：
+
+- **代码风格**：项目配置了 `.editorconfig`，请确保你的 IDE 加载了该配置。我们偏好使用 C# 12+ 的现代特性，如文件范围命名空间 (File-scoped Namespaces) 和主构造函数 (Primary Constructors)。
+- **质量检查**：项目集成了 [Qodana](https://www.jetbrains.com/qodana/) 进行静态代码分析。在提交 PR 前，建议确保 CI 中的 Qodana 检查通过。
 
 ---
 

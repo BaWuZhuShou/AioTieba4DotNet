@@ -1,0 +1,42 @@
+﻿#-------------------------------------------------------------------------------#
+#               Qodana analysis is configured by qodana.yaml file               #
+#             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
+#-------------------------------------------------------------------------------#
+
+#################################################################################
+#              WARNING: Do not store sensitive information in this file,        #
+#               as its contents will be included in the Qodana report.          #
+#################################################################################
+version: "1.0"
+
+# 使用针对 .NET 的 Qodana Linter (支持 .NET 8/9/10)
+linter: jetbrains/qodana-dotnet:latest
+
+# 检查配置
+profile:
+  name: qodana.recommended
+
+# 排除不需要分析的路径，聚焦于 AioTieba4DotNet 核心代码
+exclude:
+  - name: All
+    paths:
+      - ProtoGenerator/      # 仅用于开发的工具项目
+      - assets/              # 静态资源
+      - docs/                # 文档
+      - "**/Protobuf/*.cs"   # 自动生成的 Protobuf 代码
+      - "**/bin/"
+      - "**/obj/"
+      - TestResults/         # 测试运行结果
+      - "*.sln.DotSettings.user"
+
+# 质量门禁配置
+failureConditions:
+  severityThresholds:
+    any: 50              # 允许存在的问题总数上限
+    critical: 0          # 不允许存在 Critical 级别的问题
+    high: 10             # 高优先级问题的容忍上限
+
+# Qodana .NET 专属设置
+dotnet:
+  solution: AioTieba4DotNet.sln
+  configuration: Release
