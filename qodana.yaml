@@ -1,6 +1,5 @@
 ﻿version: "1.0"
 linter: jetbrains/qodana-cdnet:latest
-projectFolderName: AioTieba4DotNet
 dotnet:
   solution: AioTieba4DotNet.sln
   configuration: Release
