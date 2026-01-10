@@ -34,8 +34,7 @@ public class LikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/c/forum/like").Uri;
-        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendAppFormAsync(requestUri, data);
         return ParseBody(result);
     }
 }

@@ -16,7 +16,7 @@ public class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 
         var followList = resJson.GetValue("follow_list")?.ToObject<JArray>() ?? [];
         var objs = followList.Select(m => UserInfo.FromTbData((JObject)m)).ToList();
-        
+
         var pn = resJson.GetValue("pn")?.ToObject<int>() ?? 0;
         var totalCount = resJson.GetValue("total_follow_num")?.ToObject<int>() ?? 0;
         var hasMore = resJson.GetValue("has_more")?.ToObject<int>() == 1;
@@ -43,8 +43,7 @@ public class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/follow/followList").Uri;
-        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendAppFormAsync(requestUri, data);
         return ParseBody(result);
     }
 }

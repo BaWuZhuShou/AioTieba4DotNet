@@ -44,6 +44,7 @@
 - **实现模式**:
     - **Cmd 常量**: 定义 API 对应的指令号（主要用于 WebSocket 和 Protobuf API）。
     - **PackProto / PackForm**: 私有方法，负责将输入参数打包为字节流或表单数据。
+    - **请求发起**: 统一调用 `HttpCore.Send*Async` 方法（如 `SendAppFormAsync`, `SendAppProtoAsync`, `SendWebGetAsync`, `SendWebFormAsync`）。这些方法会自动处理 `HttpRequestMessage` 的构建、响应内容的读取以及资源的自动释放（Disposal），**严禁**在 API 层手动调用 `HttpClient.SendAsync` 或手动处置 `HttpResponseMessage` 资源。
     - **ParseBody**: 负责将响应解析为实体类。对于 JSON，调用基类的 `ParseBody` 获取 `JObject`；对于 Protobuf，解析后调用 `CheckError`。
     - **双模调度**: 在 `RequestAsync` 中调用 `ExecuteAsync` 方法。该方法会根据 `TiebaRequestMode` 自动分发到 `RequestHttpAsync` 或 `RequestWsAsync`，并在 WS 不可用时自动回退。
 - **依赖**: 统一通过注入的 `HttpCore` 或 `WsCore` (来自基类) 发起网络请求。
@@ -61,7 +62,7 @@
 ### 4.4 核心层与工具 (`AioTieba4DotNet/Core/`)
 - **Utils**: 包含常用的业务工具（如 `TbNumToInt` 转换贴吧热度数字）。
 - **Signer / TbCrypto**: 负责请求签名与加密逻辑。
-- **HttpCore / WebsocketCore**: 封装底层的 HTTP 和 WebSocket 通信逻辑。
+- **HttpCore / WebsocketCore**: 封装底层的 HTTP 和 WebSocket 通信逻辑。`HttpCore` 特别提供了高层 API 以简化资源管理，确保所有 `IDisposable` 对象在请求结束后被正确处置。
 
 ## 5. 异常处理
 - **TieBaServerException**: 业务级错误（如 `error_code != 0`）必须抛出此异常。
@@ -81,5 +82,6 @@
 ## 8. 协作准则
 - **一致性**: 严格遵循现有代码的实现模式。
 - **基类优先**: 在实现新的 API 时，必须优先继承 `ApiBase` 及其衍生类，严禁手动编写重复的注入、分发和错误检查代码。
+- **资源管理**: 严格遵守 `IDisposable` 处置规范。对于 HTTP 请求，应始终利用 `HttpCore` 封装好的高层方法，避免在业务代码中暴露底层的资源管理细节。
 - **DRY 原则**: 优先复用 `Abstractions` 中的接口和 `Core` 中的工具，避免重复造轮子。
 - **高性能**: 关注异步调用的开销，避免不必要的内存分配（如在大循环中使用集合表达式时需权衡）。

@@ -19,7 +19,7 @@ public class AddPost(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     public async Task<long> RequestAsync(string fname, ulong fid, long tid, List<IFrag> contents, long quoteId = 0, uint floor = 0)
     {
         var contentJson = JsonConvert.SerializeObject(contents.Select(c => c.ToDict()));
-        
+
         var data = new List<KeyValuePair<string, string>>()
         {
             new("BDUSS", HttpCore.Account!.Bduss),
@@ -45,8 +45,7 @@ public class AddPost(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         }
 
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/post/add").Uri;
-        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendAppFormAsync(requestUri, data);
         return ParseBody(result);
     }
 }

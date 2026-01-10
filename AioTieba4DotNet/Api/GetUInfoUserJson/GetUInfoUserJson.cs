@@ -24,14 +24,11 @@ public class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
             new("ie", "utf-8"),
         };
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/i/sys/user_json").Uri;
-        var responseMessage = await HttpCore.PackWebGetRequestAsync(requestUri, data);
-        var responseBytes = await responseMessage.Content.ReadAsByteArrayAsync();
-        if (responseBytes.Length == 0)
+        var responseString = await HttpCore.SendWebGetAsync(requestUri, data);
+        if (string.IsNullOrEmpty(responseString))
         {
             throw new TieBaServerException(-1, "无法获取到用户数据!");
         }
-        // 使用 UTF-8 编码将字节数组转换为字符串
-        var responseString = Encoding.GetEncoding("UTF-8", EncoderFallback.ReplacementFallback, DecoderFallback.ReplacementFallback).GetString(responseBytes);
         return ParseBody(responseString);
     }
 }

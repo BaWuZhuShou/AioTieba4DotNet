@@ -19,8 +19,7 @@ public class Sign(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
 
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/forum/sign").Uri;
-        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendAppFormAsync(requestUri, data);
         ParseBody(result);
         return true;
     }

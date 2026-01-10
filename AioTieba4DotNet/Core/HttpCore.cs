@@ -88,10 +88,7 @@ public class HttpCore : ITiebaHttpCore
         request.Headers.Add("User-Agent", $"aiotieba/{Const.Version}");
         request.Headers.AcceptEncoding.ParseAdd("gzip");
         request.Headers.AcceptEncoding.ParseAdd("deflate");
-        request.Headers.CacheControl = new CacheControlHeaderValue
-        {
-            NoCache = true
-        };
+        request.Headers.CacheControl = new CacheControlHeaderValue { NoCache = true };
         request.Headers.Connection.Add("keep-alive");
         request.Headers.Accept.ParseAdd("*/*");
     }
@@ -104,17 +101,14 @@ public class HttpCore : ITiebaHttpCore
     {
         Account = newAccount;
     }
-    
+
     /// <summary>
     /// 发送 App 端表单请求（自动添加签名）
     /// </summary>
-    public async Task<HttpResponseMessage> PackAppFormRequestAsync(Uri uri, List<KeyValuePair<string, string>> data)
+    private async Task<HttpResponseMessage> PackAppFormRequestAsync(Uri uri, List<KeyValuePair<string, string>> data)
     {
-        var content = new FormUrlEncodedContent(Sign(data));
-        var request = new HttpRequestMessage(HttpMethod.Post, uri)
-        {
-            Content = content
-        };
+        using var content = new FormUrlEncodedContent(Sign(data));
+        using var request = new HttpRequestMessage(HttpMethod.Post, uri) { Content = content };
         SetAppHeaders(request);
         return await HttpClient.SendAsync(request);
     }
@@ -122,18 +116,15 @@ public class HttpCore : ITiebaHttpCore
     /// <summary>
     /// 发送 App 端 Protobuf 请求（自动添加签名）
     /// </summary>
-    public async Task<HttpResponseMessage> PackProtoRequestAsync(Uri uri, byte[] data)
+    private async Task<HttpResponseMessage> PackProtoRequestAsync(Uri uri, byte[] data)
     {
-        var byteArrayContent = new ByteArrayContent(data);
+        using var byteArrayContent = new ByteArrayContent(data);
         byteArrayContent.Headers.Add("Content-Disposition", "form-data; name=\"data\"; filename=\"file\"");
-        var content = new MultipartFormDataContent();
+        using var content = new MultipartFormDataContent();
         content.Add(byteArrayContent);
         var boundary = content.Headers.ContentType?.Parameters.First(header => header.Name == "boundary");
         if (boundary != null) boundary.Value = boundary.Value?.Replace("\"", "");
-        var request = new HttpRequestMessage(HttpMethod.Post, uri)
-        {
-            Content = content
-        };
+        using var request = new HttpRequestMessage(HttpMethod.Post, uri) { Content = content };
         SetAppProtoHeaders(request);
         return await HttpClient.SendAsync(request);
     }
@@ -141,10 +132,10 @@ public class HttpCore : ITiebaHttpCore
     /// <summary>
     /// 发送 Web 端 GET 请求
     /// </summary>
-    public async Task<HttpResponseMessage> PackWebGetRequestAsync(Uri uri,
+    private async Task<HttpResponseMessage> PackWebGetRequestAsync(Uri uri,
         List<KeyValuePair<string, string>> parameters)
     {
-        var formUrlEncodedContent = new FormUrlEncodedContent(parameters);
+        using var formUrlEncodedContent = new FormUrlEncodedContent(parameters);
         var readAsStringAsync = await formUrlEncodedContent.ReadAsStringAsync();
         var builder = new UriBuilder(uri) { Query = readAsStringAsync };
         using var request = new HttpRequestMessage(HttpMethod.Get, builder.Uri);
@@ -155,10 +146,46 @@ public class HttpCore : ITiebaHttpCore
     /// <summary>
     /// 发送 Web 端表单请求
     /// </summary>
-    public async Task<HttpResponseMessage> PackWebFormRequestAsync(Uri uri, List<KeyValuePair<string, string>> data)
+    private async Task<HttpResponseMessage> PackWebFormRequestAsync(Uri uri, List<KeyValuePair<string, string>> data)
     {
-        var content = new FormUrlEncodedContent(data);
-        var request = new HttpRequestMessage(HttpMethod.Post, uri) { Content = content };
+        using var content = new FormUrlEncodedContent(data);
+        using var request = new HttpRequestMessage(HttpMethod.Post, uri) { Content = content };
         return await HttpClient.SendAsync(request);
+    }
+
+    /// <summary>
+    /// 发送 App 端表单请求并获取字符串响应
+    /// </summary>
+    public async Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
+    {
+        using var response = await PackAppFormRequestAsync(uri, data);
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    /// <summary>
+    /// 发送 App 端 Protobuf 请求并获取字节数组响应
+    /// </summary>
+    public async Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data)
+    {
+        using var response = await PackProtoRequestAsync(uri, data);
+        return await response.Content.ReadAsByteArrayAsync();
+    }
+
+    /// <summary>
+    /// 发送 Web 端 GET 请求并获取字符串响应
+    /// </summary>
+    public async Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters)
+    {
+        using var response = await PackWebGetRequestAsync(uri, parameters);
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    /// <summary>
+    /// 发送 Web 端表单请求并获取字符串响应
+    /// </summary>
+    public async Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
+    {
+        using var response = await PackWebFormRequestAsync(uri, data);
+        return await response.Content.ReadAsStringAsync();
     }
 }

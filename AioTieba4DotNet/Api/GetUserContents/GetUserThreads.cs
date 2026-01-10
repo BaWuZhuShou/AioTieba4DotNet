@@ -60,8 +60,7 @@ public class GetUserThreads(
             Query = $"cmd={Cmd}"
         }.Uri;
 
-        var responseMessage = await HttpCore.PackProtoRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsByteArrayAsync();
+        var result = await HttpCore.SendAppProtoAsync(requestUri, data);
         return ParseBody(result);
     }
 

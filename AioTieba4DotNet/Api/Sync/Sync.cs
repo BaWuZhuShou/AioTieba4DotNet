@@ -26,8 +26,7 @@ public class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
             new("cuid", HttpCore.Account.CuidGalaxy2)
         };
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/s/sync").Uri;
-        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendAppFormAsync(requestUri, data);
         return ParseBody(result);
     }
 }

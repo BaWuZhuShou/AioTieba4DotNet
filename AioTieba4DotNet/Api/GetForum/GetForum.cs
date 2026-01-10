@@ -29,8 +29,7 @@ public class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/c/f/frs/frsBottom").Uri;
 
-        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendAppFormAsync(requestUri, data);
         return ParseBody(result);
     }
 }

@@ -11,7 +11,7 @@ public class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     private static UserInfoPanel ParseBody(string body)
     {
         var o = JsonApiBase.ParseBody(body, "no", "error");
-        
+
         var data = o.GetValue("data")?.ToObject<JObject>();
         if (data == null)
         {
@@ -30,8 +30,7 @@ public class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
                 : new KeyValuePair<string, string>("un", nameOrPortrait)
         };
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/home/get/panel").Uri;
-        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendAppFormAsync(requestUri, data);
         return ParseBody(result);
     }
 }

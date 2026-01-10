@@ -8,7 +8,7 @@ using Google.Protobuf;
 namespace AioTieba4DotNet.Api.GetThreads;
 
 /// <summary>
-/// 
+///
 /// </summary>
 /// <param name="httpCore"></param>
 /// <param name="wsCore"></param>
@@ -83,8 +83,7 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
             Query = $"cmd={Cmd}"
         }.Uri;
 
-        var responseMessage = await HttpCore.PackProtoRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsByteArrayAsync();
+        var result = await HttpCore.SendAppProtoAsync(requestUri, data);
         return ParseBody(result);
     }
 

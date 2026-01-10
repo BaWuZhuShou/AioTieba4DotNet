@@ -26,8 +26,7 @@ public class Login(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
             new("bdusstoken", HttpCore.Account!.Bduss)
         };
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/s/login").Uri;
-        var responseMessage = await HttpCore.PackAppFormRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendAppFormAsync(requestUri, data);
         return ParseBody(result);
     }
 }

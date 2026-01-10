@@ -29,8 +29,7 @@ public class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/f/commit/share/fnameShareApi").Uri;
 
-        var responseMessage = await HttpCore.PackWebGetRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendWebGetAsync(requestUri, data);
         return ParseBody(result);
     }
 }

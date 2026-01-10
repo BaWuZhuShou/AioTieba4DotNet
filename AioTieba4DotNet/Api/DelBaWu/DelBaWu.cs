@@ -23,8 +23,7 @@ public class DelBaWu(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
 
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/mo/q/bawuteamclear").Uri;
-        var responseMessage = await HttpCore.PackWebFormRequestAsync(requestUri, data);
-        var result = await responseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendWebFormAsync(requestUri, data);
 
         return ParseBody(result);
     }

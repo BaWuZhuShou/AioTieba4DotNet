@@ -23,22 +23,22 @@ public interface ITiebaHttpCore
     void SetAccount(Account newAccount);
 
     /// <summary>
-    /// 发送 App 端表单请求（自动添加签名）
+    /// 发送 App 端表单请求并获取字符串响应
     /// </summary>
-    Task<HttpResponseMessage> PackAppFormRequestAsync(Uri uri, List<KeyValuePair<string, string>> data);
+    Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data);
 
     /// <summary>
-    /// 发送 App 端 Protobuf 请求（自动添加签名）
+    /// 发送 App 端 Protobuf 请求并获取字节数组响应
     /// </summary>
-    Task<HttpResponseMessage> PackProtoRequestAsync(Uri uri, byte[] data);
+    Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data);
 
     /// <summary>
-    /// 发送 Web 端 GET 请求
+    /// 发送 Web 端 GET 请求并获取字符串响应
     /// </summary>
-    Task<HttpResponseMessage> PackWebGetRequestAsync(Uri uri, List<KeyValuePair<string, string>> parameters);
+    Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters);
 
     /// <summary>
-    /// 发送 Web 端表单请求
+    /// 发送 Web 端表单请求并获取字符串响应
     /// </summary>
-    Task<HttpResponseMessage> PackWebFormRequestAsync(Uri uri, List<KeyValuePair<string, string>> data);
+    Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data);
 }
