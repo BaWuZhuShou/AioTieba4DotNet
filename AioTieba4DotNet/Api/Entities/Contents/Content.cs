@@ -434,9 +434,8 @@ public class Content
 
         if (dataRes.Media is { Count: > 0 })
         {
-            foreach (var m in dataRes.Media.Where(m => m.Type != 5))
+            foreach (var image in dataRes.Media.Where(m => m.Type != 5).Select(m => FragImage.FromTbData(m)))
             {
-                var image = FragImage.FromTbData(m);
                 content.Images.Add(image);
                 content.Frags.Add(image);
             }
