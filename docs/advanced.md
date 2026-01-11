@@ -181,13 +181,20 @@ client.HttpCore.Interceptors.Add(new MyLoggerInterceptor());
 ```
 
 ## 7. 身份验证与错误处理
+
 ### 自动身份验证检查
-SDK 内部对需要登录的 API（如发帖、点赞、封禁等）进行了标记。如果当前客户端未配置有效的 `BDUSS` 就调用这些 API，会直接抛出 `NotLoggedInException`。
-这避免了无效的网络请求，并能让开发者在第一时间定位配置问题。
+SDK 采用了现代化的鉴权拦截机制。
+所有需要用户登录权限的 API（如发帖、关注、点赞等）均通过 `[RequireBduss]` 特性进行了标记。
+当调用这些 API 时，底层核心 (`HttpCore`) 会自动检查当前账户是否配置了有效的 `BDUSS`。
+
+- **本地快速失败**：如果未检测到 `BDUSS`，SDK **不会发起网络请求**，而是直接抛出 `TiebaException`。
+- **开发友好**：这种机制能帮助开发者在开发早期快速定位鉴权配置缺失的问题，同时避免了无效的 API 调用。
+
 ### 业务异常 (TieBaServerException)
-当百度贴吧服务器返回非 0 的 `error_code` 时，SDK 会抛出 `TieBaServerException`。你可以从中获取具体的错误码和错误消息。
+当请求成功发送到服务器，但百度贴吧返回了非 0 的 `error_code`（例如“发帖过快”、“账号被封禁”等）时，SDK 会抛出 `TieBaServerException`。
+你可以捕获该异常并读取 `Code` 和 `Message` 属性来处理特定的业务错误。
 ```csharp
-try 
+try
 {
     await client.Forums.SignAsync("某个不存在的吧");
 }

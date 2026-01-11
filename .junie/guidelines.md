@@ -47,6 +47,7 @@
     - **请求发起**: 统一调用 `HttpCore.Send*Async` 方法（如 `SendAppFormAsync`, `SendAppProtoAsync`, `SendWebGetAsync`, `SendWebFormAsync`）。这些方法会自动处理 `HttpRequestMessage` 的构建、响应内容的读取以及资源的自动释放（Disposal），**严禁**在 API 层手动调用 `HttpClient.SendAsync` 或手动处置 `HttpResponseMessage` 资源。
     - **ParseBody**: 负责将响应解析为实体类。对于 JSON，调用基类的 `ParseBody` 获取 `JObject`；对于 Protobuf，解析后调用 `CheckError`。
     - **双模调度**: 在 `RequestAsync` 中调用 `ExecuteAsync` 方法。该方法会根据 `TiebaRequestMode` 自动分发到 `RequestHttpAsync` 或 `RequestWsAsync`，并在 WS 不可用时自动回退。
+    - **鉴权**: 若 API 需要用户登录（BDUSS），**必须**在 API 类上添加 `[RequireBduss]` 特性。底层 `HttpCore` 会在发送请求时自动检查 `Account.Bduss`；若为空，会自动回溯调用堆栈检查该特性并抛出异常。**严禁**在 API 方法内部手动编写 `CheckBduss` 逻辑。
 - **依赖**: 统一通过注入的 `HttpCore` 或 `WsCore` (来自基类) 发起网络请求。
 
 ### 4.2 模块化入口 (`AioTieba4DotNet/Modules/`)
@@ -65,7 +66,8 @@
 - **HttpCore / WebsocketCore**: 封装底层的 HTTP 和 WebSocket 通信逻辑。`HttpCore` 特别提供了高层 API 以简化资源管理，确保所有 `IDisposable` 对象在请求结束后被正确处置。
 
 ## 5. 异常处理
-- **TieBaServerException**: 业务级错误（如 `error_code != 0`）必须抛出此异常。
+- **TieBaServerException**: 服务端返回的业务错误（如 `error_code != 0`）必须抛出此异常。
+- **TiebaException**: 客户端检查错误（如缺少必要的 BDUSS）应抛出此异常。
 - **底层错误**: 网络异常或协议解析失败应在 Core 层捕获并视情况封装或直接抛出。
 
 ## 6. 依赖注入 (DI)

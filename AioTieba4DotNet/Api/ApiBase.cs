@@ -19,7 +19,10 @@ public abstract class ApiBase(ITiebaHttpCore httpCore)
 /// <param name="httpCore"></param>
 /// <param name="wsCore"></param>
 /// <param name="mode"></param>
-public abstract class ApiWsBase<TResult>(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http) 
+public abstract class ApiWsBase<TResult>(
+    ITiebaHttpCore httpCore,
+    ITiebaWsCore wsCore,
+    TiebaRequestMode mode = TiebaRequestMode.Http)
     : ApiBase(httpCore)
 {
     protected readonly ITiebaWsCore WsCore = wsCore;
