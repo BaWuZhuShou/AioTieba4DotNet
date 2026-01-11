@@ -2,12 +2,11 @@
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
-using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.LikeForum;
 
 /// <summary>
-/// 关注贴吧的 API
+///     关注贴吧的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
@@ -29,7 +28,7 @@ public class LikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     }
 
     /// <summary>
-    /// 发送关注贴吧请求
+    ///     发送关注贴吧请求
     /// </summary>
     /// <param name="fid">吧 ID (fid)</param>
     /// <returns>操作是否成功</returns>

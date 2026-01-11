@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SignApi = AioTieba4DotNet.Api.Sign.Sign;
-using JetBrains.Annotations;
 
 namespace AioTieba4DotNet.Tests.Api.Sign;
 

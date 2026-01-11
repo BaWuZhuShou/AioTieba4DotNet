@@ -3,57 +3,82 @@
 namespace AioTieba4DotNet.Api.Entities.Contents;
 
 /// <summary>
-/// 图像碎片
+///     图像碎片
 /// </summary>
 public partial class FragImage : IFrag
 {
-    [GeneratedRegex("/([a-z0-9]{32,})\\.")]
-    private static partial Regex MyRegex();
-
     private static readonly Regex ImageHashExp = MyRegex();
 
     /// <summary>
-    /// 小图链接 宽720px 一定是静态图
+    ///     小图链接 宽720px 一定是静态图
     /// </summary>
     public string Src { get; init; } = "";
 
     /// <summary>
-    /// 大图链接 宽960px
+    ///     大图链接 宽960px
     /// </summary>
     public string BigSrc { get; init; } = "";
 
     /// <summary>
-    /// 原图链接
+    ///     原图链接
     /// </summary>
     public string OriginSrc { get; init; } = "";
 
     /// <summary>
-    /// 原图大小
+    ///     原图大小
     /// </summary>
     public uint OriginSize { get; init; }
 
     /// <summary>
-    /// 图像在客户端预览显示的宽度
+    ///     图像在客户端预览显示的宽度
     /// </summary>
     public int ShowWidth { get; init; }
 
     /// <summary>
-    /// 图像在客户端预览显示的高度
+    ///     图像在客户端预览显示的高度
     /// </summary>
     public int ShowHeight { get; init; }
 
     /// <summary>
-    /// 百度图床hash
+    ///     百度图床hash
     /// </summary>
     public string Hash { get; init; } = "";
 
     /// <summary>
-    /// 文本内容
+    ///     文本内容
     /// </summary>
     public string Text => "";
 
     /// <summary>
-    /// 从贴吧原始数据转换
+    ///     获取碎片类型
+    /// </summary>
+    /// <returns>碎片类型名称</returns>
+    public string GetFragType()
+    {
+        return "FragImage";
+    }
+
+    /// <summary>
+    ///     转换为字典用于序列化
+    /// </summary>
+    /// <returns>包含碎片数据的字典</returns>
+    public Dictionary<string, object> ToDict()
+    {
+        return new Dictionary<string, object>
+        {
+            { "type", "3" },
+            { "src", Src },
+            { "origin_src", OriginSrc },
+            { "show_width", ShowWidth },
+            { "show_height", ShowHeight }
+        };
+    }
+
+    [GeneratedRegex("/([a-z0-9]{32,})\\.")]
+    private static partial Regex MyRegex();
+
+    /// <summary>
+    ///     从贴吧原始数据转换
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>图像碎片实体</returns>
@@ -88,7 +113,7 @@ public partial class FragImage : IFrag
     }
 
     /// <summary>
-    /// 从贴吧原始数据转换
+    ///     从贴吧原始数据转换
     /// </summary>
     /// <param name="dataProto">Protobuf 媒体数据</param>
     /// <returns>图像碎片实体</returns>
@@ -117,32 +142,7 @@ public partial class FragImage : IFrag
     }
 
     /// <summary>
-    /// 获取碎片类型
-    /// </summary>
-    /// <returns>碎片类型名称</returns>
-    public string GetFragType()
-    {
-        return "FragImage";
-    }
-
-    /// <summary>
-    /// 转换为字典用于序列化
-    /// </summary>
-    /// <returns>包含碎片数据的字典</returns>
-    public Dictionary<string, object> ToDict()
-    {
-        return new Dictionary<string, object>
-        {
-            { "type", "3" },
-            { "src", Src },
-            { "origin_src", OriginSrc },
-            { "show_width", ShowWidth },
-            { "show_height", ShowHeight }
-        };
-    }
-
-    /// <summary>
-    /// 格式设置成员
+    ///     格式设置成员
     /// </summary>
     /// <returns>string</returns>
     public override string ToString()

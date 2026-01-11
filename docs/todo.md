@@ -26,7 +26,7 @@
 - [ ] `untop`: 取消置顶
 - [ ] `move`: 移动帖子到指定分区
 - [ ] `recommend`: 推荐帖子 (大推)
-- [ ] `unagree`: 取消点赞 (对应 `agree`)
+- [x] `unagree`: 取消点赞 (对应 `agree`)
 - [ ] `recover`: 恢复已删除的帖子/回复
 - [ ] `get_recovers`: 获取回收站列表
 - [ ] `get_recover_info`: 获取回收站内单条内容的详情

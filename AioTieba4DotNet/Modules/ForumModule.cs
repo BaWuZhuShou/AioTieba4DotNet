@@ -1,19 +1,19 @@
 ﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Api.DelBawu;
 using AioTieba4DotNet.Api.GetFid;
-using AioTieba4DotNet.Api.GetForumDetail;
-using AioTieba4DotNet.Api.GetForumDetail.Entities;
 using AioTieba4DotNet.Api.GetForum;
 using AioTieba4DotNet.Api.GetForum.Entities;
-using AioTieba4DotNet.Api.DelBawu;
+using AioTieba4DotNet.Api.GetForumDetail;
+using AioTieba4DotNet.Api.GetForumDetail.Entities;
 using AioTieba4DotNet.Api.LikeForum;
-using AioTieba4DotNet.Api.UnlikeForum;
 using AioTieba4DotNet.Api.Sign;
+using AioTieba4DotNet.Api.UnlikeForum;
 using AioTieba4DotNet.Core;
 
 namespace AioTieba4DotNet.Modules;
 
 /// <summary>
-/// 贴吧吧务及基础信息功能模块
+///     贴吧吧务及基础信息功能模块
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
@@ -21,7 +21,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     private readonly ForumInfoCache _cache = new();
 
     /// <summary>
-    /// 获取吧 ID (fid)
+    ///     获取吧 ID (fid)
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <returns>吧 ID</returns>
@@ -38,7 +38,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     }
 
     /// <summary>
-    /// 获取吧名 (fname)
+    ///     获取吧名 (fname)
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <returns>吧名</returns>
@@ -54,7 +54,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     }
 
     /// <summary>
-    /// 获取贴吧详情 (通过 Fid)
+    ///     获取贴吧详情 (通过 Fid)
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <returns>贴吧详情信息</returns>
@@ -65,7 +65,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     }
 
     /// <summary>
-    /// 获取贴吧详情 (通过吧名)
+    ///     获取贴吧详情 (通过吧名)
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <returns>贴吧详情信息</returns>
@@ -76,7 +76,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     }
 
     /// <summary>
-    /// 关注贴吧
+    ///     关注贴吧
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <returns>操作是否成功</returns>
@@ -88,7 +88,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     }
 
     /// <summary>
-    /// 取消关注贴吧
+    ///     取消关注贴吧
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <returns>操作是否成功</returns>
@@ -100,7 +100,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     }
 
     /// <summary>
-    /// 贴吧签到
+    ///     贴吧签到
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <returns>操作是否成功</returns>
@@ -112,7 +112,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     }
 
     /// <summary>
-    /// 获取贴吧基础信息 (主要用于检查贴吧是否存在)
+    ///     获取贴吧基础信息 (主要用于检查贴吧是否存在)
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <returns>贴吧基础信息</returns>
@@ -123,7 +123,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     }
 
     /// <summary>
-    /// 移除吧务
+    ///     移除吧务
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="portrait">用户头像 ID (Portrait)</param>

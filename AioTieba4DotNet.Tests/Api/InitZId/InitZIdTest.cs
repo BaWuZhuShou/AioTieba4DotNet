@@ -2,9 +2,9 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using AioTieba4DotNet.Core;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AioTieba4DotNet.Core;
 
 namespace AioTieba4DotNet.Tests.Api.InitZId;
 

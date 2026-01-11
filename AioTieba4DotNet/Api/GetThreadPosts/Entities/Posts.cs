@@ -1,15 +1,16 @@
 ﻿using AioTieba4DotNet.Api.GetThreads.Entities;
+using Thread = AioTieba4DotNet.Api.GetThreads.Entities.Thread;
 
 namespace AioTieba4DotNet.Api.GetThreadPosts.Entities;
 
 /// <summary>
-/// 回复列表
+///     回复列表
 /// </summary>
 public class Posts
 {
     public required PageT Page { get; init; }
     public required ForumT Forum { get; init; }
-    public required AioTieba4DotNet.Api.GetThreads.Entities.Thread Thread { get; init; }
+    public required Thread Thread { get; init; }
     public required List<Post> Objs { get; init; }
 
     public bool HasMore => Page.HasMore;
@@ -17,7 +18,7 @@ public class Posts
     public static Posts FromTbData(PbPageResIdl.Types.DataRes dataRes)
     {
         var forum = ForumT.FromTbData(dataRes.Forum);
-        var thread = AioTieba4DotNet.Api.GetThreads.Entities.Thread.FromTbData(dataRes.Thread);
+        var thread = Thread.FromTbData(dataRes.Thread);
         thread.Fname = forum.Fname;
         thread.Fid = forum.Fid;
 

@@ -57,7 +57,7 @@ public static class Utils
     }
 
     /// <summary>
-    /// 判断是否是portrait
+    ///     判断是否是portrait
     /// </summary>
     /// <param name="portrait"></param>
     /// <returns></returns>
@@ -67,7 +67,7 @@ public static class Utils
     }
 
     /// <summary>
-    /// 转换贴吧数字
+    ///     转换贴吧数字
     /// </summary>
     /// <param name="tbNum"></param>
     /// <returns></returns>
@@ -76,7 +76,6 @@ public static class Utils
         if (!string.IsNullOrEmpty(tbNum) && tbNum.EndsWith('万'))
             // 去掉字符串末尾的"万"，转换为浮点数后乘以10000
             return (int)(double.Parse(tbNum.TrimEnd('万')) * 1e4);
-        else
-            return int.Parse(tbNum);
+        return int.Parse(tbNum);
     }
 }

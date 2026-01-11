@@ -1,15 +1,14 @@
 using AioTieba4DotNet.Abstractions;
-using Google.Protobuf;
 using AioTieba4DotNet.Api.GetUserContents.Entities;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
-using AioTieba4DotNet.Exceptions;
+using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetUserContents;
 
 /// <summary>
-/// 获取用户发布回复列表的 API
+///     获取用户发布回复列表的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
@@ -49,7 +48,7 @@ public class GetPosts(
     }
 
     /// <summary>
-    /// 发送获取用户发布回复列表请求
+    ///     发送获取用户发布回复列表请求
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
     /// <param name="pn">页码</param>

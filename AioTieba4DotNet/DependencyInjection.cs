@@ -1,4 +1,5 @@
-﻿using AioTieba4DotNet.Abstractions;
+﻿using System.Net;
+using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Modules;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,12 +8,12 @@ using Microsoft.Extensions.Options;
 namespace AioTieba4DotNet;
 
 /// <summary>
-/// 依赖注入扩展类，用于集成到 Microsoft.Extensions.DependencyInjection
+///     依赖注入扩展类，用于集成到 Microsoft.Extensions.DependencyInjection
 /// </summary>
 public static class DependencyInjection
 {
     /// <summary>
-    /// 注册 AioTieba4DotNet 相关服务到 DI 容器
+    ///     注册 AioTieba4DotNet 相关服务到 DI 容器
     /// </summary>
     /// <param name="services">服务集合</param>
     /// <param name="configureOptions">配置参数委托</param>
@@ -29,8 +30,8 @@ public static class DependencyInjection
         }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
         {
             UseCookies = true,
-            CookieContainer = new System.Net.CookieContainer(),
-            AutomaticDecompression = System.Net.DecompressionMethods.GZip
+            CookieContainer = new CookieContainer(),
+            AutomaticDecompression = DecompressionMethods.GZip
         });
 
         // 注册 HTTP 核心组件，并自动注入已注册的拦截器

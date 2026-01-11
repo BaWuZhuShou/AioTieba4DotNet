@@ -1,5 +1,6 @@
-﻿using AioTieba4DotNet.Api.GetThreads.Entities;
-using AioTieba4DotNet.Api.GetThreadPosts.Entities;
+﻿using AioTieba4DotNet.Api.GetThreadPosts.Entities;
+using AioTieba4DotNet.Api.GetThreads.Entities;
+using Thread = AioTieba4DotNet.Api.GetThreads.Entities.Thread;
 
 namespace AioTieba4DotNet.Api.GetComments.Entities;
 
@@ -7,8 +8,8 @@ public class Comments
 {
     public required PageT Page { get; init; }
     public required ForumT Forum { get; init; }
-    public required AioTieba4DotNet.Api.GetThreads.Entities.Thread Thread { get; init; }
-    public required AioTieba4DotNet.Api.GetThreadPosts.Entities.Post Post { get; init; }
+    public required Thread Thread { get; init; }
+    public required GetThreadPosts.Entities.Post Post { get; init; }
     public required List<Comment> Objs { get; init; }
 
     public bool HasMore => Page.HasMore;
@@ -20,17 +21,17 @@ public class Comments
             {
                 Page = new PageT(),
                 Forum = new ForumT(),
-                Thread = AioTieba4DotNet.Api.GetThreads.Entities.Thread.FromTbData(null),
-                Post = AioTieba4DotNet.Api.GetThreadPosts.Entities.Post.FromTbData(null),
+                Thread = Thread.FromTbData(null),
+                Post = GetThreadPosts.Entities.Post.FromTbData(null),
                 Objs = []
             };
 
         var forum = ForumT.FromTbData(dataRes.Forum);
-        var thread = AioTieba4DotNet.Api.GetThreads.Entities.Thread.FromTbData(dataRes.Thread);
+        var thread = Thread.FromTbData(dataRes.Thread);
         thread.Fname = forum.Fname;
         thread.Fid = forum.Fid;
 
-        var post = AioTieba4DotNet.Api.GetThreadPosts.Entities.Post.FromTbData(dataRes.Post);
+        var post = GetThreadPosts.Entities.Post.FromTbData(dataRes.Post);
         post.Fname = forum.Fname;
         post.Fid = forum.Fid;
         post.Tid = thread.Tid;

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using AioTieba4DotNet.Core;
+﻿using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

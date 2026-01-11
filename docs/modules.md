@@ -62,7 +62,6 @@
 | `GetFollowsAsync` | 获取用户关注列表 | `userId`, `pn` |
 | `GetPanelInfoAsync` | 获取用户信息面板 | `nameOrPortrait` |
 | `GetUserInfoJsonAsync` | 通过 JSON API 获取用户信息 | `username` |
-| `LoginAsync` | 执行登录操作 | - |
 
 ## 4. 客户端模块 (`client.Client`)
 

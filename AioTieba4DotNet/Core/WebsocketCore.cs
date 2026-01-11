@@ -4,7 +4,6 @@ using System.IO.Compression;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Channels;
 using AioTieba4DotNet.Abstractions;
 using Google.Protobuf;
@@ -14,38 +13,32 @@ using Newtonsoft.Json.Linq;
 namespace AioTieba4DotNet.Core;
 
 /// <summary>
-/// WebSocket 核心实现类，负责维护与贴吧的实时双向长连接
+///     WebSocket 核心实现类，负责维护与贴吧的实时双向长连接
 /// </summary>
 public class WebsocketCore : ITiebaWsCore, IDisposable
 {
-    private readonly ClientWebSocket _ws = new();
-
-    /// <summary>
-    /// 当前绑定的账户信息
-    /// </summary>
-    public Account? Account { get; private set; }
-
     private const string WsEndpoint = "ws://im.tieba.baidu.com:8000";
 
     /// <summary>
-    /// 用于加密通信密钥的 RSA 公钥
+    ///     用于加密通信密钥的 RSA 公钥
     /// </summary>
     private const string RsaPublicKey =
         "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwQpwBZxXJV/JVRF/uNfyMSdu7YWwRNLM8+2xbniGp2iIQHOikPpTYQjlQgMi1uvq1kZpJ32rHo3hkwjy2l0lFwr3u4Hk2Wk7vnsqYQjAlYlK0TCzjpmiI+OiPOUNVtbWHQiLiVqFtzvpvi4AU7C1iKGvc/4IS45WjHxeScHhnZZ7njS4S1UgNP/GflRIbzgbBhyZ9kEW5/OO5YfG1fy6r4KSlDJw4o/mw5XhftyIpL+5ZBVBC6E1EIiP/dd9AbK62VV1PByfPMHMixpxI3GM2qwcmFsXcCcgvUXJBa9k6zP8dDQ3csCM2QNT+CQAOxthjtp/TFWaD7MzOdsIYb3THwIDAQAB";
 
     private readonly SemaphoreSlim _connectLock = new(1, 1);
-    private readonly SemaphoreSlim _sendLock = new(1, 1);
     private readonly CancellationTokenSource _cts = new();
+    private readonly Channel<WSRes> _messageChannel = Channel.CreateUnbounded<WSRes>();
+    private readonly ConcurrentDictionary<int, TaskCompletionSource<WSRes>> _pendingRequests = new();
+    private readonly SemaphoreSlim _sendLock = new(1, 1);
+    private readonly ClientWebSocket _ws = new();
+    private bool _disposed;
     private Task? _heartbeatTask;
     private Task? _listenTask;
-    private bool _disposed;
 
     private int _reqIdCounter = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-    private readonly ConcurrentDictionary<int, TaskCompletionSource<WSRes>> _pendingRequests = new();
-    private readonly Channel<WSRes> _messageChannel = Channel.CreateUnbounded<WSRes>();
 
     /// <summary>
-    /// 初始化 WebsocketCore
+    ///     初始化 WebsocketCore
     /// </summary>
     /// <param name="account">可选的账户信息</param>
     public WebsocketCore(Account? account = null)
@@ -54,7 +47,27 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     }
 
     /// <summary>
-    /// 绑定账户信息
+    ///     销毁对象，关闭连接并释放资源
+    /// </summary>
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _cts.Cancel();
+        _cts.Dispose();
+        _ws.Dispose();
+        _connectLock.Dispose();
+        _sendLock.Dispose();
+        _disposed = true;
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    ///     当前绑定的账户信息
+    /// </summary>
+    public Account? Account { get; private set; }
+
+    /// <summary>
+    ///     绑定账户信息
     /// </summary>
     public void SetAccount(Account newAccount)
     {
@@ -62,7 +75,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     }
 
     /// <summary>
-    /// 建立 WebSocket 连接并执行初始化握手
+    ///     建立 WebSocket 连接并执行初始化握手
     /// </summary>
     public async Task ConnectAsync(CancellationToken cancellationToken = default)
     {
@@ -99,55 +112,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     }
 
     /// <summary>
-    /// 接收数据循环
-    /// </summary>
-    private async Task ListenLoopAsync(CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-            try
-            {
-                var res = await ReceiveAsync(cancellationToken);
-                if (res == null) break;
-
-                // 根据 ReqId 将响应分发给等待的 Task，或者是推送 Channel
-                if (res.ReqId != 0 && _pendingRequests.TryRemove(res.ReqId, out var tcs))
-                    tcs.SetResult(res);
-                else
-                    await _messageChannel.Writer.WriteAsync(res, cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
-            catch
-            {
-                // 异常暂不处理，等待重连机制（待完善）
-            }
-    }
-
-    /// <summary>
-    /// 心跳循环，维持连接活性
-    /// </summary>
-    private async Task RunHeartbeatAsync(CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-            try
-            {
-                await Task.Delay(30000, cancellationToken);
-                await SendAsync(0, [], true, cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
-            catch
-            {
-                // 忽略心跳异常
-            }
-    }
-
-    /// <summary>
-    /// 发送原始 WSReq 对象
+    ///     发送原始 WSReq 对象
     /// </summary>
     public async Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
     {
@@ -166,7 +131,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     }
 
     /// <summary>
-    /// 发送业务请求并异步等待对应的响应
+    ///     发送业务请求并异步等待对应的响应
     /// </summary>
     /// <param name="cmd">指令号</param>
     /// <param name="data">业务数据负载</param>
@@ -206,7 +171,79 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     }
 
     /// <summary>
-    /// 从底层 WebSocket 接收并拼接一个完整的消息包
+    ///     监听消息推送流
+    /// </summary>
+    public async IAsyncEnumerable<WSRes> ListenAsync(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        while (await _messageChannel.Reader.WaitToReadAsync(cancellationToken))
+        while (_messageChannel.Reader.TryRead(out var res))
+            yield return res;
+    }
+
+    /// <summary>
+    ///     优雅关闭连接
+    /// </summary>
+    public async Task CloseAsync(CancellationToken cancellationToken = default)
+    {
+        if (_ws.State == WebSocketState.Open)
+            await _ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
+
+        _cts.Cancel();
+        if (_listenTask != null) await _listenTask;
+        if (_heartbeatTask != null) await _heartbeatTask;
+    }
+
+    /// <summary>
+    ///     接收数据循环
+    /// </summary>
+    private async Task ListenLoopAsync(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+            try
+            {
+                var res = await ReceiveAsync(cancellationToken);
+                if (res == null) break;
+
+                // 根据 ReqId 将响应分发给等待的 Task，或者是推送 Channel
+                if (res.ReqId != 0 && _pendingRequests.TryRemove(res.ReqId, out var tcs))
+                    tcs.SetResult(res);
+                else
+                    await _messageChannel.Writer.WriteAsync(res, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+            catch
+            {
+                // 异常暂不处理，等待重连机制（待完善）
+            }
+    }
+
+    /// <summary>
+    ///     心跳循环，维持连接活性
+    /// </summary>
+    private async Task RunHeartbeatAsync(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+            try
+            {
+                await Task.Delay(30000, cancellationToken);
+                await SendAsync(0, [], true, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+            catch
+            {
+                // 忽略心跳异常
+            }
+    }
+
+    /// <summary>
+    ///     从底层 WebSocket 接收并拼接一个完整的消息包
     /// </summary>
     private async Task<WSRes?> ReceiveAsync(CancellationToken cancellationToken = default)
     {
@@ -235,7 +272,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     }
 
     /// <summary>
-    /// 打包原始字节流为贴吧 WebSocket 协议格式
+    ///     打包原始字节流为贴吧 WebSocket 协议格式
     /// </summary>
     internal byte[] PackWsBytes(byte[] data, int cmd, int reqId, bool encrypt = true)
     {
@@ -256,7 +293,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     }
 
     /// <summary>
-    /// 解析贴吧 WebSocket 协议包，处理解密与解压
+    ///     解析贴吧 WebSocket 协议包，处理解密与解压
     /// </summary>
     internal (byte[] data, int cmd, int reqId) ParseWsBytes(byte[] data)
     {
@@ -283,31 +320,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     }
 
     /// <summary>
-    /// 监听消息推送流
-    /// </summary>
-    public async IAsyncEnumerable<WSRes> ListenAsync(
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        while (await _messageChannel.Reader.WaitToReadAsync(cancellationToken))
-        while (_messageChannel.Reader.TryRead(out var res))
-            yield return res;
-    }
-
-    /// <summary>
-    /// 优雅关闭连接
-    /// </summary>
-    public async Task CloseAsync(CancellationToken cancellationToken = default)
-    {
-        if (_ws.State == WebSocketState.Open)
-            await _ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
-
-        _cts.Cancel();
-        if (_listenTask != null) await _listenTask;
-        if (_heartbeatTask != null) await _heartbeatTask;
-    }
-
-    /// <summary>
-    /// 打包 1001 客户端信息更新包（RSA 加密 AES 密钥）
+    ///     打包 1001 客户端信息更新包（RSA 加密 AES 密钥）
     /// </summary>
     private byte[] PackUpdateClientInfo(Account account)
     {
@@ -348,20 +361,5 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
         cos.Flush();
 
         return ms.ToArray();
-    }
-
-    /// <summary>
-    /// 销毁对象，关闭连接并释放资源
-    /// </summary>
-    public void Dispose()
-    {
-        if (_disposed) return;
-        _cts.Cancel();
-        _cts.Dispose();
-        _ws.Dispose();
-        _connectLock.Dispose();
-        _sendLock.Dispose();
-        _disposed = true;
-        GC.SuppressFinalize(this);
     }
 }

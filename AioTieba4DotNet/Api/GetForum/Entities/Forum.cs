@@ -2,17 +2,17 @@ namespace AioTieba4DotNet.Api.GetForum.Entities;
 
 public class Forum
 {
-    public int Fid { get; set; } = 0;
+    public int Fid { get; set; }
     public string Fname { get; set; } = "";
     public string Category { get; set; } = "";
     public string Subcategory { get; set; } = "";
     public string SmallAvatar { get; set; } = "";
     public string Slogan { get; set; } = "";
-    public int MemberNum { get; set; } = 0;
-    public int PostNum { get; set; } = 0;
-    public int ThreadNum { get; set; } = 0;
+    public int MemberNum { get; set; }
+    public int PostNum { get; set; }
+    public int ThreadNum { get; set; }
 
-    public bool HasBaWu { get; set; } = false;
+    public bool HasBaWu { get; set; }
     // 贴吧信息
 
     public static Forum FromTbData(IDictionary<string, object> dataMap)

@@ -3,12 +3,39 @@
 namespace AioTieba4DotNet.Core;
 
 /// <summary>
-/// 贴吧账户类，包含账户凭证及设备信息
+///     贴吧账户类，包含账户凭证及设备信息
 /// </summary>
 public class Account
 {
+    private readonly object _lock = new();
+    private volatile Aes? _aesCbcCipher;
+    private volatile byte[]? _aesCbcSecKey;
+    private volatile Aes? _aesEcbCipher;
+    private volatile byte[]? _aesEcbSecKey;
+
+    private volatile string? _androidId;
+
+    private string _bduss = string.Empty;
+    private volatile string? _c3Aid;
+    private volatile string? _cuid;
+    private volatile string? _cuidGalaxy2;
+
+    private string _stoken = string.Empty;
+    private volatile string? _uuid;
+
     /// <summary>
-    /// BDUSS 凭证，主登录凭证
+    ///     构造函数
+    /// </summary>
+    /// <param name="bduss">BDUSS 凭证</param>
+    /// <param name="stoken">STOKEN 凭证（可选）</param>
+    public Account(string bduss = "", string stoken = "")
+    {
+        Bduss = bduss;
+        Stoken = stoken;
+    }
+
+    /// <summary>
+    ///     BDUSS 凭证，主登录凭证
     /// </summary>
     public string Bduss
     {
@@ -21,10 +48,8 @@ public class Account
         }
     }
 
-    private string _bduss = string.Empty;
-
     /// <summary>
-    /// STOKEN 凭证，部分 API 校验所需
+    ///     STOKEN 凭证，部分 API 校验所需
     /// </summary>
     public string Stoken
     {
@@ -37,33 +62,8 @@ public class Account
         }
     }
 
-    private string _stoken = string.Empty;
-
     /// <summary>
-    /// 构造函数
-    /// </summary>
-    /// <param name="bduss">BDUSS 凭证</param>
-    /// <param name="stoken">STOKEN 凭证（可选）</param>
-    public Account(string bduss = "", string stoken = "")
-    {
-        Bduss = bduss;
-        Stoken = stoken;
-    }
-
-    private volatile string? _androidId;
-    private volatile string? _uuid;
-    private volatile string? _cuid;
-    private volatile string? _cuidGalaxy2;
-    private volatile string? _c3Aid;
-    private volatile byte[]? _aesEcbSecKey;
-    private volatile Aes? _aesEcbCipher;
-    private volatile byte[]? _aesCbcSecKey;
-    private volatile Aes? _aesCbcCipher;
-
-    private readonly object _lock = new();
-
-    /// <summary>
-    /// Android ID，自动生成的 16 位 16 进制字符串
+    ///     Android ID，自动生成的 16 位 16 进制字符串
     /// </summary>
     public string AndroidId
     {
@@ -82,7 +82,7 @@ public class Account
     }
 
     /// <summary>
-    /// UUID，自动生成的标准 GUID
+    ///     UUID，自动生成的标准 GUID
     /// </summary>
     public string Uuid
     {
@@ -101,22 +101,22 @@ public class Account
     }
 
     /// <summary>
-    /// 当前会话的 tbs 校验码
+    ///     当前会话的 tbs 校验码
     /// </summary>
     public string? Tbs { get; set; }
 
     /// <summary>
-    /// Client ID
+    ///     Client ID
     /// </summary>
     public string? ClientId { get; set; }
 
     /// <summary>
-    /// Sample ID
+    ///     Sample ID
     /// </summary>
     public string? SampleId { get; set; }
 
     /// <summary>
-    /// CUID，由百度生成的设备唯一标识符
+    ///     CUID，由百度生成的设备唯一标识符
     /// </summary>
     public string Cuid
     {
@@ -135,7 +135,7 @@ public class Account
     }
 
     /// <summary>
-    /// CUID Galaxy 2，新型设备 ID 标识
+    ///     CUID Galaxy 2，新型设备 ID 标识
     /// </summary>
     public string CuidGalaxy2
     {
@@ -154,7 +154,7 @@ public class Account
     }
 
     /// <summary>
-    /// C3 AID
+    ///     C3 AID
     /// </summary>
     public string? C3Aid
     {
@@ -173,12 +173,12 @@ public class Account
     }
 
     /// <summary>
-    /// Z ID
+    ///     Z ID
     /// </summary>
     public string? ZId { get; set; }
 
     /// <summary>
-    /// WebSocket 通信使用的 AES-ECB 密钥
+    ///     WebSocket 通信使用的 AES-ECB 密钥
     /// </summary>
     public byte[] AesEcbSecKey
     {
@@ -196,7 +196,7 @@ public class Account
     }
 
     /// <summary>
-    /// WebSocket 通信使用的 AES-ECB 加密器
+    ///     WebSocket 通信使用的 AES-ECB 加密器
     /// </summary>
     public Aes AesEcbCipher
     {
@@ -221,7 +221,7 @@ public class Account
     }
 
     /// <summary>
-    /// HTTP 某些协议使用的 AES-CBC 密钥
+    ///     HTTP 某些协议使用的 AES-CBC 密钥
     /// </summary>
     public byte[] AesCbcSecKey
     {
@@ -240,7 +240,7 @@ public class Account
     }
 
     /// <summary>
-    /// HTTP 某些协议使用的 AES-CBC 加密器
+    ///     HTTP 某些协议使用的 AES-CBC 加密器
     /// </summary>
     public Aes? AesCbcCipher
     {

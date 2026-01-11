@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DelThreadApi = AioTieba4DotNet.Api.DelThread.DelThread;
-using JetBrains.Annotations;
 
 namespace AioTieba4DotNet.Tests.Api.DelThread;
 

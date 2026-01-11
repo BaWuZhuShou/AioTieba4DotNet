@@ -1,13 +1,11 @@
 ﻿using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Exceptions;
-using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Sign;
 
 /// <summary>
-/// 贴吧签到的 API
+///     贴吧签到的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
@@ -15,7 +13,7 @@ namespace AioTieba4DotNet.Api.Sign;
 public class Sign(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     /// <summary>
-    /// 发送贴吧签到请求
+    ///     发送贴吧签到请求
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="fid">吧 ID (fid)</param>

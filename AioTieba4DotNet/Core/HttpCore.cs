@@ -1,8 +1,8 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Diagnostics;
 using System.Reflection;
+using System.Text;
 using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.Login;
 using AioTieba4DotNet.Attributes;
@@ -11,36 +11,14 @@ using AioTieba4DotNet.Exceptions;
 namespace AioTieba4DotNet.Core;
 
 /// <summary>
-/// HTTP 核心实现类，负责底层网络请求的打包、签名与发送
+///     HTTP 核心实现类，负责底层网络请求的打包、签名与发送
 /// </summary>
 public class HttpCore : ITiebaHttpCore
 {
-    /// <summary>
-    /// 当前绑定的账户信息
-    /// </summary>
-    public Account? Account { get; private set; }
-
-    /// <summary>
-    /// 用于发送请求的 HttpClient 实例
-    /// </summary>
-    public HttpClient HttpClient { get; }
-
     private AsyncInit<string>? _tbsInit;
 
     /// <summary>
-    /// 对请求参数进行签名
-    /// </summary>
-    /// <param name="items">待签名的参数列表</param>
-    /// <returns>包含签名后的参数列表</returns>
-    public static List<KeyValuePair<string, string>> Sign(List<KeyValuePair<string, string>> items)
-    {
-        var list = items.Select(item => new KeyValuePair<string, string>(item.Key, item.Value)).ToList();
-        list.Add(new KeyValuePair<string, string>("sign", Signer.Sign(items)));
-        return list;
-    }
-
-    /// <summary>
-    /// 初始化 HttpCore
+    ///     初始化 HttpCore
     /// </summary>
     /// <param name="httpClient">可选的 HttpClient 实例，若不提供则自动创建一个</param>
     public HttpCore(HttpClient? httpClient = null)
@@ -66,7 +44,94 @@ public class HttpCore : ITiebaHttpCore
     }
 
     /// <summary>
-    /// 设置 App 端请求通用 Header
+    ///     当前绑定的账户信息
+    /// </summary>
+    public Account? Account { get; private set; }
+
+    /// <summary>
+    ///     用于发送请求的 HttpClient 实例
+    /// </summary>
+    public HttpClient HttpClient { get; }
+
+    /// <summary>
+    ///     绑定账户信息
+    /// </summary>
+    /// <param name="newAccount">账户实例</param>
+    public void SetAccount(Account newAccount)
+    {
+        Account = newAccount;
+        InitTbs(newAccount);
+    }
+
+    /// <summary>
+    ///     获取 TBS 校验码
+    /// </summary>
+    /// <returns>TBS 字符串</returns>
+    public async Task<string> GetTbsAsync()
+    {
+        if (Account == null) throw new TiebaException("Account not set");
+        // 如果 SetAccount 正常调用，_tbsInit 肯定不为空
+        return await _tbsInit!.GetAsync();
+    }
+
+    /// <summary>
+    ///     发送 App 端表单请求并获取字符串响应
+    /// </summary>
+    public async Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
+    {
+        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
+
+        using var response = await PackAppFormRequestAsync(uri, data);
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    /// <summary>
+    ///     发送 App 端 Protobuf 请求并获取字节数组响应
+    /// </summary>
+    public async Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data)
+    {
+        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
+
+        using var response = await PackProtoRequestAsync(uri, data);
+        return await response.Content.ReadAsByteArrayAsync();
+    }
+
+    /// <summary>
+    ///     发送 Web 端 GET 请求并获取字符串响应
+    /// </summary>
+    public async Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters)
+    {
+        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
+
+        using var response = await PackWebGetRequestAsync(uri, parameters);
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    /// <summary>
+    ///     发送 Web 端表单请求并获取字符串响应
+    /// </summary>
+    public async Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
+    {
+        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
+
+        using var response = await PackWebFormRequestAsync(uri, data);
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    /// <summary>
+    ///     对请求参数进行签名
+    /// </summary>
+    /// <param name="items">待签名的参数列表</param>
+    /// <returns>包含签名后的参数列表</returns>
+    public static List<KeyValuePair<string, string>> Sign(List<KeyValuePair<string, string>> items)
+    {
+        var list = items.Select(item => new KeyValuePair<string, string>(item.Key, item.Value)).ToList();
+        list.Add(new KeyValuePair<string, string>("sign", Signer.Sign(items)));
+        return list;
+    }
+
+    /// <summary>
+    ///     设置 App 端请求通用 Header
     /// </summary>
     private static void SetAppHeaders(HttpRequestMessage request)
     {
@@ -76,7 +141,7 @@ public class HttpCore : ITiebaHttpCore
     }
 
     /// <summary>
-    /// 设置 App 端 Protobuf 请求通用 Header
+    ///     设置 App 端 Protobuf 请求通用 Header
     /// </summary>
     private static void SetAppProtoHeaders(HttpRequestMessage request)
     {
@@ -88,7 +153,7 @@ public class HttpCore : ITiebaHttpCore
     }
 
     /// <summary>
-    /// 设置 Web 端请求通用 Header
+    ///     设置 Web 端请求通用 Header
     /// </summary>
     private static void SetWebHeaders(HttpRequestMessage request)
     {
@@ -101,17 +166,7 @@ public class HttpCore : ITiebaHttpCore
     }
 
     /// <summary>
-    /// 绑定账户信息
-    /// </summary>
-    /// <param name="newAccount">账户实例</param>
-    public void SetAccount(Account newAccount)
-    {
-        Account = newAccount;
-        InitTbs(newAccount);
-    }
-
-    /// <summary>
-    /// 初始化tbs
+    ///     初始化tbs
     /// </summary>
     private void InitTbs(Account newAccount)
     {
@@ -124,18 +179,14 @@ public class HttpCore : ITiebaHttpCore
         });
 
         if (!string.IsNullOrEmpty(newAccount.Tbs))
-        {
             _tbsInit.SetValue(newAccount.Tbs);
-        }
         else if (!string.IsNullOrEmpty(newAccount.Bduss))
-        {
             // 采用 Fire-and-forget 模式，自动触发后台获取
             _ = Task.Run(() => _tbsInit.GetAsync());
-        }
     }
 
     /// <summary>
-    /// 发送 App 端表单请求（自动添加签名）
+    ///     发送 App 端表单请求（自动添加签名）
     /// </summary>
     private async Task<HttpResponseMessage> PackAppFormRequestAsync(Uri uri, List<KeyValuePair<string, string>> data)
     {
@@ -146,7 +197,7 @@ public class HttpCore : ITiebaHttpCore
     }
 
     /// <summary>
-    /// 发送 App 端 Protobuf 请求（自动添加签名）
+    ///     发送 App 端 Protobuf 请求（自动添加签名）
     /// </summary>
     private async Task<HttpResponseMessage> PackProtoRequestAsync(Uri uri, byte[] data)
     {
@@ -162,7 +213,7 @@ public class HttpCore : ITiebaHttpCore
     }
 
     /// <summary>
-    /// 发送 Web 端 GET 请求
+    ///     发送 Web 端 GET 请求
     /// </summary>
     private async Task<HttpResponseMessage> PackWebGetRequestAsync(Uri uri,
         List<KeyValuePair<string, string>> parameters)
@@ -176,7 +227,7 @@ public class HttpCore : ITiebaHttpCore
     }
 
     /// <summary>
-    /// 发送 Web 端表单请求
+    ///     发送 Web 端表单请求
     /// </summary>
     private async Task<HttpResponseMessage> PackWebFormRequestAsync(Uri uri, List<KeyValuePair<string, string>> data)
     {
@@ -202,60 +253,5 @@ public class HttpCore : ITiebaHttpCore
 
             return;
         }
-    }
-
-    /// <summary>
-    /// 获取 TBS 校验码
-    /// </summary>
-    /// <returns>TBS 字符串</returns>
-    public async Task<string> GetTbsAsync()
-    {
-        if (Account == null) throw new TiebaException("Account not set");
-        // 如果 SetAccount 正常调用，_tbsInit 肯定不为空
-        return await _tbsInit!.GetAsync();
-    }
-
-    /// <summary>
-    /// 发送 App 端表单请求并获取字符串响应
-    /// </summary>
-    public async Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
-    {
-        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
-
-        using var response = await PackAppFormRequestAsync(uri, data);
-        return await response.Content.ReadAsStringAsync();
-    }
-
-    /// <summary>
-    /// 发送 App 端 Protobuf 请求并获取字节数组响应
-    /// </summary>
-    public async Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data)
-    {
-        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
-
-        using var response = await PackProtoRequestAsync(uri, data);
-        return await response.Content.ReadAsByteArrayAsync();
-    }
-
-    /// <summary>
-    /// 发送 Web 端 GET 请求并获取字符串响应
-    /// </summary>
-    public async Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters)
-    {
-        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
-
-        using var response = await PackWebGetRequestAsync(uri, parameters);
-        return await response.Content.ReadAsStringAsync();
-    }
-
-    /// <summary>
-    /// 发送 Web 端表单请求并获取字符串响应
-    /// </summary>
-    public async Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
-    {
-        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
-
-        using var response = await PackWebFormRequestAsync(uri, data);
-        return await response.Content.ReadAsStringAsync();
     }
 }

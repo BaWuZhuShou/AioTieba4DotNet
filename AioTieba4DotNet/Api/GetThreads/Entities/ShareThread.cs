@@ -4,57 +4,57 @@ using AioTieba4DotNet.Api.Entities.Contents;
 namespace AioTieba4DotNet.Api.GetThreads.Entities;
 
 /// <summary>
-/// 被分享的主题帖信息
+///     被分享的主题帖信息
 /// </summary>
 public class ShareThread
 {
     /// <summary>
-    /// 文本内容
+    ///     文本内容
     /// </summary>
     public string Text => Title != "" ? $"{Title}\n{Content.Texts}" : Content.Texts.ToString() ?? "";
 
     /// <summary>
-    /// 正文内容碎片列表
+    ///     正文内容碎片列表
     /// </summary>
     public required Content Content { get; init; }
 
     /// <summary>
-    /// 标题内容
+    ///     标题内容
     /// </summary>
     public string Title { get; init; } = "";
 
     /// <summary>
-    /// 发布者的user_id
+    ///     发布者的user_id
     /// </summary>
     public long AuthorId { get; init; }
 
     /// <summary>
-    /// 所在吧id
+    ///     所在吧id
     /// </summary>
     public long Fid { get; init; }
 
     /// <summary>
-    /// 所在贴吧名
+    ///     所在贴吧名
     /// </summary>
     public string Fname { get; init; } = "";
 
     /// <summary>
-    /// 主题帖tid
+    ///     主题帖tid
     /// </summary>
     public int Tid { get; init; }
 
     /// <summary>
-    /// 首楼的回复id
+    ///     首楼的回复id
     /// </summary>
     public long Pid { get; init; }
 
     /// <summary>
-    /// 投票内容
+    ///     投票内容
     /// </summary>
     public VoteInfo? VoteInfo { get; init; }
 
     /// <summary>
-    /// 从贴吧原始数据转换
+    ///     从贴吧原始数据转换
     /// </summary>
     /// <param name="threadInfo"></param>
     /// <returns>ShareThread</returns>
@@ -74,7 +74,7 @@ public class ShareThread
     }
 
     /// <summary>
-    /// 格式设置
+    ///     格式设置
     /// </summary>
     /// <returns>string</returns>
     public override string ToString()

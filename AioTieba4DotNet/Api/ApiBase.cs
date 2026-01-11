@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 namespace AioTieba4DotNet.Api;
 
 /// <summary>
-/// 所有 API 实现的基类
+///     所有 API 实现的基类
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 public abstract class ApiBase(ITiebaHttpCore httpCore)
@@ -14,7 +14,7 @@ public abstract class ApiBase(ITiebaHttpCore httpCore)
     protected readonly ITiebaHttpCore HttpCore = httpCore;
 
     /// <summary>
-    /// 确保 TBS 已加载（如果已登录）
+    ///     确保 TBS 已加载（如果已登录）
     /// </summary>
     protected async Task EnsureTbsAsync()
     {
@@ -23,7 +23,7 @@ public abstract class ApiBase(ITiebaHttpCore httpCore)
     }
 
     /// <summary>
-    /// 检查错误码并抛出异常
+    ///     检查错误码并抛出异常
     /// </summary>
     /// <param name="code">错误码</param>
     /// <param name="msg">错误消息</param>
@@ -34,7 +34,7 @@ public abstract class ApiBase(ITiebaHttpCore httpCore)
     }
 
     /// <summary>
-    /// 解析 JSON 响应体并检查错误码
+    ///     解析 JSON 响应体并检查错误码
     /// </summary>
     /// <param name="body">响应字符串</param>
     /// <param name="codeField">错误码字段名</param>
@@ -51,7 +51,7 @@ public abstract class ApiBase(ITiebaHttpCore httpCore)
 }
 
 /// <summary>
-/// 支持双模（Http/Websocket）分发的 API 基类
+///     支持双模（Http/Websocket）分发的 API 基类
 /// </summary>
 /// <typeparam name="TResult">响应实体类型</typeparam>
 /// <param name="httpCore">Http 核心组件</param>
@@ -63,11 +63,11 @@ public abstract class ApiWsBase<TResult>(
     TiebaRequestMode mode = TiebaRequestMode.Http)
     : ApiBase(httpCore)
 {
-    protected readonly ITiebaWsCore WsCore = wsCore;
     protected readonly TiebaRequestMode Mode = mode;
+    protected readonly ITiebaWsCore WsCore = wsCore;
 
     /// <summary>
-    /// 根据当前模式执行请求分发
+    ///     根据当前模式执行请求分发
     /// </summary>
     /// <param name="httpRequest">Http 执行逻辑</param>
     /// <param name="wsRequest">Websocket 执行逻辑（可选）</param>

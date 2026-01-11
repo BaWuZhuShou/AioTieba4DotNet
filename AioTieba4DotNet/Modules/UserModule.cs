@@ -1,5 +1,7 @@
 ﻿using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.Block;
+using AioTieba4DotNet.Api.Entities;
+using AioTieba4DotNet.Api.FollowUser;
 using AioTieba4DotNet.Api.GetFollows;
 using AioTieba4DotNet.Api.GetUInfoGetUserInfoApp;
 using AioTieba4DotNet.Api.GetUInfoGetUserInfoApp.Entities;
@@ -7,22 +9,20 @@ using AioTieba4DotNet.Api.GetUInfoPanel;
 using AioTieba4DotNet.Api.GetUInfoPanel.Entities;
 using AioTieba4DotNet.Api.GetUInfoUserJson;
 using AioTieba4DotNet.Api.GetUInfoUserJson.Entities;
+using AioTieba4DotNet.Api.GetUserContents;
+using AioTieba4DotNet.Api.GetUserContents.Entities;
 using AioTieba4DotNet.Api.Login;
 using AioTieba4DotNet.Api.Login.Entities;
 using AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 using AioTieba4DotNet.Api.Profile.GetUInfoProfile.Entities;
-using AioTieba4DotNet.Api.FollowUser;
 using AioTieba4DotNet.Api.UnfollowUser;
-using AioTieba4DotNet.Api.GetUserContents;
-using AioTieba4DotNet.Api.GetUserContents.Entities;
-using AioTieba4DotNet.Api.Entities;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
 
 namespace AioTieba4DotNet.Modules;
 
 /// <summary>
-/// 用户相关功能模块
+///     用户相关功能模块
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="forumModule">贴吧模块组件</param>
@@ -30,12 +30,12 @@ namespace AioTieba4DotNet.Modules;
 public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITiebaWsCore wsCore) : IUserModule
 {
     /// <summary>
-    /// 默认请求模式 (Http/Websocket)
+    ///     默认请求模式 (Http/Websocket)
     /// </summary>
     public TiebaRequestMode RequestMode { get; set; } = TiebaRequestMode.Http;
 
     /// <summary>
-    /// 获取 TBS 校验码
+    ///     获取 TBS 校验码
     /// </summary>
     /// <returns>TBS 字符串</returns>
     public async Task<string> GetTbsAsync()
@@ -44,7 +44,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 获取用户基础信息 (App端接口)
+    ///     获取用户基础信息 (App端接口)
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
     /// <returns>用户基础信息</returns>
@@ -55,7 +55,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 获取用户详细主页信息 (通过用户 ID)
+    ///     获取用户详细主页信息 (通过用户 ID)
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
     /// <returns>用户主页信息</returns>
@@ -66,7 +66,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 获取用户详细主页信息 (通过用户名或 Portrait)
+    ///     获取用户详细主页信息 (通过用户名或 Portrait)
     /// </summary>
     /// <param name="portraitOrUserName">用户名 (un) 或用户头像 ID (portrait)</param>
     /// <returns>用户主页信息</returns>
@@ -77,7 +77,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 封禁用户 (通过吧 ID)
+    ///     封禁用户 (通过吧 ID)
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <param name="portrait">用户头像 ID (Portrait)</param>
@@ -91,7 +91,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 封禁用户 (通过吧名)
+    ///     封禁用户 (通过吧名)
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="portrait">用户头像 ID (Portrait)</param>
@@ -105,7 +105,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 关注用户
+    ///     关注用户
     /// </summary>
     /// <param name="portrait">用户头像 ID (Portrait)</param>
     /// <returns>操作是否成功</returns>
@@ -116,7 +116,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 取消关注用户
+    ///     取消关注用户
     /// </summary>
     /// <param name="portrait">用户头像 ID (Portrait)</param>
     /// <returns>操作是否成功</returns>
@@ -127,7 +127,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 获取用户关注列表
+    ///     获取用户关注列表
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
     /// <param name="pn">页码</param>
@@ -139,7 +139,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 获取用户面板信息
+    ///     获取用户面板信息
     /// </summary>
     /// <param name="nameOrPortrait">用户名或 Portrait</param>
     /// <returns>用户面板信息</returns>
@@ -150,7 +150,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 获取用户信息 JSON
+    ///     获取用户信息 JSON
     /// </summary>
     /// <param name="username">用户名</param>
     /// <returns>用户信息实体</returns>
@@ -161,19 +161,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 登录并获取用户信息和 TBS
-    /// </summary>
-    /// <returns>包含登录用户信息和 TBS 的元组</returns>
-    internal async Task<(UserInfoLogin User, string Tbs)> LoginAsync()
-    {
-        var api = new Login(httpCore);
-        var (user, tbs) = await api.RequestAsync();
-        if (httpCore.Account != null) httpCore.Account.Tbs = tbs;
-        return (user, tbs);
-    }
-
-    /// <summary>
-    /// 获取用户发布的回复列表
+    ///     获取用户发布的回复列表
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
     /// <param name="pn">页码</param>
@@ -189,7 +177,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     }
 
     /// <summary>
-    /// 获取用户发布的主题帖列表
+    ///     获取用户发布的主题帖列表
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
     /// <param name="pn">页码</param>
@@ -201,5 +189,17 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     {
         var api = new GetUserThreads(httpCore, wsCore, mode ?? RequestMode);
         return await api.RequestAsync(userId, pn, publicOnly);
+    }
+
+    /// <summary>
+    ///     登录并获取用户信息和 TBS
+    /// </summary>
+    /// <returns>包含登录用户信息和 TBS 的元组</returns>
+    internal async Task<(UserInfoLogin User, string Tbs)> LoginAsync()
+    {
+        var api = new Login(httpCore);
+        var (user, tbs) = await api.RequestAsync();
+        if (httpCore.Account != null) httpCore.Account.Tbs = tbs;
+        return (user, tbs);
     }
 }

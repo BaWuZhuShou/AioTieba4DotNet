@@ -1,14 +1,13 @@
 using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Api.Profile.GetUInfoProfile.Entities;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Exceptions;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 
 /// <summary>
-/// 获取用户详细主页信息的 API
+///     获取用户详细主页信息的 API
 /// </summary>
 /// <typeparam name="T">请求参数类型 (支持 int/long 作为 uid，或 string 作为 portrait/用户名)</typeparam>
 /// <param name="httpCore">Http 核心组件</param>
@@ -51,7 +50,7 @@ public class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore
     }
 
     /// <summary>
-    /// 发送获取用户详细主页信息请求
+    ///     发送获取用户详细主页信息请求
     /// </summary>
     /// <param name="requestParams">uid (int/long) 或 portrait/用户名 (string)</param>
     /// <returns>用户详细主页信息</returns>

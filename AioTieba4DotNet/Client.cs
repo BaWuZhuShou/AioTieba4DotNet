@@ -7,15 +7,11 @@ using AioTieba4DotNet.Enums;
 namespace AioTieba4DotNet;
 
 /// <summary>
-/// 客户端
+///     客户端
 /// </summary>
 public class Client : TiebaClient
 {
     private readonly ForumInfoCache _forumInfoCache = new();
-
-    public ThreadSortType ThreadSortType { get; init; } = ThreadSortType.Reply;
-    public bool ThreadIsGood { get; init; }
-    public int ThreadRn { get; init; } = 30;
 
     [Obsolete("Use TiebaClient instead.")]
     public Client() : base(new HttpCore())
@@ -27,6 +23,10 @@ public class Client : TiebaClient
     {
         HttpCore.SetAccount(new Account(bduss, stoken));
     }
+
+    public ThreadSortType ThreadSortType { get; init; } = ThreadSortType.Reply;
+    public bool ThreadIsGood { get; init; }
+    public int ThreadRn { get; init; } = 30;
 
     [Obsolete("Use Forums.GetFidAsync instead.")]
     public Task<ulong> GetFid(string fname)

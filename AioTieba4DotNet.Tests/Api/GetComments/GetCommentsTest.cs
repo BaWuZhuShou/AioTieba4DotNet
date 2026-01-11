@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
+using AioTieba4DotNet.Exceptions;
+using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GetCommentsApi = AioTieba4DotNet.Api.GetComments.GetComments;
-using JetBrains.Annotations;
 
 namespace AioTieba4DotNet.Tests.Api.GetComments;
 
@@ -39,7 +39,7 @@ public class GetCommentsTest : TestBase
                 Console.WriteLine("获取成功，但该楼层没有楼中楼或数据已失效（返回了空对象）。");
             }
         }
-        catch (Exceptions.TieBaServerException ex)
+        catch (TieBaServerException ex)
         {
             Console.WriteLine($"请求失败 (贴吧服务器返回错误): {ex.Message}");
             // 如果是 ID 失效导致的服务器错误，我们在这里可以选择不抛出异常，或者标记为 Inconclusive

@@ -116,7 +116,7 @@ public class MyBot(ITiebaClientFactory factory)
 
 为了保持 README 简洁，更多详细内容请参阅：
 
-- [功能模块详细说明](./docs/modules.md) - 包含 Forum, Thread, User 模块的所有 API 列表。
+- [功能模块详细说明](./docs/modules.md) - 包含 Forum, Thread, User, Client 模块的所有 API 列表。
 - [高级用法](./docs/advanced.md) - 包含 WebSocket 配置、多账户模式、**异常处理**、自定义 HttpClient 等。
 - [待实现功能清单 (TODO)](./docs/todo.md) - 总结还未实现原版哪些内容。
 
@@ -143,7 +143,7 @@ public class MyBot(ITiebaClientFactory factory)
 - 用户详细资料、基础信息、面板信息获取
 - 关注/取消关注用户、关注列表获取
 - 用户发表的主题/回复列表获取
-- 登录与 TBS 获取 (`LoginAsync`, `GetTbsAsync`)
+- TBS 获取 (`GetTbsAsync`)
 - 封禁用户 (`BlockAsync`)
 
 ### 客户端模块 (`client.Client`)

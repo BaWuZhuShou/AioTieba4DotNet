@@ -11,17 +11,18 @@ public static class Const
     public const string AppBaseHost = "tiebac.baidu.com";
     public const string WebBaseHost = "tieba.baidu.com";
 
-    public static readonly string Version =
-        typeof(Const).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            .Split('+')[0] ?? "0.0.0";
-
     public const int TbcAndroidIdSize = 16;
     public const int TbcMd5HashSize = 16;
     public const int TbcMd5StrSize = TbcMd5HashSize * 2;
     public const int TbcSha1HashSize = 20;
     public const int TbcSha1HexSize = TbcSha1HashSize * 2;
-    public static int TbcSha1Base32Size = BASE32_LEN(TbcSha1HashSize);
     public const string SofireHost = "sofire.baidu.com";
+
+    public static readonly string Version =
+        typeof(Const).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+            .Split('+')[0] ?? "0.0.0";
+
+    public static int TbcSha1Base32Size = BASE32_LEN(TbcSha1HashSize);
 
     public static int BASE32_LEN(int len)
     {

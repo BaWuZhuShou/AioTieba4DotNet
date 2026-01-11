@@ -1,5 +1,4 @@
 using System.Text;
-using AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 
 namespace AioTieba4DotNet.Api.GetThreads.Entities;
 

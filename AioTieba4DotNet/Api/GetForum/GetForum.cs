@@ -1,14 +1,13 @@
 ﻿using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Api.GetForum.Entities;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
-using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetForum;
 
 /// <summary>
-/// 获取贴吧基础信息的 API (主要用于获取 Fid)
+///     获取贴吧基础信息的 API (主要用于获取 Fid)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_forum")]
@@ -25,7 +24,7 @@ public class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     }
 
     /// <summary>
-    /// 发送获取贴吧基础信息请求
+    ///     发送获取贴吧基础信息请求
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <returns>贴吧基础信息</returns>

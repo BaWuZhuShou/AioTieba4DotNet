@@ -1,7 +1,6 @@
 using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Attributes;
-using System.Text;
 using AioTieba4DotNet.Api.GetUInfoUserJson.Entities;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
 using Newtonsoft.Json.Linq;
@@ -9,7 +8,7 @@ using Newtonsoft.Json.Linq;
 namespace AioTieba4DotNet.Api.GetUInfoUserJson;
 
 /// <summary>
-/// 通过用户名获取用户信息 JSON 的 API (Web端接口，常用于获取用户 uid)
+///     通过用户名获取用户信息 JSON 的 API (Web端接口，常用于获取用户 uid)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_uinfo_user_json")]
@@ -23,7 +22,7 @@ public class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     }
 
     /// <summary>
-    /// 发送获取用户信息 JSON 请求
+    ///     发送获取用户信息 JSON 请求
     /// </summary>
     /// <param name="username">用户名</param>
     /// <returns>用户信息 JSON 实体</returns>

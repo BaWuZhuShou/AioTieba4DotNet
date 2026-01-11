@@ -1,14 +1,13 @@
 ﻿using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Api.GetForumDetail.Entities;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Exceptions;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetForumDetail;
 
 /// <summary>
-/// 获取贴吧详情信息的 API
+///     获取贴吧详情信息的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_forum_detail")]
@@ -39,7 +38,7 @@ public class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
     }
 
     /// <summary>
-    /// 发送获取贴吧详情信息请求
+    ///     发送获取贴吧详情信息请求
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <returns>贴吧详情信息</returns>

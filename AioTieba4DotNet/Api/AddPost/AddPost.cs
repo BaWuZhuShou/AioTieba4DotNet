@@ -1,14 +1,14 @@
 ﻿using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Exceptions;
 using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Exceptions;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.AddPost;
 
 /// <summary>
-/// 发布回复 (Post) 的 API
+///     发布回复 (Post) 的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
@@ -112,7 +112,7 @@ public class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestM
 
 
     /// <summary>
-    /// 发送发布回复请求
+    ///     发送发布回复请求
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="fid">吧 ID</param>

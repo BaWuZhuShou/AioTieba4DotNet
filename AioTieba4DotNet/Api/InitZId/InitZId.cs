@@ -1,16 +1,17 @@
-using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Attributes;
 using System.IO.Compression;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.InitZId;
 
 /// <summary>
-/// 初始化 ZID 的 API (用于 App 端的设备标识)
+///     初始化 ZID 的 API (用于 App 端的设备标识)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.init_z_id")]
@@ -21,7 +22,7 @@ public class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
 
 
     /// <summary>
-    /// 发送初始化 ZID 请求
+    ///     发送初始化 ZID 请求
     /// </summary>
     /// <returns>ZID (token)</returns>
     public async Task<string> RequestAsync()
@@ -53,7 +54,7 @@ public class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
         request.Headers.Add("x-plu-ver", "x6/4.4.1.3");
         request.Content = new ByteArrayContent(payload);
         request.Content.Headers.ContentType =
-            new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
+            new MediaTypeHeaderValue("application/x-www-form-urlencoded");
         using var httpResponseMessage = await HttpCore.HttpClient.SendAsync(request);
         var result = await httpResponseMessage.Content.ReadAsStringAsync();
         var token = ParseBody(result);

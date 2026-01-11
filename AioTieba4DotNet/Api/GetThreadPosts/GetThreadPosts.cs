@@ -1,15 +1,14 @@
 ﻿using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Api.GetThreadPosts.Entities;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Exceptions;
 using AioTieba4DotNet.Enums;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetThreadPosts;
 
 /// <summary>
-/// 获取主题帖内回复列表的 API (PB页)
+///     获取主题帖内回复列表的 API (PB页)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
@@ -55,7 +54,7 @@ public class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaR
     }
 
     /// <summary>
-    /// 发送获取主题帖内回复列表请求
+    ///     发送获取主题帖内回复列表请求
     /// </summary>
     /// <param name="tid">主题帖 ID (tid)</param>
     /// <param name="pn">页码</param>

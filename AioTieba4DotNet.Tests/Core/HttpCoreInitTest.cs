@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AioTieba4DotNet.Core;
 
 namespace AioTieba4DotNet.Tests.Core;
 

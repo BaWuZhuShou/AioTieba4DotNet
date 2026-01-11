@@ -5,147 +5,147 @@ using AioTieba4DotNet.Api.Profile.GetUInfoProfile.Entities;
 namespace AioTieba4DotNet.Api.GetThreads.Entities;
 
 /// <summary>
-/// 主题帖信息
+///     主题帖信息
 /// </summary>
 public class Thread
 {
     /// <summary>
-    /// 文本内容
-    /// </summary>
-    public string Text => Title != "" ? $"{Title}\n{Content.Text}" : Content.Text;
-
-    /// <summary>
-    /// 正文内容碎片列表
-    /// </summary>
-    public required Content Content { get; init; }
-
-    /// <summary>
-    /// 标题
-    /// </summary>
-    public string Title { get; init; } = "";
-
-    /// <summary>
-    /// 所在吧id
-    /// </summary>
-    public long Fid { get; set; } = 0;
-
-    /// <summary>
-    /// 所在贴吧名
-    /// </summary>
-    public string Fname { get; set; } = "";
-
-    /// <summary>
-    /// 主题帖tid
-    /// </summary>
-    public long Tid { get; init; }
-
-    /// <summary>
-    /// 首楼回复pid
-    /// </summary>
-    public long Pid { get; init; }
-
-    /// <summary>
-    /// 发布者的用户信息
-    /// </summary>
-    public UserInfoT? User { get; set; }
-
-    /// <summary>
-    ///  发布者的user_id
-    /// </summary>
-    public long AuthorId { get; init; }
-
-    /// <summary>
-    /// 帖子类型
-    /// </summary>
-    public int Type { get; init; }
-
-    /// <summary>
-    /// 帖子所在分区id
+    ///     帖子所在分区id
     /// </summary>
     public int TabId;
 
     /// <summary>
-    /// 是否精品帖
+    ///     文本内容
+    /// </summary>
+    public string Text => Title != "" ? $"{Title}\n{Content.Text}" : Content.Text;
+
+    /// <summary>
+    ///     正文内容碎片列表
+    /// </summary>
+    public required Content Content { get; init; }
+
+    /// <summary>
+    ///     标题
+    /// </summary>
+    public string Title { get; init; } = "";
+
+    /// <summary>
+    ///     所在吧id
+    /// </summary>
+    public long Fid { get; set; } = 0;
+
+    /// <summary>
+    ///     所在贴吧名
+    /// </summary>
+    public string Fname { get; set; } = "";
+
+    /// <summary>
+    ///     主题帖tid
+    /// </summary>
+    public long Tid { get; init; }
+
+    /// <summary>
+    ///     首楼回复pid
+    /// </summary>
+    public long Pid { get; init; }
+
+    /// <summary>
+    ///     发布者的用户信息
+    /// </summary>
+    public UserInfoT? User { get; set; }
+
+    /// <summary>
+    ///     发布者的user_id
+    /// </summary>
+    public long AuthorId { get; init; }
+
+    /// <summary>
+    ///     帖子类型
+    /// </summary>
+    public int Type { get; init; }
+
+    /// <summary>
+    ///     是否精品帖
     /// </summary>
     public bool IsGood { get; init; }
 
     /// <summary>
-    /// 是否置顶帖
+    ///     是否置顶帖
     /// </summary>
     public bool IsTop { get; init; }
 
     /// <summary>
-    /// 是否分享帖
+    ///     是否分享帖
     /// </summary>
     public bool IsShare { get; init; }
 
     /// <summary>
-    /// 是否被屏蔽
+    ///     是否被屏蔽
     /// </summary>
     public bool IsHide { get; init; }
 
     /// <summary>
-    /// 是否为置顶话题
+    ///     是否为置顶话题
     /// </summary>
     public bool IsLivePost { get; init; }
 
     /// <summary>
-    /// 是否为求助帖
+    ///     是否为求助帖
     /// </summary>
     public bool IsHelp => Type == 71;
 
     /// <summary>
-    /// 投票信息
+    ///     投票信息
     /// </summary>
     public VoteInfo? VoteInfo { get; set; }
 
     /// <summary>
-    /// 转发来的原帖内容
+    ///     转发来的原帖内容
     /// </summary>
     public ShareThread? ShareOrigin { get; init; }
 
     /// <summary>
-    /// 虚拟形象
+    ///     虚拟形象
     /// </summary>
     public required VirtualImagePf VirtualImage { get; init; }
 
     /// <summary>
-    /// 浏览量
+    ///     浏览量
     /// </summary>
     public int ViewNum { get; init; }
 
     /// <summary>
-    /// 回复数
+    ///     回复数
     /// </summary>
     public int ReplyNum { get; init; }
 
     /// <summary>
-    /// 分享数
+    ///     分享数
     /// </summary>
     public long ShareNum { get; init; }
 
     /// <summary>
-    /// 点赞数
+    ///     点赞数
     /// </summary>
     public long Agree { get; init; }
 
     /// <summary>
-    /// 点踩数
+    ///     点踩数
     /// </summary>
     public long Disagree { get; init; }
 
     /// <summary>
-    /// 创建时间 10位时间戳 以秒为单位
+    ///     创建时间 10位时间戳 以秒为单位
     /// </summary>
     public int CreateTime { get; init; }
 
     /// <summary>
-    /// 最后回复时间 10位时间戳 以秒为单位
+    ///     最后回复时间 10位时间戳 以秒为单位
     /// </summary>
     public int LastTime { get; init; }
 
     /// <summary>
-    /// 从贴吧原始数据转换
+    ///     从贴吧原始数据转换
     /// </summary>
     /// <param name="threadInfo"></param>
     /// <returns>Thread</returns>
@@ -185,7 +185,7 @@ public class Thread
     }
 
     /// <summary>
-    /// 字符串输出
+    ///     字符串输出
     /// </summary>
     /// <returns>string</returns>
     public override string ToString()

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 
 namespace AioTieba4DotNet.Tests.Api.Profile.GetUInfoProfile;
 

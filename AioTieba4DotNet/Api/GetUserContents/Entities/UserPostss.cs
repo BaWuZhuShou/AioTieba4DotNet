@@ -4,7 +4,7 @@ using AioTieba4DotNet.Entities;
 namespace AioTieba4DotNet.Api.GetUserContents.Entities;
 
 /// <summary>
-/// 用户历史回复信息列表的列表
+///     用户历史回复信息列表的列表
 /// </summary>
 public class UserPostss : Containers<UserPosts>
 {

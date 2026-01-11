@@ -4,17 +4,17 @@ using AioTieba4DotNet.Enums;
 namespace AioTieba4DotNet.Api.GetThreads.Entities;
 
 /// <summary>
-/// 用户信息
+///     用户信息
 /// </summary>
 public class UserInfoT : UserInfo
 {
     /// <summary>
-    /// 等级
+    ///     等级
     /// </summary>
     public int Level { get; init; }
 
     /// <summary>
-    /// 是否吧务
+    ///     是否吧务
     /// </summary>
     public bool IsBawu { get; init; }
 

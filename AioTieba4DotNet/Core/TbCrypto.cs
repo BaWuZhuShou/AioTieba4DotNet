@@ -5,8 +5,8 @@ using System.Text;
 namespace AioTieba4DotNet.Core;
 
 /// <summary>
-/// 导入所需哈希类
-/// 导入加密类
+///     导入所需哈希类
+///     导入加密类
 /// </summary>
 public static class TbCrypto
 {

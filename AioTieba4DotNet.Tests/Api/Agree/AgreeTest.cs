@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AgreeApi = AioTieba4DotNet.Api.Agree.Agree;
-using JetBrains.Annotations;
 
 namespace AioTieba4DotNet.Tests.Api.Agree;
 
@@ -11,34 +10,21 @@ namespace AioTieba4DotNet.Tests.Api.Agree;
 public class AgreeTest : TestBase
 {
     [TestMethod]
-    public async Task TestRequest()
+    public async Task TestRequestAsync()
     {
-        if (!IsAuthenticated)
-        {
-            Assert.Inconclusive("未设置 BDUSS，跳过写操作测试");
-            return;
-        }
+        EnsureAuthenticated();
 
         var agreeApi = new AgreeApi(HttpCore);
 
         // 使用一个已知的帖子 ID 进行测试 (建议使用自己的帖子或测试贴)
-        var tid = 8116540605;
+        const long tid = 8116540605;
 
         // 点赞主题帖
-        try
-        {
-            var success = await agreeApi.RequestAsync(tid, 0, false, false, false);
-            Assert.IsTrue(success, "点赞失败");
-            Console.WriteLine("点赞主题帖成功");
+        var success = await agreeApi.RequestAsync(tid, 0, false, false, false);
+        Assert.IsTrue(success, "点赞失败");
 
-            // 取消点赞
-            var undoSuccess = await agreeApi.RequestAsync(tid, 0, false, false, true);
-            Assert.IsTrue(undoSuccess, "取消点赞失败");
-            Console.WriteLine("取消点赞主题帖成功");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"点赞操作失败: {ex.Message}");
-        }
+        // 取消点赞
+        var undoSuccess = await agreeApi.RequestAsync(tid, 0, false, false, true);
+        Assert.IsTrue(undoSuccess, "取消点赞失败");
     }
 }

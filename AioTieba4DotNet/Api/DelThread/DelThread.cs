@@ -1,13 +1,11 @@
 ﻿using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Exceptions;
-using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.DelThread;
 
 /// <summary>
-/// 删除主题帖的 API
+///     删除主题帖的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
@@ -21,7 +19,7 @@ public class DelThread(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     }
 
     /// <summary>
-    /// 发送删除主题帖请求
+    ///     发送删除主题帖请求
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <param name="tid">主题帖 ID</param>

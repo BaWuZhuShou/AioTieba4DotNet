@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 namespace AioTieba4DotNet.Api.GetFid;
 
 /// <summary>
-/// 获取吧 ID (fid) 的 API
+///     获取吧 ID (fid) 的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_fid")]
@@ -15,7 +15,7 @@ public class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static ulong ParseBody(string body)
     {
-        var o = JsonApiBase.ParseBody(body, "no", "error");
+        var o = ParseBody(body, "no", "error");
 
         var fid = o.GetValue("data")!.ToObject<JObject>()!.GetValue("fid")!.ToObject<ulong>();
         if (fid == 0) throw new TieBaServerException(-1, "fid is 0!");
@@ -24,7 +24,7 @@ public class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     }
 
     /// <summary>
-    /// 发送获取吧 ID 请求
+    ///     发送获取吧 ID 请求
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <returns>吧 ID (fid)</returns>

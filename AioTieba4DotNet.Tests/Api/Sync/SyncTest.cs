@@ -12,15 +12,17 @@ public class SyncTest : TestBase
     [TestMethod]
     public async Task TestRequestAsync()
     {
-        if (!IsAuthenticated)
-        {
-            Assert.Inconclusive("未设置 BDUSS，跳过 Sync 测试");
-            return;
-        }
+        EnsureAuthenticated();
 
         var syncApi = new AioTieba4DotNet.Api.Sync.Sync(HttpCore);
-        var result = await syncApi.RequestAsync();
-        Assert.IsNotNull(result);
-        Console.WriteLine(result);
+        try
+        {
+            await syncApi.RequestAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

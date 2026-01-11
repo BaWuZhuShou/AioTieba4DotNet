@@ -2,7 +2,7 @@ namespace AioTieba4DotNet.Api.Profile.GetUInfoProfile.Entities;
 
 public class VirtualImagePf
 {
-    public bool Enabled = false;
+    public bool Enabled;
     public string State = "";
 
     public static VirtualImagePf FromTbData(ThreadInfo dataProto)

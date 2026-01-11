@@ -1,57 +1,57 @@
 ﻿namespace AioTieba4DotNet.Api.GetThreads.Entities;
 
 /// <summary>
-/// 吧信息
+///     吧信息
 /// </summary>
 public class ForumT
 {
     /// <summary>
-    /// 贴吧id
+    ///     贴吧id
     /// </summary>
     public long Fid { get; init; }
 
     /// <summary>
-    /// 贴吧名
+    ///     贴吧名
     /// </summary>
     public string Fname { get; init; } = "";
 
     /// <summary>
-    /// 一级分类
+    ///     一级分类
     /// </summary>
     public string Category { get; init; } = "";
 
     /// <summary>
-    /// 二级分类
+    ///     二级分类
     /// </summary>
     public string Subcategory { get; init; } = "";
 
     /// <summary>
-    /// 吧会员数
+    ///     吧会员数
     /// </summary>
     public int MemberNum { get; init; }
 
     /// <summary>
-    /// 发帖量
+    ///     发帖量
     /// </summary>
     public int PostNum { get; init; }
 
     /// <summary>
-    /// 主题帖数
+    ///     主题帖数
     /// </summary>
     public int ThreadNum { get; init; }
 
     /// <summary>
-    /// 是否有吧务
+    ///     是否有吧务
     /// </summary>
     public bool HasBaWu { get; init; }
 
     /// <summary>
-    /// 是否有吧规
+    ///     是否有吧规
     /// </summary>
     public bool HasRule { get; init; }
 
     /// <summary>
-    /// 从贴吧原始数据转换
+    ///     从贴吧原始数据转换
     /// </summary>
     /// <param name="dataRes"></param>
     /// <returns>ForumT</returns>
@@ -73,7 +73,7 @@ public class ForumT
     }
 
     /// <summary>
-    /// 从贴吧原始数据转换
+    ///     从贴吧原始数据转换
     /// </summary>
     /// <param name="forumInfo"></param>
     /// <returns>ForumT</returns>
@@ -93,7 +93,7 @@ public class ForumT
     }
 
     /// <summary>
-    /// 格式设置
+    ///     格式设置
     /// </summary>
     /// <returns>string</returns>
     public override string ToString()

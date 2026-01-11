@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Reflection;
 using System.Security.Cryptography;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Text.RegularExpressions;
 using AioTieba4DotNet.Core;
+using JetBrains.Annotations;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AioTieba4DotNet.Tests.Core;
 
 [TestClass]
+[TestSubject(typeof(Account))]
 public class AccountTest
 {
     [TestMethod]
@@ -15,11 +19,11 @@ public class AccountTest
 
         // 验证 AndroidId 格式：16位小写16进制
         Assert.AreEqual(16, account.AndroidId.Length);
-        Assert.IsTrue(System.Text.RegularExpressions.Regex.IsMatch(account.AndroidId, "^[0-9a-f]{16}$"));
+        Assert.IsTrue(Regex.IsMatch(account.AndroidId, "^[0-9a-f]{16}$"));
 
         // 验证 Uuid 格式：标准 UUID
         Assert.IsTrue(Guid.TryParse(account.Uuid, out _));
-        Assert.IsTrue(account.Uuid.Contains("-"));
+        Assert.Contains("-", account.Uuid);
 
         // 验证 Cuid 格式
         Assert.AreEqual("baidutiebaapp" + account.Uuid, account.Cuid);
@@ -29,10 +33,10 @@ public class AccountTest
         Assert.AreEqual(expectedCuidGalaxy2, account.CuidGalaxy2);
 
         // 验证 AesEcbSecKey 长度
-        Assert.AreEqual(31, account.AesEcbSecKey.Length);
+        Assert.HasCount(31, account.AesEcbSecKey);
 
         // 验证 AesCbcSecKey 长度
-        Assert.AreEqual(16, account.AesCbcSecKey.Length);
+        Assert.HasCount(16, account.AesCbcSecKey);
     }
 
     [TestMethod]
@@ -43,11 +47,6 @@ public class AccountTest
         // 测试 CuidGalaxy2 相关数据 (数据来源于 TBCryptoTest)
         account.AndroidId = "6723280942424234";
         Assert.AreEqual("7A906FF80FFA1FCDF93F8CBEFEC546BA|VNHO3C5IV", account.CuidGalaxy2);
-
-        // 测试 C3Aid 相关数据 (数据来源于 TBCryptoTest)
-        // 注意：修改 AndroidId 后，由于 C3Aid 是懒加载的，如果已经生成过可能不会重新生成。
-        // 但在这个测试中我们还没访问过 C3Aid。为了保险起见，我们重新创建一个 account 或者使用反射清理缓存。
-        // 考虑到 Account 类内部逻辑，我们直接新建。
 
         var account2 = new Account { AndroidId = "6723280942DS4234", Uuid = "d5992777-6dd1-40c7-84e4-489332c41a81" };
         Assert.AreEqual("A00-YOMYUVSSXRCD6Y473WPJ7SMQDAIQLEYU-3NI4Y2N5", account2.C3Aid);
@@ -66,7 +65,7 @@ public class AccountTest
 
         // 使用反射设置私有字段 _aesEcbSecKey (因为没有 Setter)
         var field = typeof(Account).GetField("_aesEcbSecKey",
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            BindingFlags.Instance | BindingFlags.NonPublic);
         field?.SetValue(account, key);
 
         var cipher = account.AesEcbCipher;

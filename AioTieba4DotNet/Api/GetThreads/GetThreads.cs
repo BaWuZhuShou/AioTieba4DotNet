@@ -1,15 +1,14 @@
 ﻿using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Api.GetThreads.Entities;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Exceptions;
 using AioTieba4DotNet.Enums;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetThreads;
 
 /// <summary>
-/// 获取贴吧主题帖列表的 API (FRS页)
+///     获取贴吧主题帖列表的 API (FRS页)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
@@ -51,15 +50,15 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
     }
 
     /// <summary>
-    /// 发送获取贴吧主题帖列表请求
+    ///     发送获取贴吧主题帖列表请求
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="pn">页码</param>
     /// <param name="rn">每页请求数量</param>
     /// <param name="sort">
-    /// 排序方式
-    /// 对于有热门分区的贴吧: 0:热门排序(HOT), 1:按发布时间(CREATE), 2:关注的人(FOLLOW), 3/4:热门排序(HOT), >=5:按回复时间(REPLY)
-    /// 对于无热门分区的贴吧: 0:按回复时间(REPLY), 1:按发布时间(CREATE), 2:关注的人(FOLLOW), >=3:按回复时间(REPLY)
+    ///     排序方式
+    ///     对于有热门分区的贴吧: 0:热门排序(HOT), 1:按发布时间(CREATE), 2:关注的人(FOLLOW), 3/4:热门排序(HOT), >=5:按回复时间(REPLY)
+    ///     对于无热门分区的贴吧: 0:按回复时间(REPLY), 1:按发布时间(CREATE), 2:关注的人(FOLLOW), >=3:按回复时间(REPLY)
     /// </param>
     /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
     /// <returns>主题帖列表实体</returns>

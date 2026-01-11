@@ -1,5 +1,4 @@
 ﻿using AioTieba4DotNet.Core;
-using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AioTieba4DotNet.Tests;
@@ -17,7 +16,7 @@ public class WsCoreTest
         var reqId = 7890;
 
         // 测试加密打包
-        var packed = wsCore.PackWsBytes(data, cmd, reqId, true);
+        var packed = wsCore.PackWsBytes(data, cmd, reqId);
         Assert.AreEqual(0x88, packed[0]); // 0x08 | 0x80
 
         // 测试解包

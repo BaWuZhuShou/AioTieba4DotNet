@@ -2,7 +2,7 @@ namespace AioTieba4DotNet.Api.GetForumDetail.Entities;
 
 public class ForumDetail
 {
-    public ulong Fid { get; set; } = 0;
+    public ulong Fid { get; set; }
     public string Fname { get; set; } = "";
     public string Category { get; set; } = "";
     public string SmallAvatar { get; set; } = "";

@@ -1,16 +1,15 @@
 ﻿using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Api.Entities;
 using AioTieba4DotNet.Api.GetThreads.Entities;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Entities;
-using AioTieba4DotNet.Exceptions;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetFollows;
 
 /// <summary>
-/// 获取用户关注列表的 API
+///     获取用户关注列表的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_follows")]
@@ -33,7 +32,7 @@ public class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     }
 
     /// <summary>
-    /// 发送获取用户关注列表请求
+    ///     发送获取用户关注列表请求
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
     /// <param name="pn">页码</param>

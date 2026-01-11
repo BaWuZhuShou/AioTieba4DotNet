@@ -1,62 +1,62 @@
 ﻿namespace AioTieba4DotNet.Api.Entities.Contents;
 
 /// <summary>
-/// 内容碎片列表
+///     内容碎片列表
 /// </summary>
 public class Content
 {
     /// <summary>
-    /// 文本内容
+    ///     文本内容
     /// </summary>
     public string Text => string.Concat(Frags.Select(f => f.Text));
 
     /// <summary>
-    /// 纯文本碎片列表
+    ///     纯文本碎片列表
     /// </summary>
     public List<FragText> Texts { get; init; } = [];
 
     /// <summary>
-    /// 表情碎片列表
+    ///     表情碎片列表
     /// </summary>
     public List<FragEmoji> Emojis { get; init; } = [];
 
     /// <summary>
-    /// 图像碎片列表
+    ///     图像碎片列表
     /// </summary>
     public List<FragImage> Images { get; init; } = [];
 
     /// <summary>
-    /// @碎片列表
+    ///     @碎片列表
     /// </summary>
     public List<FragAt> Ats { get; init; } = [];
 
     /// <summary>
-    /// 链接碎片列表
+    ///     链接碎片列表
     /// </summary>
     public List<FragLink> Links { get; init; } = [];
 
     /// <summary>
-    /// 贴吧plus碎片列表
+    ///     贴吧plus碎片列表
     /// </summary>
     public List<FragTiebaPlus> TiebaPluses { get; init; } = [];
 
     /// <summary>
-    /// 视频碎片
+    ///     视频碎片
     /// </summary>
     public FragVideo? Video { get; set; }
 
     /// <summary>
-    /// 音频碎片
+    ///     音频碎片
     /// </summary>
     public FragVoice? Voice { get; set; }
 
     /// <summary>
-    /// 所有原始碎片
+    ///     所有原始碎片
     /// </summary>
     public List<IFrag> Frags { get; init; } = [];
 
     /// <summary>
-    /// 从贴吧原始数据转换
+    ///     从贴吧原始数据转换
     /// </summary>
     /// <param name="threadInfo">Protobuf 主题帖信息数据</param>
     /// <returns>内容碎片列表实体</returns>
@@ -201,7 +201,7 @@ public class Content
     }
 
     /// <summary>
-    /// 从贴吧原始数据转换
+    ///     从贴吧原始数据转换
     /// </summary>
     /// <param name="threadInfo"></param>
     /// <returns>Content</returns>
@@ -422,7 +422,7 @@ public class Content
     }
 
     /// <summary>
-    /// 从用户内容列表数据转换
+    ///     从用户内容列表数据转换
     /// </summary>
     /// <param name="dataRes"></param>
     /// <returns>Content</returns>
@@ -455,7 +455,7 @@ public class Content
     }
 
     /// <summary>
-    /// 从贴吧原始数据转换
+    ///     从贴吧原始数据转换
     /// </summary>
     /// <param name="contentProtos"></param>
     /// <returns>Content</returns>
@@ -570,7 +570,7 @@ public class Content
     }
 
     /// <summary>
-    /// 格式设置
+    ///     格式设置
     /// </summary>
     /// <returns>string</returns>
     public override string ToString()

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LikeForumApi = AioTieba4DotNet.Api.LikeForum.LikeForum;
-using JetBrains.Annotations;
 
 namespace AioTieba4DotNet.Tests.Api.UnlikeForum;
 

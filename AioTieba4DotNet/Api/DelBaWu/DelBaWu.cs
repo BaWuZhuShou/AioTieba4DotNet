@@ -5,7 +5,7 @@ using AioTieba4DotNet.Core;
 namespace AioTieba4DotNet.Api.DelBawu;
 
 /// <summary>
-/// 移除吧务的 API
+///     移除吧务的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
@@ -19,7 +19,7 @@ public class DelBaWu(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     }
 
     /// <summary>
-    /// 发送移除吧务请求
+    ///     发送移除吧务请求
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <param name="portrait">用户头像 ID (Portrait)</param>

@@ -1,19 +1,19 @@
 ﻿using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.GetThreads;
-using AioTieba4DotNet.Api.GetThreads.Entities;
-using AioTieba4DotNet.Api.GetThreadPosts;
-using AioTieba4DotNet.Api.GetThreadPosts.Entities;
+using AioTieba4DotNet.Api.AddPost;
+using AioTieba4DotNet.Api.DelPost;
+using AioTieba4DotNet.Api.DelThread;
 using AioTieba4DotNet.Api.GetComments;
 using AioTieba4DotNet.Api.GetComments.Entities;
-using AioTieba4DotNet.Api.AddPost;
-using AioTieba4DotNet.Api.DelThread;
-using AioTieba4DotNet.Api.DelPost;
+using AioTieba4DotNet.Api.GetThreadPosts;
+using AioTieba4DotNet.Api.GetThreadPosts.Entities;
+using AioTieba4DotNet.Api.GetThreads;
+using AioTieba4DotNet.Api.GetThreads.Entities;
 using AioTieba4DotNet.Enums;
 
 namespace AioTieba4DotNet.Modules;
 
 /// <summary>
-/// 帖子（主题帖及回复）功能模块
+///     帖子（主题帖及回复）功能模块
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="forumModule">贴吧模块组件</param>
@@ -21,12 +21,12 @@ namespace AioTieba4DotNet.Modules;
 public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITiebaWsCore wsCore) : IThreadModule
 {
     /// <summary>
-    /// 默认请求模式 (Http/Websocket)
+    ///     默认请求模式 (Http/Websocket)
     /// </summary>
     public TiebaRequestMode RequestMode { get; set; } = TiebaRequestMode.Http;
 
     /// <summary>
-    /// 获取贴吧主题帖列表
+    ///     获取贴吧主题帖列表
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="pn">页码</param>
@@ -43,7 +43,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     }
 
     /// <summary>
-    /// 获取贴吧主题帖列表 (通过吧 ID)
+    ///     获取贴吧主题帖列表 (通过吧 ID)
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <param name="pn">页码</param>
@@ -60,7 +60,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     }
 
     /// <summary>
-    /// 获取主题帖内回复列表
+    ///     获取主题帖内回复列表
     /// </summary>
     /// <param name="tid">主题帖 ID</param>
     /// <param name="pn">页码</param>
@@ -82,7 +82,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     }
 
     /// <summary>
-    /// 获取楼中楼回复列表
+    ///     获取楼中楼回复列表
     /// </summary>
     /// <param name="tid">主题帖 ID</param>
     /// <param name="pid">回复 ID (pid) 或楼中楼 ID (spid)</param>
@@ -98,7 +98,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     }
 
     /// <summary>
-    /// 点赞/点踩
+    ///     点赞/点踩
     /// </summary>
     /// <param name="tid">主题帖 ID</param>
     /// <param name="pid">回复 ID (为 0 表示对主题帖操作)</param>
@@ -109,12 +109,12 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     public async Task<bool> AgreeAsync(long tid, long pid = 0, bool isComment = false, bool isDisagree = false,
         bool isUndo = false)
     {
-        var api = new AioTieba4DotNet.Api.Agree.Agree(httpCore);
+        var api = new Api.Agree.Agree(httpCore);
         return await api.RequestAsync(tid, pid, isComment, isDisagree, isUndo);
     }
 
     /// <summary>
-    /// 点踩
+    ///     点踩
     /// </summary>
     /// <param name="tid">主题帖 ID</param>
     /// <param name="pid">回复 ID</param>
@@ -127,7 +127,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     }
 
     /// <summary>
-    /// 取消点赞
+    ///     取消点赞
     /// </summary>
     /// <param name="tid">主题帖 ID</param>
     /// <param name="pid">回复 ID</param>
@@ -139,7 +139,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     }
 
     /// <summary>
-    /// 取消点踩
+    ///     取消点踩
     /// </summary>
     /// <param name="tid">主题帖 ID</param>
     /// <param name="pid">回复 ID</param>
@@ -152,7 +152,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
 
 
     /// <summary>
-    /// 发布回复
+    ///     发布回复
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="tid">主题帖 ID</param>
@@ -169,7 +169,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     }
 
     /// <summary>
-    /// 删除主题帖
+    ///     删除主题帖
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="tid">主题帖 ID</param>
@@ -182,7 +182,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     }
 
     /// <summary>
-    /// 删除回复
+    ///     删除回复
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="tid">主题帖 ID</param>

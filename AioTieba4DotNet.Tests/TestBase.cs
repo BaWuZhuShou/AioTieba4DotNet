@@ -1,20 +1,12 @@
 ﻿using System;
-using Microsoft.Extensions.Configuration;
 using AioTieba4DotNet.Core;
+using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AioTieba4DotNet.Tests;
 
 public abstract class TestBase
 {
-    protected static IConfiguration Configuration { get; }
-    protected static string Bduss { get; }
-    protected static string Stoken { get; }
-
-    protected HttpCore HttpCore { get; }
-    protected WebsocketCore WebsocketCore { get; }
-
-    protected bool IsAuthenticated => !string.IsNullOrEmpty(Bduss);
-
     static TestBase()
     {
         Configuration = new ConfigurationBuilder()
@@ -36,5 +28,21 @@ public abstract class TestBase
         HttpCore = new HttpCore();
         HttpCore.SetAccount(account);
         WebsocketCore = new WebsocketCore(account);
+        Client = new TiebaClient(HttpCore);
+    }
+
+    protected static IConfiguration Configuration { get; }
+    protected static string Bduss { get; }
+    protected static string Stoken { get; }
+
+    protected HttpCore HttpCore { get; }
+    protected WebsocketCore WebsocketCore { get; }
+    protected TiebaClient Client { get; }
+
+    protected bool IsAuthenticated => !string.IsNullOrEmpty(Bduss);
+
+    protected void EnsureAuthenticated()
+    {
+        if (!IsAuthenticated) Assert.Inconclusive("Skipping test: BDUSS is not configured.");
     }
 }

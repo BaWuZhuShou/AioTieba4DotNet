@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AioTieba4DotNet.Api.GetUInfoUserJson;
+using Newtonsoft.Json;
 
 namespace AioTieba4DotNet.Tests.Api.GetUInfoUserJson;
 
@@ -17,6 +17,6 @@ public class GetUInfoUserJsonTest : TestBase
         // 使用用户名进行查询
         var result = await getUInfoUserJson.RequestAsync("momoiebee");
         Assert.IsNotNull(result);
-        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
+        Console.WriteLine(JsonConvert.SerializeObject(result));
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AioTieba4DotNet.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GetThreadPostsApi = AioTieba4DotNet.Api.GetThreadPosts.GetThreadPosts;
 using GetThreadsApi = AioTieba4DotNet.Api.GetThreads.GetThreads;
@@ -14,7 +13,7 @@ public class GetThreadPostsTest : TestBase
     [TestMethod]
     public async Task TestRequest()
     {
-        var getThreads = new GetThreadsApi(HttpCore, WebsocketCore, TiebaRequestMode.Http);
+        var getThreads = new GetThreadsApi(HttpCore, WebsocketCore);
         var threads = await getThreads.RequestAsync("地下城与勇士", 1, 10, 5, 0);
         Assert.IsNotNull(threads.Objs);
         Assert.IsNotEmpty(threads.Objs);

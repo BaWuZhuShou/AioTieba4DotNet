@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
+using AioTieba4DotNet.Core;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AioTieba4DotNet.Core;
 
 namespace AioTieba4DotNet.Tests.Core;
 
