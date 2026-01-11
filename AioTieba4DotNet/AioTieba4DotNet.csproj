@@ -30,7 +30,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.33.2"/>
+        <PackageReference Include="Google.Protobuf" Version="3.33.3" />
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.1"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.1"/>

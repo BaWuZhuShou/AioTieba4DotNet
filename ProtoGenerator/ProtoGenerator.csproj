@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.29.3"/>
-        <PackageReference Include="Google.Protobuf.Tools" Version="3.33.2" GeneratePathProperty="true"/>
+        <PackageReference Include="Google.Protobuf" Version="3.33.3" />
+        <PackageReference Include="Google.Protobuf.Tools" Version="3.33.3" GeneratePathProperty="true" />
     </ItemGroup>
 
     <!-- 自动将 protoc 复制到输出目录，实现彻底独立运行 -->

@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "Google.Protobuf": {
+        "type": "Direct",
+        "requested": "[3.33.3, )",
+        "resolved": "3.33.3",
+        "contentHash": "ZkghmDjhnSS26gL1GbaMpl/8Uj/azE24xZunN36pGplYIj2xI6OBZUCe5LVoj18D2mcMJBBjUSjJMceyAPybNQ=="
+      },
+      "Google.Protobuf.Tools": {
+        "type": "Direct",
+        "requested": "[3.33.3, )",
+        "resolved": "3.33.3",
+        "contentHash": "RW5qBLqw4Z6or3TF9GFz7GrBxEhyPi9r/ZiUHZTNSORivkHTCQQUA4Vk09QwuIZBl2TqkkCDjtnlihQ3s1Phrw=="
+      }
+    },
+    "net8.0": {
+      "Google.Protobuf": {
+        "type": "Direct",
+        "requested": "[3.33.3, )",
+        "resolved": "3.33.3",
+        "contentHash": "ZkghmDjhnSS26gL1GbaMpl/8Uj/azE24xZunN36pGplYIj2xI6OBZUCe5LVoj18D2mcMJBBjUSjJMceyAPybNQ=="
+      },
+      "Google.Protobuf.Tools": {
+        "type": "Direct",
+        "requested": "[3.33.3, )",
+        "resolved": "3.33.3",
+        "contentHash": "RW5qBLqw4Z6or3TF9GFz7GrBxEhyPi9r/ZiUHZTNSORivkHTCQQUA4Vk09QwuIZBl2TqkkCDjtnlihQ3s1Phrw=="
+      }
+    },
+    "net9.0": {
+      "Google.Protobuf": {
+        "type": "Direct",
+        "requested": "[3.33.3, )",
+        "resolved": "3.33.3",
+        "contentHash": "ZkghmDjhnSS26gL1GbaMpl/8Uj/azE24xZunN36pGplYIj2xI6OBZUCe5LVoj18D2mcMJBBjUSjJMceyAPybNQ=="
+      },
+      "Google.Protobuf.Tools": {
+        "type": "Direct",
+        "requested": "[3.33.3, )",
+        "resolved": "3.33.3",
+        "contentHash": "RW5qBLqw4Z6or3TF9GFz7GrBxEhyPi9r/ZiUHZTNSORivkHTCQQUA4Vk09QwuIZBl2TqkkCDjtnlihQ3s1Phrw=="
+      }
+    }
+  }
+}

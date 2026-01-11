@@ -1,70 +1,70 @@
 ﻿name: "CodeQL"
 
 on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
-  schedule:
-    - cron: '30 18 * * 4'
+    push:
+        branches: [ "main", "master" ]
+    pull_request:
+        branches: [ "main", "master" ]
+    schedule:
+        -   cron: '30 18 * * 4'
 
 jobs:
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
+    analyze:
+        name: Analyze
+        runs-on: ubuntu-latest
+        permissions:
+            actions: read
+            contents: read
+            security-events: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'csharp' ]
+        strategy:
+            fail-fast: false
+            matrix:
+                language: [ 'csharp' ]
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v5
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v6
 
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: |
-          8.x
-          9.x
-          10.x
+            -   name: Setup .NET SDK
+                uses: actions/setup-dotnet@v5
+                with:
+                    dotnet-version: |
+                        8.x
+                        9.x
+                        10.x
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
-        queries: security-extended,security-and-quality
-        config-file: .github/codeql/config.yml
+            -   name: Initialize CodeQL
+                uses: github/codeql-action/init@v3
+                with:
+                    languages: ${{ matrix.language }}
+                    queries: security-extended,security-and-quality
+                    config-file: .github/codeql/config.yml
 
-    - name: Build
-      run: |
-        dotnet restore
-        dotnet build --no-restore
+            -   name: Build
+                run: |
+                    dotnet restore
+                    dotnet build --no-restore
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
-        upload: failure-only
-        output: ${{ runner.temp }}/codeql-sarif
+            -   name: Perform CodeQL Analysis
+                uses: github/codeql-action/analyze@v3
+                with:
+                    category: "/language:${{matrix.language}}"
+                    upload: failure-only
+                    output: ${{ runner.temp }}/codeql-sarif
 
-    - name: Filter SARIF
-      uses: advanced-security/filter-sarif@59d0a64b3c0a34d787819f6659708915b6210582
-      with:
-        patterns: |
-          -**/Protobuf/**
-          -**/protobuf/**
-          -AioTieba4DotNet.Tests/**
-          -ProtoGenerator/**
-        input: ${{ runner.temp }}/codeql-sarif/${{ matrix.language }}.sarif
-        output: ${{ runner.temp }}/codeql-sarif/${{ matrix.language }}.sarif
+            -   name: Filter SARIF
+                uses: advanced-security/filter-sarif@59d0a64b3c0a34d787819f6659708915b6210582
+                with:
+                    patterns: |
+                        -**/Protobuf/**
+                        -**/protobuf/**
+                        -AioTieba4DotNet.Tests/**
+                        -ProtoGenerator/**
+                    input: ${{ runner.temp }}/codeql-sarif/${{ matrix.language }}.sarif
+                    output: ${{ runner.temp }}/codeql-sarif/${{ matrix.language }}.sarif
 
-    - name: Upload SARIF
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: ${{ runner.temp }}/codeql-sarif/${{ matrix.language }}.sarif
+            -   name: Upload SARIF
+                uses: github/codeql-action/upload-sarif@v3
+                with:
+                    sarif_file: ${{ runner.temp }}/codeql-sarif/${{ matrix.language }}.sarif
