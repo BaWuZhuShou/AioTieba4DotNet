@@ -14,7 +14,8 @@
 - [ ] `set_bawu_perm`: 设置吧务权限
 - [ ] `get_unblock_appeals`: 获取解封申诉列表
 - [ ] `handle_unblock_appeals`: 处理解封申诉 (同意/拒绝)
-- [ ] `get_blocks`: 获取封禁列表 (对应 `get_blocks`)
+- [ ] `get_blocks`: 获取封禁列表
+- [ ] `unblock`: 解除封禁
 
 ## 2. 帖子与评论管理 (Thread & Post Management)
 - [ ] `del_posts`: 批量删除回复
@@ -25,6 +26,7 @@
 - [ ] `untop`: 取消置顶
 - [ ] `move`: 移动帖子到指定分区
 - [ ] `recommend`: 推荐帖子 (大推)
+- [ ] `unagree`: 取消点赞 (对应 `agree`)
 - [ ] `recover`: 恢复已删除的帖子/回复
 - [ ] `get_recovers`: 获取回收站列表
 - [ ] `get_recover_info`: 获取回收站内单条内容的详情
@@ -36,10 +38,16 @@
 - [ ] `get_replys`: 获取 回复我的 消息列表
 - [ ] `get_fans`: 获取用户的粉丝列表
 - [ ] `remove_fan`: 移除粉丝
-- [ ] `get_follow_forums`: 获取关注的吧列表 (支持 v1 接口)
+- [ ] `get_follow_forums`: 获取他人关注的吧列表
+- [ ] `get_self_follow_forums`: 获取自己关注的吧列表 (Web 接口)
+- [ ] `get_self_follow_forums_v1`: 获取自己关注的吧列表 (Web V1 接口)
+- [ ] `get_dislike_forums`: 获取屏蔽吧列表
 - [ ] `set_blacklist`: 将用户加入黑名单
 - [ ] `get_blacklist`: 获取黑名单列表
 - [ ] `set_profile`: 修改个人资料 (头像/简介等)
+- [ ] `get_uinfo_getUserInfo_web`: 获取用户信息 (Web 接口)
+- [ ] `get_selfinfo_initNickname`: 获取初始昵称信息
+- [ ] `get_selfinfo_moindex`: 获取主页索引信息
 - [ ] `tieba_uid2user_info`: 通过 `tieba_uid` 查询用户信息
 - [ ] `get_rank_users`: 获取用户等级排行榜
 
@@ -50,6 +58,7 @@
 - [ ] `get_last_replyers`: 获取帖子最后回复者的简要信息
 - [ ] `get_member_users`: 获取吧会员列表
 - [ ] `get_rank_forums`: 获取吧热度排行榜
+- [ ] `get_recom_status`: 获取贴吧推荐状态 (大吧主权限)
 - [ ] `get_square_forums`: 获取吧广场列表
 - [ ] `get_statistics`: 获取贴吧统计数据
 
