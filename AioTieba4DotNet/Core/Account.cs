@@ -5,19 +5,50 @@ namespace AioTieba4DotNet.Core;
 /// <summary>
 /// 贴吧账户类，包含账户凭证及设备信息
 /// </summary>
-/// <param name="bduss">BDUSS 凭证</param>
-/// <param name="stoken">STOKEN 凭证（可选）</param>
-public class Account(string bduss = "", string stoken = "")
+public class Account
 {
     /// <summary>
     /// BDUSS 凭证，主登录凭证
     /// </summary>
-    public string Bduss { get; private set; } = bduss;
+    public string Bduss
+    {
+        get => _bduss;
+        private set
+        {
+            if (!string.IsNullOrEmpty(value) && value.Length != 192)
+                throw new ArgumentException($"BDUSS length should be 192, but got {value.Length}");
+            _bduss = value;
+        }
+    }
+
+    private string _bduss = string.Empty;
 
     /// <summary>
     /// STOKEN 凭证，部分 API 校验所需
     /// </summary>
-    public string Stoken { get; private set; } = stoken;
+    public string Stoken
+    {
+        get => _stoken;
+        private set
+        {
+            if (!string.IsNullOrEmpty(value) && value.Length != 64)
+                throw new ArgumentException($"STOKEN length should be 64, but got {value.Length}");
+            _stoken = value;
+        }
+    }
+
+    private string _stoken = string.Empty;
+
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="bduss">BDUSS 凭证</param>
+    /// <param name="stoken">STOKEN 凭证（可选）</param>
+    public Account(string bduss = "", string stoken = "")
+    {
+        Bduss = bduss;
+        Stoken = stoken;
+    }
 
     private volatile string? _androidId;
     private volatile string? _uuid;
@@ -74,9 +105,15 @@ public class Account(string bduss = "", string stoken = "")
     /// </summary>
     public string? Tbs { get; set; }
 
-    private string? ClientId { get; set; }
+    /// <summary>
+    /// Client ID
+    /// </summary>
+    public string? ClientId { get; set; }
 
-    private string? SampleId { get; set; }
+    /// <summary>
+    /// Sample ID
+    /// </summary>
+    public string? SampleId { get; set; }
 
     /// <summary>
     /// CUID，由百度生成的设备唯一标识符
@@ -94,6 +131,7 @@ public class Account(string bduss = "", string stoken = "")
                 return val;
             }
         }
+        set => _cuid = value;
     }
 
     /// <summary>
@@ -112,9 +150,13 @@ public class Account(string bduss = "", string stoken = "")
                 return val;
             }
         }
+        set => _cuidGalaxy2 = value;
     }
 
-    private string? C3Aid
+    /// <summary>
+    /// C3 AID
+    /// </summary>
+    public string? C3Aid
     {
         get
         {
@@ -127,9 +169,13 @@ public class Account(string bduss = "", string stoken = "")
                 return val;
             }
         }
+        set => _c3Aid = value;
     }
 
-    private string? ZId { get; set; }
+    /// <summary>
+    /// Z ID
+    /// </summary>
+    public string? ZId { get; set; }
 
     /// <summary>
     /// WebSocket 通信使用的 AES-ECB 密钥
