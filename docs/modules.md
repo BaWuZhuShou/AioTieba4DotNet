@@ -41,8 +41,7 @@
 ### 发布与管理 API
 | 方法 | 说明 | 参数 |
 | --- | --- | --- |
-| `AddThreadAsync` | 发表主题帖 | `fname`, `title`, `content` (字符串或 `IFrag` 列表), `mode` |
-| `AddPostAsync` | 回复帖子/楼中楼 | `fname`, `tid`, `content`, `showName` (小号名), `mode` |
+| `AddPostAsync` | 回复帖子/楼中楼 | `fname`, `tid`, `content` (纯文本), `showName` (小号名), `mode` |
 | `DelThreadAsync` | 删除主题帖 | `fname`, `tid` |
 | `DelPostAsync` | 删除回复 | `fname`, `tid`, `pid` |
 

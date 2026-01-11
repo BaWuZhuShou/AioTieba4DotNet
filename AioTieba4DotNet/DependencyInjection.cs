@@ -20,10 +20,7 @@ public static class DependencyInjection
     public static IServiceCollection AddAioTiebaClient(this IServiceCollection services,
         Action<TiebaOptions>? configureOptions = null)
     {
-        if (configureOptions != null)
-        {
-            services.Configure(configureOptions);
-        }
+        if (configureOptions != null) services.Configure(configureOptions);
 
         // 注册专用的 HttpClient，配置连接池、Cookie 容器和 GZip 压缩
         services.AddHttpClient("TiebaClient", client =>
@@ -45,9 +42,7 @@ public static class DependencyInjection
 
             var httpCore = new HttpCore(httpClient);
             if (!string.IsNullOrEmpty(options.Bduss) && !string.IsNullOrEmpty(options.Stoken))
-            {
                 httpCore.SetAccount(new Account(options.Bduss, options.Stoken));
-            }
 
             return httpCore;
         });

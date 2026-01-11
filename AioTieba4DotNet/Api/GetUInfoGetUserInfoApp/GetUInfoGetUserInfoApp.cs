@@ -18,7 +18,7 @@ public class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : ProtoApiBase(http
 
     private static byte[] PackProto(int userId)
     {
-        var reqProto = new GetUserInfoReqIdl { Data = new() { UserId = userId } };
+        var reqProto = new GetUserInfoReqIdl { Data = new GetUserInfoReqIdl.Types.DataReq { UserId = userId } };
         return reqProto.ToByteArray();
     }
 

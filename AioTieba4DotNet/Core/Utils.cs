@@ -23,14 +23,11 @@ public static class Utils
 
     public static byte[] ApplyPkcs7Padding(byte[] data, int blockSize)
     {
-        var paddingSize = blockSize - (data.Length % blockSize);
+        var paddingSize = blockSize - data.Length % blockSize;
         var paddedData = new byte[data.Length + paddingSize];
         Buffer.BlockCopy(data, 0, paddedData, 0, data.Length);
 
-        for (var i = data.Length; i < paddedData.Length; i++)
-        {
-            paddedData[i] = (byte)paddingSize;
-        }
+        for (var i = data.Length; i < paddedData.Length; i++) paddedData[i] = (byte)paddingSize;
 
         return paddedData;
     }
@@ -77,13 +74,9 @@ public static class Utils
     public static int TbNumToInt(string tbNum)
     {
         if (!string.IsNullOrEmpty(tbNum) && tbNum.EndsWith('万'))
-        {
             // 去掉字符串末尾的"万"，转换为浮点数后乘以10000
             return (int)(double.Parse(tbNum.TrimEnd('万')) * 1e4);
-        }
         else
-        {
             return int.Parse(tbNum);
-        }
     }
 }

@@ -21,10 +21,7 @@ public abstract class ApiBase(ITiebaHttpCore httpCore)
     /// <exception cref="TieBaServerException">当错误码不为 0 时抛出</exception>
     protected static void CheckError(int code, string? msg)
     {
-        if (code != 0)
-        {
-            throw new TieBaServerException(code, msg ?? string.Empty);
-        }
+        if (code != 0) throw new TieBaServerException(code, msg ?? string.Empty);
     }
 
     /// <summary>
@@ -69,7 +66,6 @@ public abstract class ApiWsBase<TResult>(
     protected async Task<TResult> ExecuteAsync(Func<Task<TResult>> httpRequest, Func<Task<TResult>>? wsRequest = null)
     {
         if (Mode == TiebaRequestMode.Websocket && wsRequest != null)
-        {
             try
             {
                 return await wsRequest();
@@ -78,7 +74,6 @@ public abstract class ApiWsBase<TResult>(
             {
                 // 强制要求ws但是未实现，回退http
             }
-        }
 
         return await httpRequest();
     }

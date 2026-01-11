@@ -18,11 +18,11 @@ public class WebsocketIntegrationTest
         try
         {
             await wsCore.ConnectAsync();
-            
+
             // 如果连接成功，我们尝试发送一个心跳
             // 心跳 cmd 为 0，不加密
             await wsCore.SendAsync(0, Array.Empty<byte>(), false);
-            
+
             // 验证状态
             // 虽然我们无法直接访问 _ws，但如果没有抛出异常，说明 Send 成功了
         }

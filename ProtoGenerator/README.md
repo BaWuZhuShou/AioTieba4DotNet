@@ -4,7 +4,8 @@
 
 ## ✨ 特点
 
-- **彻底独立运行**：深度集成 `Google.Protobuf.Tools`。工具在构建时会自动根据当前操作系统（Windows/Linux/macOS）提取对应的 `protoc` 二进制文件，**无需**在系统中预装 Protobuf 环境。
+- **彻底独立运行**：深度集成 `Google.Protobuf.Tools`。工具在构建时会自动根据当前操作系统（Windows/Linux/macOS）提取对应的
+  `protoc` 二进制文件，**无需**在系统中预装 Protobuf 环境。
 - **现代化 C#**：基于 **.NET 10** 和顶级语句 (Top-level statements) 构建。
 - **智能路径探测**：运行时自动向上递归探测项目根目录（通过寻找 `.sln` 文件），确保在任何环境下启动都能正确定位。
 - **全自动递归扫描**：自动扫描 `AioTieba4DotNet/Api` 目录及其所有子目录下的 `.proto` 文件，并将其转换为对应的 C# 类文件。

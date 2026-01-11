@@ -31,7 +31,7 @@ public class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaR
                 {
                     ClientType = 2,
                     ClientVersion = Const.MainVersion,
-                    BDUSS = withComments ? (bduss ?? string.Empty) : string.Empty
+                    BDUSS = withComments ? bduss ?? string.Empty : string.Empty
                 },
                 Kz = tid,
                 Pn = pn,

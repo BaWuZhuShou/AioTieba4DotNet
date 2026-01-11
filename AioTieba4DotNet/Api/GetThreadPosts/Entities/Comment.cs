@@ -85,10 +85,7 @@ public class Comment
 
     public static Comment FromTbData(SubPostList? dataProto)
     {
-        if (dataProto == null)
-        {
-            return new Comment { Content = Content.FromTbData((IEnumerable<PbContent>?)null) };
-        }
+        if (dataProto == null) return new Comment { Content = Content.FromTbData((IEnumerable<PbContent>?)null) };
 
         var content = Content.FromTbData(dataProto.Content);
 
@@ -119,10 +116,7 @@ public class Comment
                     var newFirstText = new FragText { Text = trimmedText };
                     content.Frags[0] = newFirstText;
                     var indexInTexts = content.Texts.IndexOf(firstFragText);
-                    if (indexInTexts != -1)
-                    {
-                        content.Texts[indexInTexts] = newFirstText;
-                    }
+                    if (indexInTexts != -1) content.Texts[indexInTexts] = newFirstText;
                 }
             }
         }

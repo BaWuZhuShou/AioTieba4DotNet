@@ -10,16 +10,11 @@ namespace AioTieba4DotNet.Tests.Core;
 [TestSubject(typeof(Signer))]
 public class SignerTest
 {
-
     [TestMethod]
     public void TestSign()
     {
-        var items = new List<KeyValuePair<string, string>>()
-        {
-            new("key1", "value1"),
-            new("key2", "12345")
-        };
+        var items = new List<KeyValuePair<string, string>> { new("key1", "value1"), new("key2", "12345") };
         var sign = Signer.Sign(items);
-        Assert.AreEqual(sign,"9732aa652304b3770aba8902323a05a7");
+        Assert.AreEqual(sign, "9732aa652304b3770aba8902323a05a7");
     }
 }

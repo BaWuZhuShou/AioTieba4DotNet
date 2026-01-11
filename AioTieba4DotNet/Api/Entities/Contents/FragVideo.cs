@@ -69,7 +69,7 @@ public class FragVideo : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>视频碎片实体</returns>
-    public static FragVideo FromTbData(global::PbContent dataProto)
+    public static FragVideo FromTbData(PbContent dataProto)
     {
         return new FragVideo
         {

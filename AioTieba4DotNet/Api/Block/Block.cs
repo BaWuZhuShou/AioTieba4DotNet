@@ -32,7 +32,7 @@ public class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     {
         var specialDays = new HashSet<int> { 1, 3, 10 }; // 可以随时在这里添加新的特殊天数
         var isSvipBlock = specialDays.Contains(day) ? "0" : "1";
-        var data = new List<KeyValuePair<string, string>>()
+        var data = new List<KeyValuePair<string, string>>
         {
             new("BDUSS", HttpCore.Account!.Bduss),
             new("day", day.ToString()),
@@ -43,7 +43,7 @@ public class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
             new("reason", reason),
             new("tbs", HttpCore.Account!.Tbs!),
             new("word", "-"),
-            new("z", "6"),
+            new("z", "6")
         };
         var requestUri = new UriBuilder(Const.AppSecureScheme, Const.AppBaseHost, 443, "/c/c/bawu/commitprison").Uri;
 

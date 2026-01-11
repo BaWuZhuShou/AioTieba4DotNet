@@ -29,14 +29,14 @@ public class DelPost(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(ulong fid, long tid, long pid)
     {
-        var data = new List<KeyValuePair<string, string>>()
+        var data = new List<KeyValuePair<string, string>>
         {
             new("BDUSS", HttpCore.Account!.Bduss),
             new("_client_version", Const.MainVersion),
             new("fid", fid.ToString()),
             new("tid", tid.ToString()),
             new("pid", pid.ToString()),
-            new("tbs", HttpCore.Account!.Tbs!),
+            new("tbs", HttpCore.Account!.Tbs!)
         };
 
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/post/del").Uri;

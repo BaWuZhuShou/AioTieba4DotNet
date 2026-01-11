@@ -20,7 +20,7 @@ public class GetUserThreadsTest : TestBase
             return;
         }
 
-        var getUserThreads = new GetUserThreads(HttpCore, WebsocketCore,TiebaRequestMode.Websocket);
+        var getUserThreads = new GetUserThreads(HttpCore, WebsocketCore, TiebaRequestMode.Websocket);
         var result = await getUserThreads.RequestAsync(1, 1, true);
 
         Assert.IsNotNull(result);

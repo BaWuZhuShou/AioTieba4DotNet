@@ -20,10 +20,7 @@ public class UserThreads : Containers<UserThread>
         if (objs.Count == 0) return new UserThreads(objs);
 
         var user = UserInfo.FromTbData(dataRes.PostList[0]);
-        foreach (var uthread in objs)
-        {
-            uthread.User = user;
-        }
+        foreach (var uthread in objs) uthread.User = user;
 
         return new UserThreads(objs);
     }

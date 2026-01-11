@@ -28,7 +28,7 @@ public class Forum
         var threadNum = Convert.ToInt32(dataMap["thread_num"]);
         var hasBaWu = dataMap.ContainsKey("managers");
 
-        return new Forum()
+        return new Forum
         {
             Fid = fid,
             Fname = fname,

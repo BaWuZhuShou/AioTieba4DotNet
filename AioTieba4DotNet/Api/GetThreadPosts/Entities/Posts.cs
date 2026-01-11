@@ -22,10 +22,7 @@ public class Posts
         thread.Fid = forum.Fid;
 
         var users = dataRes.UserList.ToDictionary(u => u.Id, UserInfoT.FromTbData);
-        if (users.TryGetValue(thread.AuthorId, out var threadAuthor))
-        {
-            thread.User = threadAuthor;
-        }
+        if (users.TryGetValue(thread.AuthorId, out var threadAuthor)) thread.User = threadAuthor;
 
         var posts = dataRes.PostList.Select(Post.FromTbData).ToList();
         foreach (var post in posts)
@@ -34,10 +31,7 @@ public class Posts
             post.Fid = forum.Fid;
             post.Tid = thread.Tid;
             post.IsThreadAuthor = post.AuthorId == thread.AuthorId;
-            if (users.TryGetValue(post.AuthorId, out var postAuthor))
-            {
-                post.User = postAuthor;
-            }
+            if (users.TryGetValue(post.AuthorId, out var postAuthor)) post.User = postAuthor;
 
             foreach (var comment in post.Comments)
             {
@@ -47,10 +41,7 @@ public class Posts
                 comment.Ppid = post.Pid;
                 comment.Floor = post.Floor;
                 comment.IsThreadAuthor = comment.AuthorId == thread.AuthorId;
-                if (users.TryGetValue(comment.AuthorId, out var commentAuthor))
-                {
-                    comment.User = commentAuthor;
-                }
+                if (users.TryGetValue(comment.AuthorId, out var commentAuthor)) comment.User = commentAuthor;
             }
         }
 

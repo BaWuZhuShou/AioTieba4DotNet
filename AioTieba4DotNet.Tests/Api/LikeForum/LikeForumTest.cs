@@ -22,7 +22,7 @@ public class UnlikeForumTest : TestBase
 
         var getTbs = new GetTbsApi(HttpCore);
         HttpCore!.Account!.Tbs = await getTbs.RequestAsync();
-        
+
         var unlikeForum = new UnlikeForumApi(HttpCore);
 
         try

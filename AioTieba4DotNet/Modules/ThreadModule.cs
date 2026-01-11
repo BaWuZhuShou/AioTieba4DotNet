@@ -5,13 +5,9 @@ using AioTieba4DotNet.Api.GetThreadPosts;
 using AioTieba4DotNet.Api.GetThreadPosts.Entities;
 using AioTieba4DotNet.Api.GetComments;
 using AioTieba4DotNet.Api.GetComments.Entities;
-using AioTieba4DotNet.Api.Agree;
-using AioTieba4DotNet.Api.AddThread;
 using AioTieba4DotNet.Api.AddPost;
 using AioTieba4DotNet.Api.DelThread;
 using AioTieba4DotNet.Api.DelPost;
-using AioTieba4DotNet.Api.Entities.Contents;
-using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
 
 namespace AioTieba4DotNet.Modules;
@@ -154,65 +150,22 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
         return await AgreeAsync(tid, pid, isComment, true, true);
     }
 
-    /// <summary>
-    /// 发布主题帖 (简单文本)
-    /// </summary>
-    /// <param name="fname">吧名</param>
-    /// <param name="title">标题</param>
-    /// <param name="content">文本内容</param>
-    /// <param name="mode">请求模式覆盖（可选）</param>
-    /// <returns>新发布的帖子 ID (tid)</returns>
-    public async Task<long> AddThreadAsync(string fname, string title, string content, TiebaRequestMode? mode = null)
-    {
-        return await AddThreadAsync(fname, title, [new FragText { Text = content }], mode);
-    }
 
     /// <summary>
-    /// 发布主题帖 (富文本碎片)
-    /// </summary>
-    /// <param name="fname">吧名</param>
-    /// <param name="title">标题</param>
-    /// <param name="contents">内容碎片列表</param>
-    /// <param name="mode">请求模式覆盖（可选）</param>
-    /// <returns>新发布的帖子 ID (tid)</returns>
-    public async Task<long> AddThreadAsync(string fname, string title, List<IFrag> contents,
-        TiebaRequestMode? mode = null)
-    {
-        var fid = await forumModule.GetFidAsync(fname);
-        var api = new AddThread(httpCore, wsCore, mode ?? RequestMode);
-        return await api.RequestAsync(fname, fid, title, contents);
-    }
-
-    /// <summary>
-    /// 发布回复 (简单文本)
+    /// 发布回复
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="tid">主题帖 ID</param>
-    /// <param name="content">文本内容</param>
+    /// <param name="content">内容</param>
     /// <param name="showName">显示名称 (可选)</param>
     /// <param name="mode">请求模式覆盖（可选）</param>
-    /// <returns>新发布的回复 ID (pid)</returns>
-    public async Task<long> AddPostAsync(string fname, long tid, string content, string? showName = null,
-        TiebaRequestMode? mode = null)
-    {
-        return await AddPostAsync(fname, tid, [new FragText { Text = content }], showName, mode);
-    }
-
-    /// <summary>
-    /// 发布回复 (富文本碎片)
-    /// </summary>
-    /// <param name="fname">吧名</param>
-    /// <param name="tid">主题帖 ID</param>
-    /// <param name="contents">内容碎片列表</param>
-    /// <param name="showName">显示名称 (可选)</param>
-    /// <param name="mode">请求模式覆盖（可选）</param>
-    /// <returns>新发布的回复 ID (pid)</returns>
-    public async Task<long> AddPostAsync(string fname, long tid, List<IFrag> contents, string? showName = null,
+    /// <returns>是否成功</returns>
+    public async Task<bool> AddPostAsync(string fname, long tid, string content, string? showName = null,
         TiebaRequestMode? mode = null)
     {
         var fid = await forumModule.GetFidAsync(fname);
         var api = new AddPost(httpCore, wsCore, mode ?? RequestMode);
-        return await api.RequestAsync(fname, fid, tid, contents, showName);
+        return await api.RequestAsync(fname, fid, tid, content, showName);
     }
 
     /// <summary>

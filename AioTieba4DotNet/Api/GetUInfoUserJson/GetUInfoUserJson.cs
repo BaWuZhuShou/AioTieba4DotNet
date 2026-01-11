@@ -29,13 +29,10 @@ public class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <returns>用户信息 JSON 实体</returns>
     public async Task<UserInfoJson> RequestAsync(string username)
     {
-        var data = new List<KeyValuePair<string, string>> { new("un", username), new("ie", "utf-8"), };
+        var data = new List<KeyValuePair<string, string>> { new("un", username), new("ie", "utf-8") };
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/i/sys/user_json").Uri;
         var responseString = await HttpCore.SendWebGetAsync(requestUri, data);
-        if (string.IsNullOrEmpty(responseString))
-        {
-            throw new TieBaServerException(-1, "无法获取到用户数据!");
-        }
+        if (string.IsNullOrEmpty(responseString)) throw new TieBaServerException(-1, "无法获取到用户数据!");
 
         return ParseBody(responseString);
     }

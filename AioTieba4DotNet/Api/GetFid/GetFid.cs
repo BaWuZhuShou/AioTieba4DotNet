@@ -18,10 +18,7 @@ public class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         var o = JsonApiBase.ParseBody(body, "no", "error");
 
         var fid = o.GetValue("data")!.ToObject<JObject>()!.GetValue("fid")!.ToObject<ulong>();
-        if (fid == 0)
-        {
-            throw new TieBaServerException(-1, "fid is 0!");
-        }
+        if (fid == 0) throw new TieBaServerException(-1, "fid is 0!");
 
         return fid;
     }
@@ -33,7 +30,7 @@ public class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <returns>吧 ID (fid)</returns>
     public async Task<ulong> RequestAsync(string fname)
     {
-        var data = new List<KeyValuePair<string, string>>() { new("fname", fname), new("ie", "utf-8") };
+        var data = new List<KeyValuePair<string, string>> { new("fname", fname), new("ie", "utf-8") };
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/f/commit/share/fnameShareApi").Uri;
 
         var result = await HttpCore.SendWebGetAsync(requestUri, data);

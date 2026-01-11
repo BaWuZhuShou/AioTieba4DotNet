@@ -20,16 +20,10 @@ public class UserInfoT : UserInfo
 
     public static UserInfoT? FromTbData(User? dataProto)
     {
-        if (dataProto == null)
-        {
-            return null;
-        }
+        if (dataProto == null) return null;
 
         var portrait = dataProto.Portrait ?? "";
-        if (portrait.Contains('?'))
-        {
-            portrait = portrait[..^13];
-        }
+        if (portrait.Contains('?')) portrait = portrait[..^13];
 
         return new UserInfoT
         {
@@ -50,7 +44,7 @@ public class UserInfoT : UserInfo
             PrivReply = dataProto.PrivSets != null && dataProto.PrivSets.Reply != 0
                 ? (PrivReply)dataProto.PrivSets.Reply
                 : PrivReply.All,
-            Ip = dataProto.IpAddress,
+            Ip = dataProto.IpAddress
         };
     }
 }

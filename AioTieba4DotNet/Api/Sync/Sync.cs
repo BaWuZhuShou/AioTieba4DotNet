@@ -30,7 +30,7 @@ public class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <returns>包含 ClientId 和 SampleId 的元组</returns>
     public async Task<(string ClientId, string SampleId)> RequestAsync()
     {
-        var data = new List<KeyValuePair<string, string>>()
+        var data = new List<KeyValuePair<string, string>>
         {
             new("BDUSS", HttpCore.Account!.Bduss),
             new("_client_version", Const.MainVersion),

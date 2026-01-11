@@ -45,7 +45,7 @@ public class Rc4
 
             var xorIndex = (byte)((_s[_x] + _s[_y]) & 255);
             // 先进行RC4加密/解密，然后额外进行一次42异或
-            output[i] = (byte)((data[i] ^ _s[xorIndex]) ^ XorConst);
+            output[i] = (byte)(data[i] ^ _s[xorIndex] ^ XorConst);
         }
 
         return output;
@@ -59,10 +59,7 @@ public class Rc4
     private void KeySetup(byte[] key)
     {
         var keyLength = key.Length;
-        for (var i = 0; i < 256; i++)
-        {
-            _s[i] = (byte)i;
-        }
+        for (var i = 0; i < 256; i++) _s[i] = (byte)i;
 
         var j = 0;
         for (var i = 0; i < 256; i++)

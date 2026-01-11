@@ -91,20 +91,18 @@ public class Post
     public static Post FromTbData(global::Post? dataProto)
     {
         if (dataProto == null)
-        {
             return new Post
             {
-                Content = AioTieba4DotNet.Api.Entities.Contents.Content.FromTbData(
-                    (IEnumerable<global::PbContent>?)null)
+                Content = Content.FromTbData(
+                    (IEnumerable<PbContent>?)null)
             };
-        }
 
         var sign = dataProto.Signature != null
             ? string.Join("", dataProto.Signature.Content.Where(p => p.Type == 0).Select(p => p.Text))
             : "";
         return new Post
         {
-            Content = AioTieba4DotNet.Api.Entities.Contents.Content.FromTbData(dataProto.Content),
+            Content = Content.FromTbData(dataProto.Content),
             Sign = sign,
             Pid = dataProto.Id,
             User = UserInfoT.FromTbData(dataProto.Author),

@@ -22,7 +22,7 @@ public class DelPostTest : TestBase
 
         var getTbs = new GetTbsApi(HttpCore);
         HttpCore.Account.Tbs = await getTbs.RequestAsync();
-        
+
         var delPost = new DelPostApi(HttpCore);
 
         try

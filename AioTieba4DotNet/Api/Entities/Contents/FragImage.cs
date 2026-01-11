@@ -65,8 +65,8 @@ public partial class FragImage : IFrag
         var originSize = dataProto.OriginSize;
 
         var bSize = dataProto.Bsize.Split(',');
-        int showWidth = 0;
-        int showHeight = 0;
+        var showWidth = 0;
+        var showHeight = 0;
         if (bSize.Length >= 2)
         {
             _ = int.TryParse(bSize[0], out showWidth);

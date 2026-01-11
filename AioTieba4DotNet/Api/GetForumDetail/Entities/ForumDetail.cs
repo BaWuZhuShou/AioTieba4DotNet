@@ -15,7 +15,7 @@ public class ForumDetail
     public static ForumDetail FromTbData(GetForumDetailResIdl.Types.DataRes data)
     {
         var forumInfo = data.ForumInfo;
-        return new ForumDetail()
+        return new ForumDetail
         {
             Fid = forumInfo.ForumId,
             Fname = forumInfo.ForumName,

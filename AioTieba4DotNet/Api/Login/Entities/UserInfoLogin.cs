@@ -8,16 +8,13 @@ public class UserInfoLogin : UserInfo
     public new static UserInfoLogin FromTbData(JObject data)
     {
         var portrait = data.GetValue("portrait")?.Value<string>() ?? "";
-        if (portrait.Contains('?'))
-        {
-            portrait = portrait[..^13];
-        }
+        if (portrait.Contains('?')) portrait = portrait[..^13];
 
         return new UserInfoLogin
         {
             UserId = data.GetValue("id")?.Value<long>() ?? 0,
             Portrait = portrait,
-            UserName = data.GetValue("name")?.Value<string>() ?? "",
+            UserName = data.GetValue("name")?.Value<string>() ?? ""
         };
     }
 }

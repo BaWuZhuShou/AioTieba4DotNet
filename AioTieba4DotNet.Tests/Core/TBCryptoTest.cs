@@ -8,7 +8,6 @@ namespace AioTieba4DotNet.Tests.Core;
 [TestSubject(typeof(TbCrypto))]
 public class TbCryptoTest
 {
-
     [TestMethod]
     public void TestCuidGalaxy2()
     {
@@ -21,7 +20,7 @@ public class TbCryptoTest
     {
         var g = "d5992777-6dd1-40c7-84e4-489332c41a81";
         var androidId = "6723280942DS4234";
-        var c3Aid = TbCrypto.C3Aid(androidId,g);
+        var c3Aid = TbCrypto.C3Aid(androidId, g);
         Assert.AreEqual("A00-YOMYUVSSXRCD6Y473WPJ7SMQDAIQLEYU-3NI4Y2N5", c3Aid);
     }
 }

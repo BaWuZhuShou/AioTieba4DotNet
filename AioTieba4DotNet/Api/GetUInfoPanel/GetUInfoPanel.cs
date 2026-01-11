@@ -19,10 +19,7 @@ public class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         var o = JsonApiBase.ParseBody(body, "no", "error");
 
         var data = o.GetValue("data")?.ToObject<JObject>();
-        if (data == null)
-        {
-            throw new TieBaServerException(-1, "无法获取到用户数据!");
-        }
+        if (data == null) throw new TieBaServerException(-1, "无法获取到用户数据!");
 
         return UserInfoPanel.FromTbData(data);
     }

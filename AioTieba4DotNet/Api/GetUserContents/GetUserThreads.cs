@@ -25,13 +25,13 @@ public class GetUserThreads(
 
     private static byte[] PackProto(Account account, int userId, uint pn, bool publicOnly)
     {
-        var userPostReqIdl = new UserPostReqIdl()
+        var userPostReqIdl = new UserPostReqIdl
         {
-            Data = new UserPostReqIdl.Types.DataReq()
+            Data = new UserPostReqIdl.Types.DataReq
             {
-                Common = new CommonReq()
+                Common = new CommonReq
                 {
-                    ClientType = 2, BDUSS = account.Bduss, ClientVersion = Const.MainVersion,
+                    ClientType = 2, BDUSS = account.Bduss, ClientVersion = Const.MainVersion
                 },
                 UserId = userId,
                 Pn = pn,

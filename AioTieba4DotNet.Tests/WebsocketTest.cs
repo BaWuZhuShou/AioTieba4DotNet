@@ -12,12 +12,7 @@ public class WebsocketTest
     {
         var req = new WSReq
         {
-            Cmd = 1,
-            ReqId = 123,
-            Payload = new WSReq.Types.Payload
-            {
-                Data = ByteString.CopyFromUtf8("test")
-            }
+            Cmd = 1, ReqId = 123, Payload = new WSReq.Types.Payload { Data = ByteString.CopyFromUtf8("test") }
         };
 
         var data = req.ToByteArray();
@@ -34,12 +29,12 @@ public class WebsocketTest
         var key = "12345678"u8.ToArray();
         var rc4 = new Rc4(key);
         var data = "hello world"u8.ToArray();
-        
+
         var encrypted = rc4.Crypt(data);
-        
+
         var rc4_2 = new Rc4(key);
         var decrypted = rc4_2.Crypt(encrypted);
-        
+
         CollectionAssert.AreEqual(data, decrypted);
     }
 }

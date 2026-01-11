@@ -23,10 +23,7 @@ public class UserPostss : Containers<UserPosts>
         if (objs.Count == 0) return new UserPostss(objs);
         var postInfoList = dataRes.PostList[0];
         var user = UserInfo.FromTbData(postInfoList);
-        foreach (var userPost in objs.SelectMany(obj => obj))
-        {
-            userPost.User = user;
-        }
+        foreach (var userPost in objs.SelectMany(obj => obj)) userPost.User = user;
 
         return new UserPostss(objs);
     }

@@ -12,9 +12,7 @@ public class TiebaClientFactory(IServiceProvider serviceProvider) : ITiebaClient
 
         var httpCore = new HttpCore(httpClient);
         if (!string.IsNullOrEmpty(options.Bduss))
-        {
             httpCore.SetAccount(new Account(options.Bduss, options.Stoken ?? string.Empty));
-        }
 
         return new TiebaClient(httpCore) { RequestMode = options.RequestMode };
     }

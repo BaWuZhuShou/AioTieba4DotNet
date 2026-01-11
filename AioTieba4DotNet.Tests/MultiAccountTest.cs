@@ -42,20 +42,19 @@ public class MultiAccountTest
     {
         var account = new Account("test", "test");
         var tasks = new List<Task>();
-        
-        for (int i = 0; i < 100; i++)
-        {
-            tasks.Add(Task.Run(() => {
+
+        for (var i = 0; i < 100; i++)
+            tasks.Add(Task.Run(() =>
+            {
                 var id = account.AndroidId;
                 var uuid = account.Uuid;
                 var cipher = account.AesEcbCipher;
                 var cuid = account.Cuid;
                 var cuidG2 = account.CuidGalaxy2;
             }));
-        }
 
         await Task.WhenAll(tasks);
-        
+
         Assert.IsNotNull(account.AndroidId);
         Assert.IsNotNull(account.Uuid);
         Assert.IsNotNull(account.AesEcbCipher);

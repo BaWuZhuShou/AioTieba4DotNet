@@ -10,17 +10,11 @@ public class UserInfoPf : UserInfoGuInfoApp
     public static UserInfoPf FromTbData(ProfileResIdl.Types.DataRes dataProto)
     {
         var userProto = dataProto.User;
-        if (userProto == null)
-        {
-            throw new InvalidOperationException("Profile response data.User is null.");
-        }
+        if (userProto == null) throw new InvalidOperationException("Profile response data.User is null.");
 
         var antiStatProto = dataProto.AntiStat;
         var portrait = userProto.Portrait ?? string.Empty;
-        if (portrait.Contains('?'))
-        {
-            portrait = portrait[..^13];
-        }
+        if (portrait.Contains('?')) portrait = portrait[..^13];
 
         return new UserInfoPf
         {
@@ -55,7 +49,7 @@ public class UserInfoPf : UserInfoGuInfoApp
                     : PrivLike.Public,
             PrivReply = userProto.PrivSets != null && userProto.PrivSets.Reply != 0
                 ? (PrivReply)userProto.PrivSets.Reply
-                : PrivReply.All,
+                : PrivReply.All
         };
     }
 }

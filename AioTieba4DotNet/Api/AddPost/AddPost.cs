@@ -1,11 +1,9 @@
 ﻿using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.Entities.Contents;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
 using AioTieba4DotNet.Enums;
 using Google.Protobuf;
-using Newtonsoft.Json;
 
 namespace AioTieba4DotNet.Api.AddPost;
 
@@ -18,7 +16,7 @@ namespace AioTieba4DotNet.Api.AddPost;
 [RequireBduss]
 [PythonApi("aiotieba.api.add_post")]
 public class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
-    : ProtoApiWsBase<long>(httpCore, wsCore, mode)
+    : ProtoApiWsBase<bool>(httpCore, wsCore, mode)
 {
     private const int Cmd = 309731;
 
@@ -103,17 +101,13 @@ public class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestM
         };
     }
 
-    private static long ParseBody(byte[] body)
+    private static bool ParseBody(byte[] body)
     {
         var resProto = AddPostResIdl.Parser.ParseFrom(body);
         CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
-        if (resProto.Data?.Info?.NeedVcode == "1")
-        {
-            throw new TiebaException("Need verify code");
-        }
-
-        return resProto.Data?.Pid ?? 0;
+        if (resProto.Data?.Info?.NeedVcode == "1") throw new TiebaException("Need verify code");
+        return true;
     }
 
 
@@ -123,24 +117,23 @@ public class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestM
     /// <param name="fname">吧名</param>
     /// <param name="fid">吧 ID</param>
     /// <param name="tid">主题帖 ID</param>
-    /// <param name="contents">回复内容碎片列表</param>
+    /// <param name="content">回复内容</param>
     /// <param name="showName">显示名称（可选）</param>
-    /// <returns>新发布的回复 ID (pid)</returns>
-    public async Task<long> RequestAsync(string fname, ulong fid, long tid, List<IFrag> contents,
+    /// <returns>是否成功</returns>
+    public async Task<bool> RequestAsync(string fname, ulong fid, long tid, string content,
         string? showName = null)
     {
         return await ExecuteAsync(
-            () => RequestHttpAsync(fname, fid, tid, contents, showName),
-            () => RequestWsAsync(fname, fid, tid, contents, showName)
+            () => RequestHttpAsync(fname, fid, tid, content, showName),
+            () => RequestWsAsync(fname, fid, tid, content, showName)
         );
     }
 
-    public async Task<long> RequestHttpAsync(string fname, ulong fid, long tid, List<IFrag> contents,
+    public async Task<bool> RequestHttpAsync(string fname, ulong fid, long tid, string content,
         string? showName = null)
     {
-        var contentJson = JsonConvert.SerializeObject(contents.Select(c => c.ToDict()));
         var account = HttpCore.Account!;
-        var reqProto = PackProto(account, fname, fid, tid, showName ?? "", contentJson);
+        var reqProto = PackProto(account, fname, fid, tid, showName ?? "", content);
         var data = reqProto.ToByteArray();
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/c/post/add") { Query = $"cmd={Cmd}" }.Uri;
@@ -149,12 +142,11 @@ public class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestM
         return ParseBody(result);
     }
 
-    public async Task<long> RequestWsAsync(string fname, ulong fid, long tid, List<IFrag> contents,
+    public async Task<bool> RequestWsAsync(string fname, ulong fid, long tid, string content,
         string? showName = null)
     {
-        var contentJson = JsonConvert.SerializeObject(contents.Select(c => c.ToDict()));
         var account = HttpCore.Account!;
-        var reqProto = PackProto(account, fname, fid, tid, showName ?? "", contentJson);
+        var reqProto = PackProto(account, fname, fid, tid, showName ?? "", content);
         var data = reqProto.ToByteArray();
 
         var response = await WsCore.SendAsync(Cmd, data);

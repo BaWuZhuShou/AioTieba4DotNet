@@ -135,7 +135,7 @@ public class MyBot(ITiebaClientFactory factory)
 
 - 帖子列表、回复列表、楼中楼获取
 - 点赞/点踩 (`AgreeAsync`, `DisagreeAsync`)
-- 发布主题帖、回复帖子 (`AddThreadAsync`, `AddPostAsync`)
+- 回复帖子 (`AddPostAsync`)
 - 删除帖子、删除回复 (`DelThreadAsync`, `DelPostAsync`)
 
 ### 用户模块 (`client.Users`)

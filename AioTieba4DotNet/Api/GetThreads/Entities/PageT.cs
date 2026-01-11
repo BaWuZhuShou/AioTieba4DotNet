@@ -42,10 +42,7 @@ public class PageT
     /// <returns>PageT</returns>
     public static PageT FromTbData(Page? page)
     {
-        if (page == null)
-        {
-            return new PageT();
-        }
+        if (page == null) return new PageT();
 
         return new PageT
         {

@@ -22,6 +22,6 @@ public class VoteOption
     /// <returns>投票选项实体</returns>
     public static VoteOption FromTbData(PollInfo.Types.PollOption pollOption)
     {
-        return new VoteOption() { VoteNum = pollOption.Num, Text = pollOption.Text };
+        return new VoteOption { VoteNum = pollOption.Num, Text = pollOption.Text };
     }
 }

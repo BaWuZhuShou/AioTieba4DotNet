@@ -10,7 +10,6 @@ namespace AioTieba4DotNet.Tests.Core;
 [TestSubject(typeof(Rc4))]
 public class Rc4Test
 {
-
     [TestMethod]
     public void Test()
     {

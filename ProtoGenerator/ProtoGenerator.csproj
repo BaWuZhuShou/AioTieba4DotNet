@@ -1,28 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <PublishAot>false</PublishAot>
-    <IsPackable>false</IsPackable>
-    <TargetFrameworks>net10.0;net8.0;net9.0</TargetFrameworks>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.29.3" />
-    <PackageReference Include="Google.Protobuf.Tools" Version="3.33.2" GeneratePathProperty="true" />
-  </ItemGroup>
-
-  <!-- 自动将 protoc 复制到输出目录，实现彻底独立运行 -->
-  <Target Name="CopyProtoc" AfterTargets="Build" Condition="'$(TargetFramework)' != ''">
     <PropertyGroup>
-      <Protoc_OS Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))">windows_x64</Protoc_OS>
-      <Protoc_OS Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))">linux_x64</Protoc_OS>
-      <Protoc_OS Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))">macosx_x64</Protoc_OS>
-      <Protoc_Executable_Computed>$(PkgGoogle_Protobuf_Tools)\tools\$(Protoc_OS)\protoc.exe</Protoc_Executable_Computed>
-      <Protoc_Executable_Computed Condition="'$(Protoc_OS)' != 'windows_x64'">$(PkgGoogle_Protobuf_Tools)\tools\$(Protoc_OS)\protoc</Protoc_Executable_Computed>
+        <OutputType>Exe</OutputType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PublishAot>false</PublishAot>
+        <IsPackable>false</IsPackable>
+        <TargetFrameworks>net10.0;net8.0;net9.0</TargetFrameworks>
     </PropertyGroup>
-    <Message Importance="high" Text="Copying protoc from $(Protoc_Executable_Computed) to $(OutputPath)" />
-    <Copy SourceFiles="$(Protoc_Executable_Computed)" DestinationFolder="$(OutputPath)" />
-  </Target>
+
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.29.3"/>
+        <PackageReference Include="Google.Protobuf.Tools" Version="3.33.2" GeneratePathProperty="true"/>
+    </ItemGroup>
+
+    <!-- 自动将 protoc 复制到输出目录，实现彻底独立运行 -->
+    <Target Name="CopyProtoc" AfterTargets="Build" Condition="'$(TargetFramework)' != ''">
+        <PropertyGroup>
+            <Protoc_OS Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))">windows_x64</Protoc_OS>
+            <Protoc_OS Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))">linux_x64</Protoc_OS>
+            <Protoc_OS Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))">macosx_x64</Protoc_OS>
+            <Protoc_Executable_Computed>$(PkgGoogle_Protobuf_Tools)\tools\$(Protoc_OS)\protoc.exe</Protoc_Executable_Computed>
+            <Protoc_Executable_Computed Condition="'$(Protoc_OS)' != 'windows_x64'">$(PkgGoogle_Protobuf_Tools)\tools\$(Protoc_OS)\protoc</Protoc_Executable_Computed>
+        </PropertyGroup>
+        <Message Importance="high" Text="Copying protoc from $(Protoc_Executable_Computed) to $(OutputPath)"/>
+        <Copy SourceFiles="$(Protoc_Executable_Computed)" DestinationFolder="$(OutputPath)"/>
+    </Target>
 </Project>

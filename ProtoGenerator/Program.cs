@@ -3,13 +3,11 @@ using System.Runtime.InteropServices;
 
 // 1. 自动定位项目根目录
 var currentDir = new DirectoryInfo(AppContext.BaseDirectory);
-DirectoryInfo? projectRootDir = currentDir;
+var projectRootDir = currentDir;
 
 // 向上寻找包含 .sln 的目录作为项目根目录
 while (projectRootDir != null && !File.Exists(Path.Combine(projectRootDir.FullName, "AioTieba4DotNet.sln")))
-{
     projectRootDir = projectRootDir.Parent;
-}
 
 if (projectRootDir == null)
 {
@@ -17,16 +15,16 @@ if (projectRootDir == null)
     return 1;
 }
 
-string projectRoot = projectRootDir.FullName;
-string apiDir = Path.Combine(projectRoot, "AioTieba4DotNet", "Api");
-string baseProtobufDir = Path.Combine(apiDir, "Protobuf");
+var projectRoot = projectRootDir.FullName;
+var apiDir = Path.Combine(projectRoot, "AioTieba4DotNet", "Api");
+var baseProtobufDir = Path.Combine(apiDir, "Protobuf");
 
 Console.WriteLine($"🚀 开始生成 Proto 代码...");
 Console.WriteLine($"📂 项目根目录: {projectRoot}");
 Console.WriteLine($"📂 公共 Protobuf 目录: {baseProtobufDir}");
 
 // 2. 寻找 protoc 可执行文件
-string? protocPath = FindProtocPath();
+var protocPath = FindProtocPath();
 
 if (protocPath == null)
 {
@@ -53,15 +51,15 @@ if (protoFiles.Length == 0)
     return 0;
 }
 
-int successCount = 0;
-int failCount = 0;
+var successCount = 0;
+var failCount = 0;
 
 var stopwatch = Stopwatch.StartNew();
 
 foreach (var protoFile in protoFiles)
 {
     var relativePath = Path.GetRelativePath(projectRoot, protoFile);
-    
+
     if (GenerateCSharp(protoFile))
     {
         Console.WriteLine($"✅ 已处理: {relativePath}");
@@ -79,10 +77,7 @@ Console.WriteLine("\n========================================");
 Console.WriteLine($"🏁 生成完成！");
 Console.WriteLine($"⏱️  耗时: {stopwatch.Elapsed.TotalSeconds:F2}s");
 Console.WriteLine($"✅ 成功: {successCount}");
-if (failCount > 0)
-{
-    Console.WriteLine($"❌ 失败: {failCount}");
-}
+if (failCount > 0) Console.WriteLine($"❌ 失败: {failCount}");
 Console.WriteLine("========================================\n");
 
 return failCount == 0 ? 0 : 1;
@@ -90,16 +85,13 @@ return failCount == 0 ? 0 : 1;
 bool GenerateCSharp(string protoFile)
 {
     var directory = Path.GetDirectoryName(protoFile)!;
-    
+
     // 构造命令参数
     // 注意：这里保持了原始脚本的逻辑，将包含路径设为文件所在目录以及公共目录
     var args = new[]
     {
-        "--csharp_opt=serializable",
-        $"--csharp_out=\"{directory}\"",
-        $"--proto_path=\"{directory}\"",
-        $"-I \"{baseProtobufDir}\"",
-        $"\"{protoFile}\""
+        "--csharp_opt=serializable", $"--csharp_out=\"{directory}\"", $"--proto_path=\"{directory}\"",
+        $"-I \"{baseProtobufDir}\"", $"\"{protoFile}\""
     };
 
     var startInfo = new ProcessStartInfo
@@ -117,8 +109,8 @@ bool GenerateCSharp(string protoFile)
         using var process = Process.Start(startInfo);
         if (process == null) return false;
 
-        string output = process.StandardOutput.ReadToEnd();
-        string error = process.StandardError.ReadToEnd();
+        var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
         process.WaitForExit();
 
         if (process.ExitCode != 0)
@@ -127,6 +119,7 @@ bool GenerateCSharp(string protoFile)
             if (!string.IsNullOrEmpty(error)) Console.WriteLine("错误: " + error);
             return false;
         }
+
         return true;
     }
     catch (Exception ex)
@@ -139,7 +132,7 @@ bool GenerateCSharp(string protoFile)
 string? FindProtocPath()
 {
     var exeName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "protoc.exe" : "protoc";
-    
+
     // 检查程序运行目录（我们在 csproj 中配置了复制 protoc 到此处）
     var localPath = Path.Combine(AppContext.BaseDirectory, exeName);
     if (File.Exists(localPath)) return localPath;

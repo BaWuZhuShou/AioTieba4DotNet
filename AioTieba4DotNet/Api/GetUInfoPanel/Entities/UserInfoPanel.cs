@@ -10,32 +10,20 @@ public class UserInfoPanel : UserInfo
     public new static UserInfoPanel FromTbData(JObject data)
     {
         var portrait = data.GetValue("portrait")?.ToObject<string>() ?? "";
-        if (portrait.Contains('?'))
-        {
-            portrait = portrait[..^13];
-        }
+        if (portrait.Contains('?')) portrait = portrait[..^13];
 
         var isVip = false;
         var vipInfoToken = data.GetValue("vipInfo");
         JObject? vipInfoObject = null;
-        if (vipInfoToken is { Type: JTokenType.Object })
-        {
-            vipInfoObject = vipInfoToken.ToObject<JObject>();
-        }
+        if (vipInfoToken is { Type: JTokenType.Object }) vipInfoObject = vipInfoToken.ToObject<JObject>();
 
         var vStatus = vipInfoObject?.GetValue("v_status")?.ToObject<int>() ?? 0;
         float age = 0;
-        if (data.GetValue("tb_age")?.ToObject<string>() != "-")
-        {
-            age = data.GetValue("tb_age")!.ToObject<float>();
-        }
+        if (data.GetValue("tb_age")?.ToObject<string>() != "-") age = data.GetValue("tb_age")!.ToObject<float>();
 
-        if (vStatus == 3)
-        {
-            isVip = true;
-        }
+        if (vStatus == 3) isVip = true;
 
-        return new UserInfoPanel()
+        return new UserInfoPanel
         {
             Portrait = portrait,
             UserName = data["name"]?.ToObject<string>() ?? "",
@@ -45,7 +33,7 @@ public class UserInfoPanel : UserInfo
             Age = age,
             IsVip = isVip,
             PostNum = Utils.TbNumToInt(data["post_num"]?.ToObject<string>() ?? "0"),
-            FanNum = Utils.TbNumToInt(data["followed_count"]?.ToObject<string>() ?? "0"),
+            FanNum = Utils.TbNumToInt(data["followed_count"]?.ToObject<string>() ?? "0")
         };
     }
 }

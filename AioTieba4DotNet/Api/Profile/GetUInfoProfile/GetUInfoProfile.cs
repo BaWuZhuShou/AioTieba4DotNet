@@ -20,30 +20,22 @@ public class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore
     private static byte[] PackProto<TP>(TP uidOrPortrait)
     {
         if (!(typeof(TP) == typeof(string) || typeof(TP) == typeof(int) || typeof(TP) == typeof(long)))
-        {
             throw new InvalidOperationException(
                 $"TP's type is {typeof(TP)} now.TP must be either string, int or long.");
-        }
 
-        var reqProto = new ProfileReqIdl()
+        var reqProto = new ProfileReqIdl
         {
             Data = new ProfileReqIdl.Types.DataReq
             {
-                Common = new CommonReq { ClientType = 2, ClientVersion = Const.MainVersion, },
+                Common = new CommonReq { ClientType = 2, ClientVersion = Const.MainVersion },
                 NeedPostCount = 1,
                 Page = 1
             }
         };
 
-        if (typeof(TP) == typeof(int) || typeof(TP) == typeof(long))
-        {
-            reqProto.Data.Uid = Convert.ToInt64(uidOrPortrait);
-        }
+        if (typeof(TP) == typeof(int) || typeof(TP) == typeof(long)) reqProto.Data.Uid = Convert.ToInt64(uidOrPortrait);
 
-        if (typeof(TP) == typeof(string))
-        {
-            reqProto.Data.FriendUidPortrait = Convert.ToString(uidOrPortrait);
-        }
+        if (typeof(TP) == typeof(string)) reqProto.Data.FriendUidPortrait = Convert.ToString(uidOrPortrait);
 
         return reqProto.ToByteArray();
     }

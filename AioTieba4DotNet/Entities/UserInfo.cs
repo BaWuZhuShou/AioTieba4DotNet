@@ -176,25 +176,16 @@ public class UserInfo
     /// <returns>UserInfo?</returns>
     public static UserInfo? FromTbData(PostInfoList? dataRes)
     {
-        if (dataRes == null)
-        {
-            return null;
-        }
+        if (dataRes == null) return null;
 
         var userId = dataRes.UserId;
         var portrait = dataRes.UserPortrait ?? "";
-        if (portrait.Contains('?'))
-        {
-            portrait = portrait[..^13];
-        }
+        if (portrait.Contains('?')) portrait = portrait[..^13];
 
         var userName = dataRes.UserName;
         var nickNameNew = dataRes.NameShow;
 
-        return new UserInfo()
-        {
-            UserId = userId, Portrait = portrait, UserName = userName, NickNameNew = nickNameNew,
-        };
+        return new UserInfo { UserId = userId, Portrait = portrait, UserName = userName, NickNameNew = nickNameNew };
     }
 
     /// <summary>
@@ -205,17 +196,14 @@ public class UserInfo
     public static UserInfo FromTbData(JObject data)
     {
         var portrait = data.GetValue("portrait")?.Value<string>() ?? "";
-        if (portrait.Contains('?'))
-        {
-            portrait = portrait[..^13];
-        }
+        if (portrait.Contains('?')) portrait = portrait[..^13];
 
-        return new UserInfo()
+        return new UserInfo
         {
             UserId = data.GetValue("id")?.Value<long>() ?? 0,
             Portrait = portrait,
             UserName = data.GetValue("name")?.Value<string>() ?? "",
-            NickNameNew = data.GetValue("name_show")?.Value<string>() ?? "",
+            NickNameNew = data.GetValue("name_show")?.Value<string>() ?? ""
         };
     }
 }

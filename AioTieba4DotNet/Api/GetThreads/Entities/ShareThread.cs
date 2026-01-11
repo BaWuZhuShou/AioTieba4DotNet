@@ -69,7 +69,7 @@ public class ShareThread
             Fname = threadInfo.Fname,
             Tid = threadInfo.Tid != null ? Convert.ToInt16(threadInfo.Tid) : 0,
             Pid = threadInfo.Pid,
-            VoteInfo = threadInfo.PollInfo != null ? VoteInfo.FromTbData(threadInfo.PollInfo) : null,
+            VoteInfo = threadInfo.PollInfo != null ? VoteInfo.FromTbData(threadInfo.PollInfo) : null
         };
     }
 

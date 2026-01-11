@@ -170,10 +170,7 @@ public class HttpCore : ITiebaHttpCore
             var hasAttr = type.GetCustomAttribute<RequireBdussAttribute>() != null ||
                           method!.GetCustomAttribute<RequireBdussAttribute>() != null;
 
-            if (hasAttr)
-            {
-                throw new TiebaException("Account not set or BDUSS missing. This API requires BDUSS.");
-            }
+            if (hasAttr) throw new TiebaException("Account not set or BDUSS missing. This API requires BDUSS.");
 
             return;
         }
@@ -184,10 +181,7 @@ public class HttpCore : ITiebaHttpCore
     /// </summary>
     public async Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
     {
-        if (string.IsNullOrEmpty(Account?.Bduss))
-        {
-            CheckBdussRequirement();
-        }
+        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
 
         using var response = await PackAppFormRequestAsync(uri, data);
         return await response.Content.ReadAsStringAsync();
@@ -198,10 +192,7 @@ public class HttpCore : ITiebaHttpCore
     /// </summary>
     public async Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data)
     {
-        if (string.IsNullOrEmpty(Account?.Bduss))
-        {
-            CheckBdussRequirement();
-        }
+        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
 
         using var response = await PackProtoRequestAsync(uri, data);
         return await response.Content.ReadAsByteArrayAsync();
@@ -212,10 +203,7 @@ public class HttpCore : ITiebaHttpCore
     /// </summary>
     public async Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters)
     {
-        if (string.IsNullOrEmpty(Account?.Bduss))
-        {
-            CheckBdussRequirement();
-        }
+        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
 
         using var response = await PackWebGetRequestAsync(uri, parameters);
         return await response.Content.ReadAsStringAsync();
@@ -226,10 +214,7 @@ public class HttpCore : ITiebaHttpCore
     /// </summary>
     public async Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
     {
-        if (string.IsNullOrEmpty(Account?.Bduss))
-        {
-            CheckBdussRequirement();
-        }
+        if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
 
         using var response = await PackWebFormRequestAsync(uri, data);
         return await response.Content.ReadAsStringAsync();

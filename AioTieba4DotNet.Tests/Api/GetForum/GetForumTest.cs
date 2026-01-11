@@ -14,8 +14,9 @@ public class GetForumTest : TestBase
     public async Task TestRequest()
     {
         var getForum = new GetForumApi(HttpCore);
-        var result = await getForum.RequestAsync("测试");
+        var fname = "地下城与勇士";
+        var result = await getForum.RequestAsync(fname);
         Console.WriteLine(result);
-        Assert.AreEqual("测试", result.Fname);
+        Assert.AreEqual(fname, result.Fname);
     }
 }

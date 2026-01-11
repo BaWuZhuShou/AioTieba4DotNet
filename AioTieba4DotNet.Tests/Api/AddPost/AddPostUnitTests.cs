@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.AddPost;
-using AioTieba4DotNet.Api.Entities.Contents;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
-
 using System.Threading;
 using Google.Protobuf;
 
@@ -27,7 +24,10 @@ public class AddPostUnitTests
         public List<KeyValuePair<string, string>>? LastData { get; private set; }
         public byte[]? LastProtoData { get; private set; }
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
         {
@@ -41,8 +41,15 @@ public class AddPostUnitTests
             return Task.FromResult(ProtoResponse);
         }
 
-        public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters) => throw new NotImplementedException();
-        public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data) => throw new NotImplementedException();
+        public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private class FakeWsCore : ITiebaWsCore
@@ -53,29 +60,40 @@ public class AddPostUnitTests
         public int LastCmd { get; private set; }
         public byte[]? LastData { get; private set; }
 
-        public Task ConnectAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task ConnectAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
-        public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true, CancellationToken cancellationToken = default)
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
+            CancellationToken cancellationToken = default)
         {
             LastCmd = cmd;
             LastData = data;
 
-            var wsRes = new WSRes
-            {
-                Payload = new WSRes.Types.Payload
-                {
-                    Data = ByteString.CopyFrom(Response)
-                }
-            };
+            var wsRes = new WSRes { Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(Response) } };
             return Task.FromResult(wsRes);
         }
 
-        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
-        public void SetAccount(Account account) => Account = account;
+        public void SetAccount(Account account)
+        {
+            Account = account;
+        }
     }
 
 
@@ -90,19 +108,18 @@ public class AddPostUnitTests
         // 构造成功的 Protobuf 响应
         var resIdl = new AddPostResIdl
         {
-            Error = new Error { Errorno = 0 },
-            Data = new AddPostResIdl.Types.DataRes { Pid = 998877 }
+            Error = new Error { Errorno = 0 }, Data = new AddPostResIdl.Types.DataRes { Pid = 998877 }
         };
         fakeWs.Response = resIdl.ToByteArray();
 
-        var api = new AioTieba4DotNet.Api.AddPost.AddPost(fakeHttp, fakeWs, AioTieba4DotNet.Enums.TiebaRequestMode.Websocket);
-        var contents = new List<IFrag> { new FragText { Text = "hello" } };
+        var api = new AioTieba4DotNet.Api.AddPost.AddPost(fakeHttp, fakeWs, Enums.TiebaRequestMode.Websocket);
+        var content = "hello";
 
         // Act
-        var pid = await api.RequestAsync("test_forum", 1, 2, contents);
+        var success = await api.RequestAsync("test_forum", 1, 2, content);
 
         // Assert
-        Assert.AreEqual(998877L, pid);
+        Assert.IsTrue(success);
         Assert.AreEqual(309731, fakeWs.LastCmd);
         Assert.IsNotNull(fakeWs.LastData);
 
@@ -125,23 +142,27 @@ public class AddPostUnitTests
         var resIdl = new AddPostResIdl
         {
             Error = new Error { Errorno = 0 },
-            Data = new AddPostResIdl.Types.DataRes { Info = new AddPostResIdl.Types.DataRes.Types.PostAntiInfo { NeedVcode = "1" } }
+            Data = new AddPostResIdl.Types.DataRes
+            {
+                Info = new AddPostResIdl.Types.DataRes.Types.PostAntiInfo { NeedVcode = "1" }
+            }
         };
         fakeWs.Response = resIdl.ToByteArray();
 
-        var api = new AioTieba4DotNet.Api.AddPost.AddPost(fakeHttp, fakeWs, AioTieba4DotNet.Enums.TiebaRequestMode.Websocket);
-        var contents = new List<IFrag> { new FragText { Text = "hello" } };
+        var api = new AioTieba4DotNet.Api.AddPost.AddPost(fakeHttp, fakeWs, Enums.TiebaRequestMode.Websocket);
+        var content = "hello";
 
         // Act & Assert
-        bool exceptionThrown = false;
+        var exceptionThrown = false;
         try
         {
-            await api.RequestAsync("test_forum", 1, 2, contents);
+            await api.RequestAsync("test_forum", 1, 2, content);
         }
         catch (TiebaException)
         {
             exceptionThrown = true;
         }
+
         Assert.IsTrue(exceptionThrown, "Need verify code");
     }
 }

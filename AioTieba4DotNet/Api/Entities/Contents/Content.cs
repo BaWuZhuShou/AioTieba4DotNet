@@ -186,7 +186,7 @@ public class Content
             frags.Add(voice);
         }
 
-        return new Content()
+        return new Content
         {
             Texts = texts,
             Emojis = emojis,
@@ -196,7 +196,7 @@ public class Content
             TiebaPluses = tiebaPluses,
             Frags = frags,
             Voice = voice,
-            Video = video,
+            Video = video
         };
     }
 
@@ -208,7 +208,6 @@ public class Content
     public static Content FromTbData(ThreadInfo? threadInfo)
     {
         if (threadInfo == null)
-        {
             return new Content
             {
                 Texts = [],
@@ -221,7 +220,6 @@ public class Content
                 Voice = new FragVoice(),
                 Video = new FragVideo()
             };
-        }
 
         var texts = new List<FragText>();
         var emojis = new List<FragEmoji>();
@@ -326,7 +324,7 @@ public class Content
             frags.Add(voice);
         }
 
-        return new Content()
+        return new Content
         {
             Texts = texts,
             Emojis = emojis,
@@ -336,7 +334,7 @@ public class Content
             TiebaPluses = tiebaPluses,
             Frags = frags,
             Voice = voice,
-            Video = video,
+            Video = video
         };
     }
 
@@ -409,7 +407,7 @@ public class Content
             Console.WriteLine($"Unknown fragment type. type: {type}");
         }
 
-        return new Content()
+        return new Content
         {
             Texts = texts,
             Emojis = emojis,
@@ -433,13 +431,11 @@ public class Content
         var content = FromTbData(dataRes.FirstPostContent);
 
         if (dataRes.Media is { Count: > 0 })
-        {
             foreach (var image in dataRes.Media.Where(m => m.Type != 5).Select(FragImage.FromTbData))
             {
                 content.Images.Add(image);
                 content.Frags.Add(image);
             }
-        }
 
         if (dataRes.VideoInfo is { VideoWidth: > 0 })
         {
@@ -466,7 +462,6 @@ public class Content
     public static Content FromTbData(IEnumerable<PbContent>? contentProtos)
     {
         if (contentProtos == null)
-        {
             return new Content
             {
                 Texts = [],
@@ -479,7 +474,6 @@ public class Content
                 Voice = new FragVoice(),
                 Video = new FragVideo()
             };
-        }
 
         var texts = new List<FragText>();
         var emojis = new List<FragEmoji>();
@@ -571,7 +565,7 @@ public class Content
             TiebaPluses = tiebaPluses,
             Frags = frags,
             Voice = voice,
-            Video = video,
+            Video = video
         };
     }
 

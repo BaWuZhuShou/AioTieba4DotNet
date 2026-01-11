@@ -58,7 +58,7 @@ public class ForumT
     public static ForumT FromTbData(FrsPageResIdl.Types.DataRes dataRes)
     {
         var forumInfo = dataRes.Forum;
-        return new ForumT()
+        return new ForumT
         {
             Fid = forumInfo.Id,
             Fname = forumInfo.Name,
@@ -68,7 +68,7 @@ public class ForumT
             PostNum = forumInfo.PostNum,
             ThreadNum = forumInfo.ThreadNum,
             HasBaWu = forumInfo.Managers.Count != 0,
-            HasRule = dataRes.ForumRule.HasForumRule == 1,
+            HasRule = dataRes.ForumRule.HasForumRule == 1
         };
     }
 
@@ -79,10 +79,7 @@ public class ForumT
     /// <returns>ForumT</returns>
     public static ForumT FromTbData(SimpleForum? forumInfo)
     {
-        if (forumInfo == null)
-        {
-            return new ForumT();
-        }
+        if (forumInfo == null) return new ForumT();
 
         return new ForumT
         {
@@ -91,7 +88,7 @@ public class ForumT
             MemberNum = forumInfo.MemberNum,
             PostNum = forumInfo.PostNum,
             Category = forumInfo.FirstClass,
-            Subcategory = forumInfo.SecondClass,
+            Subcategory = forumInfo.SecondClass
         };
     }
 

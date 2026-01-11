@@ -16,7 +16,6 @@ public class Comments
     public static Comments FromTbData(PbFloorResIdl.Types.DataRes? dataRes)
     {
         if (dataRes == null)
-        {
             return new Comments
             {
                 Page = new PageT(),
@@ -25,7 +24,6 @@ public class Comments
                 Post = AioTieba4DotNet.Api.GetThreadPosts.Entities.Post.FromTbData(null),
                 Objs = []
             };
-        }
 
         var forum = ForumT.FromTbData(dataRes.Forum);
         var thread = AioTieba4DotNet.Api.GetThreads.Entities.Thread.FromTbData(dataRes.Thread);

@@ -4,7 +4,7 @@ namespace AioTieba4DotNet.Core;
 
 public class ForumInfoCache
 {
-    private readonly MemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
+    private readonly MemoryCache _cache = new(new MemoryCacheOptions());
 
     public ulong GetForumId(string forumName)
     {

@@ -21,7 +21,7 @@ public class GetPostsTest : TestBase
 
         var getPosts = new GetPosts(HttpCore, WebsocketCore);
         var result = await getPosts.RequestAsync(1, 1, 20, "8.9.8.5");
-        
+
         Assert.IsNotNull(result);
         Console.WriteLine(result.Count);
         foreach (var userPosts in result)
@@ -29,10 +29,7 @@ public class GetPostsTest : TestBase
             Console.WriteLine($"User Posts Count: {userPosts.Count}");
             Console.WriteLine($"Thread ID: {userPosts.Tid}");
             Console.WriteLine($"Forum ID: {userPosts.Fid}");
-            foreach (var userPost in userPosts)
-            {
-                Console.WriteLine(userPost);
-            }
+            foreach (var userPost in userPosts) Console.WriteLine(userPost);
         }
     }
 }

@@ -31,7 +31,7 @@ public class Login(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <returns>包含用户信息和 TBS 的元组</returns>
     public async Task<(UserInfoLogin User, string Tbs)> RequestAsync()
     {
-        var data = new List<KeyValuePair<string, string>>()
+        var data = new List<KeyValuePair<string, string>>
         {
             new("_client_version", Const.MainVersion), new("bdusstoken", HttpCore.Account!.Bduss)
         };

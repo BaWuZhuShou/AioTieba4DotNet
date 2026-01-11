@@ -35,10 +35,7 @@ public class GetTbs(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         var result = await HttpCore.SendAppFormAsync(requestUri, data);
         var tbs = ParseBody(result);
 
-        if (HttpCore.Account != null)
-        {
-            HttpCore.Account.Tbs = tbs;
-        }
+        if (HttpCore.Account != null) HttpCore.Account.Tbs = tbs;
 
         return tbs;
     }

@@ -23,12 +23,7 @@ public class ClientTest
     public void TestGetThreadsByFid()
     {
         var client =
-            new Client()
-            {
-                ThreadIsGood = false,
-                ThreadSortType = ThreadSortType.Reply,
-                ThreadRn = 10
-            };
+            new Client { ThreadIsGood = false, ThreadSortType = ThreadSortType.Reply, ThreadRn = 10 };
         var threads = client.GetThreads("DNF", 2);
         threads.Wait();
         Console.WriteLine("page:");
@@ -65,13 +60,13 @@ public class ClientTest
     [TestMethod]
     public void TestReqUInfo()
     {
-        ReqUInfo input = ReqUInfo.TiebaUid; // 假设输入是一个单独的标志，例如 USER_ID
+        var input = ReqUInfo.TiebaUid; // 假设输入是一个单独的标志，例如 USER_ID
 
         // 判断是否属于 BASIC
-        bool isBasic = (input & ReqUInfo.Basic) == input;
+        var isBasic = (input & ReqUInfo.Basic) == input;
 
         // 判断是否属于 ALL
-        bool isAll = (input & ReqUInfo.All) == input;
+        var isAll = (input & ReqUInfo.All) == input;
 
         Console.WriteLine("是否属于 BASIC: " + isBasic);
         Console.WriteLine("是否属于 ALL: " + isAll);

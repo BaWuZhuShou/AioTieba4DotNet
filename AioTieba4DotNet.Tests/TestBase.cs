@@ -9,7 +9,7 @@ public abstract class TestBase
     protected static IConfiguration Configuration { get; }
     protected static string Bduss { get; }
     protected static string Stoken { get; }
-    
+
     protected HttpCore HttpCore { get; }
     protected WebsocketCore WebsocketCore { get; }
 
@@ -19,9 +19,9 @@ public abstract class TestBase
     {
         Configuration = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: true)
-            .AddJsonFile("appsettings.test.json", optional: true)
-            .AddEnvironmentVariables(prefix: "TIEBA_")
+            .AddJsonFile("appsettings.json", true)
+            .AddJsonFile("appsettings.test.json", true)
+            .AddEnvironmentVariables("TIEBA_")
             .Build();
 
         // 优先从环境变量读取 (TIEBA_BDUSS, TIEBA_STOKEN)

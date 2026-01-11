@@ -10,10 +10,7 @@ public class Threads
     public required List<Thread> Objs { get; set; }
     public required Dictionary<string, int> TabDictionary { get; set; }
 
-    public bool HasMore
-    {
-        get => Page.HasMore;
-    }
+    public bool HasMore => Page.HasMore;
 
     public static Threads FromTbData(FrsPageResIdl.Types.DataRes dataRes)
     {
@@ -27,12 +24,12 @@ public class Threads
             thread.User = users.GetValueOrDefault(thread.AuthorId) ?? new UserInfoT();
         }
 
-        return new Threads()
+        return new Threads
         {
             Page = PageT.FromTbData(dataRes.Page),
             Forum = forum,
             TabDictionary = dataRes.NavTabInfo.Tab.ToDictionary(p => p.TabName, p => p.TabId),
-            Objs = threads,
+            Objs = threads
         };
     }
 
@@ -42,10 +39,7 @@ public class Threads
         sb.AppendLine(
             $"{nameof(Page)}: {Page}, {nameof(Forum)}: {Forum}, {nameof(TabDictionary)}: {TabDictionary}, {nameof(HasMore)}: {HasMore}");
         sb.AppendLine($"{nameof(Objs)}:");
-        foreach (var obj in Objs)
-        {
-            sb.AppendLine($"{obj}");
-        }
+        foreach (var obj in Objs) sb.AppendLine($"{obj}");
 
         return sb.ToString();
     }

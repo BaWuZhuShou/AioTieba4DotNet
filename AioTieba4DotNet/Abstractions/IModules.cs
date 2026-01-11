@@ -176,48 +176,17 @@ public interface IThreadModule
     /// </summary>
     Task<bool> UndisagreeAsync(long tid, long pid = 0, bool isComment = false);
 
-    /// <summary>
-    /// 发表主题帖
-    /// </summary>
-    /// <param name="fname">贴吧名</param>
-    /// <param name="title">标题</param>
-    /// <param name="content">纯文本内容</param>
-    /// <param name="mode">请求模式</param>
-    /// <returns>新帖子的 tid</returns>
-    Task<long> AddThreadAsync(string fname, string title, string content, TiebaRequestMode? mode = null);
-
-    /// <summary>
-    /// 发表带有富文本内容的主题帖
-    /// </summary>
-    /// <param name="fname">贴吧名</param>
-    /// <param name="title">标题</param>
-    /// <param name="contents">富文本碎片列表</param>
-    /// <param name="mode">请求模式</param>
-    /// <returns>新帖子的 tid</returns>
-    Task<long> AddThreadAsync(string fname, string title, List<IFrag> contents, TiebaRequestMode? mode = null);
 
     /// <summary>
     /// 回复帖子
     /// </summary>
     /// <param name="fname">贴吧名</param>
     /// <param name="tid">主题帖 ID</param>
-    /// <param name="content">纯文本内容</param>
+    /// <param name="content">回复内容</param>
     /// <param name="showName">展示名称 (昵称)</param>
     /// <param name="mode">请求模式</param>
-    /// <returns>新回复的 pid</returns>
-    Task<long> AddPostAsync(string fname, long tid, string content, string? showName = null,
-        TiebaRequestMode? mode = null);
-
-    /// <summary>
-    /// 发表带有富文本内容的回复
-    /// </summary>
-    /// <param name="fname">贴吧名</param>
-    /// <param name="tid">主题帖 ID</param>
-    /// <param name="contents">富文本碎片列表</param>
-    /// <param name="showName">展示名称 (昵称)</param>
-    /// <param name="mode">请求模式</param>
-    /// <returns>新回复的 pid</returns>
-    Task<long> AddPostAsync(string fname, long tid, List<IFrag> contents, string? showName = null,
+    /// <returns>是否成功</returns>
+    Task<bool> AddPostAsync(string fname, long tid, string content, string? showName = null,
         TiebaRequestMode? mode = null);
 
     /// <summary>

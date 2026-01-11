@@ -30,10 +30,7 @@ public class Signer
 
         // 将哈希值转换为十六进制字符串
         var hashSb = new StringBuilder();
-        foreach (var b in hashBytes)
-        {
-            hashSb.Append(b.ToString("x2"));
-        }
+        foreach (var b in hashBytes) hashSb.Append(b.ToString("x2"));
 
         // 返回最终的 MD5 签名
         return hashSb.ToString();

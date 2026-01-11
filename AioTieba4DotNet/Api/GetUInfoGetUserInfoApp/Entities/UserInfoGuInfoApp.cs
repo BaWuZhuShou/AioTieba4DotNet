@@ -8,10 +8,7 @@ public class UserInfoGuInfoApp : UserInfo
     public static UserInfoGuInfoApp FromTbData(User dataProto)
     {
         var dataProtoPortrait = dataProto.Portrait;
-        if (dataProtoPortrait.Contains('?'))
-        {
-            dataProtoPortrait = dataProtoPortrait[..^13];
-        }
+        if (dataProtoPortrait.Contains('?')) dataProtoPortrait = dataProtoPortrait[..^13];
 
         return new UserInfoGuInfoApp
         {
@@ -22,7 +19,7 @@ public class UserInfoGuInfoApp : UserInfo
             Gender = (Gender)dataProto.Gender,
             IsVip = dataProto.VipInfo.VStatus != 0,
             IsGod = dataProto.NewGodData.Status != 0,
-            Ip = dataProto.IpAddress,
+            Ip = dataProto.IpAddress
         };
     }
 }

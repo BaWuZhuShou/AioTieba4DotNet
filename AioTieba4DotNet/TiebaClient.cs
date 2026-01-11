@@ -78,9 +78,7 @@ public class TiebaClient : ITiebaClient
     {
         var httpCore = new HttpCore();
         if (!string.IsNullOrEmpty(options.Bduss))
-        {
             httpCore.SetAccount(new Account(options.Bduss, options.Stoken ?? string.Empty));
-        }
 
         return httpCore;
     }

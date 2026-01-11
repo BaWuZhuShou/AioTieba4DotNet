@@ -35,13 +35,9 @@ public class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequ
             }
         };
         if (isComment)
-        {
             reqProto.Data.Spid = pid;
-        }
         else
-        {
             reqProto.Data.Pid = pid;
-        }
 
         return reqProto.ToByteArray();
     }

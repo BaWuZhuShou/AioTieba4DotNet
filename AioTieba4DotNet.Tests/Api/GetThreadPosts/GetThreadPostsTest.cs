@@ -14,7 +14,7 @@ public class GetThreadPostsTest : TestBase
     [TestMethod]
     public async Task TestRequest()
     {
-        var getThreads = new GetThreadsApi(HttpCore, WebsocketCore, mode: TiebaRequestMode.Http);
+        var getThreads = new GetThreadsApi(HttpCore, WebsocketCore, TiebaRequestMode.Http);
         var threads = await getThreads.RequestAsync("地下城与勇士", 1, 10, 5, 0);
         Assert.IsNotNull(threads.Objs);
         Assert.IsNotEmpty(threads.Objs);
@@ -29,8 +29,6 @@ public class GetThreadPostsTest : TestBase
         Console.WriteLine($"成功获取 tid={tid} 的回复列表，共 {result.Objs.Count} 条回复");
 
         foreach (var post in result.Objs.Take(5))
-        {
             Console.WriteLine($"F{post.Floor}: {post.Text}  (by {post.User?.ShowName})");
-        }
     }
 }

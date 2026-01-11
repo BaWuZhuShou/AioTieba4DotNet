@@ -19,10 +19,7 @@ public class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         var o = JsonApiBase.ParseBody(body);
 
         var forumDict = o.GetValue("forum")?.ToObject<Dictionary<string, object>>();
-        if (forumDict == null)
-        {
-            throw new TieBaServerException(-1, "无法获取到贴吧数据!");
-        }
+        if (forumDict == null) throw new TieBaServerException(-1, "无法获取到贴吧数据!");
 
         return Forum.FromTbData(forumDict);
     }
@@ -34,7 +31,7 @@ public class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <returns>贴吧基础信息</returns>
     public async Task<Forum> RequestAsync(string fname)
     {
-        var data = new List<KeyValuePair<string, string>>() { new("kw", fname) };
+        var data = new List<KeyValuePair<string, string>> { new("kw", fname) };
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/c/f/frs/frsBottom").Uri;
 
         var result = await HttpCore.SendAppFormAsync(requestUri, data);

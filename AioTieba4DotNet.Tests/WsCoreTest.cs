@@ -22,7 +22,7 @@ public class WsCoreTest
 
         // 测试解包
         var (parsedData, parsedCmd, parsedReqId) = wsCore.ParseWsBytes(packed);
-        
+
         Assert.AreEqual(cmd, parsedCmd);
         Assert.AreEqual(reqId, parsedReqId);
         CollectionAssert.AreEqual(data, parsedData);
@@ -43,7 +43,7 @@ public class WsCoreTest
 
         // 测试解包
         var (parsedData, parsedCmd, parsedReqId) = wsCore.ParseWsBytes(packed);
-        
+
         Assert.AreEqual(cmd, parsedCmd);
         Assert.AreEqual(reqId, parsedReqId);
         CollectionAssert.AreEqual(data, parsedData);

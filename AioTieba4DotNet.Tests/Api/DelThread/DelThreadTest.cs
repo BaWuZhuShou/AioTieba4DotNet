@@ -22,7 +22,7 @@ public class DelThreadTest : TestBase
 
         var getTbs = new GetTbsApi(HttpCore);
         HttpCore.Account.Tbs = await getTbs.RequestAsync();
-        
+
         var delThread = new DelThreadApi(HttpCore);
 
         try

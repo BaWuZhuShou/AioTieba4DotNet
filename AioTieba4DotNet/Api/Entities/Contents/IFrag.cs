@@ -9,16 +9,16 @@ public interface IFrag
     /// 获取碎片类型
     /// </summary>
     /// <returns></returns>
-    public string GetFragType();
+    string GetFragType();
 
     /// <summary>
     /// 文本内容
     /// </summary>
-    public string Text { get; }
+    string Text { get; }
 
     /// <summary>
     /// 转换为字典用于序列化
     /// </summary>
     /// <returns></returns>
-    public Dictionary<string, object> ToDict();
+    Dictionary<string, object> ToDict();
 }

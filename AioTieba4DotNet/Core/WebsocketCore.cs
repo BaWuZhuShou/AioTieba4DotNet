@@ -104,7 +104,6 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     private async Task ListenLoopAsync(CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
-        {
             try
             {
                 var res = await ReceiveAsync(cancellationToken);
@@ -112,13 +111,9 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
 
                 // 根据 ReqId 将响应分发给等待的 Task，或者是推送 Channel
                 if (res.ReqId != 0 && _pendingRequests.TryRemove(res.ReqId, out var tcs))
-                {
                     tcs.SetResult(res);
-                }
                 else
-                {
                     await _messageChannel.Writer.WriteAsync(res, cancellationToken);
-                }
             }
             catch (OperationCanceledException)
             {
@@ -128,7 +123,6 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
             {
                 // 异常暂不处理，等待重连机制（待完善）
             }
-        }
     }
 
     /// <summary>
@@ -137,7 +131,6 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     private async Task RunHeartbeatAsync(CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
-        {
             try
             {
                 await Task.Delay(30000, cancellationToken);
@@ -151,7 +144,6 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
             {
                 // 忽略心跳异常
             }
-        }
     }
 
     /// <summary>
@@ -268,16 +260,14 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     /// </summary>
     internal (byte[] data, int cmd, int reqId) ParseWsBytes(byte[] data)
     {
-        byte flag = data[0];
-        int cmd = BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(1, 4));
-        int reqId = BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(5, 4));
+        var flag = data[0];
+        var cmd = BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(1, 4));
+        var reqId = BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(5, 4));
 
-        byte[] payload = data[9..];
+        var payload = data[9..];
         // 处理加密
         if ((flag & 0x80) != 0 && Account != null)
-        {
             payload = Account.AesEcbCipher.DecryptEcb(payload, PaddingMode.PKCS7);
-        }
 
         // 处理 GZip 压缩
         if ((flag & 0x40) != 0)
@@ -299,12 +289,8 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         while (await _messageChannel.Reader.WaitToReadAsync(cancellationToken))
-        {
-            while (_messageChannel.Reader.TryRead(out var res))
-            {
-                yield return res;
-            }
-        }
+        while (_messageChannel.Reader.TryRead(out var res))
+            yield return res;
     }
 
     /// <summary>
@@ -313,9 +299,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     public async Task CloseAsync(CancellationToken cancellationToken = default)
     {
         if (_ws.State == WebSocketState.Open)
-        {
             await _ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
-        }
 
         _cts.Cancel();
         if (_listenTask != null) await _listenTask;

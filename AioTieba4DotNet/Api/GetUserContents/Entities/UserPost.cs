@@ -47,7 +47,7 @@ public class UserPost
     {
         var contents = Content.FromTbData(dataRes);
 
-        return new UserPost()
+        return new UserPost
         {
             Contents = contents,
             Pid = (int)dataRes.PostId,

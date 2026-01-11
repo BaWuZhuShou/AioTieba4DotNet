@@ -25,11 +25,11 @@ public class GetPosts(
 
     private static byte[] PackProto(Account account, int userId, uint pn, uint rn, string version)
     {
-        var userPostReqIdl = new UserPostReqIdl()
+        var userPostReqIdl = new UserPostReqIdl
         {
-            Data = new UserPostReqIdl.Types.DataReq()
+            Data = new UserPostReqIdl.Types.DataReq
             {
-                Common = new CommonReq() { ClientType = 2, BDUSS = account.Bduss, ClientVersion = version, },
+                Common = new CommonReq { ClientType = 2, BDUSS = account.Bduss, ClientVersion = version },
                 UserId = userId,
                 Pn = pn,
                 Rn = rn,

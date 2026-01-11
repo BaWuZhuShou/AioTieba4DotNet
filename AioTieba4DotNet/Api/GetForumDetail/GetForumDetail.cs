@@ -18,9 +18,12 @@ public class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
 
     private static byte[] PackProto(long fid)
     {
-        var reqIdl = new GetForumDetailReqIdl()
+        var reqIdl = new GetForumDetailReqIdl
         {
-            Data = new() { Common = new() { ClientType = 2, ClientVersion = Const.MainVersion }, ForumId = fid }
+            Data = new GetForumDetailReqIdl.Types.DataReq
+            {
+                Common = new CommonReq { ClientType = 2, ClientVersion = Const.MainVersion }, ForumId = fid
+            }
         };
         return reqIdl.ToByteArray();
     }

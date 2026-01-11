@@ -152,9 +152,7 @@ public class Thread
     public static Thread FromTbData(ThreadInfo? threadInfo)
     {
         if (threadInfo == null)
-        {
-            return new Thread { Content = Content.FromTbData((ThreadInfo?)null), VirtualImage = new VirtualImagePf(), };
-        }
+            return new Thread { Content = Content.FromTbData((ThreadInfo?)null), VirtualImage = new VirtualImagePf() };
 
         return new Thread
         {
@@ -182,7 +180,7 @@ public class Thread
             Agree = threadInfo.Agree?.AgreeNum ?? 0,
             Disagree = threadInfo.Agree?.DisagreeNum ?? 0,
             CreateTime = threadInfo.CreateTime,
-            LastTime = threadInfo.LastTimeInt,
+            LastTime = threadInfo.LastTimeInt
         };
     }
 

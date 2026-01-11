@@ -27,25 +27,17 @@ public static class TbCrypto
         var var5 = (var9 & sec) >> (int)start;
 
         if (flag)
-        {
             var5 ^= hashVal;
-        }
         else
-        {
             var5 &= hashVal;
-        }
 
         for (ulong i = 0; i < HashSizeInBit; i++)
         {
             var opIdx = start + i;
             if ((var5 & ((ulong)1 << (int)i)) != 0)
-            {
                 secTemp |= (ulong)1 << (int)opIdx;
-            }
             else
-            {
                 secTemp &= ~((ulong)1 << (int)opIdx);
-            }
         }
 
         return secTemp;
@@ -208,9 +200,7 @@ public static class TbCrypto
     {
         var androidIdBytes = Encoding.UTF8.GetBytes(androidId);
         if (androidIdBytes.Length != 16)
-        {
             throw new ArgumentException($"Invalid size of android_id. Expected 16, got {androidIdBytes.Length}");
-        }
 
         return TbcCuidGalaxy2(androidIdBytes);
     }
@@ -220,14 +210,10 @@ public static class TbCrypto
         var androidIdBytes = Encoding.UTF8.GetBytes(androidId);
         var uuidBytes = Encoding.UTF8.GetBytes(uuid);
         if (androidIdBytes.Length != 16)
-        {
             throw new ArgumentException($"Invalid size of android_id. Expected 16, got {androidIdBytes.Length}");
-        }
 
         if (uuidBytes.Length != 36)
-        {
             throw new ArgumentException($"Invalid size of uuid. Expected 36, got {uuidBytes.Length}");
-        }
 
         return TbcC3Aid(androidIdBytes, uuidBytes);
     }

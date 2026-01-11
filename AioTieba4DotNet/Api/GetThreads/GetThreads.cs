@@ -22,7 +22,7 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
 
     private static byte[] PackProto(string fname, int pn, int rn, int sort, int isGood)
     {
-        var frsPageResIdl = new FrsPageReqIdl()
+        var frsPageResIdl = new FrsPageReqIdl
         {
             Data = new FrsPageReqIdl.Types.DataReq
             {
@@ -32,13 +32,10 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
                 RnNeed = rn + 5,
                 IsGood = isGood,
                 SortType = sort,
-                LoadType = 1,
+                LoadType = 1
             }
         };
-        if (pn != 1)
-        {
-            frsPageResIdl.Data.Pn = pn;
-        }
+        if (pn != 1) frsPageResIdl.Data.Pn = pn;
 
         return frsPageResIdl.ToByteArray();
     }

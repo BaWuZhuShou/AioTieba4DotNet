@@ -9,7 +9,7 @@ public class VirtualImagePf
     {
         var enabled = dataProto?.CustomFigure?.BackgroundValue != "";
         var customStateContent = dataProto?.CustomState?.Content ?? "";
-        return new VirtualImagePf() { Enabled = enabled, State = customStateContent };
+        return new VirtualImagePf { Enabled = enabled, State = customStateContent };
     }
 
     public static VirtualImagePf FromTbData(User.Types.VirtualImageInfo? dataProto)

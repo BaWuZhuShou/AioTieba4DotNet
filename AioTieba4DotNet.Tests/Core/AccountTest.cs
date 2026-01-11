@@ -49,11 +49,7 @@ public class AccountTest
         // 但在这个测试中我们还没访问过 C3Aid。为了保险起见，我们重新创建一个 account 或者使用反射清理缓存。
         // 考虑到 Account 类内部逻辑，我们直接新建。
 
-        var account2 = new Account
-        {
-            AndroidId = "6723280942DS4234",
-            Uuid = "d5992777-6dd1-40c7-84e4-489332c41a81"
-        };
+        var account2 = new Account { AndroidId = "6723280942DS4234", Uuid = "d5992777-6dd1-40c7-84e4-489332c41a81" };
         Assert.AreEqual("A00-YOMYUVSSXRCD6Y473WPJ7SMQDAIQLEYU-3NI4Y2N5", account2.C3Aid);
 
         // 验证 Cuid
@@ -66,10 +62,11 @@ public class AccountTest
         var account = new Account();
         // 设置固定的 key 方便验证
         var key = new byte[31];
-        for(int i=0; i<31; i++) key[i] = (byte)i;
+        for (var i = 0; i < 31; i++) key[i] = (byte)i;
 
         // 使用反射设置私有字段 _aesEcbSecKey (因为没有 Setter)
-        var field = typeof(Account).GetField("_aesEcbSecKey", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        var field = typeof(Account).GetField("_aesEcbSecKey",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
         field?.SetValue(account, key);
 
         var cipher = account.AesEcbCipher;
@@ -77,7 +74,8 @@ public class AccountTest
         Assert.AreEqual(CipherMode.ECB, cipher.Mode);
 
         // 验证 Key 是否是通过 PBKDF2 生成的
-        var expectedKey = Rfc2898DeriveBytes.Pbkdf2(key, (byte[])[0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13], 5, HashAlgorithmName.SHA1, 32);
+        var expectedKey = Rfc2898DeriveBytes.Pbkdf2(key, (byte[])[0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13], 5,
+            HashAlgorithmName.SHA1, 32);
         CollectionAssert.AreEqual(expectedKey, cipher.Key);
     }
 

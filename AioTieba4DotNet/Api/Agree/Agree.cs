@@ -27,13 +27,9 @@ public class Agree(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     {
         int objType;
         if (pid == 0)
-        {
             objType = 3;
-        }
         else
-        {
             objType = isComment ? 2 : 1;
-        }
 
         var data = new List<KeyValuePair<string, string>>
         {

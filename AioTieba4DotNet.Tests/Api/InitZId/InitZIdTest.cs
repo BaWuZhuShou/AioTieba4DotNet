@@ -19,14 +19,14 @@ public class InitZIdTest : TestBase
         {
             AndroidId = "5cae590c1ee17ff1",
             Uuid = "6031f0e4-99b0-4c09-a21f-43af72db4426",
-            AesCbcSecKey=[24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24]
+            AesCbcSecKey = [24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24]
         };
         var xyus = AioTieba4DotNet.Api.InitZId.InitZId.GetMd5Hash(account.AndroidId + account.Uuid) + "|0";
-        var xyusMd5Str =AioTieba4DotNet.Api.InitZId.InitZId. GetMd5Hash(xyus).ToLower();
+        var xyusMd5Str = AioTieba4DotNet.Api.InitZId.InitZId.GetMd5Hash(xyus).ToLower();
         var currentTs = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
         var reqBody = "{\"module_section\":[{\"zid\":\"" + xyus + "\"}]}";
         var reqBodyBytes = Encoding.UTF8.GetBytes(reqBody);
-        var reqBodyCompressed =AioTieba4DotNet.Api.InitZId.InitZId.Compress(reqBodyBytes);
+        var reqBodyCompressed = AioTieba4DotNet.Api.InitZId.InitZId.Compress(reqBodyBytes);
         var padding = Utils.ApplyPkcs7Padding(reqBodyCompressed, 16);
         var cryptoTransform = account.AesCbcCipher!.CreateEncryptor(account.AesCbcCipher.Key, account.AesCbcCipher.IV);
         var transformFinalBlock = cryptoTransform.TransformFinalBlock(padding, 0, padding.Length);
