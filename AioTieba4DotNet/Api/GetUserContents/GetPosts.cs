@@ -63,6 +63,14 @@ public class GetPosts(
         );
     }
 
+    /// <summary>
+    ///     通过 HTTP 获取用户发布回复列表
+    /// </summary>
+    /// <param name="userId">用户 ID (uid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="rn">每页请求数量</param>
+    /// <param name="version">客户端版本号</param>
+    /// <returns>回复列表实体</returns>
     public async Task<UserPostss> RequestHttpAsync(int userId, uint pn, uint rn, string version)
     {
         var data = PackProto(HttpCore.Account!, userId, pn, rn, version);
@@ -73,6 +81,14 @@ public class GetPosts(
         return ParseBody(result);
     }
 
+    /// <summary>
+    ///     通过 Websocket 获取用户发布回复列表
+    /// </summary>
+    /// <param name="userId">用户 ID (uid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="rn">每页请求数量</param>
+    /// <param name="version">客户端版本号</param>
+    /// <returns>回复列表实体</returns>
     public async Task<UserPostss> RequestWsAsync(int userId, uint pn, uint rn, string version)
     {
         var data = PackProto(WsCore.Account!, userId, pn, rn, version);

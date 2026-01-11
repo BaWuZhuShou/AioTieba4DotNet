@@ -65,6 +65,14 @@ public class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequ
         );
     }
 
+    /// <summary>
+    ///     通过 HTTP 获取楼中楼回复
+    /// </summary>
+    /// <param name="tid">主题帖 ID</param>
+    /// <param name="pid">回复 ID (pid) 或楼中楼回复 ID (spid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="isComment">如果 pid 是楼中楼回复 ID (spid) 则为 true</param>
+    /// <returns>楼中楼回复列表</returns>
     public async Task<Comments> RequestHttpAsync(long tid, long pid, int pn, bool isComment)
     {
         var data = PackProto(tid, pid, pn, isComment, HttpCore.Account?.Bduss);
@@ -74,6 +82,14 @@ public class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequ
         return ParseBody(result);
     }
 
+    /// <summary>
+    ///     通过 Websocket 获取楼中楼回复
+    /// </summary>
+    /// <param name="tid">主题帖 ID</param>
+    /// <param name="pid">回复 ID (pid) 或楼中楼回复 ID (spid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="isComment">如果 pid 是楼中楼回复 ID (spid) 则为 true</param>
+    /// <returns>楼中楼回复列表</returns>
     public async Task<Comments> RequestWsAsync(long tid, long pid, int pn, bool isComment)
     {
         var data = PackProto(tid, pid, pn, isComment, WsCore.Account?.Bduss);

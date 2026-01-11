@@ -43,6 +43,11 @@ public class UserPost
     /// </summary>
     public int CreateTime { get; set; }
 
+    /// <summary>
+    ///     从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataRes">Protobuf 帖子内容信息数据</param>
+    /// <returns>用户历史回复实体</returns>
     public static UserPost FromTbData(PostInfoList.Types.PostInfoContent dataRes)
     {
         var contents = Content.FromTbData(dataRes);
@@ -56,6 +61,10 @@ public class UserPost
         };
     }
 
+    /// <summary>
+    ///     转换为字符串
+    /// </summary>
+    /// <returns>回复摘要</returns>
     public override string ToString()
     {
         return

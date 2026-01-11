@@ -74,6 +74,18 @@ public class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaR
         );
     }
 
+    /// <summary>
+    ///     通过 HTTP 获取主题帖内回复列表
+    /// </summary>
+    /// <param name="tid">主题帖 ID (tid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="rn">每页请求数量</param>
+    /// <param name="sort">排序方式 (0:按回复时间, 1:按发布时间, 2:热门排序)</param>
+    /// <param name="onlyThreadAuthor">是否只看楼主</param>
+    /// <param name="withComments">是否包含楼中楼回复</param>
+    /// <param name="commentRn">每层楼显示的楼中楼数量</param>
+    /// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
+    /// <returns>回复列表实体</returns>
     public async Task<Posts> RequestHttpAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor,
         bool withComments, int commentRn, bool commentSortByAgree)
     {
@@ -85,6 +97,18 @@ public class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaR
         return ParseBody(result);
     }
 
+    /// <summary>
+    ///     通过 Websocket 获取主题帖内回复列表
+    /// </summary>
+    /// <param name="tid">主题帖 ID (tid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="rn">每页请求数量</param>
+    /// <param name="sort">排序方式 (0:按回复时间, 1:按发布时间, 2:热门排序)</param>
+    /// <param name="onlyThreadAuthor">是否只看楼主</param>
+    /// <param name="withComments">是否包含楼中楼回复</param>
+    /// <param name="commentRn">每层楼显示的楼中楼数量</param>
+    /// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
+    /// <returns>回复列表实体</returns>
     public async Task<Posts> RequestWsAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor,
         bool withComments, int commentRn, bool commentSortByAgree)
     {

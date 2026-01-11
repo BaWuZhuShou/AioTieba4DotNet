@@ -8,13 +8,14 @@ namespace AioTieba4DotNet.Abstractions;
 public interface ITiebaWsCore
 {
     /// <summary>
-    ///     当前绑定的账户信息
+    ///     当前绑定的账户信息 <see cref="Account"/>
     /// </summary>
     Account? Account { get; }
 
     /// <summary>
     ///     设置或更新绑定的账户
     /// </summary>
+    /// <param name="newAccount">新账户 <see cref="Account"/></param>
     void SetAccount(Account newAccount);
 
     /// <summary>
@@ -25,6 +26,8 @@ public interface ITiebaWsCore
     /// <summary>
     ///     发送原始 Protobuf 请求（不等待响应）
     /// </summary>
+    /// <param name="req">请求对象 <see cref="WSReq"/></param>
+    /// <param name="cancellationToken">取消令牌</param>
     Task SendAsync(WSReq req, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -34,12 +37,14 @@ public interface ITiebaWsCore
     /// <param name="data">业务负载字节流</param>
     /// <param name="encrypt">是否对负载加密（默认开启）</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>服务器返回的响应对象</returns>
+    /// <returns>服务器返回的响应对象 <see cref="WSRes"/></returns>
     Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     监听并流式获取服务器推送消息（如通知等）
     /// </summary>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>服务器推送的响应流 <see cref="IAsyncEnumerable{WSRes}"/></returns>
     IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default);
 
     /// <summary>

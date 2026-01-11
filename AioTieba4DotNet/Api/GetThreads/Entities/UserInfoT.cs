@@ -18,6 +18,11 @@ public class UserInfoT : UserInfo
     /// </summary>
     public bool IsBawu { get; init; }
 
+    /// <summary>
+    ///     从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataProto">Protobuf 用户信息数据</param>
+    /// <returns>用户信息实体</returns>
     public static UserInfoT? FromTbData(User? dataProto)
     {
         if (dataProto == null) return null;

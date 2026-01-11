@@ -77,6 +77,9 @@ public class HttpCore : ITiebaHttpCore
     /// <summary>
     ///     发送 App 端表单请求并获取字符串响应
     /// </summary>
+    /// <param name="uri">请求 URI</param>
+    /// <param name="data">请求表单数据</param>
+    /// <returns>响应字符串</returns>
     public async Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
     {
         if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
@@ -88,6 +91,9 @@ public class HttpCore : ITiebaHttpCore
     /// <summary>
     ///     发送 App 端 Protobuf 请求并获取字节数组响应
     /// </summary>
+    /// <param name="uri">请求 URI</param>
+    /// <param name="data">Protobuf 请求负载</param>
+    /// <returns>响应字节数组</returns>
     public async Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data)
     {
         if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
@@ -99,6 +105,9 @@ public class HttpCore : ITiebaHttpCore
     /// <summary>
     ///     发送 Web 端 GET 请求并获取字符串响应
     /// </summary>
+    /// <param name="uri">请求 URI</param>
+    /// <param name="parameters">查询参数</param>
+    /// <returns>响应字符串</returns>
     public async Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters)
     {
         if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();
@@ -110,6 +119,9 @@ public class HttpCore : ITiebaHttpCore
     /// <summary>
     ///     发送 Web 端表单请求并获取字符串响应
     /// </summary>
+    /// <param name="uri">请求 URI</param>
+    /// <param name="data">请求表单数据</param>
+    /// <returns>响应字符串</returns>
     public async Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
     {
         if (string.IsNullOrEmpty(Account?.Bduss)) CheckBdussRequirement();

@@ -2,8 +2,15 @@
 
 namespace AioTieba4DotNet.Core;
 
+/// <summary>
+///     工具类
+/// </summary>
 public static class Utils
 {
+    /// <summary>
+    ///     生成随机 Android ID
+    /// </summary>
+    /// <returns>Android ID 字符串</returns>
     public static string GenerateAndroidId()
     {
         // 创建一个长度为8的字节数组
@@ -21,6 +28,12 @@ public static class Utils
         return hexString;
     }
 
+    /// <summary>
+    ///     应用 PKCS7 填充
+    /// </summary>
+    /// <param name="data">原始数据</param>
+    /// <param name="blockSize">块大小</param>
+    /// <returns>填充后的数据</returns>
     public static byte[] ApplyPkcs7Padding(byte[] data, int blockSize)
     {
         var paddingSize = blockSize - data.Length % blockSize;
@@ -32,6 +45,13 @@ public static class Utils
         return paddedData;
     }
 
+    /// <summary>
+    ///     移除 PKCS7 填充
+    /// </summary>
+    /// <param name="paddedData">填充后的数据</param>
+    /// <param name="blockSize">块大小</param>
+    /// <returns>原始数据</returns>
+    /// <exception cref="ArgumentException"></exception>
     public static byte[] RemovePkcs7Padding(byte[] paddedData, int blockSize)
     {
         if (paddedData.Length == 0)
@@ -57,20 +77,20 @@ public static class Utils
     }
 
     /// <summary>
-    ///     判断是否是portrait
+    ///     判断是否是 portrait
     /// </summary>
-    /// <param name="portrait"></param>
-    /// <returns></returns>
+    /// <param name="portrait">头像 ID</param>
+    /// <returns>True 如果是 portrait</returns>
     public static bool IsPortrait(string portrait)
     {
         return portrait.Contains("tb.");
     }
 
     /// <summary>
-    ///     转换贴吧数字
+    ///     转换贴吧热度数字（处理“万”单位）
     /// </summary>
-    /// <param name="tbNum"></param>
-    /// <returns></returns>
+    /// <param name="tbNum">贴吧热度字符串</param>
+    /// <returns>整数热度值</returns>
     public static int TbNumToInt(string tbNum)
     {
         if (!string.IsNullOrEmpty(tbNum) && tbNum.EndsWith('万'))

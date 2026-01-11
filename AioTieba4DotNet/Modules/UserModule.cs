@@ -47,7 +47,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     ///     获取用户基础信息 (App端接口)
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
-    /// <returns>用户基础信息</returns>
+    /// <returns>包含用户基础信息的 <see cref="UserInfoGuInfoApp"/> 实体</returns>
     public async Task<UserInfoGuInfoApp> GetBasicInfoAsync(int userId)
     {
         var api = new GetUInfoGetUserInfoApp((HttpCore)httpCore);
@@ -58,7 +58,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     ///     获取用户详细主页信息 (通过用户 ID)
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
-    /// <returns>用户主页信息</returns>
+    /// <returns>包含用户主页信息的 <see cref="UserInfoPf"/> 实体</returns>
     public async Task<UserInfoPf> GetProfileAsync(int userId)
     {
         var api = new GetUInfoProfile<int>((HttpCore)httpCore);
@@ -69,7 +69,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     ///     获取用户详细主页信息 (通过用户名或 Portrait)
     /// </summary>
     /// <param name="portraitOrUserName">用户名 (un) 或用户头像 ID (portrait)</param>
-    /// <returns>用户主页信息</returns>
+    /// <returns>包含用户主页信息的 <see cref="UserInfoPf"/> 实体</returns>
     public async Task<UserInfoPf> GetProfileAsync(string portraitOrUserName)
     {
         var api = new GetUInfoProfile<string>((HttpCore)httpCore);
@@ -131,7 +131,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
     /// <param name="pn">页码</param>
-    /// <returns>关注的用户列表</returns>
+    /// <returns>包含关注用户列表的 <see cref="UserList"/> 实体</returns>
     public async Task<UserList> GetFollowsAsync(long userId, int pn = 1)
     {
         var api = new GetFollows(httpCore);
@@ -142,7 +142,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     ///     获取用户面板信息
     /// </summary>
     /// <param name="nameOrPortrait">用户名或 Portrait</param>
-    /// <returns>用户面板信息</returns>
+    /// <returns>包含用户面板信息的 <see cref="UserInfoPanel"/> 实体</returns>
     public async Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait)
     {
         var api = new GetUInfoPanel(httpCore);
@@ -153,7 +153,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     ///     获取用户信息 JSON
     /// </summary>
     /// <param name="username">用户名</param>
-    /// <returns>用户信息实体</returns>
+    /// <returns>包含用户信息的 <see cref="UserInfoJson"/> 实体</returns>
     public async Task<UserInfoJson> GetUserInfoJsonAsync(string username)
     {
         var api = new GetUInfoUserJson(httpCore);

@@ -88,6 +88,11 @@ public class Post
     /// </summary>
     public bool IsThreadAuthor { get; set; }
 
+    /// <summary>
+    ///     从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataProto">Protobuf 楼层信息数据</param>
+    /// <returns>楼层信息实体</returns>
     public static Post FromTbData(global::Post? dataProto)
     {
         if (dataProto == null)

@@ -12,12 +12,19 @@ public class Containers<T> : IReadOnlyList<T>
     // Python中用field初始化，C#类似的做法如下
     private readonly List<T> _objs = [];
 
-    // 构造器，可通过传入列表初始化
+    /// <summary>
+    ///     构造函数
+    /// </summary>
+    /// <param name="objs">对象列表</param>
     public Containers(List<T> objs)
     {
         _objs.AddRange(objs);
     }
 
+    /// <summary>
+    ///     构造函数
+    /// </summary>
+    /// <param name="collection">对象集合</param>
     public Containers(IEnumerable<T>? collection)
     {
         if (collection != null)
@@ -29,7 +36,10 @@ public class Containers<T> : IReadOnlyList<T>
     /// </summary>
     public IReadOnlyList<T> Objs => _objs;
 
-    // 支持 foreach 遍历（实现 IEnumerable<T>，也可继承 IReadOnlyList<T>）
+    /// <summary>
+    ///     获取枚举器
+    /// </summary>
+    /// <returns>枚举器</returns>
     public IEnumerator<T> GetEnumerator()
     {
         return _objs.GetEnumerator();
@@ -40,30 +50,51 @@ public class Containers<T> : IReadOnlyList<T>
         return _objs.GetEnumerator();
     }
 
-    // 支持索引访问
+    /// <summary>
+    ///     索引访问器
+    /// </summary>
+    /// <param name="index">索引</param>
     public T this[int index] => _objs[index];
 
-    // 支持 len（数量）
+    /// <summary>
+    ///     元素数量
+    /// </summary>
     public int Count => _objs.Count;
 
-    // 支持添加元素的方法，可根据实际需求公开或保护（这里默认protected）
+    /// <summary>
+    ///     添加元素
+    /// </summary>
+    /// <param name="item">元素</param>
     protected void Add(T item)
     {
         _objs.Add(item);
     }
 
-    // 不允许 set、del，显式抛出异常
+    /// <summary>
+    ///     设置元素（未实现）
+    /// </summary>
+    /// <param name="index">索引</param>
+    /// <param name="value">值</param>
+    /// <exception cref="NotImplementedException"></exception>
     public void SetItem(int index, T value)
     {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    ///     移除元素（未实现）
+    /// </summary>
+    /// <param name="index">索引</param>
+    /// <exception cref="NotImplementedException"></exception>
     public void RemoveAt(int index)
     {
         throw new NotImplementedException();
     }
 
-    // 支持 bool（是否为空）
+    /// <summary>
+    ///     是否包含元素
+    /// </summary>
+    /// <returns>True 如果包含元素</returns>
     public bool Any()
     {
         return _objs.Count > 0;

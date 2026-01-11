@@ -5,8 +5,7 @@ using System.Text;
 namespace AioTieba4DotNet.Core;
 
 /// <summary>
-///     导入所需哈希类
-///     导入加密类
+///     贴吧加密工具类
 /// </summary>
 public static class TbCrypto
 {
@@ -196,6 +195,11 @@ public static class TbCrypto
         return sb.ToString();
     }
 
+    /// <summary>
+    ///     生成 CUID Galaxy 2
+    /// </summary>
+    /// <param name="androidId">Android ID</param>
+    /// <returns>CUID Galaxy 2 字符串</returns>
     public static string CuidGalaxy2(string androidId)
     {
         var androidIdBytes = Encoding.UTF8.GetBytes(androidId);
@@ -205,6 +209,12 @@ public static class TbCrypto
         return TbcCuidGalaxy2(androidIdBytes);
     }
 
+    /// <summary>
+    ///     生成 CUID 3 AID
+    /// </summary>
+    /// <param name="androidId">Android ID</param>
+    /// <param name="uuid">UUID</param>
+    /// <returns>CUID 3 AID 字符串</returns>
     public static string? C3Aid(string androidId, string uuid)
     {
         var androidIdBytes = Encoding.UTF8.GetBytes(androidId);

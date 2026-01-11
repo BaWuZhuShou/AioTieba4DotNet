@@ -53,8 +53,8 @@ public class ForumT
     /// <summary>
     ///     从贴吧原始数据转换
     /// </summary>
-    /// <param name="dataRes"></param>
-    /// <returns>ForumT</returns>
+    /// <param name="dataRes">Protobuf 吧响应数据</param>
+    /// <returns>吧信息实体</returns>
     public static ForumT FromTbData(FrsPageResIdl.Types.DataRes dataRes)
     {
         var forumInfo = dataRes.Forum;
@@ -75,8 +75,8 @@ public class ForumT
     /// <summary>
     ///     从贴吧原始数据转换
     /// </summary>
-    /// <param name="forumInfo"></param>
-    /// <returns>ForumT</returns>
+    /// <param name="forumInfo">Protobuf 简版吧信息数据</param>
+    /// <returns>吧信息实体</returns>
     public static ForumT FromTbData(SimpleForum? forumInfo)
     {
         if (forumInfo == null) return new ForumT();

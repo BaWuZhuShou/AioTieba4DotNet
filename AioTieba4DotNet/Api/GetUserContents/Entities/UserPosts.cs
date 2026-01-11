@@ -7,12 +7,24 @@ namespace AioTieba4DotNet.Api.GetUserContents.Entities;
 /// </summary>
 public class UserPosts : Containers<UserPost>
 {
+    /// <summary>
+    ///     构造函数
+    /// </summary>
+    /// <param name="objs">用户历史回复列表</param>
+    /// <param name="fid">吧 ID</param>
+    /// <param name="tid">主题帖 ID</param>
     public UserPosts(List<UserPost> objs, int fid, int tid) : base(objs)
     {
         Fid = fid;
         Tid = tid;
     }
 
+    /// <summary>
+    ///     构造函数
+    /// </summary>
+    /// <param name="collection">用户历史回复集合</param>
+    /// <param name="fid">吧 ID</param>
+    /// <param name="tid">主题帖 ID</param>
     public UserPosts(IEnumerable<UserPost>? collection, int fid, int tid) : base(collection)
     {
         Fid = fid;

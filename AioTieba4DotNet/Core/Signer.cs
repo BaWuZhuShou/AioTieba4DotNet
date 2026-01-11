@@ -3,12 +3,19 @@ using System.Text;
 
 namespace AioTieba4DotNet.Core;
 
+/// <summary>
+///     签名器
+/// </summary>
 public class Signer
 {
     // 定义签名后缀
     private const string SignSuffix = "tiebaclient!!!";
 
-    // 核心签名方法
+    /// <summary>
+    ///     计算 App 请求签名
+    /// </summary>
+    /// <param name="items">请求参数列表</param>
+    /// <returns>签名字符串</returns>
     public static string Sign(List<KeyValuePair<string, string>> items)
     {
         // 初始化 MD5 哈希算法

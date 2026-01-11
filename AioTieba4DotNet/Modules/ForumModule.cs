@@ -24,7 +24,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     ///     获取吧 ID (fid)
     /// </summary>
     /// <param name="fname">吧名</param>
-    /// <returns>吧 ID</returns>
+    /// <returns>吧 ID (ulong)</returns>
     public async Task<ulong> GetFidAsync(string fname)
     {
         var forumId = _cache.GetForumId(fname);
@@ -41,7 +41,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     ///     获取吧名 (fname)
     /// </summary>
     /// <param name="fid">吧 ID</param>
-    /// <returns>吧名</returns>
+    /// <returns>吧名 (string)</returns>
     public async Task<string> GetFnameAsync(ulong fid)
     {
         var forumName = _cache.GetForumName(fid);
@@ -57,7 +57,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     ///     获取贴吧详情 (通过 Fid)
     /// </summary>
     /// <param name="fid">吧 ID</param>
-    /// <returns>贴吧详情信息</returns>
+    /// <returns>包含贴吧详情信息的 <see cref="ForumDetail"/> 实体</returns>
     public async Task<ForumDetail> GetDetailAsync(ulong fid)
     {
         var api = new GetForumDetail(httpCore);
@@ -68,7 +68,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     ///     获取贴吧详情 (通过吧名)
     /// </summary>
     /// <param name="fname">吧名</param>
-    /// <returns>贴吧详情信息</returns>
+    /// <returns>包含贴吧详情信息的 <see cref="ForumDetail"/> 实体</returns>
     public async Task<ForumDetail> GetDetailAsync(string fname)
     {
         var fid = await GetFidAsync(fname);
@@ -115,7 +115,7 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     ///     获取贴吧基础信息 (主要用于检查贴吧是否存在)
     /// </summary>
     /// <param name="fname">吧名</param>
-    /// <returns>贴吧基础信息</returns>
+    /// <returns>包含贴吧基础信息的 <see cref="Forum"/> 实体</returns>
     public async Task<Forum> GetForumAsync(string fname)
     {
         var api = new GetForum(httpCore);

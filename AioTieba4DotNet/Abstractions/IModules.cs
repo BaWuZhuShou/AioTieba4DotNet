@@ -22,28 +22,28 @@ public interface IForumModule
     ///     获取贴吧 ID (fid)
     /// </summary>
     /// <param name="fname">贴吧名</param>
-    /// <returns>贴吧 ID</returns>
+    /// <returns>贴吧 ID (ulong)</returns>
     Task<ulong> GetFidAsync(string fname);
 
     /// <summary>
     ///     获取贴吧名
     /// </summary>
     /// <param name="fid">贴吧 ID</param>
-    /// <returns>贴吧名</returns>
+    /// <returns>贴吧名 (string)</returns>
     Task<string> GetFnameAsync(ulong fid);
 
     /// <summary>
     ///     获取贴吧详细资料
     /// </summary>
     /// <param name="fid">贴吧 ID</param>
-    /// <returns>贴吧详细资料实体</returns>
+    /// <returns>包含贴吧详细资料的 <see cref="ForumDetail"/> 实体</returns>
     Task<ForumDetail> GetDetailAsync(ulong fid);
 
     /// <summary>
     ///     获取贴吧详细资料
     /// </summary>
     /// <param name="fname">贴吧名</param>
-    /// <returns>贴吧详细资料实体</returns>
+    /// <returns>包含贴吧详细资料的 <see cref="ForumDetail"/> 实体</returns>
     Task<ForumDetail> GetDetailAsync(string fname);
 
     /// <summary>
@@ -71,7 +71,7 @@ public interface IForumModule
     ///     获取贴吧基本信息（底层 Frs API）
     /// </summary>
     /// <param name="fname">贴吧名</param>
-    /// <returns>贴吧基本信息实体</returns>
+    /// <returns>包含贴吧基本信息的 <see cref="Forum"/> 实体</returns>
     Task<Forum> GetForumAsync(string fname);
 
     /// <summary>
@@ -90,7 +90,7 @@ public interface IForumModule
 public interface IThreadModule
 {
     /// <summary>
-    ///     当前模块默认请求模式
+    ///     当前模块默认请求模式 <see cref="TiebaRequestMode"/>
     /// </summary>
     TiebaRequestMode RequestMode { get; set; }
 
@@ -100,10 +100,10 @@ public interface IThreadModule
     /// <param name="fname">贴吧名</param>
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
-    /// <param name="sort">排序方式</param>
+    /// <param name="sort">排序方式 <see cref="ThreadSortType"/></param>
     /// <param name="isGood">是否只看精华</param>
-    /// <param name="mode">请求模式（覆盖默认值）</param>
-    /// <returns>主题帖列表</returns>
+    /// <param name="mode">请求模式 <see cref="TiebaRequestMode"/>（覆盖默认值）</param>
+    /// <returns>包含主题帖列表的 <see cref="Threads"/> 实体</returns>
     Task<Threads> GetThreadsAsync(string fname, int pn = 1, int rn = 30, ThreadSortType sort = ThreadSortType.Reply,
         bool isGood = false, TiebaRequestMode? mode = null);
 
@@ -113,10 +113,10 @@ public interface IThreadModule
     /// <param name="fid">贴吧 ID</param>
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
-    /// <param name="sort">排序方式</param>
+    /// <param name="sort">排序方式 <see cref="ThreadSortType"/></param>
     /// <param name="isGood">是否只看精华</param>
-    /// <param name="mode">请求模式（覆盖默认值）</param>
-    /// <returns>主题帖列表</returns>
+    /// <param name="mode">请求模式 <see cref="TiebaRequestMode"/>（覆盖默认值）</param>
+    /// <returns>包含主题帖列表的 <see cref="Threads"/> 实体</returns>
     Task<Threads> GetThreadsAsync(ulong fid, int pn = 1, int rn = 30, ThreadSortType sort = ThreadSortType.Reply,
         bool isGood = false, TiebaRequestMode? mode = null);
 
@@ -126,13 +126,13 @@ public interface IThreadModule
     /// <param name="tid">主题帖 ID</param>
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
-    /// <param name="sort">排序方式</param>
+    /// <param name="sort">排序方式 <see cref="PostSortType"/></param>
     /// <param name="onlyThreadAuthor">是否只看楼主</param>
     /// <param name="withComments">是否包含楼中楼预览</param>
     /// <param name="commentRn">楼中楼显示数量</param>
     /// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
-    /// <param name="mode">请求模式（覆盖默认值）</param>
-    /// <returns>回复列表实体</returns>
+    /// <param name="mode">请求模式 <see cref="TiebaRequestMode"/>（覆盖默认值）</param>
+    /// <returns>包含回复列表的 <see cref="Posts"/> 实体</returns>
     Task<Posts> GetPostsAsync(long tid, int pn = 1, int rn = 30, PostSortType sort = PostSortType.Asc,
         bool onlyThreadAuthor = false, bool withComments = false, int commentRn = 0, bool commentSortByAgree = false,
         TiebaRequestMode? mode = null);
@@ -144,8 +144,8 @@ public interface IThreadModule
     /// <param name="pid">回复 ID (floor)</param>
     /// <param name="pn">页码</param>
     /// <param name="isComment">是否为子楼中楼</param>
-    /// <param name="mode">请求模式（覆盖默认值）</param>
-    /// <returns>楼中楼列表实体</returns>
+    /// <param name="mode">请求模式 <see cref="TiebaRequestMode"/>（覆盖默认值）</param>
+    /// <returns>包含楼中楼列表的 <see cref="Comments"/> 实体</returns>
     Task<Comments> GetCommentsAsync(long tid, long pid, int pn = 1,
         bool isComment = false, TiebaRequestMode? mode = null);
 
@@ -212,35 +212,35 @@ public interface IThreadModule
 public interface IUserModule
 {
     /// <summary>
-    ///     当前模块默认请求模式
+    ///     当前模块默认请求模式 <see cref="TiebaRequestMode"/>
     /// </summary>
     TiebaRequestMode RequestMode { get; set; }
 
     /// <summary>
     ///     获取用户 tbs（用于某些写操作的安全令牌）
     /// </summary>
-    /// <returns>tbs 字符串</returns>
+    /// <returns>tbs 字符串 (string)</returns>
     Task<string> GetTbsAsync();
 
     /// <summary>
     ///     获取用户基础信息（通过 userId）
     /// </summary>
     /// <param name="userId">用户 ID</param>
-    /// <returns>基础信息实体</returns>
+    /// <returns>包含基础信息的 <see cref="UserInfoGuInfoApp"/> 实体</returns>
     Task<UserInfoGuInfoApp> GetBasicInfoAsync(int userId);
 
     /// <summary>
     ///     获取用户详细资料（个人主页）
     /// </summary>
     /// <param name="userId">用户 ID</param>
-    /// <returns>详细资料实体</returns>
+    /// <returns>包含详细资料的 <see cref="UserInfoPf"/> 实体</returns>
     Task<UserInfoPf> GetProfileAsync(int userId);
 
     /// <summary>
     ///     获取用户详细资料（个人主页）
     /// </summary>
     /// <param name="portraitOrUserName">用户 portrait 或用户名</param>
-    /// <returns>详细资料实体</returns>
+    /// <returns>包含详细资料的 <see cref="UserInfoPf"/> 实体</returns>
     Task<UserInfoPf> GetProfileAsync(string portraitOrUserName);
 
     /// <summary>
@@ -282,21 +282,21 @@ public interface IUserModule
     /// </summary>
     /// <param name="userId">用户 ID</param>
     /// <param name="pn">页码</param>
-    /// <returns>用户关注列表实体</returns>
+    /// <returns>包含用户关注列表的 <see cref="UserList"/> 实体</returns>
     Task<UserList> GetFollowsAsync(long userId, int pn = 1);
 
     /// <summary>
     ///     获取用户信息面板（浮窗信息）
     /// </summary>
     /// <param name="nameOrPortrait">用户名或 portrait</param>
-    /// <returns>面板信息实体</returns>
+    /// <returns>包含面板信息的 <see cref="UserInfoPanel"/> 实体</returns>
     Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait);
 
     /// <summary>
     ///     通过 JSON API 获取用户信息
     /// </summary>
     /// <param name="username">用户名</param>
-    /// <returns>用户信息实体</returns>
+    /// <returns>包含用户信息的 <see cref="UserInfoJson"/> 实体</returns>
     Task<UserInfoJson> GetUserInfoJsonAsync(string username);
 
 
@@ -307,8 +307,8 @@ public interface IUserModule
     /// <param name="pn">页码</param>
     /// <param name="rn">每页条数</param>
     /// <param name="version">模拟的客户端版本</param>
-    /// <param name="mode">请求模式</param>
-    /// <returns>用户回复列表实体</returns>
+    /// <param name="mode">请求模式 <see cref="TiebaRequestMode"/></param>
+    /// <returns>包含用户回复列表的 <see cref="UserPostss"/> 实体</returns>
     Task<UserPostss> GetPostsAsync(int userId, uint pn = 1, uint rn = 20, string version = "8.9.8.5",
         TiebaRequestMode? mode = null);
 
@@ -318,8 +318,8 @@ public interface IUserModule
     /// <param name="userId">用户 ID</param>
     /// <param name="pn">页码</param>
     /// <param name="publicOnly">是否只获取公开贴子</param>
-    /// <param name="mode">请求模式</param>
-    /// <returns>用户主题帖列表实体</returns>
+    /// <param name="mode">请求模式 <see cref="TiebaRequestMode"/></param>
+    /// <returns>包含用户主题帖列表的 <see cref="UserThreads"/> 实体</returns>
     Task<UserThreads> GetThreadsAsync(int userId, uint pn = 1, bool publicOnly = true, TiebaRequestMode? mode = null);
 }
 
@@ -331,13 +331,13 @@ public interface IClientModule
     /// <summary>
     ///     初始化 ZID 令牌（用于身份识别）
     /// </summary>
-    /// <returns>ZID 字符串</returns>
+    /// <returns>ZID 字符串 (string)</returns>
     Task<string> InitZIdAsync();
 
     /// <summary>
     ///     同步客户端配置（SampleId 等参数）
     /// </summary>
-    /// <returns>ClientId 和 SampleId</returns>
+    /// <returns>包含 ClientId 和 SampleId 的元组</returns>
     Task<(string ClientId, string SampleId)> SyncAsync();
 }
 
@@ -357,27 +357,27 @@ public interface ITiebaClient : IDisposable
     ITiebaHttpCore HttpCore { get; }
 
     /// <summary>
-    ///     贴吧/吧务模块
+    ///     贴吧/吧务模块 <see cref="IForumModule"/>
     /// </summary>
     IForumModule Forums { get; }
 
     /// <summary>
-    ///     帖子/回复模块
+    ///     帖子/回复模块 <see cref="IThreadModule"/>
     /// </summary>
     IThreadModule Threads { get; }
 
     /// <summary>
-    ///     用户/社交模块
+    ///     用户/社交模块 <see cref="IUserModule"/>
     /// </summary>
     IUserModule Users { get; }
 
     /// <summary>
-    ///     客户端底层模块
+    ///     客户端底层模块 <see cref="IClientModule"/>
     /// </summary>
     IClientModule Client { get; }
 
     /// <summary>
-    ///     WebSocket 核心组件
+    ///     WebSocket 核心组件 <see cref="ITiebaWsCore"/>
     /// </summary>
     ITiebaWsCore WsCore { get; }
 }

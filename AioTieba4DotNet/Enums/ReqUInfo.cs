@@ -9,12 +9,43 @@
 [Flags]
 public enum ReqUInfo
 {
+    /// <summary>
+    ///     User ID
+    /// </summary>
     UserId = 1,
+
+    /// <summary>
+    ///     头像 ID
+    /// </summary>
     Portrait = 1 << 1,
+
+    /// <summary>
+    ///     用户名
+    /// </summary>
     UserName = 1 << 2,
+
+    /// <summary>
+    ///     昵称
+    /// </summary>
     NickName = 1 << 3,
+
+    /// <summary>
+    ///     贴吧 UID
+    /// </summary>
     TiebaUid = 1 << 4,
+
+    /// <summary>
+    ///     其他信息
+    /// </summary>
     Other = 1 << 5,
+
+    /// <summary>
+    ///     基础信息
+    /// </summary>
     Basic = UserId | Portrait | UserName,
+
+    /// <summary>
+    ///     全部信息
+    /// </summary>
     All = Basic | NickName | TiebaUid | Other
 }

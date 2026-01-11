@@ -9,7 +9,18 @@
 /// </summary>
 public enum PrivLike
 {
+    /// <summary>
+    ///     所有人可见
+    /// </summary>
     Public = 1,
+
+    /// <summary>
+    ///     好友可见
+    /// </summary>
     Friend = 2,
+
+    /// <summary>
+    ///     完全隐藏
+    /// </summary>
     Hide = 3
 }

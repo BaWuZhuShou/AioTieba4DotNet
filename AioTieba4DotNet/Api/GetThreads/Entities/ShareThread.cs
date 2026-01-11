@@ -56,8 +56,8 @@ public class ShareThread
     /// <summary>
     ///     从贴吧原始数据转换
     /// </summary>
-    /// <param name="threadInfo"></param>
-    /// <returns>ShareThread</returns>
+    /// <param name="threadInfo">Protobuf 原始主题帖信息数据</param>
+    /// <returns>被分享的主题帖实体</returns>
     public static ShareThread FromTbData(ThreadInfo.Types.OriginThreadInfo threadInfo)
     {
         return new ShareThread

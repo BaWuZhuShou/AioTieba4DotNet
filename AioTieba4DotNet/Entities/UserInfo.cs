@@ -3,6 +3,9 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Entities;
 
+/// <summary>
+///     用户信息
+/// </summary>
 public class UserInfo
 {
     /// <summary>
@@ -115,7 +118,14 @@ public class UserInfo
     /// </summary>
     public PrivReply PrivReply { get; init; } = PrivReply.All;
 
+    /// <summary>
+    ///     UK
+    /// </summary>
     public long Uk { get; init; }
+
+    /// <summary>
+    ///     百度 UK
+    /// </summary>
     public string BdUk { get; init; } = "";
 
     /// <summary>
@@ -135,19 +145,35 @@ public class UserInfo
     public string LogName => !string.IsNullOrEmpty(UserName) ? UserName :
         !string.IsNullOrEmpty(Portrait) ? $"{NickName}/{Portrait}" : UserId.ToString();
 
+    /// <summary>
+    ///     基于 UserId 的比较器
+    /// </summary>
     public static IEqualityComparer<UserInfo> UserIdComparer { get; } = new UserIdEqualityComparer();
 
+    /// <summary>
+    ///     转换为字符串
+    /// </summary>
+    /// <returns>用户名、头像 ID 或 UserId</returns>
     public override string ToString()
     {
         return !string.IsNullOrEmpty(UserName) ? UserName :
             !string.IsNullOrEmpty(Portrait) ? Portrait : UserId.ToString();
     }
 
+    /// <summary>
+    ///     判断是否相等
+    /// </summary>
+    /// <param name="obj">比较对象</param>
+    /// <returns>True 如果 UserId 相等</returns>
     public override bool Equals(object? obj)
     {
         return obj is UserInfo user && UserId == user.UserId;
     }
 
+    /// <summary>
+    ///     获取哈希值
+    /// </summary>
+    /// <returns>UserId 的哈希值</returns>
     public override int GetHashCode()
     {
         return UserId.GetHashCode();
@@ -156,7 +182,7 @@ public class UserInfo
     /// <summary>
     ///     从贴吧原始数据转换
     /// </summary>
-    /// <param name="dataRes"></param>
+    /// <param name="dataRes">原始数据</param>
     /// <returns>UserInfo?</returns>
     public static UserInfo? FromTbData(PostInfoList? dataRes)
     {
@@ -175,7 +201,7 @@ public class UserInfo
     /// <summary>
     ///     从 JSON 数据转换
     /// </summary>
-    /// <param name="data"></param>
+    /// <param name="data">JSON 对象</param>
     /// <returns>UserInfo</returns>
     public static UserInfo FromTbData(JObject data)
     {

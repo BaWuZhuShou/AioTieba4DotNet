@@ -11,6 +11,9 @@ namespace AioTieba4DotNet.Api;
 /// <param name="httpCore">Http 核心组件</param>
 public abstract class ApiBase(ITiebaHttpCore httpCore)
 {
+    /// <summary>
+    ///     Http 核心组件
+    /// </summary>
     protected readonly ITiebaHttpCore HttpCore = httpCore;
 
     /// <summary>
@@ -63,7 +66,14 @@ public abstract class ApiWsBase<TResult>(
     TiebaRequestMode mode = TiebaRequestMode.Http)
     : ApiBase(httpCore)
 {
+    /// <summary>
+    ///     请求模式
+    /// </summary>
     protected readonly TiebaRequestMode Mode = mode;
+
+    /// <summary>
+    ///     Websocket 核心组件
+    /// </summary>
     protected readonly ITiebaWsCore WsCore = wsCore;
 
     /// <summary>

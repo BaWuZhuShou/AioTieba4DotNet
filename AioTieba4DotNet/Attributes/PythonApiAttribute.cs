@@ -7,5 +7,8 @@
 [AttributeUsage(AttributeTargets.Class)]
 public class PythonApiAttribute(string path) : Attribute
 {
+    /// <summary>
+    ///     原版 Python aiotieba 接口路径
+    /// </summary>
     public string Path { get; } = path;
 }

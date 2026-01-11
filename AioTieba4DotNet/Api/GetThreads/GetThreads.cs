@@ -70,6 +70,15 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
         );
     }
 
+    /// <summary>
+    ///     通过 HTTP 获取贴吧主题帖列表
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <param name="pn">页码</param>
+    /// <param name="rn">每页请求数量</param>
+    /// <param name="sort">排序方式</param>
+    /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
+    /// <returns>主题帖列表实体</returns>
     public async Task<Threads> RequestHttpAsync(string fname, int pn, int rn, int sort, int isGood)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);
@@ -79,6 +88,15 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
         return ParseBody(result);
     }
 
+    /// <summary>
+    ///     通过 Websocket 获取贴吧主题帖列表
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <param name="pn">页码</param>
+    /// <param name="rn">每页请求数量</param>
+    /// <param name="sort">排序方式</param>
+    /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
+    /// <returns>主题帖列表实体</returns>
     public async Task<Threads> RequestWsAsync(string fname, int pn, int rn, int sort, int isGood)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);

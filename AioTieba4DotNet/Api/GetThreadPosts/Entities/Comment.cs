@@ -83,6 +83,11 @@ public class Comment
     /// </summary>
     public bool IsThreadAuthor { get; set; }
 
+    /// <summary>
+    ///     从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataProto">Protobuf 楼中楼信息数据</param>
+    /// <returns>楼中楼信息实体</returns>
     public static Comment FromTbData(SubPostList? dataProto)
     {
         if (dataProto == null) return new Comment { Content = Content.FromTbData((IEnumerable<PbContent>?)null) };

@@ -65,6 +65,13 @@ public class GetUserThreads(
         );
     }
 
+    /// <summary>
+    ///     通过 HTTP 获取用户发布主题帖列表
+    /// </summary>
+    /// <param name="userId">用户 ID (uid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="publicOnly">是否只看公开帖子</param>
+    /// <returns>用户发布主题帖列表实体</returns>
     public async Task<UserThreads> RequestHttpAsync(int userId, uint pn, bool publicOnly)
     {
         var data = PackProto(HttpCore.Account!, userId, pn, publicOnly);
@@ -75,6 +82,13 @@ public class GetUserThreads(
         return ParseBody(result);
     }
 
+    /// <summary>
+    ///     通过 Websocket 获取用户发布主题帖列表
+    /// </summary>
+    /// <param name="userId">用户 ID (uid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="publicOnly">是否只看公开帖子</param>
+    /// <returns>用户发布主题帖列表实体</returns>
     public async Task<UserThreads> RequestWsAsync(int userId, uint pn, bool publicOnly)
     {
         var data = PackProto(WsCore.Account!, userId, pn, publicOnly);

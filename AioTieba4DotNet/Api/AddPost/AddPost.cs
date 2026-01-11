@@ -129,6 +129,15 @@ public class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestM
         );
     }
 
+    /// <summary>
+    ///     通过 HTTP 发送发布回复请求
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <param name="fid">吧 ID</param>
+    /// <param name="tid">主题帖 ID</param>
+    /// <param name="content">回复内容</param>
+    /// <param name="showName">显示名称（可选）</param>
+    /// <returns>是否成功</returns>
     public async Task<bool> RequestHttpAsync(string fname, ulong fid, long tid, string content,
         string? showName = null)
     {
@@ -142,6 +151,15 @@ public class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestM
         return ParseBody(result);
     }
 
+    /// <summary>
+    ///     通过 Websocket 发送发布回复请求
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <param name="fid">吧 ID</param>
+    /// <param name="tid">主题帖 ID</param>
+    /// <param name="content">回复内容</param>
+    /// <param name="showName">显示名称（可选）</param>
+    /// <returns>是否成功</returns>
     public async Task<bool> RequestWsAsync(string fname, ulong fid, long tid, string content,
         string? showName = null)
     {

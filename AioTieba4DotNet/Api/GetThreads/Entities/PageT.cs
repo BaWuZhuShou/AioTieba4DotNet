@@ -38,8 +38,8 @@ public class PageT
     /// <summary>
     ///     从贴吧原始数据转换
     /// </summary>
-    /// <param name="page"></param>
-    /// <returns>PageT</returns>
+    /// <param name="page">Protobuf 页码数据</param>
+    /// <returns>页信息实体</returns>
     public static PageT FromTbData(Page? page)
     {
         if (page == null) return new PageT();

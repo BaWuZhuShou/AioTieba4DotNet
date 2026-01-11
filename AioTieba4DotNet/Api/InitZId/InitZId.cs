@@ -87,6 +87,11 @@ public class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
     }
 
 
+    /// <summary>
+    ///     计算 MD5 哈希
+    /// </summary>
+    /// <param name="input">输入字符串</param>
+    /// <returns>MD5 字符串</returns>
     public static string GetMd5Hash(string input)
     {
         var data = MD5.HashData(Encoding.UTF8.GetBytes(input));
@@ -94,6 +99,11 @@ public class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
         return BitConverter.ToString(data).Replace("-", string.Empty);
     }
 
+    /// <summary>
+    ///     压缩数据 (GZip)
+    /// </summary>
+    /// <param name="data">输入字节数组</param>
+    /// <returns>压缩后的字节数组</returns>
     public static byte[] Compress(byte[] data)
     {
         using var compressedStream = new MemoryStream();

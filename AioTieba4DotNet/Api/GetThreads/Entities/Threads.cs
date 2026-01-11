@@ -2,15 +2,41 @@ using System.Text;
 
 namespace AioTieba4DotNet.Api.GetThreads.Entities;
 
+/// <summary>
+///     主题帖列表
+/// </summary>
 public class Threads
 {
+    /// <summary>
+    ///     页码信息
+    /// </summary>
     public required PageT Page { get; set; }
+
+    /// <summary>
+    ///     吧信息
+    /// </summary>
     public required ForumT Forum { get; set; }
+
+    /// <summary>
+    ///     主题帖列表
+    /// </summary>
     public required List<Thread> Objs { get; set; }
+
+    /// <summary>
+    ///     分区字典
+    /// </summary>
     public required Dictionary<string, int> TabDictionary { get; set; }
 
+    /// <summary>
+    ///     是否还有更多
+    /// </summary>
     public bool HasMore => Page.HasMore;
 
+    /// <summary>
+    ///     从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataRes">Protobuf 吧页面响应数据</param>
+    /// <returns>主题帖列表实体</returns>
     public static Threads FromTbData(FrsPageResIdl.Types.DataRes dataRes)
     {
         var forum = ForumT.FromTbData(dataRes);
@@ -32,6 +58,10 @@ public class Threads
         };
     }
 
+    /// <summary>
+    ///     转换为字符串
+    /// </summary>
+    /// <returns>列表摘要信息</returns>
     public override string ToString()
     {
         var sb = new StringBuilder();

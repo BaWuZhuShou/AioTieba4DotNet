@@ -9,7 +9,18 @@
 /// </summary>
 public enum PrivReply
 {
+    /// <summary>
+    ///     允许所有人
+    /// </summary>
     All = 1,
+
+    /// <summary>
+    ///     仅允许我的粉丝
+    /// </summary>
     Fans = 5,
+
+    /// <summary>
+    ///     仅允许我的关注
+    /// </summary>
     Follow = 6
 }

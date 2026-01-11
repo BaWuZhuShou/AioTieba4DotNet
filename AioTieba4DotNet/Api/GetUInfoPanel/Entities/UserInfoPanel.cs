@@ -5,8 +5,16 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetUInfoPanel.Entities;
 
+/// <summary>
+///     用户信息 (面板接口)
+/// </summary>
 public class UserInfoPanel : UserInfo
 {
+    /// <summary>
+    ///     从贴吧原始数据转换
+    /// </summary>
+    /// <param name="data">JSON 数据对象</param>
+    /// <returns>用户信息实体</returns>
     public new static UserInfoPanel FromTbData(JObject data)
     {
         var portrait = data.GetValue("portrait")?.ToObject<string>() ?? "";

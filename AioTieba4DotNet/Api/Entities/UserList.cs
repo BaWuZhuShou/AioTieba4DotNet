@@ -8,6 +8,11 @@ namespace AioTieba4DotNet.Api.Entities;
 /// </summary>
 public class UserList : Containers<UserInfo>
 {
+    /// <summary>
+    ///     构造函数
+    /// </summary>
+    /// <param name="objs">用户列表</param>
+    /// <param name="page">页码信息</param>
     public UserList(List<UserInfo> objs, PageT page) : base(objs)
     {
         Page = page;

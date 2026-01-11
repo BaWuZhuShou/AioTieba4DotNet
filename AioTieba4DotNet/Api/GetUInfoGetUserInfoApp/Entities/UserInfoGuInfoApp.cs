@@ -3,8 +3,16 @@ using AioTieba4DotNet.Enums;
 
 namespace AioTieba4DotNet.Api.GetUInfoGetUserInfoApp.Entities;
 
+/// <summary>
+///     用户信息 (App 接口)
+/// </summary>
 public class UserInfoGuInfoApp : UserInfo
 {
+    /// <summary>
+    ///     从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataProto">Protobuf 用户信息数据</param>
+    /// <returns>用户信息实体</returns>
     public static UserInfoGuInfoApp FromTbData(User dataProto)
     {
         var dataProtoPortrait = dataProto.Portrait;

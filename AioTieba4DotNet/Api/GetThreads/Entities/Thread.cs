@@ -147,8 +147,8 @@ public class Thread
     /// <summary>
     ///     从贴吧原始数据转换
     /// </summary>
-    /// <param name="threadInfo"></param>
-    /// <returns>Thread</returns>
+    /// <param name="threadInfo">Protobuf 主题帖信息数据</param>
+    /// <returns>主题帖信息实体</returns>
     public static Thread FromTbData(ThreadInfo? threadInfo)
     {
         if (threadInfo == null)

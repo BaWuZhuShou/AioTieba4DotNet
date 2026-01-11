@@ -3,10 +3,21 @@ using AioTieba4DotNet.Enums;
 
 namespace AioTieba4DotNet.Api.Profile.GetUInfoProfile.Entities;
 
+/// <summary>
+///     用户信息 (个人主页接口)
+/// </summary>
 public class UserInfoPf : UserInfoGuInfoApp
 {
+    /// <summary>
+    ///     虚拟形象
+    /// </summary>
     public required VirtualImagePf VImage { get; init; }
 
+    /// <summary>
+    ///     从贴吧原始数据转换
+    /// </summary>
+    /// <param name="dataProto">Protobuf 响应数据</param>
+    /// <returns>用户信息实体</returns>
     public static UserInfoPf FromTbData(ProfileResIdl.Types.DataRes dataProto)
     {
         var userProto = dataProto.User;

@@ -34,7 +34,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     /// <param name="sort">排序类型</param>
     /// <param name="isGood">是否精品贴</param>
     /// <param name="mode">请求模式覆盖（可选）</param>
-    /// <returns>主题帖列表实体</returns>
+    /// <returns>包含主题帖列表的 <see cref="Threads"/> 实体</returns>
     public async Task<Threads> GetThreadsAsync(string fname, int pn = 1, int rn = 30,
         ThreadSortType sort = ThreadSortType.Reply, bool isGood = false, TiebaRequestMode? mode = null)
     {
@@ -51,7 +51,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     /// <param name="sort">排序类型</param>
     /// <param name="isGood">是否精品贴</param>
     /// <param name="mode">请求模式覆盖（可选）</param>
-    /// <returns>主题帖列表实体</returns>
+    /// <returns>包含主题帖列表的 <see cref="Threads"/> 实体</returns>
     public async Task<Threads> GetThreadsAsync(ulong fid, int pn = 1, int rn = 30,
         ThreadSortType sort = ThreadSortType.Reply, bool isGood = false, TiebaRequestMode? mode = null)
     {
@@ -71,10 +71,10 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     /// <param name="commentRn">楼中楼显示条数</param>
     /// <param name="commentSortByAgree">楼中楼是否按赞数排序</param>
     /// <param name="mode">请求模式覆盖（可选）</param>
-    /// <returns>回复列表实体</returns>
+    /// <returns>包含回复列表的 <see cref="Posts"/> 实体</returns>
     public async Task<Posts> GetPostsAsync(long tid, int pn = 1, int rn = 30, PostSortType sort = PostSortType.Asc,
-        bool onlyThreadAuthor = false,
-        bool withComments = false, int commentRn = 0, bool commentSortByAgree = false, TiebaRequestMode? mode = null)
+        bool onlyThreadAuthor = false, bool withComments = false, int commentRn = 0, bool commentSortByAgree = false,
+        TiebaRequestMode? mode = null)
     {
         var api = new GetThreadPosts(httpCore, wsCore, mode ?? RequestMode);
         return await api.RequestAsync(tid, pn, rn, (int)sort, onlyThreadAuthor, withComments, commentRn,
@@ -89,7 +89,7 @@ public class ThreadModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITi
     /// <param name="pn">页码</param>
     /// <param name="isComment">如果 pid 是楼中楼 ID (spid) 则为 true</param>
     /// <param name="mode">请求模式覆盖（可选）</param>
-    /// <returns>楼中楼回复列表实体</returns>
+    /// <returns>包含楼中楼回复列表的 <see cref="Comments"/> 实体</returns>
     public async Task<Comments> GetCommentsAsync(long tid, long pid, int pn = 1, bool isComment = false,
         TiebaRequestMode? mode = null)
     {

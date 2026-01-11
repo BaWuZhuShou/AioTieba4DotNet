@@ -338,9 +338,12 @@ public class Content
         };
     }
 
+    /// <summary>
+    ///     从贴吧原始数据转换
+    /// </summary>
+    /// <param name="postInfoContent">Protobuf 帖子内容摘要数据</param>
+    /// <returns>内容碎片列表实体</returns>
     public static Content FromTbData(PostInfoList.Types.PostInfoContent postInfoContent)
-
-
     {
         var postContent = postInfoContent.PostContent;
         var texts = new List<FragText>();
@@ -422,10 +425,10 @@ public class Content
     }
 
     /// <summary>
-    ///     从用户内容列表数据转换
+    ///     从贴吧原始数据转换
     /// </summary>
-    /// <param name="dataRes"></param>
-    /// <returns>Content</returns>
+    /// <param name="dataRes">Protobuf 帖子列表信息数据</param>
+    /// <returns>内容碎片列表实体</returns>
     public static Content FromTbData(PostInfoList dataRes)
     {
         var content = FromTbData(dataRes.FirstPostContent);
