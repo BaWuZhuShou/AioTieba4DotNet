@@ -63,10 +63,7 @@ public static class DependencyInjection
             var forums = sp.GetRequiredService<IForumModule>();
             var wsCore = sp.GetRequiredService<ITiebaWsCore>();
             var options = sp.GetRequiredService<IOptions<TiebaOptions>>().Value;
-            return new ThreadModule(httpCore, forums, wsCore)
-            {
-                RequestMode = options.RequestMode
-            };
+            return new ThreadModule(httpCore, forums, wsCore) { RequestMode = options.RequestMode };
         });
 
         services.AddScoped<IUserModule>(sp =>
@@ -75,10 +72,7 @@ public static class DependencyInjection
             var forums = sp.GetRequiredService<IForumModule>();
             var wsCore = sp.GetRequiredService<ITiebaWsCore>();
             var options = sp.GetRequiredService<IOptions<TiebaOptions>>().Value;
-            return new UserModule(httpCore, forums, wsCore)
-            {
-                RequestMode = options.RequestMode
-            };
+            return new UserModule(httpCore, forums, wsCore) { RequestMode = options.RequestMode };
         });
 
         services.AddScoped<ITiebaWsCore>(sp =>

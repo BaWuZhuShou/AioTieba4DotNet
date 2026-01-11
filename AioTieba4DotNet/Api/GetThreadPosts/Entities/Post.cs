@@ -94,9 +94,11 @@ public class Post
         {
             return new Post
             {
-                Content = AioTieba4DotNet.Api.Entities.Contents.Content.FromTbData((IEnumerable<global::PbContent>?)null)
+                Content = AioTieba4DotNet.Api.Entities.Contents.Content.FromTbData(
+                    (IEnumerable<global::PbContent>?)null)
             };
         }
+
         var sign = dataProto.Signature != null
             ? string.Join("", dataProto.Signature.Content.Where(p => p.Type == 0).Select(p => p.Text))
             : "";

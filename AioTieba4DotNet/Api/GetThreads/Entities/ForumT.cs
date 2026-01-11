@@ -83,6 +83,7 @@ public class ForumT
         {
             return new ForumT();
         }
+
         return new ForumT
         {
             Fid = forumInfo.Id,

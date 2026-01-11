@@ -10,7 +10,7 @@ public class ForumDetail
     public string Slogan { get; set; } = "";
     public uint MemberNum { get; set; }
     public uint PostNum { get; set; }
-    public bool HasBaWu  { get; set; } 
+    public bool HasBaWu { get; set; }
 
     public static ForumDetail FromTbData(GetForumDetailResIdl.Types.DataRes data)
     {

@@ -193,10 +193,7 @@ public class UserInfo
 
         return new UserInfo()
         {
-            UserId = userId,
-            Portrait = portrait,
-            UserName = userName,
-            NickNameNew = nickNameNew,
+            UserId = userId, Portrait = portrait, UserName = userName, NickNameNew = nickNameNew,
         };
     }
 

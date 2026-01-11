@@ -87,16 +87,14 @@ public class Comment
     {
         if (dataProto == null)
         {
-            return new Comment
-            {
-                Content = Content.FromTbData((IEnumerable<PbContent>?)null)
-            };
+            return new Comment { Content = Content.FromTbData((IEnumerable<PbContent>?)null) };
         }
+
         var content = Content.FromTbData(dataProto.Content);
-        
+
         long replyToId = 0;
-        if (content.Frags.Count >= 2 && 
-            content.Frags[0] is FragText { Text: "回复 " } && 
+        if (content.Frags.Count >= 2 &&
+            content.Frags[0] is FragText { Text: "回复 " } &&
             dataProto.Content.Count >= 2)
         {
             replyToId = dataProto.Content[1].Uid;
@@ -106,8 +104,9 @@ public class Comment
             if (f1 is FragText t1) content.Texts.Remove(t1);
             if (f1 is FragAt a1) content.Ats.Remove(a1);
             content.Frags.RemoveRange(0, 2);
-            
-            if (content.Frags.Count > 0 && content.Frags[0] is FragText firstFragText && firstFragText.Text.StartsWith(" :"))
+
+            if (content.Frags.Count > 0 && content.Frags[0] is FragText firstFragText &&
+                firstFragText.Text.StartsWith(" :"))
             {
                 var trimmedText = firstFragText.Text[2..];
                 if (string.IsNullOrEmpty(trimmedText))

@@ -5,7 +5,7 @@ namespace AioTieba4DotNet.Api.GetUInfoUserJson.Entities;
 
 public class UserInfoJson : UserInfo
 {
-    public static UserInfoJson FromTbData(JObject data)
+    public new static UserInfoJson FromTbData(JObject data)
     {
         var portrait = data["portrait"]?.ToString() ?? "";
         if (portrait.Contains('?'))

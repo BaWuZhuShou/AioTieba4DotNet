@@ -13,8 +13,8 @@ public class FragItem : IFrag
     /// <summary>
     /// 从贴吧原始数据转换
     /// </summary>
-    /// <param name="dataProto"></param>
-    /// <returns>FragItem</returns>
+    /// <param name="dataProto">Protobuf 碎片数据</param>
+    /// <returns>item碎片实体</returns>
     public static FragItem FromTbData(PbContent dataProto)
     {
         var text = dataProto.Item.ItemName;
@@ -22,14 +22,18 @@ public class FragItem : IFrag
     }
 
     /// <summary>
-    /// 碎片类型
+    /// 获取碎片类型
     /// </summary>
-    /// <returns>string</returns>
+    /// <returns>碎片类型名称</returns>
     public string GetFragType()
     {
         return "FragItem";
     }
 
+    /// <summary>
+    /// 转换为字典用于序列化
+    /// </summary>
+    /// <returns>包含碎片数据的字典</returns>
     public Dictionary<string, object> ToDict()
     {
         return new Dictionary<string, object>();

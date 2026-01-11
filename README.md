@@ -15,7 +15,7 @@
 - **高性能**：全面采用异步编程模式，底层使用 Protobuf 序列化，性能优异。
 - **模块化设计**：按业务功能拆分为 `Forums`, `Threads`, `Users`, `Client` 等模块，入口清晰。
 - **功能丰富**：支持查看帖子、发布内容、点赞、签到、封禁等常用功能。
-- **多协议支持**：支持 HTTP 和 WebSocket 双协议切换。
+- **多协议支持**：支持 HTTP 和 WebSocket 双协议，核心 API（如发帖）优先使用高性能 Protobuf 协议，完美对齐原版 `aiotieba`。
 
 ---
 
@@ -61,11 +61,15 @@ foreach (var thread in threads.Objs)
 {
     Console.WriteLine($"标题: {thread.Title} | 作者: {thread.User?.ShowName}");
 }
+
+// WebSocket 模式发帖 (高性能 & 异步推送支持)
+await clientWithAccount.Threads.AddPostAsync("csharp", 123456, "这是一条来自 WS 模式的回复", mode: TiebaRequestMode.Websocket);
 ```
 
 ### 2. 依赖注入模式 (推荐生产环境)
 
 在 `Program.cs` 注册：
+
 ```csharp
 services.AddAioTiebaClient(options =>
 {
@@ -75,6 +79,7 @@ services.AddAioTiebaClient(options =>
 ```
 
 在服务中使用：
+
 ```csharp
 public class MyService(ITiebaClient tiebaClient)
 {
@@ -110,26 +115,31 @@ public class MyBot(ITiebaClientFactory factory)
 ## 📖 详细文档
 
 为了保持 README 简洁，更多详细内容请参阅：
+
 - [功能模块详细说明](./docs/modules.md) - 包含 Forum, Thread, User 模块的所有 API 列表。
 - [高级用法](./docs/advanced.md) - 包含 WebSocket 配置、多账户模式、**异常处理**、自定义 HttpClient 等。
+- [待实现功能清单 (TODO)](./docs/todo.md) - 总结还未实现原版哪些内容。
 
 ---
 
 ## 🛠️ 功能模块概览
 
 ### 贴吧模块 (`client.Forums`)
+
 - 吧资料获取 (fid, fname, detail, forumInfo)
 - 关注/取消关注 (`LikeAsync`, `UnlikeAsync`)
 - 签到 (`SignAsync`)
 - 吧务管理 (`DelBaWuAsync`)
 
 ### 帖子模块 (`client.Threads`)
+
 - 帖子列表、回复列表、楼中楼获取
 - 点赞/点踩 (`AgreeAsync`, `DisagreeAsync`)
 - 发布主题帖、回复帖子 (`AddThreadAsync`, `AddPostAsync`)
 - 删除帖子、删除回复 (`DelThreadAsync`, `DelPostAsync`)
 
 ### 用户模块 (`client.Users`)
+
 - 用户详细资料、基础信息、面板信息获取
 - 关注/取消关注用户、关注列表获取
 - 用户发表的主题/回复列表获取
@@ -137,6 +147,7 @@ public class MyBot(ITiebaClientFactory factory)
 - 封禁用户 (`BlockAsync`)
 
 ### 客户端模块 (`client.Client`)
+
 - ZID 初始化
 - 客户端配置同步 (ClientId, SampleId)
 
@@ -146,7 +157,13 @@ public class MyBot(ITiebaClientFactory factory)
 
 如果你想为本项目贡献代码，请注意以下事项：
 
-- **代码风格**：项目配置了 `.editorconfig`，请确保你的 IDE 加载了该配置。我们偏好使用 C# 12+ 的现代特性，如文件范围命名空间 (File-scoped Namespaces) 和主构造函数 (Primary Constructors)。
+- **代码风格**：项目配置了 `.editorconfig`，请确保你的 IDE 加载了该配置。我们偏好使用 C# 12+
+  的现代特性，如文件范围命名空间 (File-scoped Namespaces) 和主构造函数 (Primary Constructors)。
+- **对齐原版**：任何 API 的参数逻辑、打包规范、响应解析及错误处理，必须严格参照 Python
+  版 [aiotieba](https://github.com/lumina37/aiotieba)。
+- **Protobuf 工具链**：项目包含 `ProtoGenerator` 工具。修改 `.proto` 文件后，请运行
+  `dotnet run --project ProtoGenerator\ProtoGenerator.csproj --framework <net_version>` 重新生成 C# 代码，严禁手动修改生成的
+  `.cs` 文件。
 - **质量检查**：项目集成了 [CodeQL](https://codeql.github.com/) 进行安全和代码质量分析。在提交 PR 前，请确保 CI 检查通过。
 
 ---

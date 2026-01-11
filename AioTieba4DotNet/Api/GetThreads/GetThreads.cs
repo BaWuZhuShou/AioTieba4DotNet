@@ -1,4 +1,5 @@
 ﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Api.GetThreads.Entities;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
@@ -8,11 +9,12 @@ using Google.Protobuf;
 namespace AioTieba4DotNet.Api.GetThreads;
 
 /// <summary>
-///
+/// 获取贴吧主题帖列表的 API (FRS页)
 /// </summary>
-/// <param name="httpCore"></param>
-/// <param name="wsCore"></param>
-/// <param name="mode"></param>
+/// <param name="httpCore">Http 核心组件</param>
+/// <param name="wsCore">Websocket 核心组件</param>
+/// <param name="mode">请求模式</param>
+[PythonApi("aiotieba.api.get_threads")]
 public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
     : ProtoApiWsBase<Threads>(httpCore, wsCore, mode)
 {
@@ -24,11 +26,7 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
         {
             Data = new FrsPageReqIdl.Types.DataReq
             {
-                Common = new CommonReq
-                {
-                    ClientType = 2,
-                    ClientVersion = Const.MainVersion
-                },
+                Common = new CommonReq { ClientType = 2, ClientVersion = Const.MainVersion },
                 Kw = fname,
                 Rn = rn,
                 RnNeed = rn + 5,
@@ -37,10 +35,11 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
                 LoadType = 1,
             }
         };
-        if (pn!=1)
+        if (pn != 1)
         {
             frsPageResIdl.Data.Pn = pn;
         }
+
         return frsPageResIdl.ToByteArray();
     }
 
@@ -55,18 +54,18 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
     }
 
     /// <summary>
-    /// 异步请求
+    /// 发送获取贴吧主题帖列表请求
     /// </summary>
-    /// <param name="fname">贴吧名</param>
+    /// <param name="fname">吧名</param>
     /// <param name="pn">页码</param>
-    /// <param name="rn">每页条数</param>
+    /// <param name="rn">每页请求数量</param>
     /// <param name="sort">
-    /// 排序
-    ///对于有热门分区的贴吧 0热门排序(HOT) 1按发布时间(CREATE) 2关注的人(FOLLOW) 34热门排序(HOT) >=5是按回复时间(REPLY)\n
-    ///对于无热门分区的贴吧 0按回复时间(REPLY) 1按发布时间(CREATE) 2关注的人(FOLLOW) >=3按回复时间(REPLY)
+    /// 排序方式
+    /// 对于有热门分区的贴吧: 0:热门排序(HOT), 1:按发布时间(CREATE), 2:关注的人(FOLLOW), 3/4:热门排序(HOT), >=5:按回复时间(REPLY)
+    /// 对于无热门分区的贴吧: 0:按回复时间(REPLY), 1:按发布时间(CREATE), 2:关注的人(FOLLOW), >=3:按回复时间(REPLY)
     /// </param>
-    /// <param name="isGood">是否精品贴</param>
-    /// <returns></returns>
+    /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
+    /// <returns>主题帖列表实体</returns>
     public async Task<Threads> RequestAsync(string fname, int pn, int rn, int sort, int isGood)
     {
         return await ExecuteAsync(
@@ -78,10 +77,7 @@ public class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReque
     public async Task<Threads> RequestHttpAsync(string fname, int pn, int rn, int sort, int isGood)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/frs/page")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/frs/page") { Query = $"cmd={Cmd}" }.Uri;
 
         var result = await HttpCore.SendAppProtoAsync(requestUri, data);
         return ParseBody(result);

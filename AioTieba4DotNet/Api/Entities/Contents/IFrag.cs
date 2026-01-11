@@ -10,7 +10,7 @@ public interface IFrag
     /// </summary>
     /// <returns></returns>
     public string GetFragType();
-    
+
     /// <summary>
     /// 文本内容
     /// </summary>

@@ -6,7 +6,12 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.DelThread;
 
+/// <summary>
+/// 删除主题帖的 API
+/// </summary>
+/// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
+[PythonApi("aiotieba.api.del_thread")]
 public class DelThread(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)
@@ -15,6 +20,12 @@ public class DelThread(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return true;
     }
 
+    /// <summary>
+    /// 发送删除主题帖请求
+    /// </summary>
+    /// <param name="fid">吧 ID</param>
+    /// <param name="tid">主题帖 ID</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(ulong fid, long tid)
     {
         var data = new List<KeyValuePair<string, string>>()

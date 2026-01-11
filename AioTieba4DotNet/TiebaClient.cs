@@ -13,9 +13,9 @@ public class TiebaClient : ITiebaClient
     /// <summary>
     /// 获取或设置全局请求模式（HTTP 或 WebSocket）
     /// </summary>
-    public TiebaRequestMode RequestMode 
-    { 
-        get => Threads.RequestMode; 
+    public TiebaRequestMode RequestMode
+    {
+        get => Threads.RequestMode;
         set
         {
             Threads.RequestMode = value;
@@ -58,7 +58,10 @@ public class TiebaClient : ITiebaClient
     /// </summary>
     /// <param name="bduss">BDUSS 凭证</param>
     /// <param name="stoken">STOKEN 凭证（可选）</param>
-    public TiebaClient(string? bduss = null, string? stoken = null) : this(new TiebaOptions { Bduss = bduss, Stoken = stoken })
+    public TiebaClient(string? bduss = null, string? stoken = null) : this(new TiebaOptions
+    {
+        Bduss = bduss, Stoken = stoken
+    })
     {
     }
 
@@ -78,6 +81,7 @@ public class TiebaClient : ITiebaClient
         {
             httpCore.SetAccount(new Account(options.Bduss, options.Stoken ?? string.Empty));
         }
+
         return httpCore;
     }
 
@@ -98,7 +102,8 @@ public class TiebaClient : ITiebaClient
     /// <summary>
     /// 全量手动注入初始化（通常由依赖注入框架调用）
     /// </summary>
-    public TiebaClient(ITiebaHttpCore httpCore, IForumModule forums, IThreadModule threads, IUserModule users, IClientModule client, ITiebaWsCore wsCore)
+    public TiebaClient(ITiebaHttpCore httpCore, IForumModule forums, IThreadModule threads, IUserModule users,
+        IClientModule client, ITiebaWsCore wsCore)
     {
         HttpCore = httpCore;
         Forums = forums;

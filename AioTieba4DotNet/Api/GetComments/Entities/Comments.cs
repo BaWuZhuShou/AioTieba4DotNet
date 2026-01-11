@@ -26,11 +26,12 @@ public class Comments
                 Objs = []
             };
         }
+
         var forum = ForumT.FromTbData(dataRes.Forum);
         var thread = AioTieba4DotNet.Api.GetThreads.Entities.Thread.FromTbData(dataRes.Thread);
         thread.Fname = forum.Fname;
         thread.Fid = forum.Fid;
-        
+
         var post = AioTieba4DotNet.Api.GetThreadPosts.Entities.Post.FromTbData(dataRes.Post);
         post.Fname = forum.Fname;
         post.Fid = forum.Fid;

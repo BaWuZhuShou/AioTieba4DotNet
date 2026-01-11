@@ -20,7 +20,6 @@ public class Signer
             var key = item.Key + "=";
             sb.Append(key);
             sb.Append(item.Value);
-
         }
 
         // 添加签名后缀
@@ -35,6 +34,7 @@ public class Signer
         {
             hashSb.Append(b.ToString("x2"));
         }
+
         // 返回最终的 MD5 签名
         return hashSb.ToString();
     }

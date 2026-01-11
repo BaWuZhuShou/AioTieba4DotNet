@@ -1,4 +1,5 @@
 using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,12 +9,21 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.InitZId;
 
+/// <summary>
+/// 初始化 ZID 的 API (用于 App 端的设备标识)
+/// </summary>
+/// <param name="httpCore">Http 核心组件</param>
+[PythonApi("aiotieba.api.init_z_id")]
 public class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
 {
     private const string AppKey = "200033"; // Get by p/5/aio
     private const string SecKey = "ea737e4f435b53786043369d2e5ace4f";
 
 
+    /// <summary>
+    /// 发送初始化 ZID 请求
+    /// </summary>
+    /// <returns>ZID (token)</returns>
     public async Task<string> RequestAsync()
     {
         var account = HttpCore.Account!;
@@ -24,7 +34,8 @@ public class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
         var reqBodyBytes = Encoding.UTF8.GetBytes(reqBody);
         var reqBodyCompressed = Compress(reqBodyBytes);
         var padding = Utils.ApplyPkcs7Padding(reqBodyCompressed, 16);
-        using var cryptoTransform = account.AesCbcCipher!.CreateEncryptor(account.AesCbcCipher.Key, account.AesCbcCipher.IV);
+        using var cryptoTransform =
+            account.AesCbcCipher!.CreateEncryptor(account.AesCbcCipher.Key, account.AesCbcCipher.IV);
         var reqBodyAes = cryptoTransform.TransformFinalBlock(padding, 0, padding.Length);
         var reqBodyMd5 = MD5.HashData(reqBodyCompressed);
         var payload = new byte[reqBodyAes.Length + reqBodyMd5.Length];
@@ -41,7 +52,8 @@ public class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
         request.Headers.TryAddWithoutValidation("User-Agent", $"x6/{AppKey}/{Const.MainVersion}/4.4.1.3");
         request.Headers.Add("x-plu-ver", "x6/4.4.1.3");
         request.Content = new ByteArrayContent(payload);
-        request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
+        request.Content.Headers.ContentType =
+            new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
         using var httpResponseMessage = await HttpCore.HttpClient.SendAsync(request);
         var result = await httpResponseMessage.Content.ReadAsStringAsync();
         var token = ParseBody(result);
@@ -91,4 +103,3 @@ public class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
         return compress;
     }
 }
-

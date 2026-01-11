@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AioTieba4DotNet.Api.GetUserContents;
+using AioTieba4DotNet.Enums;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -19,9 +20,9 @@ public class GetUserThreadsTest : TestBase
             return;
         }
 
-        var getUserThreads = new GetUserThreads(HttpCore, WebsocketCore);
+        var getUserThreads = new GetUserThreads(HttpCore, WebsocketCore,TiebaRequestMode.Websocket);
         var result = await getUserThreads.RequestAsync(1, 1, true);
-        
+
         Assert.IsNotNull(result);
         Console.WriteLine($"User Threads Count: {result.Count}");
         foreach (var thread in result)

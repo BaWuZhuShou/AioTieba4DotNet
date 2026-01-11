@@ -6,7 +6,12 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Block;
 
+/// <summary>
+/// 封禁用户的 API
+/// </summary>
+/// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
+[PythonApi("aiotieba.api.block")]
 public class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)
@@ -15,6 +20,14 @@ public class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return true;
     }
 
+    /// <summary>
+    /// 发送封禁用户请求
+    /// </summary>
+    /// <param name="fid">吧 ID</param>
+    /// <param name="portrait">用户头像 ID (Portrait)</param>
+    /// <param name="day">封禁天数 (通常为 1, 3, 10)</param>
+    /// <param name="reason">封禁原因</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(ulong fid, string portrait, int day, string reason)
     {
         var specialDays = new HashSet<int> { 1, 3, 10 }; // 可以随时在这里添加新的特殊天数
@@ -38,4 +51,3 @@ public class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return ParseBody(result);
     }
 }
-

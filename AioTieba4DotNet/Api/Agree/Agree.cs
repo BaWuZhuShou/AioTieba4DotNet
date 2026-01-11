@@ -6,10 +6,23 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Agree;
 
-
+/// <summary>
+/// 点赞/点踩 API
+/// </summary>
+/// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
+[PythonApi("aiotieba.api.agree")]
 public class Agree(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
+    /// <summary>
+    /// 发送点赞/点踩请求
+    /// </summary>
+    /// <param name="tid">主题帖 ID</param>
+    /// <param name="pid">回复 ID (0 表示对主题帖点赞)</param>
+    /// <param name="isComment">是否为楼中楼回复</param>
+    /// <param name="isDisagree">是否为点踩</param>
+    /// <param name="isUndo">是否为取消操作</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(long tid, long pid, bool isComment, bool isDisagree, bool isUndo)
     {
         int objType;

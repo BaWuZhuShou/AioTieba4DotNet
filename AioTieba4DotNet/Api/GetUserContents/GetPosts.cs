@@ -8,7 +8,14 @@ using AioTieba4DotNet.Exceptions;
 
 namespace AioTieba4DotNet.Api.GetUserContents;
 
+/// <summary>
+/// 获取用户发布回复列表的 API
+/// </summary>
+/// <param name="httpCore">Http 核心组件</param>
+/// <param name="wsCore">Websocket 核心组件</param>
+/// <param name="mode">请求模式</param>
 [RequireBduss]
+[PythonApi("aiotieba.api.get_user_contents.get_posts")]
 public class GetPosts(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore,
@@ -22,12 +29,7 @@ public class GetPosts(
         {
             Data = new UserPostReqIdl.Types.DataReq()
             {
-                Common = new CommonReq()
-                {
-                    ClientType = 2,
-                    BDUSS = account.Bduss,
-                    ClientVersion = version,
-                },
+                Common = new CommonReq() { ClientType = 2, BDUSS = account.Bduss, ClientVersion = version, },
                 UserId = userId,
                 Pn = pn,
                 Rn = rn,
@@ -46,6 +48,14 @@ public class GetPosts(
         return UserPostss.FromTbData(dataForum);
     }
 
+    /// <summary>
+    /// 发送获取用户发布回复列表请求
+    /// </summary>
+    /// <param name="userId">用户 ID (uid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="rn">每页请求数量</param>
+    /// <param name="version">客户端版本号</param>
+    /// <returns>回复列表实体</returns>
     public async Task<UserPostss> RequestAsync(int userId, uint pn, uint rn, string version)
     {
         return await ExecuteAsync(
@@ -57,10 +67,8 @@ public class GetPosts(
     public async Task<UserPostss> RequestHttpAsync(int userId, uint pn, uint rn, string version)
     {
         var data = PackProto(HttpCore.Account!, userId, pn, rn, version);
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/userpost")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/userpost") { Query = $"cmd={Cmd}" }
+            .Uri;
 
         var result = await HttpCore.SendAppProtoAsync(requestUri, data);
         return ParseBody(result);

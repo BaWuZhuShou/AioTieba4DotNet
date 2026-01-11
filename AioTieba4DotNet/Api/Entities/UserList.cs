@@ -3,8 +3,14 @@ using AioTieba4DotNet.Entities;
 
 namespace AioTieba4DotNet.Api.Entities;
 
+/// <summary>
+/// 用户列表实体
+/// </summary>
 public class UserList : Containers<UserInfo>
 {
+    /// <summary>
+    /// 页码信息
+    /// </summary>
     public PageT Page { get; set; } = new();
 
     public UserList(List<UserInfo> objs, PageT page) : base(objs)

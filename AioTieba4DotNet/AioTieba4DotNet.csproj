@@ -30,22 +30,22 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.33.2" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.1" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.1" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-        <PackageReference Include="System.IO.Hashing" Version="10.0.1" />
+        <PackageReference Include="Google.Protobuf" Version="3.33.2"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
+        <PackageReference Include="System.IO.Hashing" Version="10.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="AioTieba4DotNet.Tests" />
+        <InternalsVisibleTo Include="AioTieba4DotNet.Tests"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="../README.md" Pack="true" PackagePath="\" />
+        <None Include="../README.md" Pack="true" PackagePath="\"/>
         <None Include="..\assets\icon.png">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>

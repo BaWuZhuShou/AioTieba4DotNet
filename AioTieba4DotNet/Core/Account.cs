@@ -209,7 +209,8 @@ public class Account
                 var aes = Aes.Create();
                 aes.Mode = CipherMode.ECB;
                 aes.Padding = PaddingMode.PKCS7;
-                aes.Key = Rfc2898DeriveBytes.Pbkdf2(AesEcbSecKey, (byte[])[0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13], 5,
+                aes.Key = Rfc2898DeriveBytes.Pbkdf2(AesEcbSecKey,
+                    (byte[])[0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13], 5,
                     HashAlgorithmName.SHA1, 32);
 
                 _aesEcbCipher = aes;

@@ -41,7 +41,7 @@ public class Client : TiebaClient
     public Task<ForumDetail> GetForumDetail(string fname) => Forums.GetDetailAsync(fname);
 
     [Obsolete("Use Threads.GetThreadsAsync instead.")]
-    public Task<Threads> GetThreads(string fname, int pn, int rn, ThreadSortType sort, bool isGood) 
+    public Task<Threads> GetThreads(string fname, int pn, int rn, ThreadSortType sort, bool isGood)
         => Threads.GetThreadsAsync(fname, pn, rn, sort, isGood);
 
     [Obsolete("Use Threads.GetThreadsAsync instead.")]
@@ -49,11 +49,11 @@ public class Client : TiebaClient
         => Threads.GetThreadsAsync(fid, pn, rn, sort, isGood);
 
     [Obsolete("Use Threads.GetThreadsAsync instead.")]
-    public Task<Threads> GetThreads(string fname, int pn) 
+    public Task<Threads> GetThreads(string fname, int pn)
         => Threads.GetThreadsAsync(fname, pn, ThreadRn, ThreadSortType, ThreadIsGood);
 
     [Obsolete("Use Threads.GetThreadsAsync instead.")]
-    public Task<Threads> GetThreads(ulong fid, int pn) 
+    public Task<Threads> GetThreads(ulong fid, int pn)
         => Threads.GetThreadsAsync(fid, pn, ThreadRn, ThreadSortType, ThreadIsGood);
 
     [Obsolete("Use Users.GetProfileAsync instead.")]
@@ -63,10 +63,10 @@ public class Client : TiebaClient
     public Task<UserInfoPf> GetUserInfo(string userNameOrPortrait) => Users.GetProfileAsync(userNameOrPortrait);
 
     [Obsolete("Use Users.BlockAsync instead.")]
-    public Task<bool> Block(ulong fid, string portrait, int day = 1, string reason = "") 
+    public Task<bool> Block(ulong fid, string portrait, int day = 1, string reason = "")
         => Users.BlockAsync(fid, portrait, day, reason);
 
     [Obsolete("Use Users.BlockAsync instead.")]
-    public Task<bool> Block(string fname, string portrait, int day = 1, string reason = "") 
+    public Task<bool> Block(string fname, string portrait, int day = 1, string reason = "")
         => Users.BlockAsync(fname, portrait, day, reason);
 }

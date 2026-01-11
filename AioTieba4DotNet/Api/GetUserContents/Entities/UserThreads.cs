@@ -18,7 +18,7 @@ public class UserThreads : Containers<UserThread>
         List<UserThread> objs = [];
         objs.AddRange(dataRes.PostList.Select(UserThread.FromTbData));
         if (objs.Count == 0) return new UserThreads(objs);
-        
+
         var user = UserInfo.FromTbData(dataRes.PostList[0]);
         foreach (var uthread in objs)
         {

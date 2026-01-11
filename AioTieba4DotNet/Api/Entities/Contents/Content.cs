@@ -58,8 +58,8 @@ public class Content
     /// <summary>
     /// 从贴吧原始数据转换
     /// </summary>
-    /// <param name="threadInfo"></param>
-    /// <returns>Content</returns>
+    /// <param name="threadInfo">Protobuf 主题帖信息数据</param>
+    /// <returns>内容碎片列表实体</returns>
     public static Content FromTbData(ThreadInfo.Types.OriginThreadInfo threadInfo)
     {
         var texts = new List<FragText>();

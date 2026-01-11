@@ -153,12 +153,9 @@ public class Thread
     {
         if (threadInfo == null)
         {
-            return new Thread
-            {
-                Content = Content.FromTbData((ThreadInfo?)null),
-                VirtualImage = new VirtualImagePf(),
-            };
+            return new Thread { Content = Content.FromTbData((ThreadInfo?)null), VirtualImage = new VirtualImagePf(), };
         }
+
         return new Thread
         {
             Content = Content.FromTbData(threadInfo),

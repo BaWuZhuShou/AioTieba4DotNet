@@ -24,9 +24,9 @@ public class AddPostTest : TestBase
 
         var getTbs = new GetTbsApi(HttpCore);
         HttpCore.Account.Tbs = await getTbs.RequestAsync();
-        
-        var addPost = new AddPostApi(HttpCore);
-        
+
+        var addPost = new AddPostApi(HttpCore, WebsocketCore);
+
         var contents = new List<IFrag>
         {
             new FragText { Text = "这是一条来自 AioTieba4DotNet 单元测试的回复。" }

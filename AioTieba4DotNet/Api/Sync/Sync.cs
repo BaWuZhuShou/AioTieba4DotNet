@@ -6,7 +6,12 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Sync;
 
+/// <summary>
+/// 同步客户端状态的 API (用于获取 ClientId 和 SampleId)
+/// </summary>
+/// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
+[PythonApi("aiotieba.api.sync")]
 public class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static (string ClientId, string SampleId) ParseBody(string body)
@@ -19,6 +24,10 @@ public class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return (clientId, sampleId);
     }
 
+    /// <summary>
+    /// 发送同步状态请求
+    /// </summary>
+    /// <returns>包含 ClientId 和 SampleId 的元组</returns>
     public async Task<(string ClientId, string SampleId)> RequestAsync()
     {
         var data = new List<KeyValuePair<string, string>>()
@@ -32,4 +41,3 @@ public class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return ParseBody(result);
     }
 }
-

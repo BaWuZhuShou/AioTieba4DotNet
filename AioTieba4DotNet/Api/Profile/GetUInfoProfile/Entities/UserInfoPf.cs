@@ -14,6 +14,7 @@ public class UserInfoPf : UserInfoGuInfoApp
         {
             throw new InvalidOperationException("Profile response data.User is null.");
         }
+
         var antiStatProto = dataProto.AntiStat;
         var portrait = userProto.Portrait ?? string.Empty;
         if (portrait.Contains('?'))
@@ -38,13 +39,23 @@ public class UserInfoPf : UserInfoGuInfoApp
             ForumNum = userProto.MyLikeNum,
             Sign = userProto.Intro ?? string.Empty,
             Ip = userProto.IpAddress ?? string.Empty,
-            Icons = userProto.Iconinfo != null ? userProto.Iconinfo.Where(i => !string.IsNullOrEmpty(i.Name)).Select(i => i.Name).ToList() : [],
+            Icons =
+                userProto.Iconinfo != null
+                    ? userProto.Iconinfo.Where(i => !string.IsNullOrEmpty(i.Name)).Select(i => i.Name).ToList()
+                    : [],
             VImage = VirtualImagePf.FromTbData(userProto.VirtualImageInfo),
             IsVip = userProto.NewTshowIcon != null && userProto.NewTshowIcon.Count != 0,
             IsGod = userProto.NewGodData != null && userProto.NewGodData.Status == 1,
-            IsBlocked = antiStatProto != null && antiStatProto.BlockStat != 0 && antiStatProto.HideStat != 0 && antiStatProto.DaysTofree > 30,
-            PrivLike = userProto.PrivSets != null && userProto.PrivSets.Like != 0 ? (PrivLike)userProto.PrivSets.Like : PrivLike.Public,
-            PrivReply = userProto.PrivSets != null && userProto.PrivSets.Reply != 0 ? (PrivReply)userProto.PrivSets.Reply : PrivReply.All,
+            IsBlocked =
+                antiStatProto != null && antiStatProto.BlockStat != 0 && antiStatProto.HideStat != 0 &&
+                antiStatProto.DaysTofree > 30,
+            PrivLike =
+                userProto.PrivSets != null && userProto.PrivSets.Like != 0
+                    ? (PrivLike)userProto.PrivSets.Like
+                    : PrivLike.Public,
+            PrivReply = userProto.PrivSets != null && userProto.PrivSets.Reply != 0
+                ? (PrivReply)userProto.PrivSets.Reply
+                : PrivReply.All,
         };
     }
 }

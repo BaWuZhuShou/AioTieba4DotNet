@@ -5,7 +5,7 @@ namespace AioTieba4DotNet.Api.Login.Entities;
 
 public class UserInfoLogin : UserInfo
 {
-    public static UserInfoLogin FromTbData(JObject data)
+    public new static UserInfoLogin FromTbData(JObject data)
     {
         var portrait = data.GetValue("portrait")?.Value<string>() ?? "";
         if (portrait.Contains('?'))

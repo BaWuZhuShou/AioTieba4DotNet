@@ -6,7 +6,12 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.LikeForum;
 
+/// <summary>
+/// 关注贴吧的 API
+/// </summary>
+/// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
+[PythonApi("aiotieba.api.follow_forum")]
 public class LikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)
@@ -26,13 +31,16 @@ public class LikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return true;
     }
 
+    /// <summary>
+    /// 发送关注贴吧请求
+    /// </summary>
+    /// <param name="fid">吧 ID (fid)</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(ulong fid)
     {
         var data = new List<KeyValuePair<string, string>>()
         {
-            new("BDUSS", HttpCore.Account!.Bduss),
-            new("fid", fid.ToString()),
-            new("tbs", HttpCore.Account!.Tbs!),
+            new("BDUSS", HttpCore.Account!.Bduss), new("fid", fid.ToString()), new("tbs", HttpCore.Account!.Tbs!),
         };
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/c/forum/like").Uri;

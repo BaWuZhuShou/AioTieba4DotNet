@@ -5,9 +5,19 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.FollowUser;
 
+/// <summary>
+/// 关注用户的 API
+/// </summary>
+/// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
+[PythonApi("aiotieba.api.follow_user")]
 public class FollowUser(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
+    /// <summary>
+    /// 发送关注用户请求
+    /// </summary>
+    /// <param name="portrait">用户头像 ID (Portrait)</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(string portrait)
     {
         var data = new List<KeyValuePair<string, string>>

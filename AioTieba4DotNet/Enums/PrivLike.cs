@@ -1,4 +1,5 @@
 ﻿namespace AioTieba4DotNet.Enums;
+
 /// <summary>
 /// 关注吧列表的公开状态
 /// Note:

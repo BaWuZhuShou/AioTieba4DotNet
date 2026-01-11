@@ -12,10 +12,19 @@ using AioTieba4DotNet.Core;
 
 namespace AioTieba4DotNet.Modules;
 
+/// <summary>
+/// 贴吧吧务及基础信息功能模块
+/// </summary>
+/// <param name="httpCore">Http 核心组件</param>
 public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
 {
     private readonly ForumInfoCache _cache = new();
 
+    /// <summary>
+    /// 获取吧 ID (fid)
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <returns>吧 ID</returns>
     public async Task<ulong> GetFidAsync(string fname)
     {
         var forumId = _cache.GetForumId(fname);
@@ -28,6 +37,11 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
         return forumId;
     }
 
+    /// <summary>
+    /// 获取吧名 (fname)
+    /// </summary>
+    /// <param name="fid">吧 ID</param>
+    /// <returns>吧名</returns>
     public async Task<string> GetFnameAsync(ulong fid)
     {
         var forumName = _cache.GetForumName(fid);
@@ -39,18 +53,33 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
         return detail.Fname;
     }
 
+    /// <summary>
+    /// 获取贴吧详情 (通过 Fid)
+    /// </summary>
+    /// <param name="fid">吧 ID</param>
+    /// <returns>贴吧详情信息</returns>
     public async Task<ForumDetail> GetDetailAsync(ulong fid)
     {
         var api = new GetForumDetail(httpCore);
         return await api.RequestAsync((long)fid);
     }
 
+    /// <summary>
+    /// 获取贴吧详情 (通过吧名)
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <returns>贴吧详情信息</returns>
     public async Task<ForumDetail> GetDetailAsync(string fname)
     {
         var fid = await GetFidAsync(fname);
         return await GetDetailAsync(fid);
     }
 
+    /// <summary>
+    /// 关注贴吧
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> LikeAsync(string fname)
     {
         var fid = await GetFidAsync(fname);
@@ -58,6 +87,11 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
         return await api.RequestAsync(fid);
     }
 
+    /// <summary>
+    /// 取消关注贴吧
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> UnlikeAsync(string fname)
     {
         var fid = await GetFidAsync(fname);
@@ -65,6 +99,11 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
         return await api.RequestAsync(fid);
     }
 
+    /// <summary>
+    /// 贴吧签到
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> SignAsync(string fname)
     {
         var fid = await GetFidAsync(fname);
@@ -72,12 +111,24 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
         return await api.RequestAsync(fname, fid);
     }
 
+    /// <summary>
+    /// 获取贴吧基础信息 (主要用于检查贴吧是否存在)
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <returns>贴吧基础信息</returns>
     public async Task<Forum> GetForumAsync(string fname)
     {
         var api = new GetForum(httpCore);
         return await api.RequestAsync(fname);
     }
 
+    /// <summary>
+    /// 移除吧务
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <param name="portrait">用户头像 ID (Portrait)</param>
+    /// <param name="baWuType">吧务类型</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType)
     {
         var fid = await GetFidAsync(fname);

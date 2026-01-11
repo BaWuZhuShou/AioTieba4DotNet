@@ -1,4 +1,5 @@
 ﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Api.GetThreadPosts.Entities;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
@@ -8,17 +9,19 @@ using Google.Protobuf;
 namespace AioTieba4DotNet.Api.GetThreadPosts;
 
 /// <summary>
-/// 获取帖子回复列表
+/// 获取主题帖内回复列表的 API (PB页)
 /// </summary>
-/// <param name="httpCore"></param>
-/// <param name="wsCore"></param>
-/// <param name="mode"></param>
+/// <param name="httpCore">Http 核心组件</param>
+/// <param name="wsCore">Websocket 核心组件</param>
+/// <param name="mode">请求模式</param>
+[PythonApi("aiotieba.api.get_posts")]
 public class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
     : ProtoApiWsBase<Posts>(httpCore, wsCore, mode)
 {
     private const int Cmd = 302001;
 
-    private static byte[] PackProto(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments, int commentRn, bool commentSortByAgree, string? bduss)
+    private static byte[] PackProto(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments,
+        int commentRn, bool commentSortByAgree, string? bduss)
     {
         var request = new PbPageReqIdl
         {
@@ -52,18 +55,19 @@ public class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaR
     }
 
     /// <summary>
-    /// 异步请求
+    /// 发送获取主题帖内回复列表请求
     /// </summary>
-    /// <param name="tid">主题帖tid</param>
+    /// <param name="tid">主题帖 ID (tid)</param>
     /// <param name="pn">页码</param>
-    /// <param name="rn">每页条数</param>
-    /// <param name="sort">排序方式 0按回复时间 1按发布时间 2热门排序</param>
+    /// <param name="rn">每页请求数量</param>
+    /// <param name="sort">排序方式 (0:按回复时间, 1:按发布时间, 2:热门排序)</param>
     /// <param name="onlyThreadAuthor">是否只看楼主</param>
-    /// <param name="withComments">是否包含楼中楼</param>
-    /// <param name="commentRn">楼中楼显示数量</param>
+    /// <param name="withComments">是否包含楼中楼回复</param>
+    /// <param name="commentRn">每层楼显示的楼中楼数量</param>
     /// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
-    /// <returns></returns>
-    public async Task<Posts> RequestAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments, int commentRn, bool commentSortByAgree)
+    /// <returns>回复列表实体</returns>
+    public async Task<Posts> RequestAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments,
+        int commentRn, bool commentSortByAgree)
     {
         return await ExecuteAsync(
             () => RequestHttpAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree),
@@ -71,21 +75,22 @@ public class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaR
         );
     }
 
-    public async Task<Posts> RequestHttpAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments, int commentRn, bool commentSortByAgree)
+    public async Task<Posts> RequestHttpAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor,
+        bool withComments, int commentRn, bool commentSortByAgree)
     {
-        var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree, HttpCore.Account?.Bduss);
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/pb/page")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree,
+            HttpCore.Account?.Bduss);
+        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/pb/page") { Query = $"cmd={Cmd}" }.Uri;
 
         var result = await HttpCore.SendAppProtoAsync(requestUri, data);
         return ParseBody(result);
     }
 
-    public async Task<Posts> RequestWsAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments, int commentRn, bool commentSortByAgree)
+    public async Task<Posts> RequestWsAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor,
+        bool withComments, int commentRn, bool commentSortByAgree)
     {
-        var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree, WsCore.Account?.Bduss);
+        var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree,
+            WsCore.Account?.Bduss);
         var response = await WsCore.SendAsync(Cmd, data);
         return ParseBody(response.Payload.Data.ToByteArray());
     }

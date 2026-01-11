@@ -105,7 +105,8 @@ public interface IThreadModule
     /// <param name="isGood">是否只看精华</param>
     /// <param name="mode">请求模式（覆盖默认值）</param>
     /// <returns>主题帖列表</returns>
-    Task<Threads> GetThreadsAsync(string fname, int pn = 1, int rn = 30, ThreadSortType sort = ThreadSortType.Reply, bool isGood = false, TiebaRequestMode? mode = null);
+    Task<Threads> GetThreadsAsync(string fname, int pn = 1, int rn = 30, ThreadSortType sort = ThreadSortType.Reply,
+        bool isGood = false, TiebaRequestMode? mode = null);
 
     /// <summary>
     /// 分页获取贴吧主题帖列表
@@ -117,7 +118,8 @@ public interface IThreadModule
     /// <param name="isGood">是否只看精华</param>
     /// <param name="mode">请求模式（覆盖默认值）</param>
     /// <returns>主题帖列表</returns>
-    Task<Threads> GetThreadsAsync(ulong fid, int pn = 1, int rn = 30, ThreadSortType sort = ThreadSortType.Reply, bool isGood = false, TiebaRequestMode? mode = null);
+    Task<Threads> GetThreadsAsync(ulong fid, int pn = 1, int rn = 30, ThreadSortType sort = ThreadSortType.Reply,
+        bool isGood = false, TiebaRequestMode? mode = null);
 
     /// <summary>
     /// 分页获取主题帖内的回复列表
@@ -132,7 +134,9 @@ public interface IThreadModule
     /// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
     /// <param name="mode">请求模式（覆盖默认值）</param>
     /// <returns>回复列表实体</returns>
-    Task<Posts> GetPostsAsync(long tid, int pn = 1, int rn = 30, PostSortType sort = PostSortType.Asc, bool onlyThreadAuthor = false, bool withComments = false, int commentRn = 0, bool commentSortByAgree = false, TiebaRequestMode? mode = null);
+    Task<Posts> GetPostsAsync(long tid, int pn = 1, int rn = 30, PostSortType sort = PostSortType.Asc,
+        bool onlyThreadAuthor = false, bool withComments = false, int commentRn = 0, bool commentSortByAgree = false,
+        TiebaRequestMode? mode = null);
 
     /// <summary>
     /// 分页获取楼中楼列表
@@ -143,8 +147,9 @@ public interface IThreadModule
     /// <param name="isComment">是否为子楼中楼</param>
     /// <param name="mode">请求模式（覆盖默认值）</param>
     /// <returns>楼中楼列表实体</returns>
-    Task<AioTieba4DotNet.Api.GetComments.Entities.Comments> GetCommentsAsync(long tid, long pid, int pn = 1, bool isComment = false, TiebaRequestMode? mode = null);
-    
+    Task<AioTieba4DotNet.Api.GetComments.Entities.Comments> GetCommentsAsync(long tid, long pid, int pn = 1,
+        bool isComment = false, TiebaRequestMode? mode = null);
+
     /// <summary>
     /// 对帖子/回复进行点赞/表态
     /// </summary>
@@ -177,8 +182,9 @@ public interface IThreadModule
     /// <param name="fname">贴吧名</param>
     /// <param name="title">标题</param>
     /// <param name="content">纯文本内容</param>
+    /// <param name="mode">请求模式</param>
     /// <returns>新帖子的 tid</returns>
-    Task<long> AddThreadAsync(string fname, string title, string content);
+    Task<long> AddThreadAsync(string fname, string title, string content, TiebaRequestMode? mode = null);
 
     /// <summary>
     /// 发表带有富文本内容的主题帖
@@ -186,19 +192,21 @@ public interface IThreadModule
     /// <param name="fname">贴吧名</param>
     /// <param name="title">标题</param>
     /// <param name="contents">富文本碎片列表</param>
+    /// <param name="mode">请求模式</param>
     /// <returns>新帖子的 tid</returns>
-    Task<long> AddThreadAsync(string fname, string title, List<IFrag> contents);
+    Task<long> AddThreadAsync(string fname, string title, List<IFrag> contents, TiebaRequestMode? mode = null);
 
     /// <summary>
-    /// 回复帖子或楼中楼
+    /// 回复帖子
     /// </summary>
     /// <param name="fname">贴吧名</param>
     /// <param name="tid">主题帖 ID</param>
     /// <param name="content">纯文本内容</param>
-    /// <param name="quoteId">引用 ID (回复特定楼层/楼中楼)</param>
-    /// <param name="floor">引用楼层号</param>
+    /// <param name="showName">展示名称 (昵称)</param>
+    /// <param name="mode">请求模式</param>
     /// <returns>新回复的 pid</returns>
-    Task<long> AddPostAsync(string fname, long tid, string content, long quoteId = 0, uint floor = 0);
+    Task<long> AddPostAsync(string fname, long tid, string content, string? showName = null,
+        TiebaRequestMode? mode = null);
 
     /// <summary>
     /// 发表带有富文本内容的回复
@@ -206,10 +214,11 @@ public interface IThreadModule
     /// <param name="fname">贴吧名</param>
     /// <param name="tid">主题帖 ID</param>
     /// <param name="contents">富文本碎片列表</param>
-    /// <param name="quoteId">引用 ID</param>
-    /// <param name="floor">引用楼层号</param>
+    /// <param name="showName">展示名称 (昵称)</param>
+    /// <param name="mode">请求模式</param>
     /// <returns>新回复的 pid</returns>
-    Task<long> AddPostAsync(string fname, long tid, List<IFrag> contents, long quoteId = 0, uint floor = 0);
+    Task<long> AddPostAsync(string fname, long tid, List<IFrag> contents, string? showName = null,
+        TiebaRequestMode? mode = null);
 
     /// <summary>
     /// 删除主题帖
@@ -337,7 +346,8 @@ public interface IUserModule
     /// <param name="version">模拟的客户端版本</param>
     /// <param name="mode">请求模式</param>
     /// <returns>用户回复列表实体</returns>
-    Task<UserPostss> GetPostsAsync(int userId, uint pn = 1, uint rn = 20, string version = "8.9.8.5", TiebaRequestMode? mode = null);
+    Task<UserPostss> GetPostsAsync(int userId, uint pn = 1, uint rn = 20, string version = "8.9.8.5",
+        TiebaRequestMode? mode = null);
 
     /// <summary>
     /// 分页获取用户发表的主题帖列表
@@ -367,7 +377,6 @@ public interface IClientModule
     /// <returns>ClientId 和 SampleId</returns>
     Task<(string ClientId, string SampleId)> SyncAsync();
 }
-
 
 /// <summary>
 /// 贴吧客户端接口，提供各功能模块的访问入口

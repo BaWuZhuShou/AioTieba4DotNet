@@ -43,8 +43,8 @@ public class FragVideo : IFrag
     /// <summary>
     /// 从贴吧原始数据转换
     /// </summary>
-    /// <param name="dataProto"></param>
-    /// <returns>FragVideo</returns>
+    /// <param name="dataProto">Protobuf 视频信息数据</param>
+    /// <returns>视频碎片实体</returns>
     public static FragVideo FromTbData(VideoInfo dataProto)
     {
         var src = dataProto.VideoUrl;
@@ -67,8 +67,8 @@ public class FragVideo : IFrag
     /// <summary>
     /// 从贴吧原始数据转换
     /// </summary>
-    /// <param name="dataProto"></param>
-    /// <returns>FragVideo</returns>
+    /// <param name="dataProto">Protobuf 碎片数据</param>
+    /// <returns>视频碎片实体</returns>
     public static FragVideo FromTbData(global::PbContent dataProto)
     {
         return new FragVideo
@@ -85,29 +85,28 @@ public class FragVideo : IFrag
     /// <summary>
     /// 视频是否可用
     /// </summary>
-    /// <returns>bool</returns>
+    /// <returns>如果视频宽度大于0则返回true</returns>
     public bool IsValid()
     {
         return Width > 0;
     }
 
     /// <summary>
-    /// 碎片类型
+    /// 获取碎片类型
     /// </summary>
-    /// <returns>string</returns>
+    /// <returns>碎片类型名称</returns>
     public string GetFragType()
     {
         return "FragVideo";
     }
 
+    /// <summary>
+    /// 转换为字典用于序列化
+    /// </summary>
+    /// <returns>包含碎片数据的字典</returns>
     public Dictionary<string, object> ToDict()
     {
-        return new Dictionary<string, object>
-        {
-            { "type", "5" },
-            { "link", Src },
-            { "src", CoverSrc }
-        };
+        return new Dictionary<string, object> { { "type", "5" }, { "link", Src }, { "src", CoverSrc } };
     }
 
     /// <summary>

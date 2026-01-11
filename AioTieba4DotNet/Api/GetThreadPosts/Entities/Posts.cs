@@ -20,7 +20,7 @@ public class Posts
         var thread = AioTieba4DotNet.Api.GetThreads.Entities.Thread.FromTbData(dataRes.Thread);
         thread.Fname = forum.Fname;
         thread.Fid = forum.Fid;
-        
+
         var users = dataRes.UserList.ToDictionary(u => u.Id, UserInfoT.FromTbData);
         if (users.TryGetValue(thread.AuthorId, out var threadAuthor))
         {
@@ -54,12 +54,6 @@ public class Posts
             }
         }
 
-        return new Posts
-        {
-            Page = PageT.FromTbData(dataRes.Page),
-            Forum = forum,
-            Thread = thread,
-            Objs = posts
-        };
+        return new Posts { Page = PageT.FromTbData(dataRes.Page), Forum = forum, Thread = thread, Objs = posts };
     }
 }

@@ -6,7 +6,12 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.UnlikeForum;
 
+/// <summary>
+/// 取消关注贴吧的 API
+/// </summary>
+/// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
+[PythonApi("aiotieba.api.unfollow_forum")]
 public class UnlikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)
@@ -26,6 +31,11 @@ public class UnlikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return true;
     }
 
+    /// <summary>
+    /// 发送取消关注贴吧请求
+    /// </summary>
+    /// <param name="fid">吧 ID (fid)</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(ulong fid)
     {
         var data = new List<KeyValuePair<string, string>>()

@@ -12,7 +12,7 @@ public class Forum
     public int PostNum { get; set; } = 0;
     public int ThreadNum { get; set; } = 0;
 
-    public bool HasBaWu { get; set; }= false;
+    public bool HasBaWu { get; set; } = false;
     // 贴吧信息
 
     public static Forum FromTbData(IDictionary<string, object> dataMap)

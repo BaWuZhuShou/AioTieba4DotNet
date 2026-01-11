@@ -19,18 +19,19 @@ namespace AioTieba4DotNet.Core;
 public class WebsocketCore : ITiebaWsCore, IDisposable
 {
     private readonly ClientWebSocket _ws = new();
-    
+
     /// <summary>
     /// 当前绑定的账户信息
     /// </summary>
     public Account? Account { get; private set; }
 
     private const string WsEndpoint = "ws://im.tieba.baidu.com:8000";
-    
+
     /// <summary>
     /// 用于加密通信密钥的 RSA 公钥
     /// </summary>
-    private const string RsaPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwQpwBZxXJV/JVRF/uNfyMSdu7YWwRNLM8+2xbniGp2iIQHOikPpTYQjlQgMi1uvq1kZpJ32rHo3hkwjy2l0lFwr3u4Hk2Wk7vnsqYQjAlYlK0TCzjpmiI+OiPOUNVtbWHQiLiVqFtzvpvi4AU7C1iKGvc/4IS45WjHxeScHhnZZ7njS4S1UgNP/GflRIbzgbBhyZ9kEW5/OO5YfG1fy6r4KSlDJw4o/mw5XhftyIpL+5ZBVBC6E1EIiP/dd9AbK62VV1PByfPMHMixpxI3GM2qwcmFsXcCcgvUXJBa9k6zP8dDQ3csCM2QNT+CQAOxthjtp/TFWaD7MzOdsIYb3THwIDAQAB";
+    private const string RsaPublicKey =
+        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwQpwBZxXJV/JVRF/uNfyMSdu7YWwRNLM8+2xbniGp2iIQHOikPpTYQjlQgMi1uvq1kZpJ32rHo3hkwjy2l0lFwr3u4Hk2Wk7vnsqYQjAlYlK0TCzjpmiI+OiPOUNVtbWHQiLiVqFtzvpvi4AU7C1iKGvc/4IS45WjHxeScHhnZZ7njS4S1UgNP/GflRIbzgbBhyZ9kEW5/OO5YfG1fy6r4KSlDJw4o/mw5XhftyIpL+5ZBVBC6E1EIiP/dd9AbK62VV1PByfPMHMixpxI3GM2qwcmFsXcCcgvUXJBa9k6zP8dDQ3csCM2QNT+CQAOxthjtp/TFWaD7MzOdsIYb3THwIDAQAB";
 
     private readonly SemaphoreSlim _connectLock = new(1, 1);
     private readonly SemaphoreSlim _sendLock = new(1, 1);
@@ -38,7 +39,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     private Task? _heartbeatTask;
     private Task? _listenTask;
     private bool _disposed;
-    
+
     private int _reqIdCounter = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     private readonly ConcurrentDictionary<int, TaskCompletionSource<WSRes>> _pendingRequests = new();
     private readonly Channel<WSRes> _messageChannel = Channel.CreateUnbounded<WSRes>();
@@ -75,9 +76,9 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
             _ws.Options.AddSubProtocol("chat");
             _ws.Options.SetRequestHeader("Sec-WebSocket-Extensions", "im_version=2.3");
             _ws.Options.SetRequestHeader("Accept-Encoding", "gzip");
-            
+
             await _ws.ConnectAsync(new Uri(WsEndpoint), cancellationToken);
-            
+
             // 启动接收循环
             _listenTask = Task.Run(() => ListenLoopAsync(_cts.Token), _cts.Token);
 
@@ -87,7 +88,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
                 var initData = PackUpdateClientInfo(Account);
                 await SendAsync(1001, initData, false, cancellationToken);
             }
-            
+
             // 启动心跳定时器
             _heartbeatTask = Task.Run(() => RunHeartbeatAsync(_cts.Token), _cts.Token);
         }
@@ -180,10 +181,11 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     /// <param name="encrypt">是否对负载加密</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>服务器返回的响应包</returns>
-    public async Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true, CancellationToken cancellationToken = default)
+    public async Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
+        CancellationToken cancellationToken = default)
     {
         if (cmd != 1001) await ConnectAsync(cancellationToken);
-        
+
         var reqId = Interlocked.Increment(ref _reqIdCounter);
         var tcs = new TaskCompletionSource<WSRes>(TaskCreationOptions.RunContinuationsAsynchronously);
         _pendingRequests[reqId] = tcs;
@@ -200,7 +202,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
             {
                 _sendLock.Release();
             }
-            
+
             await using var registration = cancellationToken.Register(() => tcs.TrySetCanceled());
             return await tcs.Task;
         }
@@ -227,20 +229,16 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
                 await _ws.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, cancellationToken);
                 return null;
             }
+
             ms.Write(buffer, 0, result.Count);
         } while (!result.EndOfMessage);
 
         var rawData = ms.ToArray();
         var (payload, cmd, reqId) = ParseWsBytes(rawData);
-        
+
         return new WSRes
         {
-            Cmd = cmd,
-            ReqId = reqId,
-            Payload = new WSRes.Types.Payload
-            {
-                Data = ByteString.CopyFrom(payload)
-            }
+            Cmd = cmd, ReqId = reqId, Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(payload) }
         };
     }
 
@@ -250,7 +248,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     internal byte[] PackWsBytes(byte[] data, int cmd, int reqId, bool encrypt = true)
     {
         byte flag = 0x08;
-        byte[] payload = data;
+        var payload = data;
         if (encrypt && Account != null)
         {
             flag |= 0x80;
@@ -280,7 +278,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
         {
             payload = Account.AesEcbCipher.DecryptEcb(payload, PaddingMode.PKCS7);
         }
-        
+
         // 处理 GZip 压缩
         if ((flag & 0x40) != 0)
         {
@@ -297,7 +295,8 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
     /// <summary>
     /// 监听消息推送流
     /// </summary>
-    public async IAsyncEnumerable<WSRes> ListenAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<WSRes> ListenAsync(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         while (await _messageChannel.Reader.WaitToReadAsync(cancellationToken))
         {
@@ -317,6 +316,7 @@ public class WebsocketCore : ITiebaWsCore, IDisposable
         {
             await _ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
         }
+
         _cts.Cancel();
         if (_listenTask != null) await _listenTask;
         if (_heartbeatTask != null) await _heartbeatTask;

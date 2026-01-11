@@ -7,7 +7,7 @@ namespace AioTieba4DotNet.Api.GetUInfoPanel.Entities;
 
 public class UserInfoPanel : UserInfo
 {
-    public static UserInfoPanel FromTbData(JObject data)
+    public new static UserInfoPanel FromTbData(JObject data)
     {
         var portrait = data.GetValue("portrait")?.ToObject<string>() ?? "";
         if (portrait.Contains('?'))

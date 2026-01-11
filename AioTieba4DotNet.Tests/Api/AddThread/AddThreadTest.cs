@@ -25,9 +25,9 @@ public class AddThreadTest : TestBase
         // 1. 获取 TBS
         var getTbs = new GetTbsApi(HttpCore);
         HttpCore.Account.Tbs = await getTbs.RequestAsync();
-        
-        var addThread = new AddThreadApi(HttpCore);
-        
+
+        var addThread = new AddThreadApi(HttpCore, WebsocketCore);
+
         var contents = new List<IFrag>
         {
             new FragText { Text = "这是一条来自 AioTieba4DotNet 单元测试的帖子。" }
