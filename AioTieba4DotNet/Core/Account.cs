@@ -19,15 +19,15 @@ public class Account(string bduss = "", string stoken = "")
     /// </summary>
     public string Stoken { get; private set; } = stoken;
 
-    private string? _androidId;
-    private string? _uuid;
-    private string? _cuid;
-    private string? _cuidGalaxy2;
-    private string? _c3Aid;
-    private byte[]? _aesEcbSecKey;
-    private Aes? _aesEcbCipher;
-    private byte[]? _aesCbcSecKey;
-    private Aes? _aesCbcCipher;
+    private volatile string? _androidId;
+    private volatile string? _uuid;
+    private volatile string? _cuid;
+    private volatile string? _cuidGalaxy2;
+    private volatile string? _c3Aid;
+    private volatile byte[]? _aesEcbSecKey;
+    private volatile Aes? _aesEcbCipher;
+    private volatile byte[]? _aesCbcSecKey;
+    private volatile Aes? _aesCbcCipher;
 
     private readonly object _lock = new();
 
@@ -41,7 +41,10 @@ public class Account(string bduss = "", string stoken = "")
             if (_androidId != null) return _androidId;
             lock (_lock)
             {
-                return _androidId ??= BitConverter.ToString(RandomNumberGenerator.GetBytes(8)).Replace("-", "").ToLower();
+                if (_androidId != null) return _androidId;
+                var val = Convert.ToHexString(RandomNumberGenerator.GetBytes(8)).ToLowerInvariant();
+                _androidId = val;
+                return val;
             }
         }
         set => _androidId = value;
@@ -57,7 +60,10 @@ public class Account(string bduss = "", string stoken = "")
             if (_uuid != null) return _uuid;
             lock (_lock)
             {
-                return _uuid ??= Guid.NewGuid().ToString();
+                if (_uuid != null) return _uuid;
+                var val = Guid.NewGuid().ToString();
+                _uuid = val;
+                return val;
             }
         }
         set => _uuid = value;
@@ -67,9 +73,9 @@ public class Account(string bduss = "", string stoken = "")
     /// 当前会话的 tbs 校验码
     /// </summary>
     public string? Tbs { get; set; }
-    
+
     private string? ClientId { get; set; }
-    
+
     private string? SampleId { get; set; }
 
     /// <summary>
@@ -82,7 +88,10 @@ public class Account(string bduss = "", string stoken = "")
             if (_cuid != null) return _cuid;
             lock (_lock)
             {
-                return _cuid ??= "baidutiebaapp" + Uuid;
+                if (_cuid != null) return _cuid;
+                var val = "baidutiebaapp" + Uuid;
+                _cuid = val;
+                return val;
             }
         }
     }
@@ -97,7 +106,10 @@ public class Account(string bduss = "", string stoken = "")
             if (_cuidGalaxy2 != null) return _cuidGalaxy2;
             lock (_lock)
             {
-                return _cuidGalaxy2 ??= TbCrypto.CuidGalaxy2(AndroidId);
+                if (_cuidGalaxy2 != null) return _cuidGalaxy2;
+                var val = TbCrypto.CuidGalaxy2(AndroidId);
+                _cuidGalaxy2 = val;
+                return val;
             }
         }
     }
@@ -109,7 +121,10 @@ public class Account(string bduss = "", string stoken = "")
             if (_c3Aid != null) return _c3Aid;
             lock (_lock)
             {
-                return _c3Aid ??= TbCrypto.C3Aid(AndroidId, Uuid);
+                if (_c3Aid != null) return _c3Aid;
+                var val = TbCrypto.C3Aid(AndroidId, Uuid);
+                _c3Aid = val;
+                return val;
             }
         }
     }
@@ -126,7 +141,10 @@ public class Account(string bduss = "", string stoken = "")
             if (_aesEcbSecKey != null) return _aesEcbSecKey;
             lock (_lock)
             {
-                return _aesEcbSecKey ??= RandomNumberGenerator.GetBytes(31);
+                if (_aesEcbSecKey != null) return _aesEcbSecKey;
+                var val = RandomNumberGenerator.GetBytes(31);
+                _aesEcbSecKey = val;
+                return val;
             }
         }
     }
@@ -145,12 +163,12 @@ public class Account(string bduss = "", string stoken = "")
                 var aes = Aes.Create();
                 aes.Mode = CipherMode.ECB;
                 aes.Padding = PaddingMode.PKCS7;
-                aes.Key = new Rfc2898DeriveBytes(AesEcbSecKey, [0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13], 5,
-                    HashAlgorithmName.SHA1).GetBytes(32);
+                aes.Key = Rfc2898DeriveBytes.Pbkdf2(AesEcbSecKey, (byte[])[0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13], 5,
+                    HashAlgorithmName.SHA1, 32);
 
                 _aesEcbCipher = aes;
 
-                return _aesEcbCipher;
+                return aes;
             }
         }
     }
@@ -165,7 +183,10 @@ public class Account(string bduss = "", string stoken = "")
             if (_aesCbcSecKey != null) return _aesCbcSecKey;
             lock (_lock)
             {
-                return _aesCbcSecKey ??= RandomNumberGenerator.GetBytes(16);
+                if (_aesCbcSecKey != null) return _aesCbcSecKey;
+                var val = RandomNumberGenerator.GetBytes(16);
+                _aesCbcSecKey = val;
+                return val;
             }
         }
         set => _aesCbcSecKey = value;
@@ -188,7 +209,7 @@ public class Account(string bduss = "", string stoken = "")
                 aes.Key = AesCbcSecKey;
                 aes.IV = new byte[16];
                 _aesCbcCipher = aes;
-                return _aesCbcCipher;
+                return aes;
             }
         }
     }
