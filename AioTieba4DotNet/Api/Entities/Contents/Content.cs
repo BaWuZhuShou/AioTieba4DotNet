@@ -222,6 +222,7 @@ public class Content
                 Video = new FragVideo()
             };
         }
+
         var texts = new List<FragText>();
         var emojis = new List<FragEmoji>();
         var images = new List<FragImage>();
@@ -382,8 +383,12 @@ public class Content
             {
                 [10], content =>
                 {
-                     voice = new FragVoice { Md5 = content.VoiceMd5, Duration = (int)(double.TryParse(content.DuringTime, out var d) ? d / 1000 : 0) };
-                     if (voice != null) frags.Add(voice);
+                    voice = new FragVoice
+                    {
+                        Md5 = content.VoiceMd5,
+                        Duration = (int)(double.TryParse(content.DuringTime, out var d) ? d / 1000 : 0)
+                    };
+                    if (voice != null) frags.Add(voice);
                 }
             }
         };
@@ -402,7 +407,6 @@ public class Content
 
             if (handled) continue;
             Console.WriteLine($"Unknown fragment type. type: {type}");
-
         }
 
         return new Content()
@@ -430,18 +434,15 @@ public class Content
 
         if (dataRes.Media is { Count: > 0 })
         {
-            foreach (var m in dataRes.Media)
+            foreach (var m in dataRes.Media.Where(m => m.Type != 5))
             {
-                if (m.Type != 5)
-                {
-                    var image = FragImage.FromTbData(m);
-                    content.Images.Add(image);
-                    content.Frags.Add(image);
-                }
+                var image = FragImage.FromTbData(m);
+                content.Images.Add(image);
+                content.Frags.Add(image);
             }
         }
 
-        if (dataRes.VideoInfo != null && dataRes.VideoInfo.VideoWidth > 0)
+        if (dataRes.VideoInfo is { VideoWidth: > 0 })
         {
             var video = FragVideo.FromTbData(dataRes.VideoInfo);
             content.Frags.Add(video);
@@ -480,6 +481,7 @@ public class Content
                 Video = new FragVideo()
             };
         }
+
         var texts = new List<FragText>();
         var emojis = new List<FragEmoji>();
         var images = new List<FragImage>();

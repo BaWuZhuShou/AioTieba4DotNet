@@ -1,10 +1,12 @@
 ﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Sign;
 
+[RequireBduss]
 public class Sign(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<bool> RequestAsync(string fname, ulong fid)

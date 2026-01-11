@@ -1,11 +1,13 @@
 using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.Login.Entities;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Login;
 
+[RequireBduss]
 public class Login(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static (UserInfoLogin User, string Tbs) ParseBody(string body)

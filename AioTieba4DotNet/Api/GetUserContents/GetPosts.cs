@@ -1,12 +1,14 @@
 using AioTieba4DotNet.Abstractions;
 using Google.Protobuf;
 using AioTieba4DotNet.Api.GetUserContents.Entities;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
 using AioTieba4DotNet.Exceptions;
 
 namespace AioTieba4DotNet.Api.GetUserContents;
 
+[RequireBduss]
 public class GetPosts(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore,

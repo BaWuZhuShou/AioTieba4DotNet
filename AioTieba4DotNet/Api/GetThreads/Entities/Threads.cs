@@ -44,7 +44,7 @@ public class Threads
         sb.AppendLine($"{nameof(Objs)}:");
         foreach (var obj in Objs)
         {
-            sb.AppendLine(obj.ToString());
+            sb.AppendLine($"{obj}");
         }
 
         return sb.ToString();

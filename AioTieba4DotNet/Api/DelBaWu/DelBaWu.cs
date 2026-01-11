@@ -1,8 +1,10 @@
 using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 
 namespace AioTieba4DotNet.Api.DelBawu;
 
+[RequireBduss]
 public class DelBaWu(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)

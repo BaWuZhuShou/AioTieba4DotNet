@@ -1,10 +1,12 @@
 ﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.DelThread;
 
+[RequireBduss]
 public class DelThread(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)

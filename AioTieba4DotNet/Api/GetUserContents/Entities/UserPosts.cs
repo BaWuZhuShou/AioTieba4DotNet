@@ -39,9 +39,8 @@ public class UserPosts : Containers<UserPost>
         var fid = (int)dataRes.ForumId;
         var tid = (int)dataRes.ThreadId;
         List<UserPost> objs = [];
-        foreach (var postInfoContent in dataRes.Content)
+        foreach (var userPost in dataRes.Content.Select(UserPost.FromTbData))
         {
-            var userPost = UserPost.FromTbData(postInfoContent);
             userPost.Fid = fid;
             userPost.Tid = tid;
             objs.Add(userPost);

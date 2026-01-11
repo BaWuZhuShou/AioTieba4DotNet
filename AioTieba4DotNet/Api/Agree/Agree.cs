@@ -1,4 +1,5 @@
 ﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
 using Newtonsoft.Json.Linq;
@@ -6,6 +7,7 @@ using Newtonsoft.Json.Linq;
 namespace AioTieba4DotNet.Api.Agree;
 
 
+[RequireBduss]
 public class Agree(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<bool> RequestAsync(long tid, long pid, bool isComment, bool isDisagree, bool isUndo)

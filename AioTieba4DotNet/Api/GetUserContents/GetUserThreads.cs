@@ -1,5 +1,6 @@
 ﻿using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.GetUserContents.Entities;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
 using AioTieba4DotNet.Exceptions;
@@ -7,6 +8,7 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetUserContents;
 
+[RequireBduss]
 public class GetUserThreads(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore,

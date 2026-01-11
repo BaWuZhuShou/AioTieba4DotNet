@@ -1,10 +1,12 @@
 using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Sync;
 
+[RequireBduss]
 public class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static (string ClientId, string SampleId) ParseBody(string body)

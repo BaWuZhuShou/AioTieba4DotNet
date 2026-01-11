@@ -54,7 +54,7 @@ jobs:
         output: ${{ runner.temp }}/codeql-sarif
 
     - name: Filter SARIF
-      uses: advanced-security/filter-sarif@v1
+      uses: advanced-security/filter-sarif@59d0a64b3c0a34d787819f6659708915b6210582
       with:
         patterns: |
           -**/Protobuf/**

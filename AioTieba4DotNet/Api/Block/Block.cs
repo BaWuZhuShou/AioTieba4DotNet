@@ -1,10 +1,12 @@
 using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Block;
 
+[RequireBduss]
 public class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)

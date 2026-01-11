@@ -1,5 +1,6 @@
 ﻿using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.Entities.Contents;
+using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
 using Newtonsoft.Json;
@@ -7,6 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.AddPost;
 
+[RequireBduss]
 public class AddPost(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private new static long ParseBody(string body)
