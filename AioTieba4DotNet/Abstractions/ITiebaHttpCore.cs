@@ -28,6 +28,12 @@ public interface ITiebaHttpCore
     Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data);
 
     /// <summary>
+    /// 获取 TBS 校验码
+    /// </summary>
+    /// <returns>TBS 字符串</returns>
+    Task<string> GetTbsAsync();
+
+    /// <summary>
     /// 发送 App 端 Protobuf 请求并获取字节数组响应
     /// </summary>
     Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data);

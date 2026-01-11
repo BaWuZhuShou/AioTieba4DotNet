@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AddPostApi = AioTieba4DotNet.Api.AddPost.AddPost;
-using GetTbsApi = AioTieba4DotNet.Api.GetTbs.GetTbs;
 using JetBrains.Annotations;
 
 namespace AioTieba4DotNet.Tests.Api.AddPost;
@@ -20,9 +19,6 @@ public class AddPostTest : TestBase
             return;
         }
 
-        var getTbs = new GetTbsApi(HttpCore);
-        HttpCore.Account.Tbs = await getTbs.RequestAsync();
-
         var addPost = new AddPostApi(HttpCore, WebsocketCore);
 
         var content = "这是一条来自 AioTieba4DotNet 单元测试的回复。";
@@ -30,7 +26,7 @@ public class AddPostTest : TestBase
         try
         {
             // 使用一个测试贴进行回复
-            var success = await addPost.RequestAsync("", 0, 0, content);
+            var success = await addPost.RequestAsync("", 1, 1, content);
             Assert.IsTrue(success);
             Console.WriteLine($"回复成功: {success}");
         }

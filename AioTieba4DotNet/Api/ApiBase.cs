@@ -14,6 +14,15 @@ public abstract class ApiBase(ITiebaHttpCore httpCore)
     protected readonly ITiebaHttpCore HttpCore = httpCore;
 
     /// <summary>
+    /// 确保 TBS 已加载（如果已登录）
+    /// </summary>
+    protected async Task EnsureTbsAsync()
+    {
+        if (HttpCore.Account != null && !string.IsNullOrEmpty(HttpCore.Account.Bduss))
+            await HttpCore.GetTbsAsync();
+    }
+
+    /// <summary>
     /// 检查错误码并抛出异常
     /// </summary>
     /// <param name="code">错误码</param>
@@ -65,15 +74,17 @@ public abstract class ApiWsBase<TResult>(
     /// <returns>API 响应结果</returns>
     protected async Task<TResult> ExecuteAsync(Func<Task<TResult>> httpRequest, Func<Task<TResult>>? wsRequest = null)
     {
-        if (Mode == TiebaRequestMode.Websocket && wsRequest != null)
-            try
-            {
-                return await wsRequest();
-            }
-            catch (NotImplementedException)
-            {
-                // 强制要求ws但是未实现，回退http
-            }
+        await EnsureTbsAsync();
+
+        if (Mode != TiebaRequestMode.Websocket || wsRequest == null) return await httpRequest();
+        try
+        {
+            return await wsRequest();
+        }
+        catch (NotImplementedException)
+        {
+            // 强制要求ws但是未实现，回退http
+        }
 
         return await httpRequest();
     }

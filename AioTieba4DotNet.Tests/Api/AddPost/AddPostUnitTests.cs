@@ -35,6 +35,11 @@ public class AddPostUnitTests
             return Task.FromResult(Response);
         }
 
+        public Task<string> GetTbsAsync()
+        {
+            return Task.FromResult(Account?.Tbs ?? string.Empty);
+        }
+
         public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data)
         {
             LastProtoData = data;

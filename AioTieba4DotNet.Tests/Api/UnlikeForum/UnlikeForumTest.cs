@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LikeForumApi = AioTieba4DotNet.Api.LikeForum.LikeForum;
-using GetTbsApi = AioTieba4DotNet.Api.GetTbs.GetTbs;
 using JetBrains.Annotations;
 
 namespace AioTieba4DotNet.Tests.Api.UnlikeForum;
@@ -19,9 +18,6 @@ public class LikeForumTest : TestBase
             Assert.Inconclusive("未设置 BDUSS，跳过关注吧测试");
             return;
         }
-
-        var getTbs = new GetTbsApi(HttpCore);
-        HttpCore!.Account!.Tbs = await getTbs.RequestAsync();
 
         var likeForum = new LikeForumApi(HttpCore);
 

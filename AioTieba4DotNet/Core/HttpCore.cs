@@ -4,6 +4,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Reflection;
 using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Api.Login;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Exceptions;
 
@@ -23,6 +24,8 @@ public class HttpCore : ITiebaHttpCore
     /// 用于发送请求的 HttpClient 实例
     /// </summary>
     public HttpClient HttpClient { get; }
+
+    private AsyncInit<string>? _tbsInit;
 
     /// <summary>
     /// 对请求参数进行签名
@@ -104,6 +107,31 @@ public class HttpCore : ITiebaHttpCore
     public void SetAccount(Account newAccount)
     {
         Account = newAccount;
+        InitTbs(newAccount);
+    }
+
+    /// <summary>
+    /// 初始化tbs
+    /// </summary>
+    private void InitTbs(Account newAccount)
+    {
+        _tbsInit = new AsyncInit<string>(async () =>
+        {
+            var loginApi = new Login(this);
+            var (_, tbs) = await loginApi.RequestAsync();
+            if (Account != null) Account.Tbs = tbs;
+            return tbs;
+        });
+
+        if (!string.IsNullOrEmpty(newAccount.Tbs))
+        {
+            _tbsInit.SetValue(newAccount.Tbs);
+        }
+        else if (!string.IsNullOrEmpty(newAccount.Bduss))
+        {
+            // 采用 Fire-and-forget 模式，自动触发后台获取
+            _ = Task.Run(() => _tbsInit.GetAsync());
+        }
     }
 
     /// <summary>
@@ -174,6 +202,17 @@ public class HttpCore : ITiebaHttpCore
 
             return;
         }
+    }
+
+    /// <summary>
+    /// 获取 TBS 校验码
+    /// </summary>
+    /// <returns>TBS 字符串</returns>
+    public async Task<string> GetTbsAsync()
+    {
+        if (Account == null) throw new TiebaException("Account not set");
+        // 如果 SetAccount 正常调用，_tbsInit 肯定不为空
+        return await _tbsInit!.GetAsync();
     }
 
     /// <summary>

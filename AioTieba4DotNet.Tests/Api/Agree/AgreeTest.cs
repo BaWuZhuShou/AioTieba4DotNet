@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AgreeApi = AioTieba4DotNet.Api.Agree.Agree;
-using GetTbsApi = AioTieba4DotNet.Api.GetTbs.GetTbs;
 using JetBrains.Annotations;
 
 namespace AioTieba4DotNet.Tests.Api.Agree;
@@ -19,11 +18,6 @@ public class AgreeTest : TestBase
             Assert.Inconclusive("未设置 BDUSS，跳过写操作测试");
             return;
         }
-
-        // 1. 获取 TBS
-        var getTbs = new GetTbsApi(HttpCore);
-        var tbs = await getTbs.RequestAsync();
-        Assert.IsFalse(string.IsNullOrEmpty(tbs), "获取 TBS 失败");
 
         var agreeApi = new AgreeApi(HttpCore);
 

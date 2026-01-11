@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DelThreadApi = AioTieba4DotNet.Api.DelThread.DelThread;
-using GetTbsApi = AioTieba4DotNet.Api.GetTbs.GetTbs;
 using JetBrains.Annotations;
 
 namespace AioTieba4DotNet.Tests.Api.DelThread;
@@ -19,9 +18,6 @@ public class DelThreadTest : TestBase
             Assert.Inconclusive("未设置 BDUSS，跳过删帖测试");
             return;
         }
-
-        var getTbs = new GetTbsApi(HttpCore);
-        HttpCore.Account.Tbs = await getTbs.RequestAsync();
 
         var delThread = new DelThreadApi(HttpCore);
 

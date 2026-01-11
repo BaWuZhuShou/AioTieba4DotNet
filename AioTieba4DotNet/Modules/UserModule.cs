@@ -11,7 +11,6 @@ using AioTieba4DotNet.Api.Login;
 using AioTieba4DotNet.Api.Login.Entities;
 using AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 using AioTieba4DotNet.Api.Profile.GetUInfoProfile.Entities;
-using AioTieba4DotNet.Api.GetTbs;
 using AioTieba4DotNet.Api.FollowUser;
 using AioTieba4DotNet.Api.UnfollowUser;
 using AioTieba4DotNet.Api.GetUserContents;
@@ -41,8 +40,7 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     /// <returns>TBS 字符串</returns>
     public async Task<string> GetTbsAsync()
     {
-        var api = new GetTbs(httpCore);
-        return await api.RequestAsync();
+        return await httpCore.GetTbsAsync();
     }
 
     /// <summary>
@@ -166,10 +164,12 @@ public class UserModule(ITiebaHttpCore httpCore, IForumModule forumModule, ITieb
     /// 登录并获取用户信息和 TBS
     /// </summary>
     /// <returns>包含登录用户信息和 TBS 的元组</returns>
-    public async Task<(UserInfoLogin User, string Tbs)> LoginAsync()
+    internal async Task<(UserInfoLogin User, string Tbs)> LoginAsync()
     {
         var api = new Login(httpCore);
-        return await api.RequestAsync();
+        var (user, tbs) = await api.RequestAsync();
+        if (httpCore.Account != null) httpCore.Account.Tbs = tbs;
+        return (user, tbs);
     }
 
     /// <summary>

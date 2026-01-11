@@ -118,3 +118,35 @@
 - **资源管理**: 严格遵守 `IDisposable` 处置规范。对于 HTTP 请求，应始终利用 `HttpCore` 封装好的高层方法，避免在业务代码中暴露底层的资源管理细节。
 - **DRY 原则**: 优先复用 `Abstractions` 中的接口和 `Core` 中的工具，避免重复造轮子。
 - **高性能**: 关注异步调用的开销，避免不必要的内存分配。在 Protobuf 和 JSON 之间权衡时，优先选择 Protobuf。
+
+## 9. 并发控制与资源缓存规范
+- **适用场景**: 当多个并发请求可能同时触发同一个昂贵的初始化操作（如刷新 Token、获取 TBS、懒加载配置）时。
+- **解决方案**: 统一使用 `AsyncInit<T>` 工具类。
+    - **位置**: `AioTieba4DotNet.Core.AsyncInit<T>`
+    - **原理**: 封装了标准的“异步双重检查锁定 (Async Double-Check Locking)”模式，内部使用 `SemaphoreSlim(1, 1)` 确保线程安全。
+- **使用指南**:
+    - 在构造函数或初始化方法中实例化 `AsyncInit<T>`，传入工厂方法 `Func<Task<T>>`。
+    - 调用 `GetAsync()` 获取资源，该方法会自动处理加锁、双重检查和初始化。
+    - 若需预设值，可调用 `SetValue(T value)`。
+- **代码示例**:
+    ```csharp
+    private readonly AsyncInit<string> _resourceInit;
+
+    public MyService()
+    {
+        // 定义初始化逻辑
+        _resourceInit = new AsyncInit<string>(async () =>
+        {
+            return await FetchResourceAsync();
+        });
+    }
+
+    public async Task<string> GetResourceAsync()
+    {
+        // 线程安全的获取
+        return await _resourceInit.GetAsync();
+    }
+    ```
+- **后台自动初始化**:
+    - 若需 Fire-and-forget 初始化，可直接调用 `_ = Task.Run(() => _resourceInit.GetAsync());`。
+    - 前台请求与后台任务共享同一个 `AsyncInit` 实例，天然保证了竞态控制和去重。

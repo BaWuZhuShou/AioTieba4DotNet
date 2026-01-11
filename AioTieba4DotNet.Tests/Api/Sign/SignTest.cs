@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SignApi = AioTieba4DotNet.Api.Sign.Sign;
-using GetTbsApi = AioTieba4DotNet.Api.GetTbs.GetTbs;
 using JetBrains.Annotations;
 
 namespace AioTieba4DotNet.Tests.Api.Sign;
@@ -19,9 +18,6 @@ public class SignTest : TestBase
             Assert.Inconclusive("未设置 BDUSS，跳过签到测试");
             return;
         }
-
-        var getTbs = new GetTbsApi(HttpCore);
-        HttpCore.Account.Tbs = await getTbs.RequestAsync();
 
         var signApi = new SignApi(HttpCore);
 

@@ -300,11 +300,6 @@ public interface IUserModule
     /// <returns>用户信息实体</returns>
     Task<UserInfoJson> GetUserInfoJsonAsync(string username);
 
-    /// <summary>
-    /// 执行登录操作（初始化账户状态）
-    /// </summary>
-    /// <returns>登录信息及 tbs</returns>
-    Task<(UserInfoLogin User, string Tbs)> LoginAsync();
 
     /// <summary>
     /// 分页获取用户发表的回复列表

@@ -13,7 +13,7 @@ namespace AioTieba4DotNet.Api.Login;
 /// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
 [PythonApi("aiotieba.api.login")]
-public class Login(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class Login(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static (UserInfoLogin User, string Tbs) ParseBody(string body)
     {
