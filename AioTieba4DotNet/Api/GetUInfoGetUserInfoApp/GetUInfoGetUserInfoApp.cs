@@ -11,7 +11,7 @@ namespace AioTieba4DotNet.Api.GetUInfoGetUserInfoApp;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_uinfo_getuserinfo_app")]
-public class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
+internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
 {
     private const int Cmd = 303024;
 

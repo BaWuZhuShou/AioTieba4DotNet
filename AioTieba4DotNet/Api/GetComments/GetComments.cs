@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.GetComments.Entities;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
@@ -14,7 +14,7 @@ namespace AioTieba4DotNet.Api.GetComments;
 /// <param name="wsCore">Websocket 核心组件</param>
 /// <param name="mode">请求模式</param>
 [PythonApi("aiotieba.api.get_comments")]
-public class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
+internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
     : ProtoApiWsBase<Comments>(httpCore, wsCore, mode)
 {
     private const int Cmd = 302002;

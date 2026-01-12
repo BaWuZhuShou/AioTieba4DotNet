@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Api.Entities;
+using AioTieba4DotNet.Api.Entities;
 using AioTieba4DotNet.Api.Entities.Contents;
 using AioTieba4DotNet.Entities;
 
@@ -99,7 +99,7 @@ public class UserThread
     /// </summary>
     /// <param name="dataRes">Protobuf 帖子列表信息数据</param>
     /// <returns>用户历史发布主题帖实体</returns>
-    public static UserThread FromTbData(PostInfoList dataRes)
+    internal static UserThread FromTbData(PostInfoList dataRes)
     {
         return new UserThread
         {

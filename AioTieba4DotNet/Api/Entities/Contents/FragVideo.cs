@@ -63,7 +63,7 @@ public class FragVideo : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 视频信息数据</param>
     /// <returns>视频碎片实体</returns>
-    public static FragVideo FromTbData(VideoInfo dataProto)
+    internal static FragVideo FromTbData(VideoInfo dataProto)
     {
         var src = dataProto.VideoUrl;
         var coverSrc = dataProto.ThumbnailUrl;
@@ -87,7 +87,7 @@ public class FragVideo : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>视频碎片实体</returns>
-    public static FragVideo FromTbData(PbContent dataProto)
+    internal static FragVideo FromTbData(PbContent dataProto)
     {
         return new FragVideo
         {

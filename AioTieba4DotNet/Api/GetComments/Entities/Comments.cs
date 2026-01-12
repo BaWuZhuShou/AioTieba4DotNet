@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Api.GetThreadPosts.Entities;
+using AioTieba4DotNet.Api.GetThreadPosts.Entities;
 using AioTieba4DotNet.Api.GetThreads.Entities;
 using Thread = AioTieba4DotNet.Api.GetThreads.Entities.Thread;
 
@@ -44,7 +44,7 @@ public class Comments
     /// </summary>
     /// <param name="dataRes">Protobuf 楼层响应数据</param>
     /// <returns>楼中楼评论列表实体</returns>
-    public static Comments FromTbData(PbFloorResIdl.Types.DataRes? dataRes)
+    internal static Comments FromTbData(PbFloorResIdl.Types.DataRes? dataRes)
     {
         if (dataRes == null)
             return new Comments

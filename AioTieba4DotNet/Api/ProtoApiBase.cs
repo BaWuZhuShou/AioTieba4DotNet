@@ -7,7 +7,7 @@ namespace AioTieba4DotNet.Api;
 ///     处理 Protobuf 格式响应的 API 基类
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-public abstract class ProtoApiBase(ITiebaHttpCore httpCore) : ApiBase(httpCore);
+internal abstract class ProtoApiBase(ITiebaHttpCore httpCore) : ApiBase(httpCore);
 
 /// <summary>
 ///     支持双模分发的 Protobuf API 基类
@@ -16,7 +16,7 @@ public abstract class ProtoApiBase(ITiebaHttpCore httpCore) : ApiBase(httpCore);
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
 /// <param name="mode">请求模式</param>
-public abstract class ProtoApiWsBase<TResult>(
+internal abstract class ProtoApiWsBase<TResult>(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore,
     TiebaRequestMode mode = TiebaRequestMode.Http)

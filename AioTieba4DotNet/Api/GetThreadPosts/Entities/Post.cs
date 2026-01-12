@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Api.Entities.Contents;
+using AioTieba4DotNet.Api.Entities.Contents;
 using AioTieba4DotNet.Api.GetThreads.Entities;
 
 namespace AioTieba4DotNet.Api.GetThreadPosts.Entities;
@@ -93,7 +93,7 @@ public class Post
     /// </summary>
     /// <param name="dataProto">Protobuf 楼层信息数据</param>
     /// <returns>楼层信息实体</returns>
-    public static Post FromTbData(global::Post? dataProto)
+    internal static Post FromTbData(global::Post? dataProto)
     {
         if (dataProto == null)
             return new Post

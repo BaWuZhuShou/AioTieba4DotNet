@@ -1,4 +1,4 @@
-﻿namespace AioTieba4DotNet.Api.GetThreads.Entities;
+namespace AioTieba4DotNet.Api.GetThreads.Entities;
 
 /// <summary>
 ///     页信息
@@ -40,7 +40,7 @@ public class PageT
     /// </summary>
     /// <param name="page">Protobuf 页码数据</param>
     /// <returns>页信息实体</returns>
-    public static PageT FromTbData(Page? page)
+    internal static PageT FromTbData(Page? page)
     {
         if (page == null) return new PageT();
 

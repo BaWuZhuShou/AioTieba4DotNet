@@ -12,7 +12,7 @@ namespace AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 /// <typeparam name="T">请求参数类型 (支持 int/long 作为 uid，或 string 作为 portrait/用户名)</typeparam>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.profile")]
-public class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
+internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
 {
     private const int Cmd = 303012;
 

@@ -11,7 +11,7 @@ namespace AioTieba4DotNet.Api.GetFid;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_fid")]
-public class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static ulong ParseBody(string body)
     {

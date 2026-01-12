@@ -15,7 +15,7 @@ namespace AioTieba4DotNet.Api.InitZId;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.init_z_id")]
-public class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
+internal class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
 {
     private const string AppKey = "200033"; // Get by p/5/aio
     private const string SecKey = "ea737e4f435b53786043369d2e5ace4f";

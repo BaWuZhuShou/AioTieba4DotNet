@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.Entities;
 using AioTieba4DotNet.Api.GetThreads.Entities;
 using AioTieba4DotNet.Attributes;
@@ -13,7 +13,7 @@ namespace AioTieba4DotNet.Api.GetFollows;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_follows")]
-public class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static UserList ParseBody(string body)
     {

@@ -43,7 +43,7 @@ public class FragEmoji : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>表情碎片实体</returns>
-    public static FragEmoji FromTbData(PbContent dataProto)
+    internal static FragEmoji FromTbData(PbContent dataProto)
     {
         var id = dataProto.Text;
         var desc = dataProto.C;

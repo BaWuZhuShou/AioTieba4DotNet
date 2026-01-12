@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
@@ -11,7 +11,7 @@ namespace AioTieba4DotNet.Api.LikeForum;
 /// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
 [PythonApi("aiotieba.api.follow_forum")]
-public class LikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class LikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)
     {

@@ -1,4 +1,4 @@
-﻿namespace AioTieba4DotNet.Api.Entities.Contents;
+namespace AioTieba4DotNet.Api.Entities.Contents;
 
 /// <summary>
 ///     音频碎片
@@ -46,7 +46,7 @@ public class FragVoice : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 音频数据</param>
     /// <returns>音频碎片实体</returns>
-    public static FragVoice FromTbData(Voice dataProto)
+    internal static FragVoice FromTbData(Voice dataProto)
     {
         var md5 = dataProto.VoiceMd5;
         var duration = dataProto.DuringTime / 1000;
@@ -58,7 +58,7 @@ public class FragVoice : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 摘要数据</param>
     /// <returns>音频碎片实体</returns>
-    public static FragVoice FromTbData(PostInfoList.Types.PostInfoContent.Types.Abstract dataProto)
+    internal static FragVoice FromTbData(PostInfoList.Types.PostInfoContent.Types.Abstract dataProto)
     {
         var md5 = dataProto.VoiceMd5;
         var duration = int.Parse(dataProto.DuringTime) / 1000;
@@ -70,7 +70,7 @@ public class FragVoice : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>音频碎片实体</returns>
-    public static FragVoice FromTbData(PbContent dataProto)
+    internal static FragVoice FromTbData(PbContent dataProto)
     {
         return new FragVoice { Md5 = dataProto.VoiceMd5, Duration = (int)dataProto.DuringTime / 1000 };
     }

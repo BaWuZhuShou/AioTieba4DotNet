@@ -12,7 +12,7 @@ namespace AioTieba4DotNet.Api.GetUInfoUserJson;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_uinfo_user_json")]
-public class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static UserInfoJson ParseBody(string body)
     {

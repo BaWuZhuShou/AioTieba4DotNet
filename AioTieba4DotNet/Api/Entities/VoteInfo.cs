@@ -35,7 +35,7 @@ public class VoteInfo
     /// </summary>
     /// <param name="voteInfo"></param>
     /// <returns>VoteInfo</returns>
-    public static VoteInfo? FromTbData(PollInfo? voteInfo)
+    internal static VoteInfo? FromTbData(PollInfo? voteInfo)
     {
         if (voteInfo == null || string.IsNullOrEmpty(voteInfo.Title)) return null;
 

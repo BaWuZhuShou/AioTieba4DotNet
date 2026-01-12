@@ -55,7 +55,7 @@ public class ForumDetail
     /// </summary>
     /// <param name="data">Protobuf 吧详情数据</param>
     /// <returns>吧详情信息实体</returns>
-    public static ForumDetail FromTbData(GetForumDetailResIdl.Types.DataRes data)
+    internal static ForumDetail FromTbData(GetForumDetailResIdl.Types.DataRes data)
     {
         var forumInfo = data.ForumInfo;
         return new ForumDetail

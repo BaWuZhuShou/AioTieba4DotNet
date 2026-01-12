@@ -11,7 +11,7 @@ namespace AioTieba4DotNet.Api.Sync;
 /// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
 [PythonApi("aiotieba.api.sync")]
-public class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static (string ClientId, string SampleId) ParseBody(string body)
     {

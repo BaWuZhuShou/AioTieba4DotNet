@@ -1,4 +1,4 @@
-﻿namespace AioTieba4DotNet.Api.Entities.Contents;
+namespace AioTieba4DotNet.Api.Entities.Contents;
 
 /// <summary>
 ///     @碎片
@@ -38,7 +38,7 @@ public class FragAt : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>@碎片实体</returns>
-    public static FragAt FromTbData(PbContent dataProto)
+    internal static FragAt FromTbData(PbContent dataProto)
     {
         var text = dataProto.Text;
         var userId = dataProto.Uid;

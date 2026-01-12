@@ -1,4 +1,4 @@
-﻿namespace AioTieba4DotNet.Api.GetThreads.Entities;
+namespace AioTieba4DotNet.Api.GetThreads.Entities;
 
 /// <summary>
 ///     吧信息
@@ -55,7 +55,7 @@ public class ForumT
     /// </summary>
     /// <param name="dataRes">Protobuf 吧响应数据</param>
     /// <returns>吧信息实体</returns>
-    public static ForumT FromTbData(FrsPageResIdl.Types.DataRes dataRes)
+    internal static ForumT FromTbData(FrsPageResIdl.Types.DataRes dataRes)
     {
         var forumInfo = dataRes.Forum;
         return new ForumT
@@ -77,7 +77,7 @@ public class ForumT
     /// </summary>
     /// <param name="forumInfo">Protobuf 简版吧信息数据</param>
     /// <returns>吧信息实体</returns>
-    public static ForumT FromTbData(SimpleForum? forumInfo)
+    internal static ForumT FromTbData(SimpleForum? forumInfo)
     {
         if (forumInfo == null) return new ForumT();
 

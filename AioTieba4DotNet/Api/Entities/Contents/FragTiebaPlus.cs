@@ -1,4 +1,4 @@
-﻿namespace AioTieba4DotNet.Api.Entities.Contents;
+namespace AioTieba4DotNet.Api.Entities.Contents;
 
 /// <summary>
 ///     贴吧plus广告碎片
@@ -38,7 +38,7 @@ public class FragTiebaPlus : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>贴吧plus广告碎片实体</returns>
-    public static FragTiebaPlus FromTbData(PbContent dataProto)
+    internal static FragTiebaPlus FromTbData(PbContent dataProto)
     {
         var text = dataProto.TiebaplusInfo.Desc;
         var url = new Uri(dataProto.TiebaplusInfo.JumpUrl);

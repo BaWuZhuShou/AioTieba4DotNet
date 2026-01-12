@@ -12,7 +12,7 @@ namespace AioTieba4DotNet.Api.GetUInfoPanel;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_uinfo_panel")]
-public class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static UserInfoPanel ParseBody(string body)
     {

@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Api.GetThreads.Entities;
+using AioTieba4DotNet.Api.GetThreads.Entities;
 using Thread = AioTieba4DotNet.Api.GetThreads.Entities.Thread;
 
 namespace AioTieba4DotNet.Api.GetThreadPosts.Entities;
@@ -38,7 +38,7 @@ public class Posts
     /// </summary>
     /// <param name="dataRes">Protobuf 帖子页面响应数据</param>
     /// <returns>回复列表实体</returns>
-    public static Posts FromTbData(PbPageResIdl.Types.DataRes dataRes)
+    internal static Posts FromTbData(PbPageResIdl.Types.DataRes dataRes)
     {
         var forum = ForumT.FromTbData(dataRes.Forum);
         var thread = Thread.FromTbData(dataRes.Thread);

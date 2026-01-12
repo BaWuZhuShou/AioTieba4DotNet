@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Api.Entities;
+using AioTieba4DotNet.Api.Entities;
 using AioTieba4DotNet.Api.Entities.Contents;
 using AioTieba4DotNet.Api.Profile.GetUInfoProfile.Entities;
 
@@ -149,7 +149,7 @@ public class Thread
     /// </summary>
     /// <param name="threadInfo">Protobuf 主题帖信息数据</param>
     /// <returns>主题帖信息实体</returns>
-    public static Thread FromTbData(ThreadInfo? threadInfo)
+    internal static Thread FromTbData(ThreadInfo? threadInfo)
     {
         if (threadInfo == null)
             return new Thread { Content = Content.FromTbData((ThreadInfo?)null), VirtualImage = new VirtualImagePf() };

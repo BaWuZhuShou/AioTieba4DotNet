@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.GetForum.Entities;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
@@ -11,7 +11,7 @@ namespace AioTieba4DotNet.Api.GetForum;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_forum")]
-public class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static Forum ParseBody(string body)
     {

@@ -60,7 +60,7 @@ public class Forum
     /// </summary>
     /// <param name="dataMap">JSON 响应数据字典</param>
     /// <returns>吧信息实体</returns>
-    public static Forum FromTbData(IDictionary<string, object> dataMap)
+    internal static Forum FromTbData(IDictionary<string, object> dataMap)
     {
         var fid = Convert.ToInt32(dataMap["id"]);
         var fname = dataMap["name"] as string ?? "";

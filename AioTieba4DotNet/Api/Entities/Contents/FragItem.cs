@@ -33,7 +33,7 @@ public class FragItem : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>item碎片实体</returns>
-    public static FragItem FromTbData(PbContent dataProto)
+    internal static FragItem FromTbData(PbContent dataProto)
     {
         var text = dataProto.Item.ItemName;
         return new FragItem { Text = text };

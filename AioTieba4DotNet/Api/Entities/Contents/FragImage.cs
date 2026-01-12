@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace AioTieba4DotNet.Api.Entities.Contents;
 
@@ -82,7 +82,7 @@ public partial class FragImage : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>图像碎片实体</returns>
-    public static FragImage FromTbData(PbContent dataProto)
+    internal static FragImage FromTbData(PbContent dataProto)
     {
         var src = dataProto.CdnSrc;
         var bigSrc = dataProto.BigCdnSrc;
@@ -117,7 +117,7 @@ public partial class FragImage : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 媒体数据</param>
     /// <returns>图像碎片实体</returns>
-    public static FragImage FromTbData(Media dataProto)
+    internal static FragImage FromTbData(Media dataProto)
     {
         var src = dataProto.SmallPic;
         var bigSrc = dataProto.BigPic;

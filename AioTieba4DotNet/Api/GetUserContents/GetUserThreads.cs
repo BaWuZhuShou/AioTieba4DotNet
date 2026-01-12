@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.GetUserContents.Entities;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
@@ -15,7 +15,7 @@ namespace AioTieba4DotNet.Api.GetUserContents;
 /// <param name="mode">请求模式</param>
 [RequireBduss]
 [PythonApi("aiotieba.api.get_user_contents.get_threads")]
-public class GetUserThreads(
+internal class GetUserThreads(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore,
     TiebaRequestMode mode = TiebaRequestMode.Http) : ProtoApiWsBase<UserThreads>(httpCore, wsCore, mode)

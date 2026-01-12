@@ -37,7 +37,7 @@ public class Threads
     /// </summary>
     /// <param name="dataRes">Protobuf 吧页面响应数据</param>
     /// <returns>主题帖列表实体</returns>
-    public static Threads FromTbData(FrsPageResIdl.Types.DataRes dataRes)
+    internal static Threads FromTbData(FrsPageResIdl.Types.DataRes dataRes)
     {
         var forum = ForumT.FromTbData(dataRes);
         var threads = dataRes.ThreadList.Select(Thread.FromTbData).ToList();

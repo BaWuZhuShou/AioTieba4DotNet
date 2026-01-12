@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Api.Entities;
+using AioTieba4DotNet.Api.Entities;
 using AioTieba4DotNet.Entities;
 
 namespace AioTieba4DotNet.Api.GetUserContents.Entities;
@@ -29,7 +29,7 @@ public class UserThreads : Containers<UserThread>
     /// </summary>
     /// <param name="dataRes">Protobuf 响应数据</param>
     /// <returns>用户历史发布主题帖列表实体</returns>
-    public static UserThreads FromTbData(UserPostResIdl.Types.DataRes dataRes)
+    internal static UserThreads FromTbData(UserPostResIdl.Types.DataRes dataRes)
     {
         List<UserThread> objs = [];
         objs.AddRange(dataRes.PostList.Select(UserThread.FromTbData));

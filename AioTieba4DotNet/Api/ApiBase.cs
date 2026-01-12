@@ -9,7 +9,7 @@ namespace AioTieba4DotNet.Api;
 ///     所有 API 实现的基类
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-public abstract class ApiBase(ITiebaHttpCore httpCore)
+internal abstract class ApiBase(ITiebaHttpCore httpCore)
 {
     /// <summary>
     ///     Http 核心组件
@@ -60,7 +60,7 @@ public abstract class ApiBase(ITiebaHttpCore httpCore)
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
 /// <param name="mode">请求模式</param>
-public abstract class ApiWsBase<TResult>(
+internal abstract class ApiWsBase<TResult>(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore,
     TiebaRequestMode mode = TiebaRequestMode.Http)

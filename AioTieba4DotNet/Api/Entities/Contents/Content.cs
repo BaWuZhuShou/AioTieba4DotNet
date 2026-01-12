@@ -1,4 +1,4 @@
-﻿namespace AioTieba4DotNet.Api.Entities.Contents;
+namespace AioTieba4DotNet.Api.Entities.Contents;
 
 /// <summary>
 ///     内容碎片列表
@@ -60,7 +60,7 @@ public class Content
     /// </summary>
     /// <param name="threadInfo">Protobuf 主题帖信息数据</param>
     /// <returns>内容碎片列表实体</returns>
-    public static Content FromTbData(ThreadInfo.Types.OriginThreadInfo threadInfo)
+    internal static Content FromTbData(ThreadInfo.Types.OriginThreadInfo threadInfo)
     {
         var texts = new List<FragText>();
         var emojis = new List<FragEmoji>();
@@ -205,7 +205,7 @@ public class Content
     /// </summary>
     /// <param name="threadInfo"></param>
     /// <returns>Content</returns>
-    public static Content FromTbData(ThreadInfo? threadInfo)
+    internal static Content FromTbData(ThreadInfo? threadInfo)
     {
         if (threadInfo == null)
             return new Content
@@ -343,7 +343,7 @@ public class Content
     /// </summary>
     /// <param name="postInfoContent">Protobuf 帖子内容摘要数据</param>
     /// <returns>内容碎片列表实体</returns>
-    public static Content FromTbData(PostInfoList.Types.PostInfoContent postInfoContent)
+    internal static Content FromTbData(PostInfoList.Types.PostInfoContent postInfoContent)
     {
         var postContent = postInfoContent.PostContent;
         var texts = new List<FragText>();
@@ -429,7 +429,7 @@ public class Content
     /// </summary>
     /// <param name="dataRes">Protobuf 帖子列表信息数据</param>
     /// <returns>内容碎片列表实体</returns>
-    public static Content FromTbData(PostInfoList dataRes)
+    internal static Content FromTbData(PostInfoList dataRes)
     {
         var content = FromTbData(dataRes.FirstPostContent);
 
@@ -462,7 +462,7 @@ public class Content
     /// </summary>
     /// <param name="contentProtos"></param>
     /// <returns>Content</returns>
-    public static Content FromTbData(IEnumerable<PbContent>? contentProtos)
+    internal static Content FromTbData(IEnumerable<PbContent>? contentProtos)
     {
         if (contentProtos == null)
             return new Content

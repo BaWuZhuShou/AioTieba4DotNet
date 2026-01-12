@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Entities;
+using AioTieba4DotNet.Entities;
 using AioTieba4DotNet.Enums;
 
 namespace AioTieba4DotNet.Api.GetThreads.Entities;
@@ -23,7 +23,7 @@ public class UserInfoT : UserInfo
     /// </summary>
     /// <param name="dataProto">Protobuf 用户信息数据</param>
     /// <returns>用户信息实体</returns>
-    public static UserInfoT? FromTbData(User? dataProto)
+    internal static UserInfoT? FromTbData(User? dataProto)
     {
         if (dataProto == null) return null;
 

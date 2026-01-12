@@ -29,7 +29,7 @@ public class UserPostss : Containers<UserPosts>
     /// </summary>
     /// <param name="dataRes">Protobuf 响应数据</param>
     /// <returns>用户历史回复列表的列表实体</returns>
-    public static UserPostss FromTbData(UserPostResIdl.Types.DataRes dataRes)
+    internal static UserPostss FromTbData(UserPostResIdl.Types.DataRes dataRes)
     {
         List<UserPosts> objs = [];
         objs.AddRange(dataRes.PostList.Select(UserPosts.FromTbData));

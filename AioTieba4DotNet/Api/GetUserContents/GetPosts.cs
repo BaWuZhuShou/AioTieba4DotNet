@@ -15,7 +15,7 @@ namespace AioTieba4DotNet.Api.GetUserContents;
 /// <param name="mode">请求模式</param>
 [RequireBduss]
 [PythonApi("aiotieba.api.get_user_contents.get_posts")]
-public class GetPosts(
+internal class GetPosts(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore,
     TiebaRequestMode mode = TiebaRequestMode.Http) : ProtoApiWsBase<UserPostss>(httpCore, wsCore, mode)

@@ -1,4 +1,4 @@
-﻿namespace AioTieba4DotNet.Api.Entities.Contents;
+namespace AioTieba4DotNet.Api.Entities.Contents;
 
 /// <summary>
 ///     纯文本碎片
@@ -34,7 +34,7 @@ public class FragText : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>纯文本碎片实体</returns>
-    public static FragText FromTbData(PbContent dataProto)
+    internal static FragText FromTbData(PbContent dataProto)
     {
         var text = dataProto.Text;
         return new FragText { Text = text };
@@ -45,7 +45,7 @@ public class FragText : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 摘要数据</param>
     /// <returns>纯文本碎片实体</returns>
-    public static FragText FromTbData(PostInfoList.Types.PostInfoContent.Types.Abstract dataProto)
+    internal static FragText FromTbData(PostInfoList.Types.PostInfoContent.Types.Abstract dataProto)
     {
         var text = dataProto.Text;
         return new FragText { Text = text };

@@ -55,6 +55,7 @@
 ### 4.2 API 实现 (`AioTieba4DotNet/Api/`)
 每个 API 功能应有独立的文件夹，包含实现类、Protobuf 定义（如有）和实体类映射。
 - **基类使用**:
+    - 所有 API 实现类（包括基类 `ApiBase` 及其派生类）必须声明为 `internal`。它们不应直接暴露给库的用户，而应通过 `Modules` 层的公开接口进行访问。
     - 所有 API 类必须继承自 `ApiBase`。`ApiBase` 提供了统一的 `CheckError` (错误码检查) 和 `ParseBody` (JSON 解析) 静态方法，子类应通过静态调用复用这些逻辑。
     - **JSON API**: 继承 `JsonApiBase`。
     - **Protobuf API**: 继承 `ProtoApiBase`。对于响应，调用 `ApiBase.CheckError` 验证 Protobuf 错误。
@@ -85,7 +86,7 @@
 
 ### 4.4 实体类与映射 (`Entities/`)
 - **位置**: 优先在 API 目录下的 `Entities` 文件夹中定义。通用实体放在 `AioTieba4DotNet/Entities`。
-- **FromTbData**: 实体类应包含静态方法 `FromTbData`，负责从 Protobuf 生成类或 JSON 对象转换。
+- **FromTbData**: 实体类应包含 **`internal`** 静态方法 `FromTbData`，负责从 Protobuf 生成类或 JSON 对象转换。隐藏此方法可以防止将底层的协议模型（如 Protobuf 类）暴露给用户。
 - **内容碎片**: 帖子内容应映射为 `Content` 类，包含多种 `IFrag`（如 `FragText`, `FragImage`, `FragAt`）的集合。
 
 ### 4.5 核心层与工具 (`AioTieba4DotNet/Core/`)
@@ -152,3 +153,11 @@
 - **后台自动初始化**:
     - 若需 Fire-and-forget 初始化，可直接调用 `_ = Task.Run(() => _resourceInit.GetAsync());`。
     - 前台请求与后台任务共享同一个 `AsyncInit` 实例，天然保证了竞态控制和去重。
+
+## 10. 可见性与 API 暴露规范
+为了保持公开 API 的简洁性并隐藏底层实现细节，必须严格遵守以下可见性规则：
+- **API 实现类**: `AioTieba4DotNet/Api/` 下的所有类（包括基类和具体 API 实现）均设为 `internal`。它们应通过 `Modules` 层的公开接口暴露功能。
+- **实体类 (Entities)**: 保持 `public`。它们是用户获取数据的唯一合法途径。
+- **数据转换方法**: 实体类中的 `FromTbData` 静态方法必须设为 `internal`。
+- **Protobuf 类**: 保持 `public`。因为它们是由工具生成的，手动修改可见性会在重新生成时被覆盖。
+- **测试支持**: 项目配置了 `InternalsVisibleTo`，因此 `internal` 成员对测试项目依然可见。

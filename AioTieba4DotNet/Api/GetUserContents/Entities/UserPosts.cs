@@ -49,7 +49,7 @@ public class UserPosts : Containers<UserPost>
     ///     A new instance of <see cref="UserPosts" /> populated with data derived from the provided
     ///     <see cref="PostInfoList" />.
     /// </returns>
-    public static UserPosts FromTbData(PostInfoList dataRes)
+    internal static UserPosts FromTbData(PostInfoList dataRes)
     {
         var fid = (int)dataRes.ForumId;
         var tid = (int)dataRes.ThreadId;

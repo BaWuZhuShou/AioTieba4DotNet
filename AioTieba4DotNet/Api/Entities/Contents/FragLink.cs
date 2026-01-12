@@ -1,4 +1,4 @@
-﻿using System.Web;
+using System.Web;
 
 namespace AioTieba4DotNet.Api.Entities.Contents;
 
@@ -70,7 +70,7 @@ public class FragLink : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 碎片数据</param>
     /// <returns>链接碎片实体</returns>
-    public static FragLink FromTbData(PbContent dataProto)
+    internal static FragLink FromTbData(PbContent dataProto)
     {
         var text = dataProto.Link;
         var title = dataProto.Text;
@@ -83,7 +83,7 @@ public class FragLink : IFrag
     /// </summary>
     /// <param name="dataProto">Protobuf 摘要数据</param>
     /// <returns>链接碎片实体</returns>
-    public static FragLink FromTbData(PostInfoList.Types.PostInfoContent.Types.Abstract dataProto)
+    internal static FragLink FromTbData(PostInfoList.Types.PostInfoContent.Types.Abstract dataProto)
     {
         var text = dataProto.Link;
         var title = dataProto.Text;

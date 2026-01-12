@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 
@@ -10,7 +10,7 @@ namespace AioTieba4DotNet.Api.DelThread;
 /// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
 [PythonApi("aiotieba.api.del_thread")]
-public class DelThread(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class DelThread(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)
     {

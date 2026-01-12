@@ -10,7 +10,7 @@ namespace AioTieba4DotNet.Api.DelBawu;
 /// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
 [PythonApi("aiotieba.api.del_bawu")]
-public class DelBaWu(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class DelBaWu(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)
     {

@@ -18,7 +18,7 @@ public class UserInfoPf : UserInfoGuInfoApp
     /// </summary>
     /// <param name="dataProto">Protobuf 响应数据</param>
     /// <returns>用户信息实体</returns>
-    public static UserInfoPf FromTbData(ProfileResIdl.Types.DataRes dataProto)
+    internal static UserInfoPf FromTbData(ProfileResIdl.Types.DataRes dataProto)
     {
         var userProto = dataProto.User;
         if (userProto == null) throw new InvalidOperationException("Profile response data.User is null.");

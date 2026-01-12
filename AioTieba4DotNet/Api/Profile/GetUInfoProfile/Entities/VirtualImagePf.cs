@@ -20,7 +20,7 @@ public class VirtualImagePf
     /// </summary>
     /// <param name="dataProto">Protobuf 主题帖信息数据</param>
     /// <returns>虚拟形象实体</returns>
-    public static VirtualImagePf FromTbData(ThreadInfo dataProto)
+    internal static VirtualImagePf FromTbData(ThreadInfo dataProto)
     {
         var enabled = dataProto?.CustomFigure?.BackgroundValue != "";
         var customStateContent = dataProto?.CustomState?.Content ?? "";
@@ -32,7 +32,7 @@ public class VirtualImagePf
     /// </summary>
     /// <param name="dataProto">Protobuf 虚拟形象信息数据</param>
     /// <returns>虚拟形象实体</returns>
-    public static VirtualImagePf FromTbData(User.Types.VirtualImageInfo? dataProto)
+    internal static VirtualImagePf FromTbData(User.Types.VirtualImageInfo? dataProto)
     {
         return new VirtualImagePf
         {

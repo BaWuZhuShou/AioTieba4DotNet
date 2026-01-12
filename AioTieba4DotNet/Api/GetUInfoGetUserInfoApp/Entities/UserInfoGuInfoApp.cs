@@ -13,7 +13,7 @@ public class UserInfoGuInfoApp : UserInfo
     /// </summary>
     /// <param name="dataProto">Protobuf 用户信息数据</param>
     /// <returns>用户信息实体</returns>
-    public static UserInfoGuInfoApp FromTbData(User dataProto)
+    internal static UserInfoGuInfoApp FromTbData(User dataProto)
     {
         var dataProtoPortrait = dataProto.Portrait;
         if (dataProtoPortrait.Contains('?')) dataProtoPortrait = dataProtoPortrait[..^13];

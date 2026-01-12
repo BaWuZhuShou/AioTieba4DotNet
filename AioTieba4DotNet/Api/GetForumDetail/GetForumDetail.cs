@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.GetForumDetail.Entities;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
@@ -11,7 +11,7 @@ namespace AioTieba4DotNet.Api.GetForumDetail;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_forum_detail")]
-public class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
+internal class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
 {
     private const int Cmd = 303021;
 

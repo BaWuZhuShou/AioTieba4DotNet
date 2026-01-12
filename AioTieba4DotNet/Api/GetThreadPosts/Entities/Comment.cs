@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Api.Entities.Contents;
+using AioTieba4DotNet.Api.Entities.Contents;
 using AioTieba4DotNet.Api.GetThreads.Entities;
 
 namespace AioTieba4DotNet.Api.GetThreadPosts.Entities;
@@ -88,7 +88,7 @@ public class Comment
     /// </summary>
     /// <param name="dataProto">Protobuf 楼中楼信息数据</param>
     /// <returns>楼中楼信息实体</returns>
-    public static Comment FromTbData(SubPostList? dataProto)
+    internal static Comment FromTbData(SubPostList? dataProto)
     {
         if (dataProto == null) return new Comment { Content = Content.FromTbData((IEnumerable<PbContent>?)null) };
 

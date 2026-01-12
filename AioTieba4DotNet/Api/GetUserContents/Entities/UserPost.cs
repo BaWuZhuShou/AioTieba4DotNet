@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Api.Entities.Contents;
+using AioTieba4DotNet.Api.Entities.Contents;
 using AioTieba4DotNet.Entities;
 
 namespace AioTieba4DotNet.Api.GetUserContents.Entities;
@@ -48,7 +48,7 @@ public class UserPost
     /// </summary>
     /// <param name="dataRes">Protobuf 帖子内容信息数据</param>
     /// <returns>用户历史回复实体</returns>
-    public static UserPost FromTbData(PostInfoList.Types.PostInfoContent dataRes)
+    internal static UserPost FromTbData(PostInfoList.Types.PostInfoContent dataRes)
     {
         var contents = Content.FromTbData(dataRes);
 

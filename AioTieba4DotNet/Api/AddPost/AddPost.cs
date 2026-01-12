@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
@@ -15,7 +15,7 @@ namespace AioTieba4DotNet.Api.AddPost;
 /// <param name="mode">请求模式</param>
 [RequireBduss]
 [PythonApi("aiotieba.api.add_post")]
-public class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
+internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
     : ProtoApiWsBase<bool>(httpCore, wsCore, mode)
 {
     private const int Cmd = 309731;

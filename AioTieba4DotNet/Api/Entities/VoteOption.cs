@@ -20,7 +20,7 @@ public class VoteOption
     /// </summary>
     /// <param name="pollOption">Protobuf 投票选项数据</param>
     /// <returns>投票选项实体</returns>
-    public static VoteOption FromTbData(PollInfo.Types.PollOption pollOption)
+    internal static VoteOption FromTbData(PollInfo.Types.PollOption pollOption)
     {
         return new VoteOption { VoteNum = pollOption.Num, Text = pollOption.Text };
     }

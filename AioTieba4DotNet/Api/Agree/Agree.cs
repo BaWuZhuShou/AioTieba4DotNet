@@ -1,4 +1,4 @@
-﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 
@@ -10,7 +10,7 @@ namespace AioTieba4DotNet.Api.Agree;
 /// <param name="httpCore">Http 核心组件</param>
 [RequireBduss]
 [PythonApi("aiotieba.api.agree")]
-public class Agree(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+internal class Agree(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     /// <summary>
     ///     发送点赞/点踩请求
