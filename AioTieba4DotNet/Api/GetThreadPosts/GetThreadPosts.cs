@@ -14,7 +14,10 @@ namespace AioTieba4DotNet.Api.GetThreadPosts;
 /// <param name="wsCore">Websocket 核心组件</param>
 /// <param name="mode">请求模式</param>
 [PythonApi("aiotieba.api.get_posts")]
-internal class GetThreadPosts(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
+internal class GetThreadPosts(
+    ITiebaHttpCore httpCore,
+    ITiebaWsCore wsCore,
+    TiebaRequestMode mode = TiebaRequestMode.Http)
     : ProtoApiWsBase<Posts>(httpCore, wsCore, mode)
 {
     private const int Cmd = 302001;

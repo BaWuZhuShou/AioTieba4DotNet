@@ -13,13 +13,13 @@ public class FragAt : IFrag
     /// <summary>
     ///     被@用户的昵称 含@
     /// </summary>
-    public string Text { get; init; } = "";
+    public override string Text { get; init; } = "";
 
     /// <summary>
     ///     获取碎片类型
     /// </summary>
     /// <returns>碎片类型名称</returns>
-    public string GetFragType()
+    public override string GetFragType()
     {
         return "FragAt";
     }
@@ -28,7 +28,7 @@ public class FragAt : IFrag
     ///     转换为字典用于序列化
     /// </summary>
     /// <returns>包含碎片数据的字典</returns>
-    public Dictionary<string, object> ToDict()
+    public override Dictionary<string, object> ToDict()
     {
         return new Dictionary<string, object> { { "type", "4" }, { "uid", UserId }, { "text", Text } };
     }

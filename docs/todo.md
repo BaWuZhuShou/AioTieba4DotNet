@@ -4,6 +4,7 @@
 
 ## 1. 吧务管理 (Bawu Management)
 - [ ] `add_bawu`: 添加吧务 (小吧主/语音小编等)
+- [x] `del_bawu`: 移除吧务
 - [ ] `add_bawu_blacklist`: 添加吧务黑名单 (禁言)
 - [ ] `del_bawu_blacklist`: 解除吧务黑名单
 - [ ] `get_bawu_blacklist`: 获取吧务黑名单列表
@@ -15,9 +16,16 @@
 - [ ] `get_unblock_appeals`: 获取解封申诉列表
 - [ ] `handle_unblock_appeals`: 处理解封申诉 (同意/拒绝)
 - [ ] `get_blocks`: 获取封禁列表
+- [x] `block`: 封禁用户
 - [ ] `unblock`: 解除封禁
 
 ## 2. 帖子与评论管理 (Thread & Post Management)
+- [x] `get_threads`: 分页获取贴吧主题帖列表
+- [x] `get_posts`: 分页获取主题帖内的回复列表
+- [x] `get_comments`: 获取回复下的楼中楼列表
+- [x] `add_post`: 发布回复/楼中楼
+- [x] `del_thread`: 删除主题帖
+- [x] `del_post`: 删除回复
 - [ ] `del_posts`: 批量删除回复
 - [ ] `del_threads`: 批量删除主题帖
 - [ ] `good`: 将帖子加精
@@ -26,7 +34,8 @@
 - [ ] `untop`: 取消置顶
 - [ ] `move`: 移动帖子到指定分区
 - [ ] `recommend`: 推荐帖子 (大推)
-- [x] `unagree`: 取消点赞 (对应 `agree`)
+- [x] `agree`: 点赞/点踩
+- [x] `unagree`: 取消点赞/点踩 (对应 `agree`)
 - [ ] `recover`: 恢复已删除的帖子/回复
 - [ ] `get_recovers`: 获取回收站列表
 - [ ] `get_recover_info`: 获取回收站内单条内容的详情
@@ -34,6 +43,16 @@
 - [ ] `get_tab_map`: 获取贴吧的分区(Tab)列表
 
 ## 3. 用户与社交 (User & Social)
+- [x] `login`: 获取用户信息及 Tbs
+- [x] `get_uinfo_getUserInfo_app`: 获取用户基础信息 (App 接口)
+- [x] `get_uinfo_panel`: 获取用户信息面板
+- [x] `get_uinfo_user_json`: 通过 JSON 接口获取用户信息
+- [x] `get_profile`: 获取用户详细资料 (个人主页)
+- [x] `get_user_posts`: 获取用户发表的回复列表
+- [x] `get_user_threads`: 获取用户发表的主题帖列表
+- [x] `get_follows`: 获取用户关注的人列表
+- [x] `follow`: 关注用户
+- [x] `unfollow`: 取消关注用户
 - [ ] `get_ats`: 获取 @我的 消息列表
 - [ ] `get_replys`: 获取 回复我的 消息列表
 - [ ] `get_fans`: 获取用户的粉丝列表
@@ -45,13 +64,14 @@
 - [ ] `set_blacklist`: 将用户加入黑名单
 - [ ] `get_blacklist`: 获取黑名单列表
 - [ ] `set_profile`: 修改个人资料 (头像/简介等)
-- [ ] `get_uinfo_getUserInfo_web`: 获取用户信息 (Web 接口)
 - [ ] `get_selfinfo_initNickname`: 获取初始昵称信息
 - [ ] `get_selfinfo_moindex`: 获取主页索引信息
 - [ ] `tieba_uid2user_info`: 通过 `tieba_uid` 查询用户信息
 - [ ] `get_rank_users`: 获取用户等级排行榜
 
 ## 4. 搜索与工具 (Search & Tools)
+- [x] `get_fid`: 获取贴吧 ID (Fid)
+- [x] `get_forum_detail`: 获取贴吧详细信息
 - [ ] `search_exact`: 精确搜索 (支持按作者、时间范围等)
 - [ ] `get_cid`: 获取分类 ID
 - [ ] `get_images`: 下载图片并返回字节流
@@ -71,6 +91,11 @@
 - [ ] `init_websocket`: 手动初始化 WebSocket 连接 (目前已在 Core 自动处理，但可暴露更多控制)
 
 ## 6. 其他功能 (Misc)
+- [x] `init_z_id`: 初始化 ZID 设备标识
+- [x] `sync`: 同步客户端状态 (ClientId/SampleId)
+- [x] `sign_forum`: 贴吧签到
+- [x] `like_forum`: 关注贴吧
+- [x] `unlike_forum`: 取消关注贴吧
 - [ ] `sign_forums`: 一键签到所有关注的吧
 - [ ] `sign_growth`: 签到获取成长值
 - [ ] `get_forum_level`: 获取吧等级详细配置

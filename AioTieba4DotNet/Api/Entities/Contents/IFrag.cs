@@ -3,22 +3,27 @@ namespace AioTieba4DotNet.Api.Entities.Contents;
 /// <summary>
 ///     碎片基类
 /// </summary>
-public interface IFrag
+public abstract class IFrag
 {
     /// <summary>
     ///     文本内容
     /// </summary>
-    string Text { get; }
+    public virtual string Text { get; init; } = "";
+
+    /// <summary>
+    ///     索引
+    /// </summary>
+    public int Index { get; internal set; }
 
     /// <summary>
     ///     获取碎片类型
     /// </summary>
     /// <returns></returns>
-    string GetFragType();
+    public abstract string GetFragType();
 
     /// <summary>
     ///     转换为字典用于序列化
     /// </summary>
     /// <returns></returns>
-    Dictionary<string, object> ToDict();
+    public abstract Dictionary<string, object> ToDict();
 }

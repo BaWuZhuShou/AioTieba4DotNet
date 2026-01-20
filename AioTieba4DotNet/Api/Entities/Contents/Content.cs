@@ -173,7 +173,6 @@ public class Content
             }
         }
 
-
         if (threadInfo.VideoInfo != null)
         {
             video = FragVideo.FromTbData(threadInfo.VideoInfo);
@@ -185,6 +184,8 @@ public class Content
             voice = FragVoice.FromTbData(threadInfo.VoiceInfo[0]);
             frags.Add(voice);
         }
+
+        SetFragsIndex(frags);
 
         return new Content
         {
@@ -324,6 +325,8 @@ public class Content
             frags.Add(voice);
         }
 
+        SetFragsIndex(frags);
+
         return new Content
         {
             Texts = texts,
@@ -410,6 +413,8 @@ public class Content
             Console.WriteLine($"Unknown fragment type. type: {type}");
         }
 
+        SetFragsIndex(frags);
+
         return new Content
         {
             Texts = texts,
@@ -453,6 +458,8 @@ public class Content
             content.Frags.Add(voice);
             content.Voice = voice;
         }
+
+        SetFragsIndex(content.Frags);
 
         return content;
     }
@@ -558,6 +565,8 @@ public class Content
             }
         }
 
+        SetFragsIndex(frags);
+
         return new Content
         {
             Texts = texts,
@@ -578,14 +587,23 @@ public class Content
     /// <returns>string</returns>
     public override string ToString()
     {
-        var emojisString = Emojis.Aggregate("", (current, emoji) => current + (emoji + ", "));
-        var imageString = Images.Aggregate("", (current, image) => current + (image + ", "));
-        var atsString = Ats.Aggregate("", (current, at) => current + (at + ", "));
-        var linkString = Links.Aggregate("", (current, link) => current + (link + ", "));
-        var tiebaPlusString = TiebaPluses.Aggregate("", (current, tiebaPlus) => current + (tiebaPlus + ", "));
-        var fragString = Frags.Aggregate("", (current, frag) => current + (frag + ", "));
+        var sb = new System.Text.StringBuilder();
+        sb.Append(nameof(Text)).Append(": ").Append(Text);
 
-        return
-            $"{nameof(Text)}: {Text},  {nameof(Emojis)}: {emojisString}, {nameof(Images)}: {imageString}, {nameof(Ats)}: {atsString}, {nameof(Links)}: {linkString}, {nameof(TiebaPluses)}: {tiebaPlusString}, {nameof(Video)}: {Video}, {nameof(Voice)}: {Voice}, {nameof(Frags)}: {fragString}";
+        if (Emojis.Count > 0) sb.Append(", ").Append(nameof(Emojis)).Append(": [").Append(string.Join(", ", Emojis)).Append(']');
+        if (Images.Count > 0) sb.Append(", ").Append(nameof(Images)).Append(": [").Append(string.Join(", ", Images)).Append(']');
+        if (Ats.Count > 0) sb.Append(", ").Append(nameof(Ats)).Append(": [").Append(string.Join(", ", Ats)).Append(']');
+        if (Links.Count > 0) sb.Append(", ").Append(nameof(Links)).Append(": [").Append(string.Join(", ", Links)).Append(']');
+        if (TiebaPluses.Count > 0) sb.Append(", ").Append(nameof(TiebaPluses)).Append(": [").Append(string.Join(", ", TiebaPluses)).Append(']');
+        if (Video != null) sb.Append(", ").Append(nameof(Video)).Append(": ").Append(Video);
+        if (Voice != null) sb.Append(", ").Append(nameof(Voice)).Append(": ").Append(Voice);
+        if (Frags.Count > 0) sb.Append(", ").Append(nameof(Frags)).Append(": [").Append(string.Join(", ", Frags)).Append(']');
+
+        return sb.ToString();
+    }
+
+    private static void SetFragsIndex(List<IFrag> frags)
+    {
+        for (var i = 0; i < frags.Count; i++) frags[i].Index = i;
     }
 }

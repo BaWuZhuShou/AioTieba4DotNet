@@ -16,15 +16,10 @@ public class FragVoice : IFrag
     public int Duration { get; init; }
 
     /// <summary>
-    ///     文本内容
-    /// </summary>
-    public string Text => "";
-
-    /// <summary>
     ///     获取碎片类型
     /// </summary>
     /// <returns>碎片类型名称</returns>
-    public string GetFragType()
+    public override string GetFragType()
     {
         return "FragVoice";
     }
@@ -33,7 +28,7 @@ public class FragVoice : IFrag
     ///     转换为字典用于序列化
     /// </summary>
     /// <returns>包含碎片数据的字典</returns>
-    public Dictionary<string, object> ToDict()
+    public override Dictionary<string, object> ToDict()
     {
         return new Dictionary<string, object>
         {
