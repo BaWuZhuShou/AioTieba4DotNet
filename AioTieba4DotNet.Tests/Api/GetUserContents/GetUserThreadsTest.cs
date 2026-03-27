@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AioTieba4DotNet.Tests.Api.GetUserContents;
 
 [TestClass]
+[TestCategory("Live")]
 [TestSubject(typeof(GetUserThreads))]
 public class GetUserThreadsTest : TestBase
 {

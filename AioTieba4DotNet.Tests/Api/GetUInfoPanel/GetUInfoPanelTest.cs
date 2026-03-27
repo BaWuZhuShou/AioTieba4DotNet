@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 namespace AioTieba4DotNet.Tests.Api.GetUInfoPanel;
 
 [TestClass]
+[TestCategory("Integration")]
 [TestSubject(typeof(AioTieba4DotNet.Api.GetUInfoPanel.GetUInfoPanel))]
 public class GetUInfoPanelTest : TestBase
 {

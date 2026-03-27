@@ -5,10 +5,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AioTieba4DotNet.Tests;
 
 [TestClass]
+[TestCategory("Integration")]
 public class WebsocketIntegrationTest
 {
     [TestMethod]
-    [Ignore("Requires active internet connection and valid tieba endpoint")]
     public async Task TestWsConnectionSuccessAsync()
     {
         // 我们不提供 Account，这样它就不会发送 1001 认证请求，避免因为 BDUSS 错误被踢出
@@ -24,7 +24,6 @@ public class WebsocketIntegrationTest
     }
 
     [TestMethod]
-    [Ignore("Requires active internet connection")]
     public async Task TestMultipleConnectionsIsolationAsync()
     {
         using var wsCore1 = new WebsocketCore();

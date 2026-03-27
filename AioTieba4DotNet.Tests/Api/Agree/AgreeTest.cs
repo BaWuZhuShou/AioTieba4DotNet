@@ -6,6 +6,7 @@ using AgreeApi = AioTieba4DotNet.Api.Agree.Agree;
 namespace AioTieba4DotNet.Tests.Api.Agree;
 
 [TestClass]
+[TestCategory("Live")]
 [TestSubject(typeof(AgreeApi))]
 public class AgreeTest : TestBase
 {

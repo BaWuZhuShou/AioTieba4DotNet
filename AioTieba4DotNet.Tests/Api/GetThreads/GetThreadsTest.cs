@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AioTieba4DotNet.Tests.Api.GetThreads;
 
 [TestClass]
+[TestCategory("Integration")]
 [TestSubject(typeof(AioTieba4DotNet.Api.GetThreads.GetThreads))]
 public class GetThreadsTest : TestBase
 {

@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AioTieba4DotNet.Tests;
 
 [TestClass]
+[TestCategory("Integration")]
 [TestSubject(typeof(TiebaClient))]
 public class TiebaClientTest : TestBase
 {
@@ -65,6 +66,7 @@ public class TiebaClientTest : TestBase
     }
 
     [TestMethod]
+    [TestCategory("Live")]
     [Ignore("Requires admin privileges in the forum")]
     public async Task TestBlockAsync()
     {

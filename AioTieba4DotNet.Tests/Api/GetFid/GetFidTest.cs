@@ -7,6 +7,7 @@ using GetFidApi = AioTieba4DotNet.Api.GetFid.GetFid;
 namespace AioTieba4DotNet.Tests.Api.GetFid;
 
 [TestClass]
+[TestCategory("Integration")]
 [TestSubject(typeof(GetFidApi))]
 public class GetFidTest : TestBase
 {

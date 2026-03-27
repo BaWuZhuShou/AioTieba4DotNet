@@ -6,8 +6,93 @@ on:
             - 'v*.*.*'  # 监听以 v 开头的标签推送
 
 jobs:
+    verify:
+        name: Verify release lane (${{ matrix.framework }})
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                framework: [ net8.0, net9.0, net10.0 ]
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v6
+
+            -   name: Setup .NET SDK
+                uses: actions/setup-dotnet@v5
+                with:
+                    dotnet-version: |
+                        8.x
+                        9.x
+                        10.x
+
+            -   name: Restore dependencies
+                run: dotnet restore AioTieba4DotNet.sln --nologo
+
+            -   name: Build tests for ${{ matrix.framework }}
+                run: dotnet build AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-restore -f ${{ matrix.framework }} --nologo
+
+            -   name: Run deterministic tests for ${{ matrix.framework }}
+                run: dotnet test AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-build -f ${{ matrix.framework }} --filter "TestCategory!=Integration&TestCategory!=Live" --nologo
+
+    generator-consistency:
+        name: Verify generated protobuf outputs
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v6
+
+            -   name: Setup .NET SDK
+                uses: actions/setup-dotnet@v5
+                with:
+                    dotnet-version: |
+                        8.x
+                        9.x
+                        10.x
+
+            -   name: Restore dependencies
+                run: dotnet restore AioTieba4DotNet.sln --nologo
+
+            -   name: Regenerate protobuf outputs
+                run: dotnet run --project ProtoGenerator/ProtoGenerator.csproj --framework net8.0
+
+            -   name: Check generator consistency
+                shell: bash
+                run: |
+                    if [[ -n "$(git status --short --untracked-files=all -- AioTieba4DotNet)" ]]; then
+                        git status --short --untracked-files=all -- AioTieba4DotNet
+                        echo "Generated protobuf outputs are out of date."
+                        exit 1
+                    fi
+
+    migration-docs:
+        name: Verify migration docs exist
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v6
+
+            -   name: Check migration documentation presence
+                shell: bash
+                run: |
+                    shopt -s nullglob globstar
+                    files=(docs/*migration*.md docs/**/*migration*.md)
+                    if (( ${#files[@]} == 0 )); then
+                        echo "Expected at least one migration document under docs/."
+                        exit 1
+                    fi
+
+                    printf 'Found migration docs:\n'
+                    printf ' - %s\n' "${files[@]}"
+
     publish:
         runs-on: ubuntu-latest
+        needs:
+            - verify
+            - generator-consistency
+            - migration-docs
         permissions:
             contents: write
 

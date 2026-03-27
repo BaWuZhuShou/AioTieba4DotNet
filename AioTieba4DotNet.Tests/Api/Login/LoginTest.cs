@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AioTieba4DotNet.Tests.Api.Login;
 
 [TestClass]
+[TestCategory("Live")]
 [TestSubject(typeof(AioTieba4DotNet.Api.Login.Login))]
 public class LoginTest : TestBase
 {

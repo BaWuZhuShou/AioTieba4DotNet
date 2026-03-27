@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AioTieba4DotNet.Tests.Core;
 
 [TestClass]
+[TestCategory("Live")]
 public class HttpCoreInitTest : TestBase
 {
     [TestMethod]

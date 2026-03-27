@@ -8,6 +8,7 @@ using GetThreadsApi = AioTieba4DotNet.Api.GetThreads.GetThreads;
 namespace AioTieba4DotNet.Tests.Api.GetThreadPosts;
 
 [TestClass]
+[TestCategory("Integration")]
 public class GetThreadPostsTest : TestBase
 {
     [TestMethod]

@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AioTieba4DotNet.Tests.Api.Profile.GetUInfoProfile;
 
 [TestClass]
+[TestCategory("Integration")]
 [TestSubject(typeof(GetUInfoProfile<>))]
 public class GetUInfoProfileTest : TestBase
 {

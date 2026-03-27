@@ -6,6 +6,7 @@ using AddPostApi = AioTieba4DotNet.Api.AddPost.AddPost;
 namespace AioTieba4DotNet.Tests.Api.AddPost;
 
 [TestClass]
+[TestCategory("Live")]
 [TestSubject(typeof(AddPostApi))]
 public class AddPostTest : TestBase
 {

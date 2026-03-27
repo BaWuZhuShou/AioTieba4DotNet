@@ -7,6 +7,7 @@ using LikeForumApi = AioTieba4DotNet.Api.LikeForum.LikeForum;
 namespace AioTieba4DotNet.Tests.Api.UnlikeForum;
 
 [TestClass]
+[TestCategory("Live")]
 [TestSubject(typeof(LikeForumApi))]
 public class LikeForumTest : TestBase
 {

@@ -1,0 +1,39 @@
+name: Live Tests
+
+on:
+    schedule:
+        -   cron: '0 2 * * *'
+    workflow_dispatch:
+
+jobs:
+    live-tests:
+        name: Live lane (${{ matrix.framework }})
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                framework: [ net8.0, net9.0, net10.0 ]
+
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v6
+
+            -   name: Setup .NET SDK
+                uses: actions/setup-dotnet@v5
+                with:
+                    dotnet-version: |
+                        8.x
+                        9.x
+                        10.x
+
+            -   name: Restore dependencies
+                run: dotnet restore AioTieba4DotNet.sln --nologo
+
+            -   name: Build tests for ${{ matrix.framework }}
+                run: dotnet build AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-restore -f ${{ matrix.framework }} --nologo
+
+            -   name: Run live and integration tests for ${{ matrix.framework }}
+                run: dotnet test AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-build -f ${{ matrix.framework }} --filter "TestCategory=Integration|TestCategory=Live" --nologo
+                env:
+                    TIEBA_BDUSS: ${{ secrets.TIEBA_BDUSS }}
+                    TIEBA_STOKEN: ${{ secrets.TIEBA_STOKEN }}

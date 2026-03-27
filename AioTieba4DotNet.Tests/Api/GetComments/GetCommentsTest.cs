@@ -8,6 +8,7 @@ using GetCommentsApi = AioTieba4DotNet.Api.GetComments.GetComments;
 namespace AioTieba4DotNet.Tests.Api.GetComments;
 
 [TestClass]
+[TestCategory("Integration")]
 [TestSubject(typeof(GetCommentsApi))]
 public class GetCommentsTest : TestBase
 {

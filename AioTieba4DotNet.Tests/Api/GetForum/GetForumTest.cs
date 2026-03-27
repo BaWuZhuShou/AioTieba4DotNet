@@ -7,6 +7,7 @@ using GetForumApi = AioTieba4DotNet.Api.GetForum.GetForum;
 namespace AioTieba4DotNet.Tests.Api.GetForum;
 
 [TestClass]
+[TestCategory("Integration")]
 [TestSubject(typeof(GetForumApi))]
 public class GetForumTest : TestBase
 {

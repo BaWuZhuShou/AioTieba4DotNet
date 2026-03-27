@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AioTieba4DotNet.Tests.Api.Sync;
 
 [TestClass]
+[TestCategory("Live")]
 [TestSubject(typeof(AioTieba4DotNet.Api.Sync.Sync))]
 public class SyncTest : TestBase
 {

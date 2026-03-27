@@ -7,6 +7,7 @@ using SignApi = AioTieba4DotNet.Api.Sign.Sign;
 namespace AioTieba4DotNet.Tests.Api.Sign;
 
 [TestClass]
+[TestCategory("Live")]
 [TestSubject(typeof(SignApi))]
 public class SignTest : TestBase
 {

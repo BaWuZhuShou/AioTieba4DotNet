@@ -35,6 +35,7 @@ public class InitZIdTest : TestBase
     }
 
     [TestMethod]
+    [TestCategory("Integration")]
     public async Task TestRequest()
     {
         var initZId = new AioTieba4DotNet.Api.InitZId.InitZId(HttpCore);
