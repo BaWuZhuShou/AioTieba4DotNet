@@ -54,4 +54,5 @@ AioTieba4DotNet/
 ## NOTES
 - `Client.cs` is an obsolete compatibility facade; prefer `TiebaClient` in new code and docs.
 - If a change introduces durable library rules, sync them back into `../.junie/guidelines.md`.
+- Follow the repository SemVer policy in `../.junie/guidelines.md`; version bumps are determined by changes to public API surface, documented behavior, and supported target frameworks.
 - Keep `Api/Protobuf/` and feature-local `Protobuf/` folders documented by parent guidance only; they do not need their own AGENTS file.

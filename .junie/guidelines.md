@@ -166,3 +166,71 @@
 - **数据转换方法**: 实体类中的 `FromTbData` 静态方法必须设为 `internal`。
 - **Protobuf 类**: 保持 `public`。因为它们是由工具生成的，手动修改可见性会在重新生成时被覆盖。
 - **测试支持**: 项目配置了 `InternalsVisibleTo`，因此 `internal` 成员对测试项目依然可见。
+
+## 11. Semantic Versioning 策略
+此项目是面向 NuGet 使用者的 C# 类库。版本号必须围绕“使用者会编译依赖、运行依赖、或从文档中形成预期”的内容来判断，而不是围绕内部 `Api/*` 实现细节来判断。
+
+### 11.1 兼容性范围
+- SemVer 的判断对象是公开类库契约，包括 `TiebaClient`、`DependencyInjection.AddAioTiebaClient`、`Abstractions/*` 中的公开接口、公开实体类型、公开异常类型、`TiebaOptions`、`TiebaRequestMode`，以及保留兼容性的 `Client.cs` 包装层。
+- `AioTieba4DotNet/Api/*` 下的内部实现类、请求打包细节、解析流程、生成后的 protobuf 实现细节，不单独触发版本升级；只有当它们改变了公开签名、公开行为或文档承诺时，才按 SemVer 处理。
+
+### 11.2 文档行为也属于契约
+- `README.md`、`docs/modules.md`、`docs/advanced.md`、公共 XML 文档注释共同定义了使用者对类库的行为预期。
+- 即使公开方法签名未变化，只要修改了下列任一项，仍应视为契约变更：参数语义、默认行为、返回语义、异常抛出时机、请求模式回退行为、鉴权前置检查、可观察的资源生命周期行为。
+
+### 11.3 目标框架支持承诺
+- 当前稳定支持的 Target Frameworks 为 `net8.0`、`net9.0`、`net10.0`。
+- 删除任一已支持 TFM、提高最低支持版本，属于 **MAJOR**。
+- 在保留现有 TFM 的前提下新增支持的 TFM，属于 **MINOR**。
+
+### 11.4 发布标签与版本来源
+- 正式发布采用标签驱动，格式为 `vMAJOR.MINOR.PATCH`。
+- `.github/workflows/publish.yml` 会去掉 `v` 前缀，并将标签值作为 NuGet 包版本与 GitHub Release 版本来源。
+- 当前规则只覆盖稳定版本；若将来引入 `-preview`、`-rc` 等预发布标签，应单独补充对应策略。
+
+### 11.5 MAJOR / MINOR / PATCH 判定规则
+- **MAJOR**:
+  - 删除、重命名或修改任何公开类型、接口、方法、属性、构造函数、枚举值、参数列表、返回类型或空值性约束。
+  - 改变 `TiebaClient`、`ITiebaClientFactory`、`AddAioTiebaClient`、`TiebaOptions` 等公开入口的既有行为，导致旧调用方式失效或结果语义变化。
+  - 改变已文档化的异常契约、鉴权行为、请求模式传播与回退逻辑、资源释放语义，导致现有使用者需要修改代码或运行时假设。
+  - 移除或破坏 `Client.cs` 兼容层，或删除已支持的 `net8.0` / `net9.0` / `net10.0`。
+- **MINOR**:
+  - 以向后兼容方式新增公开方法、公开重载、公开实体字段/属性、可选配置项或新的模块能力。
+  - 在不破坏现有调用的前提下，新增可选行为、新支持的贴吧 API 封装能力或新的目标框架支持。
+  - 扩展文档化能力边界，但不改变既有调用结果与默认语义。
+- **PATCH**:
+  - 不改变公开契约的 bug 修复、性能优化、内部重构、测试补充、生成链路修正、文档澄清。
+  - 修复内部解析、签名、传输或缓存问题，只要对现有公开 API 的签名、异常契约和已承诺行为没有破坏性变化。
+
+### 11.6 执行准则
+- 判断版本升级时，优先检查“公开签名是否变化”“文档承诺是否变化”“支持的目标框架是否变化”。
+- 当改动同时包含新增能力与破坏性调整时，以最高影响级别为准。
+- 不要因为项目文件中的默认开发版本号而放宽破坏性变更标准；只要进入稳定标签发布流，就按正式类库的 SemVer 规则执行。
+
+### 11.7 PR / Release 快速检查清单
+在合并 PR 或创建发布标签前，快速确认以下问题：
+- **版本等级**: 这次改动是否触碰公开签名、公开入口、公开异常契约、`Client.cs` 兼容层或 `TiebaRequestMode` 等公开契约？若是，按 `11.5` 判定，并以最高影响级别作为最终版本等级。
+- **文档行为**: 这次改动是否改变了 `README.md`、`docs/*` 或公共 XML 注释中已经承诺的参数语义、默认行为、异常时机、鉴权检查、请求模式回退或资源生命周期？若是，按契约变更处理。
+- **目标框架**: 这次改动是否删除、提高或新增受支持的 TFM？删除/提高最低支持版本是 **MAJOR**；仅新增支持是 **MINOR**。
+- **文档更新**: 如果用户可见行为、调用方式、默认值或能力边界发生变化，只更新直接受影响的文档与 XML 注释，不在多处重复维护规则说明。
+- **兼容性说明**: 如果现有调用方需要改代码、调整运行时假设，或需要从旧入口迁移到新入口，必须在 PR 描述或 Release Notes 中写清迁移/兼容性说明。
+- **PATCH 自检**: 如果改动只是内部 bug 修复、性能优化、内部重构、测试补充、生成链路维护或文档澄清，且没有公开契约与文档行为变化，则应保持为 **PATCH**。
+- **记录依据**: 在 PR 描述或发版说明中明确写出本次选择 `MAJOR` / `MINOR` / `PATCH` 的依据，避免后续重新解读同一批变更。
+
+### 11.8 PR 标签参考
+- `.github/PULL_REQUEST_TEMPLATE.md` 是 PR 作者提交分类建议的入口；`.github/release.yml` 是 release notes 分类所依赖的标签真源。
+- Maintainer 在 triage 时应对照 PR 模板中的勾选结果，补齐或修正实际 PR labels，而不是只依赖正文描述。
+- Release-note 主分类优先只保留一个，使用下列标签族之一：
+  - `feat` / `feature` / `enhancement`
+  - `fix` / `bug`
+  - `refactor`
+  - `perf`
+  - `docs` / `documentation`
+  - `test` / `tests`
+  - `chore` / `dependencies`
+  - `build` / `ci`
+  - `skip-changelog`
+- `skip-changelog` 仅用于确实不需要进入用户可见 release notes 的改动，例如纯内部维护、无用户影响的仓库整理，或仅与机器人/自动化相关的变更。
+- 如需额外补充便于检索的 workflow labels，可使用维护约定标签：`semver:major`、`semver:minor`、`semver:patch`、`semver:unsure`、`breaking-change`、`migration-needed`。这些标签仅用于协作检索，不参与 `.github/release.yml` 的分类。
+- 如果 PR 被标记为 `breaking-change`、`migration-needed` 或其 SemVer 判定为 `MAJOR`，则 PR 描述或 release notes 中必须包含迁移说明。
+- 在修改 `.github/release.yml` 的标签集合时，必须同步检查 `.github/PULL_REQUEST_TEMPLATE.md` 与本节内容是否仍然一致。
