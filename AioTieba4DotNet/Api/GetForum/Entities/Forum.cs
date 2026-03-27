@@ -8,7 +8,7 @@ public class Forum
     /// <summary>
     ///     吧 ID
     /// </summary>
-    public int Fid { get; set; }
+    public long Fid { get; set; }
 
     /// <summary>
     ///     吧名
@@ -62,7 +62,7 @@ public class Forum
     /// <returns>吧信息实体</returns>
     internal static Forum FromTbData(IDictionary<string, object> dataMap)
     {
-        var fid = Convert.ToInt32(dataMap["id"]);
+        var fid = Convert.ToInt64(dataMap["id"]);
         var fname = dataMap["name"] as string ?? "";
         var category = dataMap["first_class"] as string ?? "";
         var subcategory = dataMap["second_class"] as string ?? "";

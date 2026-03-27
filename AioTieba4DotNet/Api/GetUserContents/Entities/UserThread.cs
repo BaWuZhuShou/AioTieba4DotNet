@@ -22,7 +22,7 @@ public class UserThread
     /// <summary>
     ///     吧 ID
     /// </summary>
-    public int Fid { get; init; }
+    public long Fid { get; init; }
 
     /// <summary>
     ///     吧名
@@ -105,7 +105,7 @@ public class UserThread
         {
             Contents = Content.FromTbData(dataRes),
             Title = dataRes.Title,
-            Fid = (int)dataRes.ForumId,
+            Fid = (long)dataRes.ForumId,
             Fname = dataRes.ForumName,
             Tid = (long)dataRes.ThreadId,
             Pid = (long)dataRes.PostId,

@@ -133,6 +133,6 @@ public class ForumModule(ITiebaHttpCore httpCore) : IForumModule
     {
         var fid = await GetFidAsync(fname);
         var api = new DelBaWu(httpCore);
-        return await api.RequestAsync((int)fid, portrait, baWuType);
+        return await api.RequestAsync((long)fid, portrait, baWuType);
     }
 }

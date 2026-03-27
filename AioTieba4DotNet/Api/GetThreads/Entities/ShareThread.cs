@@ -41,7 +41,7 @@ public class ShareThread
     /// <summary>
     ///     主题帖tid
     /// </summary>
-    public int Tid { get; init; }
+    public long Tid { get; init; }
 
     /// <summary>
     ///     首楼的回复id
@@ -67,7 +67,7 @@ public class ShareThread
             Title = threadInfo.Title,
             Fid = threadInfo.Fid,
             Fname = threadInfo.Fname,
-            Tid = threadInfo.Tid != null ? Convert.ToInt16(threadInfo.Tid) : 0,
+            Tid = threadInfo.Tid != null ? Convert.ToInt64(threadInfo.Tid) : 0,
             Pid = threadInfo.Pid,
             VoteInfo = threadInfo.PollInfo != null ? VoteInfo.FromTbData(threadInfo.PollInfo) : null
         };

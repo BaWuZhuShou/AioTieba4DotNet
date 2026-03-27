@@ -13,7 +13,7 @@ public class UserPosts : Containers<UserPost>
     /// <param name="objs">用户历史回复列表</param>
     /// <param name="fid">吧 ID</param>
     /// <param name="tid">主题帖 ID</param>
-    public UserPosts(List<UserPost> objs, int fid, int tid) : base(objs)
+    public UserPosts(List<UserPost> objs, long fid, long tid) : base(objs)
     {
         Fid = fid;
         Tid = tid;
@@ -25,7 +25,7 @@ public class UserPosts : Containers<UserPost>
     /// <param name="collection">用户历史回复集合</param>
     /// <param name="fid">吧 ID</param>
     /// <param name="tid">主题帖 ID</param>
-    public UserPosts(IEnumerable<UserPost>? collection, int fid, int tid) : base(collection)
+    public UserPosts(IEnumerable<UserPost>? collection, long fid, long tid) : base(collection)
     {
         Fid = fid;
         Tid = tid;
@@ -34,12 +34,12 @@ public class UserPosts : Containers<UserPost>
     /// <summary>
     ///     所在吧id
     /// </summary>
-    public int Fid { get; init; }
+    public long Fid { get; init; }
 
     /// <summary>
     ///     所在主题帖id
     /// </summary>
-    public int Tid { get; init; }
+    public long Tid { get; init; }
 
     /// <summary>
     ///     Creates an instance of <see cref="UserPosts" /> from a given <see cref="PostInfoList" /> object.
@@ -51,8 +51,8 @@ public class UserPosts : Containers<UserPost>
     /// </returns>
     internal static UserPosts FromTbData(PostInfoList dataRes)
     {
-        var fid = (int)dataRes.ForumId;
-        var tid = (int)dataRes.ThreadId;
+        var fid = (long)dataRes.ForumId;
+        var tid = (long)dataRes.ThreadId;
         List<UserPost> objs = [];
         foreach (var userPost in dataRes.Content.Select(UserPost.FromTbData))
         {

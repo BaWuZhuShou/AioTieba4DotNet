@@ -16,12 +16,12 @@ public class UserPost
     /// <summary>
     ///     所在吧id
     /// </summary>
-    public int Fid { get; set; }
+    public long Fid { get; set; }
 
     /// <summary>
     ///     所在主题帖id
     /// </summary>
-    public int Tid { get; set; }
+    public long Tid { get; set; }
 
     /// <summary>
     ///     回复id
