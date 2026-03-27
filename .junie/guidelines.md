@@ -170,6 +170,12 @@
 ## 11. Semantic Versioning 策略
 此项目是面向 NuGet 使用者的 C# 类库。版本号必须围绕“使用者会编译依赖、运行依赖、或从文档中形成预期”的内容来判断，而不是围绕内部 `Api/*` 实现细节来判断。
 
+## 11A. 分支治理与发布线规则
+- `v2` 是 2.x 现代化实现的长期分支。新的功能开发、破坏性调整、预发布收敛与 RC 修复默认都在 `v2` 进行。
+- `master` / `main` 在 `v2` 建立后进入维护模式，只接受低风险的稳定线修复、发版元数据和紧急仓库维护；不要把新的 2.x 功能工作直接做在维护分支上。
+- 维护分支上的修复默认要 forward-port 到 `v2`；`v2` 上的功能或 2.x 专属实现不得常规 backport 到 `master` / `main`，除非它是稳定线必需且兼容的低风险修复。
+- 2.0 发布节奏采用 `2.0.0-preview.N` -> `2.0.0-rc.N` -> `2.0.0`，最终 cutover 之前必须保证至少一个分支作用域的 PR/构建工作流显式覆盖 `v2`。
+
 ### 11.1 兼容性范围
 - SemVer 的判断对象是公开类库契约，包括 `TiebaClient`、`DependencyInjection.AddAioTiebaClient`、`Abstractions/*` 中的公开接口、公开实体类型、公开异常类型、`TiebaOptions`、`TiebaRequestMode`，以及保留兼容性的 `Client.cs` 包装层。
 - `AioTieba4DotNet/Api/*` 下的内部实现类、请求打包细节、解析流程、生成后的 protobuf 实现细节，不单独触发版本升级；只有当它们改变了公开签名、公开行为或文档承诺时，才按 SemVer 处理。
