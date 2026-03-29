@@ -37,11 +37,12 @@ internal class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
         return AioTieba4DotNet.Internal.Mapping.ForumDetailMapper.FromTbData(dataForum);
     }
 
-    /// <summary>
-    ///     发送获取贴吧详情信息请求
-    /// </summary>
-    /// <param name="fid">吧 ID</param>
-    /// <returns>贴吧详情信息</returns>
+/// <summary>
+///     发送获取贴吧详情信息请求
+/// </summary>
+/// <param name="fid">吧 ID</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>贴吧详情信息</returns>
     public async Task<ForumDetail> RequestAsync(long fid, CancellationToken cancellationToken = default)
     {
         var data = PackProto(fid);

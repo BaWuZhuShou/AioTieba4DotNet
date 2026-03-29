@@ -31,12 +31,13 @@ internal class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return new UserList(objs, page);
     }
 
-    /// <summary>
-    ///     发送获取用户关注列表请求
-    /// </summary>
-    /// <param name="userId">用户 ID (uid)</param>
-    /// <param name="pn">页码</param>
-    /// <returns>关注的用户列表</returns>
+/// <summary>
+///     发送获取用户关注列表请求
+/// </summary>
+/// <param name="userId">用户 ID (uid)</param>
+/// <param name="pn">页码</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>关注的用户列表</returns>
     public async Task<UserList> RequestAsync(long userId, int pn, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>

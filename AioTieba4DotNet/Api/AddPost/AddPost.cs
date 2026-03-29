@@ -117,9 +117,10 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReques
     /// <param name="fname">吧名</param>
     /// <param name="fid">吧 ID</param>
     /// <param name="tid">主题帖 ID</param>
-    /// <param name="content">回复内容</param>
-    /// <param name="showName">显示名称（可选）</param>
-    /// <returns>是否成功</returns>
+/// <param name="content">回复内容</param>
+/// <param name="showName">显示名称（可选）</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>是否成功</returns>
     public async Task<bool> RequestAsync(string fname, ulong fid, long tid, string content,
         string? showName = null, CancellationToken cancellationToken = default)
     {
@@ -136,9 +137,10 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReques
     /// <param name="fname">吧名</param>
     /// <param name="fid">吧 ID</param>
     /// <param name="tid">主题帖 ID</param>
-    /// <param name="content">回复内容</param>
-    /// <param name="showName">显示名称（可选）</param>
-    /// <returns>是否成功</returns>
+/// <param name="content">回复内容</param>
+/// <param name="showName">显示名称（可选）</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>是否成功</returns>
     public async Task<bool> RequestHttpAsync(string fname, ulong fid, long tid, string content,
         string? showName = null, CancellationToken cancellationToken = default)
     {
@@ -158,9 +160,10 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReques
     /// <param name="fname">吧名</param>
     /// <param name="fid">吧 ID</param>
     /// <param name="tid">主题帖 ID</param>
-    /// <param name="content">回复内容</param>
-    /// <param name="showName">显示名称（可选）</param>
-    /// <returns>是否成功</returns>
+/// <param name="content">回复内容</param>
+/// <param name="showName">显示名称（可选）</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>是否成功</returns>
     public async Task<bool> RequestWsAsync(string fname, ulong fid, long tid, string content,
         string? showName = null, CancellationToken cancellationToken = default)
     {

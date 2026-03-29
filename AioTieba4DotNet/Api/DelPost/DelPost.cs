@@ -21,10 +21,11 @@ internal class DelPost(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <summary>
     ///     发送删除回复请求
     /// </summary>
-    /// <param name="fid">吧 ID</param>
-    /// <param name="tid">主题帖 ID</param>
-    /// <param name="pid">回复 ID</param>
-    /// <returns>操作是否成功</returns>
+/// <param name="fid">吧 ID</param>
+/// <param name="tid">主题帖 ID</param>
+/// <param name="pid">回复 ID</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(ulong fid, long tid, long pid, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>

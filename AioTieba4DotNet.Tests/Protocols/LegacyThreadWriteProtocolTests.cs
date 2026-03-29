@@ -42,7 +42,7 @@ public class LegacyThreadWriteProtocolTests
         await ThrowsAsync<TiebaAuthenticationException>(() => protocol.RecommendAsync("lol欧服", 10377929712));
 
         Assert.AreEqual(0, forum.GetFidCalls);
-        Assert.AreEqual(0, httpCore.AppFormRequests.Count);
+        Assert.IsEmpty(httpCore.AppFormRequests);
     }
 
     [TestMethod]
@@ -59,7 +59,7 @@ public class LegacyThreadWriteProtocolTests
 
         Assert.IsTrue(success);
         Assert.AreEqual(1, forum.GetFidCalls);
-        Assert.AreEqual(2, httpCore.AppFormRequests.Count);
+        Assert.HasCount(2, httpCore.AppFormRequests);
         Assert.AreEqual("/c/c/bawu/goodlist", httpCore.AppFormRequests[0].Uri.AbsolutePath);
         Assert.AreEqual("/c/c/bawu/commitgood", httpCore.AppFormRequests[1].Uri.AbsolutePath);
         Assert.AreEqual("88", GetValue(httpCore.AppFormRequests[1].Data, "cid"));
@@ -80,7 +80,7 @@ public class LegacyThreadWriteProtocolTests
 
         Assert.IsTrue(success);
         Assert.AreEqual(1, forum.GetFidCalls);
-        Assert.AreEqual(1, httpCore.WebFormRequests.Count);
+        Assert.HasCount(1, httpCore.WebFormRequests);
         Assert.AreEqual("/mo/q/bawurecoverthread", httpCore.WebFormRequests[0].Uri.AbsolutePath);
         Assert.AreEqual("153071185710", GetValue(httpCore.WebFormRequests[0].Data, "pid_list[]"));
         Assert.AreEqual("1", GetValue(httpCore.WebFormRequests[0].Data, "type_list[]"));

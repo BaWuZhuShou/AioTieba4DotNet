@@ -25,11 +25,12 @@ internal class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return UserInfoPanelMapper.FromTbData(data);
     }
 
-    /// <summary>
-    ///     发送获取用户面板信息请求
-    /// </summary>
-    /// <param name="nameOrPortrait">用户名 (un) 或用户头像 ID (portrait)</param>
-    /// <returns>用户面板信息</returns>
+/// <summary>
+///     发送获取用户面板信息请求
+/// </summary>
+/// <param name="nameOrPortrait">用户名 (un) 或用户头像 ID (portrait)</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>用户面板信息</returns>
     public async Task<UserInfoPanel> RequestAsync(string nameOrPortrait,
         CancellationToken cancellationToken = default)
     {

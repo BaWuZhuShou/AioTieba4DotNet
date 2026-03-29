@@ -27,11 +27,12 @@ internal class UnlikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return true;
     }
 
-    /// <summary>
-    ///     发送取消关注贴吧请求
-    /// </summary>
-    /// <param name="fid">吧 ID (fid)</param>
-    /// <returns>操作是否成功</returns>
+/// <summary>
+///     发送取消关注贴吧请求
+/// </summary>
+/// <param name="fid">吧 ID (fid)</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(ulong fid, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>

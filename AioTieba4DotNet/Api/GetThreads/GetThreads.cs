@@ -57,11 +57,12 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReq
     /// <param name="rn">每页请求数量</param>
     /// <param name="sort">
     ///     排序方式
-    ///     对于有热门分区的贴吧: 0:热门排序(HOT), 1:按发布时间(CREATE), 2:关注的人(FOLLOW), 3/4:热门排序(HOT), >=5:按回复时间(REPLY)
-    ///     对于无热门分区的贴吧: 0:按回复时间(REPLY), 1:按发布时间(CREATE), 2:关注的人(FOLLOW), >=3:按回复时间(REPLY)
-    /// </param>
-    /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
-    /// <returns>主题帖列表实体</returns>
+///     对于有热门分区的贴吧: 0:热门排序(HOT), 1:按发布时间(CREATE), 2:关注的人(FOLLOW), 3/4:热门排序(HOT), >=5:按回复时间(REPLY)
+///     对于无热门分区的贴吧: 0:按回复时间(REPLY), 1:按发布时间(CREATE), 2:关注的人(FOLLOW), >=3:按回复时间(REPLY)
+/// </param>
+/// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>主题帖列表实体</returns>
     public async Task<global::AioTieba4DotNet.Models.Threads.Threads> RequestAsync(string fname, int pn, int rn, int sort, int isGood,
         CancellationToken cancellationToken = default)
     {
@@ -75,12 +76,13 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReq
     /// <summary>
     ///     通过 HTTP 获取贴吧主题帖列表
     /// </summary>
-    /// <param name="fname">吧名</param>
-    /// <param name="pn">页码</param>
-    /// <param name="rn">每页请求数量</param>
-    /// <param name="sort">排序方式</param>
-    /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
-    /// <returns>主题帖列表实体</returns>
+/// <param name="fname">吧名</param>
+/// <param name="pn">页码</param>
+/// <param name="rn">每页请求数量</param>
+/// <param name="sort">排序方式</param>
+/// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>主题帖列表实体</returns>
     public async Task<global::AioTieba4DotNet.Models.Threads.Threads> RequestHttpAsync(string fname, int pn, int rn, int sort, int isGood,
         CancellationToken cancellationToken = default)
     {
@@ -94,12 +96,13 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReq
     /// <summary>
     ///     通过 Websocket 获取贴吧主题帖列表
     /// </summary>
-    /// <param name="fname">吧名</param>
-    /// <param name="pn">页码</param>
-    /// <param name="rn">每页请求数量</param>
-    /// <param name="sort">排序方式</param>
-    /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
-    /// <returns>主题帖列表实体</returns>
+/// <param name="fname">吧名</param>
+/// <param name="pn">页码</param>
+/// <param name="rn">每页请求数量</param>
+/// <param name="sort">排序方式</param>
+/// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>主题帖列表实体</returns>
     public async Task<global::AioTieba4DotNet.Models.Threads.Threads> RequestWsAsync(string fname, int pn, int rn, int sort, int isGood,
         CancellationToken cancellationToken = default)
     {

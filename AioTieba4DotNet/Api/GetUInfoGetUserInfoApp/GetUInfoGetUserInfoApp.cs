@@ -30,11 +30,12 @@ internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : ProtoApiBase(ht
         return AioTieba4DotNet.Internal.Mapping.UserInfoGuInfoAppMapper.FromTbData(dataUser);
     }
 
-    /// <summary>
-    ///     发送获取用户基础信息请求
-    /// </summary>
-    /// <param name="userId">用户 ID (uid)</param>
-    /// <returns>用户基础信息</returns>
+/// <summary>
+///     发送获取用户基础信息请求
+/// </summary>
+/// <param name="userId">用户 ID (uid)</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>用户基础信息</returns>
     public async Task<UserInfoGuInfoApp> RequestAsync(int userId, CancellationToken cancellationToken = default)
     {
         var data = PackProto(userId);

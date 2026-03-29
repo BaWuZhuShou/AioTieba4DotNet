@@ -67,12 +67,13 @@ internal abstract class ApiWsBase<TResult>(
     /// </summary>
     protected readonly ITiebaWsCore WsCore = wsCore;
 
-    /// <summary>
-    ///     根据当前模式执行请求分发
-    /// </summary>
-    /// <param name="httpRequest">Http 执行逻辑</param>
-    /// <param name="wsRequest">Websocket 执行逻辑（可选）</param>
-    /// <returns>API 响应结果</returns>
+/// <summary>
+///     根据当前模式执行请求分发
+/// </summary>
+/// <param name="httpRequest">Http 执行逻辑</param>
+/// <param name="wsRequest">Websocket 执行逻辑（可选）</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>API 响应结果</returns>
     protected async Task<TResult> ExecuteAsync(Func<CancellationToken, Task<TResult>> httpRequest,
         Func<CancellationToken, Task<TResult>>? wsRequest = null,
         CancellationToken cancellationToken = default)

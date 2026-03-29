@@ -23,11 +23,12 @@ internal class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return fid;
     }
 
-    /// <summary>
-    ///     发送获取吧 ID 请求
-    /// </summary>
-    /// <param name="fname">吧名</param>
-    /// <returns>吧 ID (fid)</returns>
+/// <summary>
+///     发送获取吧 ID 请求
+/// </summary>
+/// <param name="fname">吧名</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>吧 ID (fid)</returns>
     public async Task<ulong> RequestAsync(string fname, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>> { new("fname", fname), new("ie", "utf-8") };

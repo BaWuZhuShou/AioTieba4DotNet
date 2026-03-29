@@ -50,13 +50,14 @@ internal class GetUserThreads(
         return AioTieba4DotNet.Internal.Mapping.UserThreadsMapper.FromTbData(resProto.Data);
     }
 
-    /// <summary>
-    ///     发送获取用户发布主题帖列表请求
-    /// </summary>
-    /// <param name="userId">用户 ID (uid)</param>
-    /// <param name="pn">页码</param>
-    /// <param name="publicOnly">是否只获取公开的主题帖</param>
-    /// <returns>主题帖列表实体</returns>
+/// <summary>
+///     发送获取用户发布主题帖列表请求
+/// </summary>
+/// <param name="userId">用户 ID (uid)</param>
+/// <param name="pn">页码</param>
+/// <param name="publicOnly">是否只获取公开的主题帖</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>主题帖列表实体</returns>
     public async Task<UserThreads> RequestAsync(int userId, uint pn, bool publicOnly,
         CancellationToken cancellationToken = default)
     {
@@ -67,13 +68,14 @@ internal class GetUserThreads(
         );
     }
 
-    /// <summary>
-    ///     通过 HTTP 获取用户发布主题帖列表
-    /// </summary>
-    /// <param name="userId">用户 ID (uid)</param>
-    /// <param name="pn">页码</param>
-    /// <param name="publicOnly">是否只看公开帖子</param>
-    /// <returns>用户发布主题帖列表实体</returns>
+/// <summary>
+///     通过 HTTP 获取用户发布主题帖列表
+/// </summary>
+/// <param name="userId">用户 ID (uid)</param>
+/// <param name="pn">页码</param>
+/// <param name="publicOnly">是否只看公开帖子</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>用户发布主题帖列表实体</returns>
     public async Task<UserThreads> RequestHttpAsync(int userId, uint pn, bool publicOnly,
         CancellationToken cancellationToken = default)
     {
@@ -85,13 +87,14 @@ internal class GetUserThreads(
         return ParseBody(result);
     }
 
-    /// <summary>
-    ///     通过 Websocket 获取用户发布主题帖列表
-    /// </summary>
-    /// <param name="userId">用户 ID (uid)</param>
-    /// <param name="pn">页码</param>
-    /// <param name="publicOnly">是否只看公开帖子</param>
-    /// <returns>用户发布主题帖列表实体</returns>
+/// <summary>
+///     通过 Websocket 获取用户发布主题帖列表
+/// </summary>
+/// <param name="userId">用户 ID (uid)</param>
+/// <param name="pn">页码</param>
+/// <param name="publicOnly">是否只看公开帖子</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>用户发布主题帖列表实体</returns>
     public async Task<UserThreads> RequestWsAsync(int userId, uint pn, bool publicOnly,
         CancellationToken cancellationToken = default)
     {

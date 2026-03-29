@@ -21,6 +21,6 @@ public class MessagingSafetyTest : TestBase
         var chatroomId = RequireSafeChatroomIdFixture(
             nameof(SafeChatroomIdFixture_IsExplicitlyRequired_ForLiveChatroomActions));
 
-        Assert.IsTrue(chatroomId > 0);
+        Assert.IsGreaterThan(0, chatroomId);
     }
 }

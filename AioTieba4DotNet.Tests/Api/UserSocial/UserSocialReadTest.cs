@@ -17,7 +17,7 @@ public class UserSocialReadTest : TestBase
         UserSocialOrInconclusive(() => Console.WriteLine("self-info endpoints are account-gated in this environment."));
         var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetSelfInfoAsync());
 
-        Assert.IsTrue(result.UserId > 0);
+        Assert.IsGreaterThan(0, result.UserId);
         Console.WriteLine($"self userId={result.UserId}, userName={result.UserName}, tiebaUid={result.TiebaUid}");
     }
 

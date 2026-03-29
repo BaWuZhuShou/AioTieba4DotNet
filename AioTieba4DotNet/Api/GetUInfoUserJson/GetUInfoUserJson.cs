@@ -22,11 +22,12 @@ internal class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return data == null ? throw new TieBaServerException(-1, "无法获取到用户数据!") : UserInfoJsonMapper.FromTbData(data);
     }
 
-    /// <summary>
-    ///     发送获取用户信息 JSON 请求
-    /// </summary>
-    /// <param name="username">用户名</param>
-    /// <returns>用户信息 JSON 实体</returns>
+/// <summary>
+///     发送获取用户信息 JSON 请求
+/// </summary>
+/// <param name="username">用户名</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>用户信息 JSON 实体</returns>
     public async Task<UserInfoJson> RequestAsync(string username, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>> { new("un", username), new("ie", "utf-8") };

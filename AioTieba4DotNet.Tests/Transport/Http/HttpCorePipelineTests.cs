@@ -62,7 +62,7 @@ public class HttpCorePipelineTests
 
         var boundary = handler.LastRequest.Content!.Headers.ContentType!.Parameters
             .Single(parameter => parameter.Name == "boundary").Value!;
-        Assert.IsFalse(boundary.Contains('"'));
+        Assert.DoesNotContain('"', boundary);
 
         var contentDisposition = ((MultipartFormDataContent)handler.LastRequest.Content).First().Headers.ContentDisposition;
         Assert.AreEqual("data", contentDisposition!.Name!.Trim('"'));

@@ -53,10 +53,11 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRe
     ///     发送获取楼中楼回复请求
     /// </summary>
     /// <param name="tid">主题帖 ID</param>
-    /// <param name="pid">回复 ID (pid) 或楼中楼回复 ID (spid)</param>
-    /// <param name="pn">页码</param>
-    /// <param name="isComment">如果 pid 是楼中楼回复 ID (spid) 则为 true</param>
-    /// <returns>楼中楼回复列表</returns>
+/// <param name="pid">回复 ID (pid) 或楼中楼回复 ID (spid)</param>
+/// <param name="pn">页码</param>
+/// <param name="isComment">如果 pid 是楼中楼回复 ID (spid) 则为 true</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>楼中楼回复列表</returns>
     public async Task<Comments> RequestAsync(long tid, long pid, int pn, bool isComment,
         CancellationToken cancellationToken = default)
     {
@@ -71,10 +72,11 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRe
     ///     通过 HTTP 获取楼中楼回复
     /// </summary>
     /// <param name="tid">主题帖 ID</param>
-    /// <param name="pid">回复 ID (pid) 或楼中楼回复 ID (spid)</param>
-    /// <param name="pn">页码</param>
-    /// <param name="isComment">如果 pid 是楼中楼回复 ID (spid) 则为 true</param>
-    /// <returns>楼中楼回复列表</returns>
+/// <param name="pid">回复 ID (pid) 或楼中楼回复 ID (spid)</param>
+/// <param name="pn">页码</param>
+/// <param name="isComment">如果 pid 是楼中楼回复 ID (spid) 则为 true</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>楼中楼回复列表</returns>
     public async Task<Comments> RequestHttpAsync(long tid, long pid, int pn, bool isComment,
         CancellationToken cancellationToken = default)
     {
@@ -89,10 +91,11 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRe
     ///     通过 Websocket 获取楼中楼回复
     /// </summary>
     /// <param name="tid">主题帖 ID</param>
-    /// <param name="pid">回复 ID (pid) 或楼中楼回复 ID (spid)</param>
-    /// <param name="pn">页码</param>
-    /// <param name="isComment">如果 pid 是楼中楼回复 ID (spid) 则为 true</param>
-    /// <returns>楼中楼回复列表</returns>
+/// <param name="pid">回复 ID (pid) 或楼中楼回复 ID (spid)</param>
+/// <param name="pn">页码</param>
+/// <param name="isComment">如果 pid 是楼中楼回复 ID (spid) 则为 true</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>楼中楼回复列表</returns>
     public async Task<Comments> RequestWsAsync(long tid, long pid, int pn, bool isComment,
         CancellationToken cancellationToken = default)
     {

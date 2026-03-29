@@ -36,7 +36,7 @@ public class WebSocketEngineTests
 
         Assert.AreEqual(1, connection.ConnectCalls);
         Assert.AreEqual(1001, handshakeCmd);
-        Assert.IsTrue(handshakeReqId > 0);
+        Assert.IsGreaterThan(0, handshakeReqId);
         Assert.AreEqual(0, heartbeatCmd);
         Assert.AreEqual(0, heartbeatReqId);
     }

@@ -50,11 +50,12 @@ internal class GetPosts(
     /// <summary>
     ///     发送获取用户发布回复列表请求
     /// </summary>
-    /// <param name="userId">用户 ID (uid)</param>
-    /// <param name="pn">页码</param>
-    /// <param name="rn">每页请求数量</param>
-    /// <param name="version">客户端版本号</param>
-    /// <returns>回复列表实体</returns>
+/// <param name="userId">用户 ID (uid)</param>
+/// <param name="pn">页码</param>
+/// <param name="rn">每页请求数量</param>
+/// <param name="version">客户端版本号</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>回复列表实体</returns>
     public async Task<UserPostss> RequestAsync(int userId, uint pn, uint rn, string version,
         CancellationToken cancellationToken = default)
     {
@@ -68,11 +69,12 @@ internal class GetPosts(
     /// <summary>
     ///     通过 HTTP 获取用户发布回复列表
     /// </summary>
-    /// <param name="userId">用户 ID (uid)</param>
-    /// <param name="pn">页码</param>
-    /// <param name="rn">每页请求数量</param>
-    /// <param name="version">客户端版本号</param>
-    /// <returns>回复列表实体</returns>
+/// <param name="userId">用户 ID (uid)</param>
+/// <param name="pn">页码</param>
+/// <param name="rn">每页请求数量</param>
+/// <param name="version">客户端版本号</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>回复列表实体</returns>
     public async Task<UserPostss> RequestHttpAsync(int userId, uint pn, uint rn, string version,
         CancellationToken cancellationToken = default)
     {
@@ -87,11 +89,12 @@ internal class GetPosts(
     /// <summary>
     ///     通过 Websocket 获取用户发布回复列表
     /// </summary>
-    /// <param name="userId">用户 ID (uid)</param>
-    /// <param name="pn">页码</param>
-    /// <param name="rn">每页请求数量</param>
-    /// <param name="version">客户端版本号</param>
-    /// <returns>回复列表实体</returns>
+/// <param name="userId">用户 ID (uid)</param>
+/// <param name="pn">页码</param>
+/// <param name="rn">每页请求数量</param>
+/// <param name="version">客户端版本号</param>
+/// <param name="cancellationToken">取消令牌</param>
+/// <returns>回复列表实体</returns>
     public async Task<UserPostss> RequestWsAsync(int userId, uint pn, uint rn, string version,
         CancellationToken cancellationToken = default)
     {
