@@ -98,6 +98,8 @@ jobs:
                     printf ' - %s\n' "${required_files[@]}"
 
     publish:
+        # `.github/workflows/publish.yml` is part of the external nuget.org trusted publishing contract.
+        # If this workflow file is renamed, the nuget.org trusted publishing policy must be updated to match `publish.yml`.
         runs-on: ubuntu-latest
         needs:
             - verify
@@ -105,6 +107,7 @@ jobs:
             - migration-docs
         permissions:
             contents: write
+            id-token: write
 
         steps:
             -   name: Checkout code
@@ -120,9 +123,18 @@ jobs:
                         9.x
                         10.x
 
-            -   name: Extract version
+            -   name: Preflight release tag version
                 shell: bash
-                run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+                run: |
+                    VERSION="${GITHUB_REF_NAME#v}"
+
+                    if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-(preview|rc)\.[0-9]+)?$ ]]; then
+                        echo "Release tag '$GITHUB_REF_NAME' produced VERSION='$VERSION'."
+                        echo "Expected vX.Y.Z, vX.Y.Z-preview.N, or vX.Y.Z-rc.N so only GA, preview, and rc releases are published."
+                        exit 1
+                    fi
+
+                    echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
             -   name: Determine release channel
                 shell: bash
@@ -142,10 +154,16 @@ jobs:
             -   name: Pack the project
                 run: dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=${{ env.VERSION }} --nologo
 
+            -   name: Validate packed artifacts
+                shell: bash
+                run: bash ./.github/scripts/validate-package-artifacts.sh "./nupkg" "AioTieba4DotNet.${{ env.VERSION }}"
+
+            -   name: Login to NuGet
+                id: login
+                uses: NuGet/login@v1
+
             -   name: Push to NuGet
-                run: dotnet nuget push ./nupkg/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
-                env:
-                    NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+                run: dotnet nuget push ./nupkg/*.nupkg --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
             -   name: Create Release
                 uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b

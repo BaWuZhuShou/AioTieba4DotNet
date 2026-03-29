@@ -70,6 +70,17 @@ v2 的发布线固定为：
 
 ## 对维护者的发布提醒
 
+- v2 维护者发布说明已经切换到 **Trusted Publishing** 口径。仓库内的发布入口仍然是 `.github/workflows/publish.yml` 这条 tag 驱动流水线，但 **nuget.org 侧 Trusted Publishing policy 的创建与维护是外部前置条件，不属于仓库自动化范围**。
+- 在第一次使用 v2 发布线前，先确认 nuget.org policy 已按下面的固定字段配置完成，否则不要执行正式发布：
+  - repository owner：`BaWuZhuShou`
+  - repository name：`AioTieba4DotNet`
+  - workflow filename：`publish.yml`
+  - GitHub Environment：默认 **不绑定**，即 no GitHub Environment binding
+- `.github/workflows/publish.yml` 的文件名本身属于外部 trusted publishing 绑定的一部分。只要 workflow filename 不是 `publish.yml`，维护者就必须先更新 nuget.org policy，再继续发版。
+- 本项目继续保留当前 tag 约定，不改为别的发布模型：
+  - 触发标签仍然是 `v*.*.*`
+  - 合法版本仍然是 `vX.Y.Z`、`vX.Y.Z-preview.N`、`vX.Y.Z-rc.N`
+  - 这份清单不新增 preview rehearsal lane
 - 发布前运行：
   - `dotnet restore --nologo`
   - `dotnet build AioTieba4DotNet.sln --configuration Release --no-restore --nologo`
@@ -77,6 +88,9 @@ v2 的发布线固定为：
   - `dotnet test AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj -f net9.0 --configuration Release --no-build --filter "TestCategory!=Integration&TestCategory!=Live" --nologo`
   - `dotnet test AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj -f net10.0 --configuration Release --no-build --filter "TestCategory!=Integration&TestCategory!=Live" --nologo`
   - `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`
+- 如需本地确认打包产物，再运行：
+  - `dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=<version> --nologo`
+- 上述本地检查通过后，再推送符合规则的 `v*.*.*` tag，让 `publish.yml` 执行仓库侧发布流程。不要把 nuget.org policy 创建、Environment 绑定或旧的长期 NuGet API key secret 轮换写成仓库内自动步骤。
 - 任何一次 major 相关预发布都应该同时附带迁移指南链接。
 
 ## 用户可见 breaking list（摘要）
