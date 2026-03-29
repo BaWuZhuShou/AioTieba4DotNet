@@ -27,7 +27,7 @@ internal class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     ///     发送同步状态请求
     /// </summary>
     /// <returns>包含 ClientId 和 SampleId 的元组</returns>
-    public async Task<(string ClientId, string SampleId)> RequestAsync()
+    public async Task<(string ClientId, string SampleId)> RequestAsync(CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {
@@ -36,7 +36,7 @@ internal class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
             new("cuid", HttpCore.Account.CuidGalaxy2)
         };
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/s/sync").Uri;
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

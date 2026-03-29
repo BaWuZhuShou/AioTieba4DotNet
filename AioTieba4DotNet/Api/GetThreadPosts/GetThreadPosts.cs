@@ -1,5 +1,5 @@
-using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.GetThreadPosts.Entities;
+﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
@@ -53,7 +53,7 @@ internal class GetThreadPosts(
         var resProto = PbPageResIdl.Parser.ParseFrom(body);
         CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
-        return Posts.FromTbData(resProto.Data);
+        return AioTieba4DotNet.Internal.Mapping.PostsMapper.FromTbData(resProto.Data);
     }
 
     /// <summary>
@@ -69,11 +69,12 @@ internal class GetThreadPosts(
     /// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
     /// <returns>回复列表实体</returns>
     public async Task<Posts> RequestAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments,
-        int commentRn, bool commentSortByAgree)
+        int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
     {
         return await ExecuteAsync(
-            () => RequestHttpAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree),
-            () => RequestWsAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree)
+            ct => RequestHttpAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree, ct),
+            ct => RequestWsAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree, ct),
+            cancellationToken
         );
     }
 
@@ -90,13 +91,13 @@ internal class GetThreadPosts(
     /// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
     /// <returns>回复列表实体</returns>
     public async Task<Posts> RequestHttpAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor,
-        bool withComments, int commentRn, bool commentSortByAgree)
+        bool withComments, int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
     {
         var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree,
             HttpCore.Account?.Bduss);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/pb/page") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data);
+        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -113,11 +114,11 @@ internal class GetThreadPosts(
     /// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
     /// <returns>回复列表实体</returns>
     public async Task<Posts> RequestWsAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor,
-        bool withComments, int commentRn, bool commentSortByAgree)
+        bool withComments, int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
     {
         var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree,
             WsCore.Account?.Bduss);
-        var response = await WsCore.SendAsync(Cmd, data);
+        var response = await WsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

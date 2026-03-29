@@ -17,15 +17,6 @@ internal abstract class ApiBase(ITiebaHttpCore httpCore)
     protected readonly ITiebaHttpCore HttpCore = httpCore;
 
     /// <summary>
-    ///     确保 TBS 已加载（如果已登录）
-    /// </summary>
-    protected async Task EnsureTbsAsync()
-    {
-        if (HttpCore.Account != null && !string.IsNullOrEmpty(HttpCore.Account.Bduss))
-            await HttpCore.GetTbsAsync();
-    }
-
-    /// <summary>
     ///     检查错误码并抛出异常
     /// </summary>
     /// <param name="code">错误码</param>
@@ -82,20 +73,20 @@ internal abstract class ApiWsBase<TResult>(
     /// <param name="httpRequest">Http 执行逻辑</param>
     /// <param name="wsRequest">Websocket 执行逻辑（可选）</param>
     /// <returns>API 响应结果</returns>
-    protected async Task<TResult> ExecuteAsync(Func<Task<TResult>> httpRequest, Func<Task<TResult>>? wsRequest = null)
+    protected async Task<TResult> ExecuteAsync(Func<CancellationToken, Task<TResult>> httpRequest,
+        Func<CancellationToken, Task<TResult>>? wsRequest = null,
+        CancellationToken cancellationToken = default)
     {
-        await EnsureTbsAsync();
-
-        if (Mode != TiebaRequestMode.Websocket || wsRequest == null) return await httpRequest();
+        if (Mode != TiebaRequestMode.Websocket || wsRequest == null) return await httpRequest(cancellationToken);
         try
         {
-            return await wsRequest();
+            return await wsRequest(cancellationToken);
         }
         catch (NotImplementedException)
         {
             // 强制要求ws但是未实现，回退http
         }
 
-        return await httpRequest();
+        return await httpRequest(cancellationToken);
     }
 }

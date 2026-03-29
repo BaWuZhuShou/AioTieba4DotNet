@@ -1,9 +1,9 @@
 using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.Entities;
-using AioTieba4DotNet.Api.GetThreads.Entities;
+using AioTieba4DotNet.Models.Shared;
+using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Entities;
+using AioTieba4DotNet.Internal.Mapping;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetFollows;
@@ -20,7 +20,7 @@ internal class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         var resJson = JsonApiBase.ParseBody(body);
 
         var followList = resJson.GetValue("follow_list")?.ToObject<JArray>() ?? [];
-        var objs = followList.Select(m => UserInfo.FromTbData((JObject)m)).ToList();
+        var objs = followList.Select(m => UserInfoMapper.FromTbData((JObject)m)).ToList();
 
         var pn = resJson.GetValue("pn")?.ToObject<int>() ?? 0;
         var totalCount = resJson.GetValue("total_follow_num")?.ToObject<int>() ?? 0;
@@ -37,7 +37,7 @@ internal class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <param name="userId">用户 ID (uid)</param>
     /// <param name="pn">页码</param>
     /// <returns>关注的用户列表</returns>
-    public async Task<UserList> RequestAsync(long userId, int pn)
+    public async Task<UserList> RequestAsync(long userId, int pn, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {
@@ -48,7 +48,7 @@ internal class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/follow/followList").Uri;
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

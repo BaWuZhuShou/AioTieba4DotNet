@@ -24,19 +24,20 @@ internal class DelThread(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <param name="fid">吧 ID</param>
     /// <param name="tid">主题帖 ID</param>
     /// <returns>操作是否成功</returns>
-    public async Task<bool> RequestAsync(ulong fid, long tid)
+    public async Task<bool> RequestAsync(ulong fid, long tid, bool isHide = false,
+        CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {
             new("BDUSS", HttpCore.Account!.Bduss),
-            new("_client_version", Const.MainVersion),
             new("fid", fid.ToString()),
-            new("tid", tid.ToString()),
-            new("tbs", HttpCore.Account!.Tbs!)
+            new("is_frs_mask", isHide ? "1" : "0"),
+            new("tbs", HttpCore.Account!.Tbs!),
+            new("z", tid.ToString())
         };
 
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/thread/del").Uri;
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var requestUri = new UriBuilder(Const.AppInsecureScheme, Const.AppBaseHost, 80, "/c/c/bawu/delthread").Uri;
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

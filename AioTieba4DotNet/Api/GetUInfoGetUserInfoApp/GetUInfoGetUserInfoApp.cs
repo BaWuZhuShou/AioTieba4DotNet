@@ -1,5 +1,5 @@
-using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.GetUInfoGetUserInfoApp.Entities;
+﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using Google.Protobuf;
@@ -27,7 +27,7 @@ internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : ProtoApiBase(ht
         CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var dataUser = resProto.Data.User;
-        return UserInfoGuInfoApp.FromTbData(dataUser);
+        return AioTieba4DotNet.Internal.Mapping.UserInfoGuInfoAppMapper.FromTbData(dataUser);
     }
 
     /// <summary>
@@ -35,12 +35,12 @@ internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : ProtoApiBase(ht
     /// </summary>
     /// <param name="userId">用户 ID (uid)</param>
     /// <returns>用户基础信息</returns>
-    public async Task<UserInfoGuInfoApp> RequestAsync(int userId)
+    public async Task<UserInfoGuInfoApp> RequestAsync(int userId, CancellationToken cancellationToken = default)
     {
         var data = PackProto(userId);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getuserinfo") { Query = $"cmd={Cmd}" }
             .Uri;
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data);
+        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

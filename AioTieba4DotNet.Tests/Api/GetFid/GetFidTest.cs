@@ -11,12 +11,14 @@ namespace AioTieba4DotNet.Tests.Api.GetFid;
 [TestSubject(typeof(GetFidApi))]
 public class GetFidTest : TestBase
 {
+    private const string SafeForumKeyword = "lol欧服";
+
     [TestMethod]
     public async Task TestRequest()
     {
         var getFid = new GetFidApi(HttpCore);
-        var fid = await getFid.RequestAsync("DNF吧");
+        var fid = await getFid.RequestAsync(SafeForumKeyword);
         Assert.IsGreaterThan<ulong>(0, fid);
-        Console.WriteLine($"DNF吧的FID: {fid}");
+        Console.WriteLine($"{SafeForumKeyword} 的 FID: {fid}");
     }
 }

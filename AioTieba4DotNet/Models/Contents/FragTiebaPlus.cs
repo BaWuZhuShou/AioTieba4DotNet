@@ -1,0 +1,43 @@
+﻿namespace AioTieba4DotNet.Models.Contents;
+
+/// <summary>
+///     贴吧plus广告碎片
+/// </summary>
+public class FragTiebaPlus : IFrag
+{
+    /// <summary>
+    ///     解析后的贴吧plus广告跳转链接
+    /// </summary>
+    public required Uri Url { get; init; }
+
+    /// <summary>
+    ///     贴吧plus广告描述
+    /// </summary>
+    public override string Text { get; init; } = "";
+
+    /// <summary>
+    ///     获取碎片类型
+    /// </summary>
+    /// <returns>碎片类型名称</returns>
+    public override string GetFragType()
+    {
+        return "FragTiebaPlus";
+    }
+
+    /// <summary>
+    ///     转换为字典用于序列化
+    /// </summary>
+    /// <returns>包含碎片数据的字典</returns>
+    public override Dictionary<string, object> ToDict()
+    {
+        return new Dictionary<string, object>();
+    }
+    /// <summary>
+    ///     格式设置成员
+    /// </summary>
+    /// <returns>string</returns>
+    public override string ToString()
+    {
+        return $"{GetFragType()} {nameof(Text)}: {Text}, {nameof(Url)}: {Url}";
+    }
+}

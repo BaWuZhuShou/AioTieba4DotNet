@@ -1,8 +1,9 @@
 using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.GetUInfoUserJson.Entities;
+using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
+using AioTieba4DotNet.Internal.Mapping;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetUInfoUserJson;
@@ -18,7 +19,7 @@ internal class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     {
         var o = JObject.Parse(body);
         var data = o.GetValue("creator")?.ToObject<JObject>();
-        return data == null ? throw new TieBaServerException(-1, "无法获取到用户数据!") : UserInfoJson.FromTbData(data);
+        return data == null ? throw new TieBaServerException(-1, "无法获取到用户数据!") : UserInfoJsonMapper.FromTbData(data);
     }
 
     /// <summary>
@@ -26,11 +27,11 @@ internal class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// </summary>
     /// <param name="username">用户名</param>
     /// <returns>用户信息 JSON 实体</returns>
-    public async Task<UserInfoJson> RequestAsync(string username)
+    public async Task<UserInfoJson> RequestAsync(string username, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>> { new("un", username), new("ie", "utf-8") };
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/i/sys/user_json").Uri;
-        var responseString = await HttpCore.SendWebGetAsync(requestUri, data);
+        var responseString = await HttpCore.SendWebGetAsync(requestUri, data, cancellationToken);
         if (string.IsNullOrEmpty(responseString)) throw new TieBaServerException(-1, "无法获取到用户数据!");
 
         return ParseBody(responseString);

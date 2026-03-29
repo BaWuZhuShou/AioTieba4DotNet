@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AioTieba4DotNet.Api.Entities.Contents;
+using AioTieba4DotNet.Models.Contents;
 using System.Collections.Generic;
 
 namespace AioTieba4DotNet.Tests.Api.Entities.Contents;
@@ -19,7 +19,7 @@ public class ContentTest
         };
 
         // 执行解析
-        var content = Content.FromTbData(pbContents);
+        var content = AioTieba4DotNet.Internal.Mapping.ContentMapper.FromTbData(pbContents);
 
         // 验证索引
         Assert.HasCount(3, content.Frags);
@@ -42,7 +42,7 @@ public class ContentTest
             new() { Type = 0, Text = " world" }
         };
 
-        var content = Content.FromTbData(pbContents);
+        var content = AioTieba4DotNet.Internal.Mapping.ContentMapper.FromTbData(pbContents);
         var str = content.ToString();
 
         System.Console.WriteLine($"[DEBUG_LOG] ToString result: {str}");

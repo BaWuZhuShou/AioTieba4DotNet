@@ -11,13 +11,15 @@ namespace AioTieba4DotNet.Tests.Api.GetForum;
 [TestSubject(typeof(GetForumApi))]
 public class GetForumTest : TestBase
 {
+    private const string SafeForumQuery = "lol欧服吧";
+    private const string CanonicalSafeForumName = "lol欧服";
+
     [TestMethod]
     public async Task TestRequest()
     {
         var getForum = new GetForumApi(HttpCore);
-        var fname = "地下城与勇士";
-        var result = await getForum.RequestAsync(fname);
+        var result = await getForum.RequestAsync(SafeForumQuery);
         Console.WriteLine(result);
-        Assert.AreEqual(fname, result.Fname);
+        Assert.AreEqual(CanonicalSafeForumName, result.Fname);
     }
 }

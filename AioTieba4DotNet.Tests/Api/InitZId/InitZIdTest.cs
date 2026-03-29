@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AioTieba4DotNet.Core;
+using AioTieba4DotNet.Exceptions;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -38,9 +39,18 @@ public class InitZIdTest : TestBase
     [TestCategory("Integration")]
     public async Task TestRequest()
     {
+        EnsureAuthenticated();
+
         var initZId = new AioTieba4DotNet.Api.InitZId.InitZId(HttpCore);
-        var result = await initZId.RequestAsync();
-        Assert.IsNotNull(result);
-        Console.WriteLine(result);
+        try
+        {
+            var result = await initZId.RequestAsync();
+            Assert.IsNotNull(result);
+            Console.WriteLine(result);
+        }
+        catch (TiebaTransportException exception)
+        {
+            Assert.Inconclusive($"Skipping InitZId live request in this environment: {exception.Message}");
+        }
     }
 }

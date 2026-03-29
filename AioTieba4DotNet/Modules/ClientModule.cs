@@ -1,32 +1,22 @@
-﻿using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.InitZId;
-using AioTieba4DotNet.Api.Sync;
+using AioTieba4DotNet.Protocols;
 
 namespace AioTieba4DotNet.Modules;
 
-/// <summary>
-///     客户端基础功能模块 (初始化、同步等)
-/// </summary>
-/// <param name="httpCore">Http 核心组件</param>
-public class ClientModule(ITiebaHttpCore httpCore) : IClientModule
+public class ClientModule : IClientModule
 {
-    /// <summary>
-    ///     初始化 ZID (设备标识)
-    /// </summary>
-    /// <returns>ZID 字符串</returns>
-    public async Task<string> InitZIdAsync()
+    private readonly IClientProtocol _protocol;
+
+    internal ClientModule(IClientProtocol protocol)
     {
-        var api = new InitZId(httpCore);
-        return await api.RequestAsync();
+        _protocol = protocol;
     }
 
-    /// <summary>
-    ///     同步客户端状态 (获取 ClientId 和 SampleId)
-    /// </summary>
-    /// <returns>包含 ClientId 和 SampleId 的元组</returns>
-    public async Task<(string ClientId, string SampleId)> SyncAsync()
-    {
-        var api = new Sync(httpCore);
-        return await api.RequestAsync();
-    }
+    public Task InitWebSocketAsync(CancellationToken cancellationToken = default) =>
+        _protocol.InitWebSocketAsync(cancellationToken);
+
+    public Task<string> InitZIdAsync(CancellationToken cancellationToken = default) =>
+        _protocol.InitZIdAsync(cancellationToken);
+
+    public Task<(string ClientId, string SampleId)> SyncAsync(CancellationToken cancellationToken = default) =>
+        _protocol.SyncAsync(cancellationToken);
 }

@@ -1,0 +1,18 @@
+syntax = "proto3";
+import "CommonReq.proto";
+
+message SetUserBlackReqIdl {
+    message DataReq {
+        message PermissionList {
+            int32 follow = 1;
+            int32 interact = 2;
+            int32 chat = 3;
+        }
+
+        CommonReq common = 1;
+        int64 black_uid = 2;
+        PermissionList perm_list = 3;
+    }
+
+    DataReq data = 1;
+}

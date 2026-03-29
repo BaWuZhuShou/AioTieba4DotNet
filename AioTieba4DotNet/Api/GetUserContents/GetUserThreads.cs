@@ -1,5 +1,5 @@
-using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.GetUserContents.Entities;
+﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
@@ -47,7 +47,7 @@ internal class GetUserThreads(
         var resProto = UserPostResIdl.Parser.ParseFrom(body);
         CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
-        return UserThreads.FromTbData(resProto.Data);
+        return AioTieba4DotNet.Internal.Mapping.UserThreadsMapper.FromTbData(resProto.Data);
     }
 
     /// <summary>
@@ -57,11 +57,13 @@ internal class GetUserThreads(
     /// <param name="pn">页码</param>
     /// <param name="publicOnly">是否只获取公开的主题帖</param>
     /// <returns>主题帖列表实体</returns>
-    public async Task<UserThreads> RequestAsync(int userId, uint pn, bool publicOnly)
+    public async Task<UserThreads> RequestAsync(int userId, uint pn, bool publicOnly,
+        CancellationToken cancellationToken = default)
     {
         return await ExecuteAsync(
-            () => RequestHttpAsync(userId, pn, publicOnly),
-            () => RequestWsAsync(userId, pn, publicOnly)
+            ct => RequestHttpAsync(userId, pn, publicOnly, ct),
+            ct => RequestWsAsync(userId, pn, publicOnly, ct),
+            cancellationToken
         );
     }
 
@@ -72,13 +74,14 @@ internal class GetUserThreads(
     /// <param name="pn">页码</param>
     /// <param name="publicOnly">是否只看公开帖子</param>
     /// <returns>用户发布主题帖列表实体</returns>
-    public async Task<UserThreads> RequestHttpAsync(int userId, uint pn, bool publicOnly)
+    public async Task<UserThreads> RequestHttpAsync(int userId, uint pn, bool publicOnly,
+        CancellationToken cancellationToken = default)
     {
         var data = PackProto(HttpCore.Account!, userId, pn, publicOnly);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/userpost") { Query = $"cmd={Cmd}" }
             .Uri;
 
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data);
+        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -89,10 +92,11 @@ internal class GetUserThreads(
     /// <param name="pn">页码</param>
     /// <param name="publicOnly">是否只看公开帖子</param>
     /// <returns>用户发布主题帖列表实体</returns>
-    public async Task<UserThreads> RequestWsAsync(int userId, uint pn, bool publicOnly)
+    public async Task<UserThreads> RequestWsAsync(int userId, uint pn, bool publicOnly,
+        CancellationToken cancellationToken = default)
     {
         var data = PackProto(WsCore.Account!, userId, pn, publicOnly);
-        var response = await WsCore.SendAsync(Cmd, data);
+        var response = await WsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

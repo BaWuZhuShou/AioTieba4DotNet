@@ -1,5 +1,5 @@
-using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.GetUserContents.Entities;
+﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
@@ -44,7 +44,7 @@ internal class GetPosts(
         CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var dataForum = resProto.Data;
-        return UserPostss.FromTbData(dataForum);
+        return AioTieba4DotNet.Internal.Mapping.UserPostssMapper.FromTbData(dataForum);
     }
 
     /// <summary>
@@ -55,11 +55,13 @@ internal class GetPosts(
     /// <param name="rn">每页请求数量</param>
     /// <param name="version">客户端版本号</param>
     /// <returns>回复列表实体</returns>
-    public async Task<UserPostss> RequestAsync(int userId, uint pn, uint rn, string version)
+    public async Task<UserPostss> RequestAsync(int userId, uint pn, uint rn, string version,
+        CancellationToken cancellationToken = default)
     {
         return await ExecuteAsync(
-            () => RequestHttpAsync(userId, pn, rn, version),
-            () => RequestWsAsync(userId, pn, rn, version)
+            ct => RequestHttpAsync(userId, pn, rn, version, ct),
+            ct => RequestWsAsync(userId, pn, rn, version, ct),
+            cancellationToken
         );
     }
 
@@ -71,13 +73,14 @@ internal class GetPosts(
     /// <param name="rn">每页请求数量</param>
     /// <param name="version">客户端版本号</param>
     /// <returns>回复列表实体</returns>
-    public async Task<UserPostss> RequestHttpAsync(int userId, uint pn, uint rn, string version)
+    public async Task<UserPostss> RequestHttpAsync(int userId, uint pn, uint rn, string version,
+        CancellationToken cancellationToken = default)
     {
         var data = PackProto(HttpCore.Account!, userId, pn, rn, version);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/userpost") { Query = $"cmd={Cmd}" }
             .Uri;
 
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data);
+        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -89,10 +92,11 @@ internal class GetPosts(
     /// <param name="rn">每页请求数量</param>
     /// <param name="version">客户端版本号</param>
     /// <returns>回复列表实体</returns>
-    public async Task<UserPostss> RequestWsAsync(int userId, uint pn, uint rn, string version)
+    public async Task<UserPostss> RequestWsAsync(int userId, uint pn, uint rn, string version,
+        CancellationToken cancellationToken = default)
     {
         var data = PackProto(WsCore.Account!, userId, pn, rn, version);
-        var response = await WsCore.SendAsync(Cmd, data);
+        var response = await WsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

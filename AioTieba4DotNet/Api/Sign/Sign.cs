@@ -18,7 +18,7 @@ internal class Sign(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <param name="fname">吧名</param>
     /// <param name="fid">吧 ID (fid)</param>
     /// <returns>操作是否成功</returns>
-    public async Task<bool> RequestAsync(string fname, ulong fid)
+    public async Task<bool> RequestAsync(string fname, ulong fid, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {
@@ -30,7 +30,7 @@ internal class Sign(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
 
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/forum/sign").Uri;
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         ParseBody(result);
         return true;
     }

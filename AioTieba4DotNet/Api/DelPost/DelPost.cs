@@ -25,20 +25,19 @@ internal class DelPost(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <param name="tid">主题帖 ID</param>
     /// <param name="pid">回复 ID</param>
     /// <returns>操作是否成功</returns>
-    public async Task<bool> RequestAsync(ulong fid, long tid, long pid)
+    public async Task<bool> RequestAsync(ulong fid, long tid, long pid, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {
             new("BDUSS", HttpCore.Account!.Bduss),
-            new("_client_version", Const.MainVersion),
             new("fid", fid.ToString()),
-            new("tid", tid.ToString()),
             new("pid", pid.ToString()),
-            new("tbs", HttpCore.Account!.Tbs!)
+            new("tbs", HttpCore.Account!.Tbs!),
+            new("z", tid.ToString())
         };
 
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/post/del").Uri;
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var requestUri = new UriBuilder(Const.AppInsecureScheme, Const.AppBaseHost, 80, "/c/c/bawu/delpost").Uri;
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

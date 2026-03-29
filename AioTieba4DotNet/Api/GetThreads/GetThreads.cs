@@ -1,5 +1,5 @@
 using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.GetThreads.Entities;
+using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Enums;
@@ -15,7 +15,7 @@ namespace AioTieba4DotNet.Api.GetThreads;
 /// <param name="mode">请求模式</param>
 [PythonApi("aiotieba.api.get_threads")]
 internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
-    : ProtoApiWsBase<Threads>(httpCore, wsCore, mode)
+    : ProtoApiWsBase<global::AioTieba4DotNet.Models.Threads.Threads>(httpCore, wsCore, mode)
 {
     private const int Cmd = 301001;
 
@@ -39,14 +39,14 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReq
         return frsPageResIdl.ToByteArray();
     }
 
-    private static Threads ParseBody(byte[] body)
+    private static global::AioTieba4DotNet.Models.Threads.Threads ParseBody(byte[] body)
     {
         var resProto = FrsPageResIdl.Parser.ParseFrom(body);
         CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var dataForum = resProto.Data;
 
-        return Threads.FromTbData(dataForum);
+        return AioTieba4DotNet.Internal.Mapping.ThreadsMapper.FromTbData(dataForum);
     }
 
     /// <summary>
@@ -62,11 +62,13 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReq
     /// </param>
     /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
     /// <returns>主题帖列表实体</returns>
-    public async Task<Threads> RequestAsync(string fname, int pn, int rn, int sort, int isGood)
+    public async Task<global::AioTieba4DotNet.Models.Threads.Threads> RequestAsync(string fname, int pn, int rn, int sort, int isGood,
+        CancellationToken cancellationToken = default)
     {
         return await ExecuteAsync(
-            () => RequestHttpAsync(fname, pn, rn, sort, isGood),
-            () => RequestWsAsync(fname, pn, rn, sort, isGood)
+            ct => RequestHttpAsync(fname, pn, rn, sort, isGood, ct),
+            ct => RequestWsAsync(fname, pn, rn, sort, isGood, ct),
+            cancellationToken
         );
     }
 
@@ -79,12 +81,13 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReq
     /// <param name="sort">排序方式</param>
     /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
     /// <returns>主题帖列表实体</returns>
-    public async Task<Threads> RequestHttpAsync(string fname, int pn, int rn, int sort, int isGood)
+    public async Task<global::AioTieba4DotNet.Models.Threads.Threads> RequestHttpAsync(string fname, int pn, int rn, int sort, int isGood,
+        CancellationToken cancellationToken = default)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/frs/page") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data);
+        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -97,10 +100,11 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReq
     /// <param name="sort">排序方式</param>
     /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
     /// <returns>主题帖列表实体</returns>
-    public async Task<Threads> RequestWsAsync(string fname, int pn, int rn, int sort, int isGood)
+    public async Task<global::AioTieba4DotNet.Models.Threads.Threads> RequestWsAsync(string fname, int pn, int rn, int sort, int isGood,
+        CancellationToken cancellationToken = default)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);
-        var response = await WsCore.SendAsync(Cmd, data);
+        var response = await WsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

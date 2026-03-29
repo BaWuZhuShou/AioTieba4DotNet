@@ -3,7 +3,7 @@
 /// <summary>
 ///     贴吧请求模式
 /// </summary>
-public enum TiebaRequestMode
+internal enum TiebaRequestMode
 {
     /// <summary>
     ///     HTTP 模式

@@ -3,5 +3,13 @@
 /// <summary>
 ///     贴吧客户端异常
 /// </summary>
-/// <param name="message">异常信息</param>
-public class TiebaException(string message) : Exception(message);
+public class TiebaException : Exception
+{
+    public TiebaException(string message) : base(message)
+    {
+    }
+
+    public TiebaException(string message, Exception? innerException) : base(message, innerException)
+    {
+    }
+}

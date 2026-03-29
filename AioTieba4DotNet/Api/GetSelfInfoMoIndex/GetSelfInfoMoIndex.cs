@@ -1,0 +1,31 @@
+using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Attributes;
+using AioTieba4DotNet.Core;
+using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Shared;
+using Newtonsoft.Json.Linq;
+
+namespace AioTieba4DotNet.Api.GetSelfInfoMoIndex;
+
+[PythonApi("aiotieba.api.get_selfinfo_moindex")]
+internal class GetSelfInfoMoIndex(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
+{
+    private static UserInfo ParseBody(string body)
+    {
+        var resJson = JsonApiBase.ParseBody(body, "no", "error");
+        var data = resJson.GetValue("data") as JObject ?? new JObject();
+        return UserInfoSelfMoIndexMapper.FromTbData(data);
+    }
+
+    public async Task<UserInfo> RequestAsync(CancellationToken cancellationToken = default)
+    {
+        var data = new List<KeyValuePair<string, string>>
+        {
+            new("need_user", "1")
+        };
+
+        var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/mo/q/newmoindex").Uri;
+        var result = await HttpCore.SendWebGetAsync(requestUri, data, cancellationToken);
+        return ParseBody(result);
+    }
+}

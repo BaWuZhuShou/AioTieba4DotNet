@@ -5,7 +5,7 @@ namespace AioTieba4DotNet.Abstractions;
 /// <summary>
 ///     WebSocket 核心接口，负责维护与贴吧长连接
 /// </summary>
-public interface ITiebaWsCore
+internal interface ITiebaWsCore
 {
     /// <summary>
     ///     当前绑定的账户信息 <see cref="Account"/>

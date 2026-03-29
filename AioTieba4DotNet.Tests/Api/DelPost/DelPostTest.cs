@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DelPostApi = AioTieba4DotNet.Api.DelPost.DelPost;
@@ -10,13 +10,12 @@ namespace AioTieba4DotNet.Tests.Api.DelPost;
 public class DelPostTest : TestBase
 {
     [TestMethod]
-    public async Task TestRequestAsync()
+    [TestCategory("Live")]
+    public void OwnedReplyFixture_IsRequired_ForLiveDelPost()
     {
-        EnsureAuthenticated();
-
-        _ = new DelPostApi(HttpCore);
-
-        // 删帖测试建议在集成测试中进行
-        // await delPost.RequestAsync(11626, 8116540605, 123456789);
+        var ownedThreadId = RequireOwnedThreadFixture(nameof(OwnedReplyFixture_IsRequired_ForLiveDelPost));
+        var ownedReplyId = RequireOwnedReplyFixture(nameof(OwnedReplyFixture_IsRequired_ForLiveDelPost));
+        Console.WriteLine(
+            $"safeForumQuery={ConfiguredSafeForumQuery}, canonicalFname={ConfiguredCanonicalSafeForumName}, ownedTid={ownedThreadId}, ownedPid={ownedReplyId}, api={typeof(DelPostApi).Name}");
     }
 }

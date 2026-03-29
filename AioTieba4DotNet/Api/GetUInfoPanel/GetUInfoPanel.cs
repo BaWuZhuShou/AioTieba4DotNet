@@ -1,8 +1,9 @@
 using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.GetUInfoPanel.Entities;
+using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
+using AioTieba4DotNet.Internal.Mapping;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetUInfoPanel;
@@ -21,7 +22,7 @@ internal class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         var data = o.GetValue("data")?.ToObject<JObject>();
         if (data == null) throw new TieBaServerException(-1, "无法获取到用户数据!");
 
-        return UserInfoPanel.FromTbData(data);
+        return UserInfoPanelMapper.FromTbData(data);
     }
 
     /// <summary>
@@ -29,7 +30,8 @@ internal class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// </summary>
     /// <param name="nameOrPortrait">用户名 (un) 或用户头像 ID (portrait)</param>
     /// <returns>用户面板信息</returns>
-    public async Task<UserInfoPanel> RequestAsync(string nameOrPortrait)
+    public async Task<UserInfoPanel> RequestAsync(string nameOrPortrait,
+        CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {
@@ -38,7 +40,7 @@ internal class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
                 : new KeyValuePair<string, string>("un", nameOrPortrait)
         };
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/home/get/panel").Uri;
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

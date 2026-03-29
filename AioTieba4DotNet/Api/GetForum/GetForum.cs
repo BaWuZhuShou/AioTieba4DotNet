@@ -1,5 +1,5 @@
-using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.GetForum.Entities;
+﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Exceptions;
@@ -20,7 +20,7 @@ internal class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         var forumDict = o.GetValue("forum")?.ToObject<Dictionary<string, object>>();
         if (forumDict == null) throw new TieBaServerException(-1, "无法获取到贴吧数据!");
 
-        return Forum.FromTbData(forumDict);
+        return AioTieba4DotNet.Internal.Mapping.ForumMapper.FromTbData(forumDict);
     }
 
     /// <summary>
@@ -28,12 +28,12 @@ internal class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <returns>贴吧基础信息</returns>
-    public async Task<Forum> RequestAsync(string fname)
+    public async Task<Forum> RequestAsync(string fname, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>> { new("kw", fname) };
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/c/f/frs/frsBottom").Uri;
 
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

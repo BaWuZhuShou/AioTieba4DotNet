@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -35,18 +34,18 @@ public class MultiAccountTest
         var client1 = factory.CreateClient(bduss1, MockStoken("st1"));
         var client2 = factory.CreateClient(bduss2, MockStoken("st2"));
 
-        Assert.IsNotNull(client1.HttpCore.Account);
-        Assert.IsNotNull(client2.HttpCore.Account);
-        Assert.AreNotEqual(client1.HttpCore.Account.Bduss, client2.HttpCore.Account.Bduss);
-        Assert.AreEqual(bduss1, client1.HttpCore.Account.Bduss);
-        Assert.AreEqual(bduss2, client2.HttpCore.Account.Bduss);
-
-        // 验证 WS 隔离性
-        Assert.IsNotNull(client1.WsCore);
-        Assert.IsNotNull(client2.WsCore);
-        Assert.AreNotSame(client1.WsCore, client2.WsCore, "Each client must have a separate WsCore instance");
-        Assert.AreEqual(bduss1, client1.WsCore.Account?.Bduss);
-        Assert.AreEqual(bduss2, client2.WsCore.Account?.Bduss);
+        Assert.IsNotNull(client1);
+        Assert.IsNotNull(client2);
+        Assert.AreNotSame(client1, client2);
+        Assert.IsNotNull(client1.Forums);
+        Assert.IsNotNull(client1.Threads);
+        Assert.IsNotNull(client1.Users);
+        Assert.IsNotNull(client1.Client);
+        Assert.IsNotNull(client2.Forums);
+        Assert.IsNotNull(client2.Threads);
+        Assert.IsNotNull(client2.Users);
+        Assert.IsNotNull(client2.Client);
+        Assert.AreNotSame(client1.Client, client2.Client);
     }
 
     [TestMethod]

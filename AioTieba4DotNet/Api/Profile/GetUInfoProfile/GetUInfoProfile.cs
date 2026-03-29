@@ -1,5 +1,5 @@
-using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.Profile.GetUInfoProfile.Entities;
+﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using Google.Protobuf;
@@ -46,7 +46,7 @@ internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : ProtoApiBase(httpCo
         CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var resProtoData = resProto.Data;
-        return UserInfoPf.FromTbData(resProtoData);
+        return AioTieba4DotNet.Internal.Mapping.UserInfoPfMapper.FromTbData(resProtoData);
     }
 
     /// <summary>
@@ -54,12 +54,12 @@ internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : ProtoApiBase(httpCo
     /// </summary>
     /// <param name="requestParams">uid (int/long) 或 portrait/用户名 (string)</param>
     /// <returns>用户详细主页信息</returns>
-    public async Task<UserInfoPf> RequestAsync(T requestParams)
+    public async Task<UserInfoPf> RequestAsync(T requestParams, CancellationToken cancellationToken = default)
     {
         var data = PackProto(requestParams);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/profile") { Query = $"cmd={Cmd}" }
             .Uri;
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data);
+        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

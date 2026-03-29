@@ -32,7 +32,7 @@ internal class UnlikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// </summary>
     /// <param name="fid">吧 ID (fid)</param>
     /// <returns>操作是否成功</returns>
-    public async Task<bool> RequestAsync(ulong fid)
+    public async Task<bool> RequestAsync(ulong fid, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {
@@ -43,7 +43,7 @@ internal class UnlikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/c/forum/unlike").Uri;
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

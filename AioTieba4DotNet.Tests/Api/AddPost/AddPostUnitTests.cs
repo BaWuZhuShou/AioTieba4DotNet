@@ -96,29 +96,33 @@ public class AddPostUnitTests
             Account = newAccount;
         }
 
-        public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
+        public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
+            CancellationToken cancellationToken = default)
         {
             LastData = data;
             return Task.FromResult(Response);
         }
 
-        public Task<string> GetTbsAsync()
-        {
-            return Task.FromResult(Account?.Tbs ?? string.Empty);
-        }
-
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data)
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
         {
             LastProtoData = data;
             return Task.FromResult(ProtoResponse);
         }
 
-        public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters)
+        public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
+            CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data)
+        public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
+            CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

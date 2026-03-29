@@ -2,64 +2,74 @@
 
 ## 1. 依赖注入 (Dependency Injection)
 
-在生产环境中，推荐使用 .NET 标准的依赖注入方式。这会自动处理 `IHttpClientFactory`，从而优化连接池管理。
+生产环境推荐通过 `AddAioTiebaClient(...)` 集成。这样可以复用 `IHttpClientFactory`、统一配置 `TiebaOptions`，并让 `ITiebaClientFactory` 按相同规则创建隔离客户端。
 
 ### 注册服务
 
 ```csharp
 using AioTieba4DotNet;
 
-// 在 Program.cs 或 Startup.cs 中
 builder.Services.AddAioTiebaClient(options =>
 {
-    options.Bduss = "你的BDUSS";
-    options.Stoken = "你的STOKEN";
-    options.RequestMode = TiebaRequestMode.Http; // 默认请求模式
+    options.Bduss = builder.Configuration["Tieba:Bduss"];
+    options.Stoken = builder.Configuration["Tieba:Stoken"];
+    options.TransportMode = TiebaTransportMode.Auto;
+    options.RequestTimeout = TimeSpan.FromSeconds(20);
+    options.MaxReadRetryAttempts = 1;
 });
 ```
 
 ### 使用服务
 
-利用 C# 12 的 **Primary Constructors**，可以更简洁地注入服务：
-
 ```csharp
 public class MyWorker(ITiebaClient client)
 {
-    public async Task RunAsync()
+    public async Task RunAsync(CancellationToken cancellationToken)
     {
-        // 自动管理生命周期的 client
-        var threads = await client.Threads.GetThreadsAsync("csharp");
+        var threads = await client.Threads.GetThreadsAsync("csharp", cancellationToken: cancellationToken);
         // ...
     }
 }
 ```
 
-## 2. 请求模式与 WebSocket
+## 2. 统一传输策略：`Auto` 默认，`Http` 为唯一公开覆盖
 
-`AioTieba4DotNet` 支持多种请求模式，优先使用 Protobuf 协议以获得最佳性能。
+调用方只做业务调用，传输决策由统一 dispatcher 负责。
 
-### 全局模式
-通过 `ITiebaClient.RequestMode` 可以切换全局默认模式。
+### 默认行为：`TiebaTransportMode.Auto`
+
+- 对支持 WebSocket 的操作优先尝试 WebSocket。
+- 当功能不支持 WebSocket，或链路在请求提交前不可用时，统一回退到 HTTP。
+- 取消、超时、本地鉴权失败、协议错误、服务端业务错误都不会被当成“自动回退”的理由。
+
+### 显式 HTTP-only
 
 ```csharp
-client.RequestMode = TiebaRequestMode.Websocket;
+using var client = new TiebaClient(new TiebaOptions
+{
+    Bduss = "你的BDUSS",
+    TransportMode = TiebaTransportMode.Http
+});
+
+var threads = await client.Threads.GetThreadsAsync("csharp");
 ```
 
-### 单次请求指定
-大部分 API 方法都支持在调用时传入 `mode` 参数。
+### 需要提前建立 WS 链路时
+
+如果场景需要提前预热链路，请调用保留的客户端模块方法：
 
 ```csharp
-// 即使全局是 WebSocket，这次请求强制使用 HTTP
-await client.Threads.GetThreadsAsync("csharp", mode: TiebaRequestMode.Http);
+await client.Client.InitWebSocketAsync();
+await client.Threads.AddPostAsync("csharp", 1234567890, "预热后发送的内容");
 ```
 
-> **注意**: 部分 API（如写操作）目前仅支持 HTTP 模式。如果请求方法不支持指定的模式，内部会自动回退到 HTTP。
+## 3. 自定义 `HttpClient`
 
-## 3. 自定义 HttpClient
-
-通过 `AddAioTiebaClient` 注册时，它会配置一个名为 `"TiebaClient"` 的专用 HttpClient。你可以配置它的行为（如添加代理、设置超时等）。
+DI 注册时会配置一个名为 `"TiebaClient"` 的专用 `HttpClient`。如果你需要代理、证书、连接策略或更细粒度的 handler 行为，请通过标准 `IHttpClientFactory` 管道配置，而不是依赖底层传输实现细节。
 
 ```csharp
+using System.Net;
+
 builder.Services.AddHttpClient("TiebaClient")
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
     {
@@ -68,55 +78,79 @@ builder.Services.AddHttpClient("TiebaClient")
     });
 ```
 
-## 4. 多账户支持 (Multi-Account)
+## 4. 多账户与生命周期
 
-### 4.1 工厂模式 (推荐)
-
-在需要同时操作大量账号的场景下，推荐使用 `ITiebaClientFactory`。它能利用统一的连接池，同时为每个账户创建隔离的客户端。
+### 工厂模式（推荐）
 
 ```csharp
 public class MultiAccountService(ITiebaClientFactory factory)
 {
     public async Task RunAsync()
     {
-        // 为不同账号创建隔离的客户端
         using var clientA = factory.CreateClient("BDUSS_A", "STOKEN_A");
-        using var clientB = factory.CreateClient("BDUSS_B", "STOKEN_B");
+        using var clientB = factory.CreateClient(new TiebaOptions
+        {
+            Bduss = "BDUSS_B",
+            TransportMode = TiebaTransportMode.Http
+        });
 
-        // 它们拥有独立的 Account 状态和 WebSocket 连接
         await clientA.Forums.SignAsync("csharp");
         await clientB.Forums.SignAsync("dotnet");
     }
 }
 ```
 
-### 4.2 简单模式 (手动实例化)
+### 直接实例化
 
 ```csharp
-using var client = new TiebaClient("你的BDUSS");
+using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
 ```
 
-> **重要**: `ITiebaClient` 实现了 `IDisposable`。请务必使用 `using` 或手动调用 `Dispose()`，以释放 WebSocket 长连接和底层资源。
+> `ITiebaClient` / `TiebaClient` 实现了 `IDisposable`。直接创建的客户端请使用 `using` 或手动 `Dispose()`；DI 管理的实例让容器负责生命周期即可。
 
-## 5. 异常处理与鉴权检查
+## 5. 鉴权与异常模型
 
-### 本地鉴权检查
-所有需要登录的 API（标记了 `[RequireBduss]`）在发起网络请求前，都会由 `HttpCore` 自动检查 `BDUSS`。如果未配置，将抛出 `TiebaException`。这能避免无效的网络请求并方便调试。
+### 本地鉴权失败：`TiebaAuthenticationException`
 
-### 业务异常 (TieBaServerException)
-当服务器返回业务错误（`error_code != 0`）时抛出。
+v2 的显式变化之一，是把“本地缺少必需凭据”从旧版的隐式失败路径改为稳定、可区分的本地异常。
 
 ```csharp
+using AioTieba4DotNet;
+using AioTieba4DotNet.Exceptions;
+
+using var guestClient = new TiebaClient();
+
+try
+{
+    await guestClient.Forums.SignAsync("csharp");
+}
+catch (TiebaAuthenticationException ex)
+{
+    Console.WriteLine(ex.Message);
+}
+```
+
+### 配置错误：`TiebaConfigurationException`
+
+例如只提供 `Stoken` 但未提供 `Bduss`，或传入非法超时/重试值时，会在配置验证或客户端创建阶段失败。
+
+### 服务端业务错误：`TieBaServerException`
+
+凭据有效但贴吧服务端拒绝请求时，仍然抛出服务端异常：
+
+```csharp
+using AioTieba4DotNet.Exceptions;
+
 try
 {
     await client.Forums.SignAsync("某个不存在的吧");
 }
 catch (TieBaServerException ex)
 {
-    // 处理特定业务逻辑，如：34001 表示已签到
     Console.WriteLine($"错误码: {ex.Code}, 消息: {ex.Message}");
 }
 ```
 
-### 账户安全性
-`Account` 类内部对设备 ID (`AndroidId`, `Cuid` 等) 的初始化进行了加锁，多线程并发访问同一个 `Account` 实例是线程安全的。
+## 6. 迁移提示
+
+如果你是从 v1 升级，请先阅读 [migration-v1-to-v2.md](./migration-v1-to-v2.md)。完整 breaking inventory、旧→新示例，以及 cutover 前检查项都集中维护在那份文档里。

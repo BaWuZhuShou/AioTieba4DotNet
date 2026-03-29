@@ -1,49 +1,78 @@
-﻿using System;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
+using AioTieba4DotNet.Enums;
 using AioTieba4DotNet.Exceptions;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GetCommentsApi = AioTieba4DotNet.Api.GetComments.GetComments;
 
 namespace AioTieba4DotNet.Tests.Api.GetComments;
 
 [TestClass]
-[TestCategory("Integration")]
-[TestSubject(typeof(GetCommentsApi))]
+[TestCategory("Live")]
 public class GetCommentsTest : TestBase
 {
+    private const string SafeForumQuery = "lol欧服吧";
+    private const string CanonicalSafeForumName = "lol欧服";
+
     [TestMethod]
     public async Task TestRequest()
     {
-        var getComments = new GetCommentsApi(HttpCore, WebsocketCore);
-
-        // 使用一个已知的帖子 ID 和楼层 ID 进行测试
-        var tid = 10377929712;
-        var pid = 153071185710;
+        var (tid, pid) = await FindSampleCommentSourceAsync();
+        var threadModule = ((global::AioTieba4DotNet.ITiebaClient)Client).Threads;
 
         try
         {
-            var result = await getComments.RequestAsync(tid, pid, 1, false);
+            var result = await threadModule.GetCommentsAsync(tid, pid, 1, false);
             Assert.IsNotNull(result, "返回结果不应为空");
+            Assert.AreEqual(tid, result.Thread.Tid);
+            Assert.AreEqual(pid, result.Post.Pid);
 
-            // 只有当获取到数据时才打印，避免在 ID 失效时产生额外的 null 问题 (虽然已经处理了健壮性)
             if (result.Objs.Count > 0)
             {
                 Console.WriteLine(
-                    $"成功获取 [{result.Forum?.Fname}] 吧，主题 [{result.Thread?.Title}] 下楼层 [{result.Post?.Pid}] 的楼中楼");
-                Console.WriteLine($"楼中楼数量: {result.Objs.Count}");
+                    $"safeForumQuery={SafeForumQuery}, canonicalFname={result.Forum?.Fname}, tid={tid}, pid={pid}, commentsPn=1, returnedComments={result.Objs.Count}");
                 foreach (var comment in result.Objs)
                     Console.WriteLine($"[{comment.User?.ShowName}]: {comment.ReplyToId} {comment.Text}");
             }
             else
             {
-                Console.WriteLine("获取成功，但该楼层没有楼中楼或数据已失效（返回了空对象）。");
+                Console.WriteLine($"tid={tid}, pid={pid} returned no comments.");
             }
         }
         catch (TieBaServerException ex)
         {
             Console.WriteLine($"请求失败 (贴吧服务器返回错误): {ex.Message}");
-            // 如果是 ID 失效导致的服务器错误，我们在这里可以选择不抛出异常，或者标记为 Inconclusive
+            Assert.Inconclusive($"Comments API sample expired for safe forum source tid={tid}, pid={pid}: {ex.Message}");
         }
+    }
+
+    private async Task<(long Tid, long Pid)> FindSampleCommentSourceAsync()
+    {
+        var threadModule = ((global::AioTieba4DotNet.ITiebaClient)Client).Threads;
+        var threads = await threadModule.GetThreadsAsync(CanonicalSafeForumName, 1, 10, ThreadSortType.Reply);
+
+        foreach (var thread in threads.Objs.Take(5))
+        {
+            var posts = await threadModule.GetPostsAsync(
+                thread.Tid,
+                pn: 1,
+                rn: 20,
+                sort: PostSortType.Hot,
+                onlyThreadAuthor: false,
+                withComments: true,
+                commentRn: 2,
+                commentSortByAgree: true);
+            var candidate = posts.Objs.FirstOrDefault(post => post.ReplyNum > 0 || post.Comments.Count > 0);
+            if (candidate != null)
+            {
+                Console.WriteLine(
+                    $"discovered safe sample from forum={CanonicalSafeForumName}, tid={thread.Tid}, pid={candidate.Pid}, replyNum={candidate.ReplyNum}, previewComments={candidate.Comments.Count}");
+                return (thread.Tid, candidate.Pid);
+            }
+        }
+
+        Assert.Inconclusive($"No post with comments was found in the first safe-forum sample window for {CanonicalSafeForumName}.");
+        return default;
     }
 }

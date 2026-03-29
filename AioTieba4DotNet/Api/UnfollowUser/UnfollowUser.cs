@@ -17,7 +17,7 @@ internal class UnfollowUser(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// </summary>
     /// <param name="portrait">用户头像 ID (Portrait)</param>
     /// <returns>操作是否成功</returns>
-    public async Task<bool> RequestAsync(string portrait)
+    public async Task<bool> RequestAsync(string portrait, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {
@@ -27,7 +27,7 @@ internal class UnfollowUser(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/c/user/unfollow").Uri;
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         ParseBody(result);
         return true;
     }

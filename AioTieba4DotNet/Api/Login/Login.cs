@@ -2,6 +2,7 @@ using AioTieba4DotNet.Abstractions;
 using AioTieba4DotNet.Api.Login.Entities;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
+using AioTieba4DotNet.Internal.Mapping;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Login;
@@ -19,7 +20,7 @@ internal class Login(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         var resJson = JsonApiBase.ParseBody(body);
 
         var userDict = resJson.GetValue("user")?.ToObject<JObject>()!;
-        var user = UserInfoLogin.FromTbData(userDict);
+        var user = UserInfoLoginMapper.FromTbData(userDict);
         var tbs = resJson.GetValue("anti")?.ToObject<JObject>()!.GetValue("tbs")!.ToString()!;
         return (user, tbs);
     }
@@ -28,14 +29,14 @@ internal class Login(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     ///     发送登录请求
     /// </summary>
     /// <returns>包含用户信息和 TBS 的元组</returns>
-    public async Task<(UserInfoLogin User, string Tbs)> RequestAsync()
+    public async Task<(UserInfoLogin User, string Tbs)> RequestAsync(CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {
             new("_client_version", Const.MainVersion), new("bdusstoken", HttpCore.Account!.Bduss)
         };
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/s/login").Uri;
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

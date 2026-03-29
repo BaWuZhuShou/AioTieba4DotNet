@@ -25,7 +25,7 @@ internal class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
     ///     发送初始化 ZID 请求
     /// </summary>
     /// <returns>ZID (token)</returns>
-    public async Task<string> RequestAsync()
+    public async Task<string> RequestAsync(CancellationToken cancellationToken = default)
     {
         var account = HttpCore.Account!;
         var xyus = GetMd5Hash(account.AndroidId + account.Uuid) + "|0";
@@ -48,15 +48,17 @@ internal class InitZId(ITiebaHttpCore httpCore) : ApiBase(httpCore)
         var reqQuerySkey = Convert.ToBase64String(rc4.Crypt(account.AesCbcSecKey));
         var uri = new UriBuilder("https", Const.SofireHost, 443, $"/c/11/z/100/{AppKey}/{currentTs}/{pathCombineMd5}"
         ) { Query = $"skey={HttpUtility.UrlEncode(reqQuerySkey)}" }.Uri;
-        using var request = new HttpRequestMessage(HttpMethod.Post, uri);
-        request.Headers.Add("x-device-id", xyusMd5Str);
-        request.Headers.TryAddWithoutValidation("User-Agent", $"x6/{AppKey}/{Const.MainVersion}/4.4.1.3");
-        request.Headers.Add("x-plu-ver", "x6/4.4.1.3");
-        request.Content = new ByteArrayContent(payload);
-        request.Content.Headers.ContentType =
-            new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-        using var httpResponseMessage = await HttpCore.HttpClient.SendAsync(request);
-        var result = await httpResponseMessage.Content.ReadAsStringAsync();
+        var result = await HttpCore.SendAsync(() =>
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, uri);
+            request.Headers.Add("x-device-id", xyusMd5Str);
+            request.Headers.TryAddWithoutValidation("User-Agent", $"x6/{AppKey}/{Const.MainVersion}/4.4.1.3");
+            request.Headers.Add("x-plu-ver", "x6/4.4.1.3");
+            request.Content = new ByteArrayContent(payload);
+            request.Content.Headers.ContentType =
+                new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+            return request;
+        }, cancellationToken: cancellationToken);
         var token = ParseBody(result);
         return token;
     }

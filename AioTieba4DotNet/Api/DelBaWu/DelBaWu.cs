@@ -25,7 +25,8 @@ internal class DelBaWu(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <param name="portrait">用户头像 ID (Portrait)</param>
     /// <param name="baWuType">吧务类型 (如 manager, moderator)</param>
     /// <returns>操作是否成功</returns>
-    public async Task<bool> RequestAsync(long fid, string portrait, string baWuType)
+    public async Task<bool> RequestAsync(long fid, string portrait, string baWuType,
+        CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {
@@ -37,7 +38,7 @@ internal class DelBaWu(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
 
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/mo/q/bawuteamclear").Uri;
-        var result = await HttpCore.SendWebFormAsync(requestUri, data);
+        var result = await HttpCore.SendWebFormAsync(requestUri, data, cancellationToken);
 
         return ParseBody(result);
     }

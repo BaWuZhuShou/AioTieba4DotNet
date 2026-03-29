@@ -28,12 +28,12 @@ internal class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <returns>吧 ID (fid)</returns>
-    public async Task<ulong> RequestAsync(string fname)
+    public async Task<ulong> RequestAsync(string fname, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>> { new("fname", fname), new("ie", "utf-8") };
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/f/commit/share/fnameShareApi").Uri;
 
-        var result = await HttpCore.SendWebGetAsync(requestUri, data);
+        var result = await HttpCore.SendWebGetAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

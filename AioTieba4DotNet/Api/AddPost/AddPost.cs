@@ -121,11 +121,12 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReques
     /// <param name="showName">显示名称（可选）</param>
     /// <returns>是否成功</returns>
     public async Task<bool> RequestAsync(string fname, ulong fid, long tid, string content,
-        string? showName = null)
+        string? showName = null, CancellationToken cancellationToken = default)
     {
         return await ExecuteAsync(
-            () => RequestHttpAsync(fname, fid, tid, content, showName),
-            () => RequestWsAsync(fname, fid, tid, content, showName)
+            ct => RequestHttpAsync(fname, fid, tid, content, showName, ct),
+            ct => RequestWsAsync(fname, fid, tid, content, showName, ct),
+            cancellationToken
         );
     }
 
@@ -139,7 +140,7 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReques
     /// <param name="showName">显示名称（可选）</param>
     /// <returns>是否成功</returns>
     public async Task<bool> RequestHttpAsync(string fname, ulong fid, long tid, string content,
-        string? showName = null)
+        string? showName = null, CancellationToken cancellationToken = default)
     {
         var account = HttpCore.Account!;
         var reqProto = PackProto(account, fname, fid, tid, showName ?? "", content);
@@ -147,7 +148,7 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReques
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/c/post/add") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data);
+        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -161,13 +162,13 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaReques
     /// <param name="showName">显示名称（可选）</param>
     /// <returns>是否成功</returns>
     public async Task<bool> RequestWsAsync(string fname, ulong fid, long tid, string content,
-        string? showName = null)
+        string? showName = null, CancellationToken cancellationToken = default)
     {
         var account = HttpCore.Account!;
         var reqProto = PackProto(account, fname, fid, tid, showName ?? "", content);
         var data = reqProto.ToByteArray();
 
-        var response = await WsCore.SendAsync(Cmd, data);
+        var response = await WsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

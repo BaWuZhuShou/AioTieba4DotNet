@@ -29,8 +29,8 @@ jobs:
             -   name: Restore dependencies
                 run: dotnet restore AioTieba4DotNet.sln --nologo
 
-            -   name: Build tests for ${{ matrix.framework }}
-                run: dotnet build AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-restore -f ${{ matrix.framework }} --nologo
+            -   name: Build solution
+                run: dotnet build AioTieba4DotNet.sln --configuration Release --no-restore --nologo
 
             -   name: Run deterministic tests for ${{ matrix.framework }}
                 run: dotnet test AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-build -f ${{ matrix.framework }} --filter "TestCategory!=Integration&TestCategory!=Live" --nologo
@@ -55,7 +55,7 @@ jobs:
                 run: dotnet restore AioTieba4DotNet.sln --nologo
 
             -   name: Regenerate protobuf outputs
-                run: dotnet run --project ProtoGenerator/ProtoGenerator.csproj --framework net8.0
+                run: dotnet run --project ProtoGenerator/ProtoGenerator.csproj
 
             -   name: Check generator consistency
                 shell: bash
@@ -74,18 +74,28 @@ jobs:
             -   name: Checkout code
                 uses: actions/checkout@v6
 
-            -   name: Check migration documentation presence
+            -   name: Check release migration artifacts
                 shell: bash
                 run: |
-                    shopt -s nullglob globstar
-                    files=(docs/*migration*.md docs/**/*migration*.md)
-                    if (( ${#files[@]} == 0 )); then
-                        echo "Expected at least one migration document under docs/."
+                    required_files=(
+                        docs/migration-v1-to-v2.md
+                        docs/release-notes-v2.md
+                    )
+
+                    missing=0
+                    for file in "${required_files[@]}"; do
+                        if [[ ! -f "$file" ]]; then
+                            echo "Missing required release artifact: $file"
+                            missing=1
+                        fi
+                    done
+
+                    if (( missing != 0 )); then
                         exit 1
                     fi
 
-                    printf 'Found migration docs:\n'
-                    printf ' - %s\n' "${files[@]}"
+                    printf 'Found release artifacts:\n'
+                    printf ' - %s\n' "${required_files[@]}"
 
     publish:
         runs-on: ubuntu-latest
@@ -114,6 +124,15 @@ jobs:
                 shell: bash
                 run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
 
+            -   name: Determine release channel
+                shell: bash
+                run: |
+                    if [[ "${VERSION}" =~ -(preview|rc)\.[0-9]+$ ]]; then
+                        echo "PRERELEASE=true" >> $GITHUB_ENV
+                    else
+                        echo "PRERELEASE=false" >> $GITHUB_ENV
+                    fi
+
             -   name: Restore dependencies
                 run: dotnet restore --nologo
 
@@ -136,6 +155,6 @@ jobs:
                         ./nupkg/*.snupkg
                     generate_release_notes: true
                     draft: false
-                    prerelease: false
+                    prerelease: ${{ env.PRERELEASE == 'true' }}
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

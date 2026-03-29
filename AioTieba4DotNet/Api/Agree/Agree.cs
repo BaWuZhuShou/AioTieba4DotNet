@@ -21,7 +21,8 @@ internal class Agree(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <param name="isDisagree">是否为点踩</param>
     /// <param name="isUndo">是否为取消操作</param>
     /// <returns>操作是否成功</returns>
-    public async Task<bool> RequestAsync(long tid, long pid, bool isComment, bool isDisagree, bool isUndo)
+    public async Task<bool> RequestAsync(long tid, long pid, bool isComment, bool isDisagree, bool isUndo,
+        CancellationToken cancellationToken = default)
     {
         int objType;
         if (pid == 0)
@@ -43,7 +44,7 @@ internal class Agree(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/c/agree/opAgree").Uri;
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         ParseBody(result);
         return true;
     }

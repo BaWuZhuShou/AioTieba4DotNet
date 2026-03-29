@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DelThreadApi = AioTieba4DotNet.Api.DelThread.DelThread;
@@ -11,24 +10,11 @@ namespace AioTieba4DotNet.Tests.Api.DelThread;
 public class DelThreadTest : TestBase
 {
     [TestMethod]
-    public async Task TestRequest()
+    [TestCategory("Live")]
+    public void OwnedThreadFixture_IsRequired_ForLiveDelThread()
     {
-        if (!IsAuthenticated)
-        {
-            Assert.Inconclusive("未设置 BDUSS，跳过删帖测试");
-            return;
-        }
-
-        var delThread = new DelThreadApi(HttpCore);
-
-        try
-        {
-            // 删帖测试建议在集成测试中进行，这里仅验证接口封装
-            // await delThread.RequestAsync(11626, 123456789);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"删帖请求失败: {ex.Message}");
-        }
+        var ownedThreadId = RequireOwnedThreadFixture(nameof(OwnedThreadFixture_IsRequired_ForLiveDelThread));
+        Console.WriteLine(
+            $"safeForumQuery={ConfiguredSafeForumQuery}, canonicalFname={ConfiguredCanonicalSafeForumName}, ownedTid={ownedThreadId}, api={typeof(DelThreadApi).Name}");
     }
 }

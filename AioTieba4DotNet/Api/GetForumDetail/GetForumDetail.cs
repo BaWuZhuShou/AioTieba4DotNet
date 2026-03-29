@@ -1,5 +1,5 @@
-using AioTieba4DotNet.Abstractions;
-using AioTieba4DotNet.Api.GetForumDetail.Entities;
+﻿using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Core;
 using Google.Protobuf;
@@ -34,7 +34,7 @@ internal class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
 
         var dataForum = resProto.Data;
 
-        return ForumDetail.FromTbData(dataForum);
+        return AioTieba4DotNet.Internal.Mapping.ForumDetailMapper.FromTbData(dataForum);
     }
 
     /// <summary>
@@ -42,13 +42,13 @@ internal class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <returns>贴吧详情信息</returns>
-    public async Task<ForumDetail> RequestAsync(long fid)
+    public async Task<ForumDetail> RequestAsync(long fid, CancellationToken cancellationToken = default)
     {
         var data = PackProto(fid);
         var requestUri =
             new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/forum/getforumdetail") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data);
+        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

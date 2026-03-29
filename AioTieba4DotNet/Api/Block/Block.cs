@@ -26,7 +26,8 @@ internal class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <param name="day">封禁天数 (通常为 1, 3, 10)</param>
     /// <param name="reason">封禁原因</param>
     /// <returns>操作是否成功</returns>
-    public async Task<bool> RequestAsync(ulong fid, string portrait, int day, string reason)
+    public async Task<bool> RequestAsync(ulong fid, string portrait, int day, string reason,
+        CancellationToken cancellationToken = default)
     {
         var specialDays = new HashSet<int> { 1, 3, 10 }; // 可以随时在这里添加新的特殊天数
         var isSvipBlock = specialDays.Contains(day) ? "0" : "1";
@@ -45,7 +46,7 @@ internal class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         };
         var requestUri = new UriBuilder(Const.AppSecureScheme, Const.AppBaseHost, 443, "/c/c/bawu/commitprison").Uri;
 
-        var result = await HttpCore.SendAppFormAsync(requestUri, data);
+        var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }
