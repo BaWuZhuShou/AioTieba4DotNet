@@ -3,5 +3,6 @@
 paths-ignore:
   - '**/Protobuf/**'
   - '**/protobuf/**'
-  - 'AioTieba4DotNet.Tests/**'
-  - 'ProtoGenerator/**'
+  - 'AioTieba4DotNet.Tests.*/**'
+  - 'AioTieba4DotNet.Testing/**'
+  - '**/obj/**'

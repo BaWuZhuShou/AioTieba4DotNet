@@ -92,8 +92,9 @@ jobs:
                     patterns: |
                         -**/Protobuf/**
                         -**/protobuf/**
-                        -AioTieba4DotNet.Tests/**
-                        -ProtoGenerator/**
+                        -AioTieba4DotNet.Tests.*/**
+                        -AioTieba4DotNet.Testing/**
+                        -**/obj/**
                     input: ${{ runner.temp }}/codeql-sarif/${{ matrix.language }}.sarif
                     output: ${{ runner.temp }}/codeql-sarif/${{ matrix.language }}.sarif
 
