@@ -11,6 +11,7 @@ using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Models.Admins;
 using AioTieba4DotNet.Protocols;
 using AioTieba4DotNet.Session;
+using AioTieba4DotNet.Tests.Infrastructure;
 using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,6 +25,18 @@ public sealed class AdminProtocolTests
     private const ulong SafeForumId = 7356044;
     private static readonly string ValidBduss = new('b', 192);
     private static readonly string ValidStoken = new('s', 64);
+
+    [TestMethod]
+    public void AdminSources_FreezeCanonicalBawuNames_AndRejectRemovedSpellings()
+    {
+        var adminSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Contracts/IAdminModule.cs",
+            "AioTieba4DotNet/Protocols/IAdminProtocol.cs",
+            "AioTieba4DotNet/Protocols/AdminProtocol.cs");
+
+        RepositorySourceTextAssert.ContainsAll(adminSource, "AddBawuAsync", "DelBawuAsync", "BlockAsync", "UnblockAsync");
+        RepositorySourceTextAssert.DoesNotContainAny(adminSource, "AddBaWuAsync", "RemoveBawuAsync", "DelBaWuAsync");
+    }
 
     [TestMethod]
     public async Task GetBawuInfoAsync_WithCachedForumId_UsesWebSocketPreferredPath()
@@ -100,27 +113,27 @@ public sealed class AdminProtocolTests
     }
 
     [TestMethod]
-    public async Task AddBaWuAsync_WithoutCredentials_FailsBeforeForumLookup()
+    public async Task AddBawuAsync_WithoutCredentials_FailsBeforeForumLookup()
     {
         var httpCore = new RecordingHttpCore();
         var wsCore = new RecordingWsCore();
         var protocol = CreateProtocol(httpCore, wsCore, new ForumInfoCache(), authenticated: false);
 
         await Assert.ThrowsAsync<TiebaAuthenticationException>(() =>
-            protocol.AddBaWuAsync(SafeForumName, "target-user", BawuType.Manager));
+            protocol.AddBawuAsync(SafeForumName, "target-user", BawuType.Manager));
 
         Assert.AreEqual(0, httpCore.SendWebGetCalls);
         Assert.AreEqual(0, httpCore.SendWebFormCalls);
     }
 
     [TestMethod]
-    public async Task AddBaWuAsync_WithCachedForumId_PacksExpectedForm()
+    public async Task AddBawuAsync_WithCachedForumId_PacksExpectedForm()
     {
         var httpCore = new RecordingHttpCore();
         var wsCore = new RecordingWsCore();
         var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache(), tbs: "tbs-admin");
 
-        var success = await protocol.AddBaWuAsync(SafeForumName, "target-user", BawuType.Manager);
+        var success = await protocol.AddBawuAsync(SafeForumName, "target-user", BawuType.Manager);
 
         Assert.IsTrue(success);
         Assert.AreEqual(1, httpCore.SendWebFormCalls);
@@ -132,13 +145,13 @@ public sealed class AdminProtocolTests
     }
 
     [TestMethod]
-    public async Task DelBaWuAsync_WithCachedForumId_PacksExpectedForm()
+    public async Task DelBawuAsync_WithCachedForumId_PacksExpectedForm()
     {
         var httpCore = new RecordingHttpCore();
         var wsCore = new RecordingWsCore();
         var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache());
 
-        var success = await protocol.DelBaWuAsync(SafeForumName, "tb.1.target", BawuType.ImageEditor);
+        var success = await protocol.DelBawuAsync(SafeForumName, "tb.1.target", BawuType.ImageEditor);
 
         Assert.IsTrue(success);
         Assert.AreEqual(1, httpCore.SendWebFormCalls);
@@ -507,8 +520,8 @@ public sealed class AdminProtocolTests
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetBawuUserLogsAsync(SafeForumName,
             new BawuUserLogQueryOptions { OperationType = -1 }));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.HandleUnblockAppealsAsync(SafeForumName, new long[] { 0 }, false));
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.AddBaWuAsync(SafeForumName, "target-user", (BawuType)999));
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.DelBaWuAsync(SafeForumName, "tb.1.target", (BawuType)999));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.AddBawuAsync(SafeForumName, "target-user", (BawuType)999));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.DelBawuAsync(SafeForumName, "tb.1.target", (BawuType)999));
 
         Assert.AreEqual(0, httpCore.SendWebFormCalls);
         Assert.AreEqual(0, httpCore.SendWebGetCalls);

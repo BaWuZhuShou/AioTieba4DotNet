@@ -12,6 +12,7 @@ using AioTieba4DotNet.Session;
 using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Protocols;
+using AioTieba4DotNet.Tests.Infrastructure;
 using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -24,6 +25,23 @@ public class ForumProtocolTests
     private const ulong SafeForumId = 7356044;
     private static readonly string ValidBduss = new('b', 192);
     private static readonly string ValidStoken = new('s', 64);
+
+    [TestMethod]
+    public void ForumSources_FreezeNormalizedNames_AndRejectRemovedAliases()
+    {
+        var forumSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Contracts/IForumModule.cs",
+            "AioTieba4DotNet/Protocols/IForumProtocol.cs",
+            "AioTieba4DotNet/Protocols/ForumProtocol.cs");
+
+        RepositorySourceTextAssert.ContainsAll(
+            forumSource,
+            "FollowAsync",
+            "UnfollowAsync",
+            "GetSelfFollowForumsAsync",
+            "GetSelfFollowForumsV1Async");
+        RepositorySourceTextAssert.DoesNotContainAny(forumSource, "LikeAsync", "UnlikeAsync", "DelBaWuAsync");
+    }
 
     [TestMethod]
     public async Task GetFidAsync_ReusesInjectedCacheAcrossRepeatedCalls()
@@ -326,7 +344,7 @@ public class ForumProtocolTests
     }
 
     [TestMethod]
-    public async Task GetSelfFollowForumsV1Async_ReturnsLegacyPageShape()
+    public async Task GetSelfFollowForumsV1Async_ReturnsV1PeerShape()
     {
         var httpCore = new RecordingHttpCore
         {

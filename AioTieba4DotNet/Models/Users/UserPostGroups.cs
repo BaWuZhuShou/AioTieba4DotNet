@@ -3,15 +3,15 @@ using AioTieba4DotNet.Models.Shared;
 namespace AioTieba4DotNet.Models.Users;
 
 /// <summary>
-///     用户历史回复信息列表的列表
+///     用户历史回复分组列表。
 /// </summary>
-public class UserPostss : Containers<UserPosts>
+public class UserPostGroups : Containers<UserPosts>
 {
     /// <summary>
     ///     构造函数
     /// </summary>
     /// <param name="objs">用户历史回复列表集合</param>
-    public UserPostss(List<UserPosts> objs) : base(objs)
+    public UserPostGroups(List<UserPosts> objs) : base(objs)
     {
     }
 
@@ -19,7 +19,7 @@ public class UserPostss : Containers<UserPosts>
     ///     构造函数
     /// </summary>
     /// <param name="collection">用户历史回复列表集合</param>
-    public UserPostss(IEnumerable<UserPosts>? collection) : base(collection)
+    public UserPostGroups(IEnumerable<UserPosts>? collection) : base(collection)
     {
     }
 }

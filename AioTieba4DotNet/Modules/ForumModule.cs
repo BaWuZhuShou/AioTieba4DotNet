@@ -34,20 +34,12 @@ public sealed class ForumModule : IForumModule
         _protocol.GetDetailAsync(fname, cancellationToken);
 
     /// <inheritdoc/>
-    public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default) =>
-        _protocol.LikeAsync(fname, cancellationToken);
-
-    /// <inheritdoc/>
     public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
         _protocol.FollowAsync(fid, cancellationToken);
 
     /// <inheritdoc/>
     public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) =>
         _protocol.FollowAsync(fname, cancellationToken);
-
-    /// <inheritdoc/>
-    public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default) =>
-        _protocol.UnlikeAsync(fname, cancellationToken);
 
     /// <inheritdoc/>
     public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
@@ -212,8 +204,4 @@ public sealed class ForumModule : IForumModule
         CancellationToken cancellationToken = default) =>
         _protocol.GetDislikeForumsAsync(pn, rn, cancellationToken);
 
-    /// <inheritdoc/>
-    public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-        CancellationToken cancellationToken = default) =>
-        _protocol.DelBaWuAsync(fname, portrait, baWuType, cancellationToken);
 }

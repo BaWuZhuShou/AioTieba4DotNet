@@ -9,6 +9,7 @@ using AioTieba4DotNet.Models.Shared;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Modules;
 using AioTieba4DotNet.Protocols;
+using AioTieba4DotNet.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AioTieba4DotNet.Tests.Baseline;
@@ -17,34 +18,78 @@ namespace AioTieba4DotNet.Tests.Baseline;
 public sealed class UserAdminMessagesModuleCoverageTests
 {
     [TestMethod]
+    public void UserAdminMessages_PublicContracts_FreezeNormalizedNames_AndRejectRemovedSpellings()
+    {
+        var userSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Contracts/IUserModule.cs",
+            "AioTieba4DotNet/Protocols/IUserProtocol.cs",
+            "AioTieba4DotNet/Modules/UserModule.cs");
+        RepositorySourceTextAssert.ContainsAll(
+            userSource,
+            "GetBlacklistAsync",
+            "GetBlacklistOldAsync",
+            "SetBlacklistAsync",
+            "AddBlacklistOldAsync",
+            "RemoveBlacklistOldAsync",
+            "GetUserInfoAppAsync",
+            "GetUserInfoWebAsync",
+            "SetNicknameAsync",
+            "UserPostGroups");
+        RepositorySourceTextAssert.DoesNotContainAny(
+            userSource,
+            "GetBlacklistPermissionsAsync",
+            "SetBlacklistPermissionsAsync",
+            "GetBlacklistMutedAsync",
+            "AddBlacklistMutedAsync",
+            "RemoveBlacklistMutedAsync",
+            "GetBlacklistLegacyAsync",
+            "AddBlacklistLegacyAsync",
+            "RemoveBlacklistLegacyAsync",
+            "GetBasicInfoAppAsync",
+            "GetBasicInfoWebAsync",
+            "SetNicknameLegacyAsync",
+            "UserPostss",
+            "GetAtsAsync(",
+            "GetRepliesAsync(",
+            "BlockAsync(");
+
+        var adminSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Contracts/IAdminModule.cs",
+            "AioTieba4DotNet/Protocols/IAdminProtocol.cs",
+            "AioTieba4DotNet/Modules/AdminModule.cs");
+        RepositorySourceTextAssert.ContainsAll(adminSource, "AddBawuAsync", "DelBawuAsync", "BlockAsync");
+        RepositorySourceTextAssert.DoesNotContainAny(adminSource, "AddBaWuAsync", "RemoveBawuAsync", "DelBaWuAsync");
+
+        var messagesSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Contracts/IMessagesModule.cs",
+            "AioTieba4DotNet/Protocols/IMessagesProtocol.cs",
+            "AioTieba4DotNet/Modules/MessagesModule.cs");
+        RepositorySourceTextAssert.ContainsAll(messagesSource, "GetAtsAsync", "GetRepliesAsync", "SetMessageReadAsync");
+    }
+
+    [TestMethod]
     public async Task UserModule_DelegatesRemainingMembersToInternalProtocol()
     {
         var protocol = new RecordingUserProtocol();
         var module = new UserModule(protocol);
 
         Assert.AreEqual("tbs-123", await module.GetTbsAsync());
-        Assert.IsNull(await module.GetBasicInfoAsync(1));
+        Assert.IsNull(await module.GetUserInfoAppAsync(1));
         Assert.IsNull(await module.GetProfileAsync(1));
         Assert.IsNull(await module.GetProfileAsync("tb.1.safe"));
-        Assert.IsTrue(await module.BlockAsync(123UL, "tb.1.safe", 3, "reason"));
-        Assert.IsTrue(await module.BlockAsync("csharp", "tb.1.safe", 4, "reason-2"));
         Assert.IsTrue(await module.UnfollowAsync("tb.1.safe"));
         Assert.IsNull(await module.GetFollowsAsync(42, 2));
         Assert.IsNull(await module.GetFansAsync(43, 3));
         Assert.IsNull(await module.GetPanelInfoAsync("safe-user"));
         Assert.IsNull(await module.GetUserInfoJsonAsync("safe-user"));
-        Assert.IsNull(await module.GetAtsAsync(4));
-        Assert.IsNull(await module.GetRepliesAsync(5));
         Assert.IsNull(await module.GetBlacklistAsync());
         Assert.IsTrue(await module.RemoveFanAsync(44));
+        Assert.IsNull(await module.GetPostsAsync(45, 6, 7, "8.9.8.5"));
 
         Assert.AreEqual(44L, protocol.LastUserId);
-        Assert.AreEqual("csharp", protocol.LastForumName);
         Assert.AreEqual("tb.1.safe", protocol.LastPortrait);
-        Assert.AreEqual(4, protocol.LastDay);
-        Assert.AreEqual("reason-2", protocol.LastReason);
         Assert.AreEqual("safe-user", protocol.LastLookupText);
-        Assert.AreEqual(5, protocol.LastPageNumber);
+        Assert.AreEqual(3, protocol.LastPageNumber);
     }
 
     [TestMethod]
@@ -53,8 +98,8 @@ public sealed class UserAdminMessagesModuleCoverageTests
         var protocol = new RecordingAdminProtocol();
         var module = new AdminModule(protocol);
 
-        Assert.IsTrue(await module.AddBaWuAsync("csharp", "target-user", BawuType.Manager));
-        Assert.IsTrue(await module.DelBaWuAsync("csharp", "tb.1.safe", BawuType.Manager));
+        Assert.IsTrue(await module.AddBawuAsync("csharp", "target-user", BawuType.Manager));
+        Assert.IsTrue(await module.DelBawuAsync("csharp", "tb.1.safe", BawuType.Manager));
         Assert.IsTrue(await module.AddBawuBlacklistAsync("csharp", 11));
         Assert.IsTrue(await module.DelBawuBlacklistAsync("csharp", 12));
         Assert.IsNull(await module.GetBawuBlacklistAsync("csharp", 2));
@@ -117,7 +162,7 @@ public sealed class UserAdminMessagesModuleCoverageTests
         public int LastPageNumber { get; private set; }
 
         public Task<string> GetTbsAsync(CancellationToken cancellationToken = default) => Task.FromResult("tbs-123");
-        public Task<UserInfoGuInfoApp> GetBasicInfoAsync(int userId, CancellationToken cancellationToken = default)
+    public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
         {
             LastUserId = userId;
             return Task.FromResult<UserInfoGuInfoApp>(null!);
@@ -133,15 +178,6 @@ public sealed class UserAdminMessagesModuleCoverageTests
         {
             LastLookupText = portraitOrUserName;
             return Task.FromResult<UserInfoPf>(null!);
-        }
-
-        public Task<bool> BlockAsync(ulong fid, string portrait, int day, string reason, CancellationToken cancellationToken = default)
-        {
-            LastUserId = (long)fid;
-            LastPortrait = portrait;
-            LastDay = day;
-            LastReason = reason;
-            return Task.FromResult(true);
         }
 
         public Task<bool> BlockAsync(string fname, string portrait, int day, string reason, CancellationToken cancellationToken = default)
@@ -193,38 +229,26 @@ public sealed class UserAdminMessagesModuleCoverageTests
             Task.FromResult(new UserInfo());
         public Task<LoginResult> LoginAsync(CancellationToken cancellationToken = default) =>
             Task.FromResult(new LoginResult { User = new UserInfo() });
-        public Task<AtMessages> GetAtsAsync(int pn, CancellationToken cancellationToken = default)
-        {
-            LastPageNumber = pn;
-            return Task.FromResult<AtMessages>(null!);
-        }
-
-        public Task<ReplyMessages> GetRepliesAsync(int pn, CancellationToken cancellationToken = default)
-        {
-            LastPageNumber = pn;
-            return Task.FromResult<ReplyMessages>(null!);
-        }
-
         public Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default) => Task.FromResult<BlacklistUsers>(null!);
-        public Task<BlacklistOldUsers> GetBlacklistLegacyAsync(int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<BlacklistOldUsers>(null!);
+        public Task<BlacklistOldUsers> GetBlacklistOldAsync(int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<BlacklistOldUsers>(null!);
         public Task<bool> SetBlacklistAsync(long userId, BlacklistType type, CancellationToken cancellationToken = default) => Task.FromResult(true);
-        public Task<bool> AddBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default) => Task.FromResult(true);
-        public Task<bool> RemoveBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<bool> AddBlacklistOldAsync(long userId, CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<bool> RemoveBlacklistOldAsync(long userId, CancellationToken cancellationToken = default) => Task.FromResult(true);
         public Task<bool> RemoveFanAsync(long userId, CancellationToken cancellationToken = default)
         {
             LastUserId = userId;
             return Task.FromResult(true);
         }
 
-        public Task<UserInfoGuInfoWeb> GetBasicInfoWebAsync(int userId, CancellationToken cancellationToken = default) => Task.FromResult<UserInfoGuInfoWeb>(null!);
+    public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default) => Task.FromResult<UserInfoGuInfoWeb>(null!);
         public Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait, CancellationToken cancellationToken = default) => Task.FromResult<UserForumInfo>(null!);
         public Task<UserForumInfo> GetUserForumInfoAsync(string fname, string portrait, CancellationToken cancellationToken = default) => Task.FromResult<UserForumInfo>(null!);
         public Task<RankUsers> GetRankUsersAsync(string fname, int pn, CancellationToken cancellationToken = default) => Task.FromResult<RankUsers>(null!);
         public Task<Homepage> GetHomepageAsync(int userId, int pn, CancellationToken cancellationToken = default) => Task.FromResult<Homepage>(null!);
-        public Task<bool> SetNicknameLegacyAsync(string nickName, CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<bool> SetNicknameAsync(string nickName, CancellationToken cancellationToken = default) => Task.FromResult(true);
         public Task<bool> SetProfileAsync(string nickName, string sign, Gender gender, CancellationToken cancellationToken = default) => Task.FromResult(true);
         public Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default) => Task.FromResult<UserInfoTUid>(null!);
-        public Task<UserPostss> GetPostsAsync(int userId, uint pn, uint rn, string version, CancellationToken cancellationToken = default) => Task.FromResult<UserPostss>(null!);
+        public Task<UserPostGroups> GetPostsAsync(int userId, uint pn, uint rn, string version, CancellationToken cancellationToken = default) => Task.FromResult<UserPostGroups>(null!);
         public Task<UserThreads> GetThreadsAsync(int userId, uint pn, bool publicOnly, CancellationToken cancellationToken = default) => Task.FromResult<UserThreads>(null!);
     }
 
@@ -239,14 +263,14 @@ public sealed class UserAdminMessagesModuleCoverageTests
         public IReadOnlyList<long>? LastAppealIds { get; private set; }
         public bool LastRefuse { get; private set; }
 
-        public Task<bool> AddBaWuAsync(string fname, string userName, BawuType bawuType, CancellationToken cancellationToken = default)
+        public Task<bool> AddBawuAsync(string fname, string userName, BawuType bawuType, CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             LastUserName = userName;
             return Task.FromResult(true);
         }
 
-        public Task<bool> DelBaWuAsync(string fname, string portrait, BawuType bawuType, CancellationToken cancellationToken = default)
+        public Task<bool> DelBawuAsync(string fname, string portrait, BawuType bawuType, CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             LastPortrait = portrait;

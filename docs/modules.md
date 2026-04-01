@@ -84,7 +84,6 @@ using var accountClient = factory.CreateClient(new Account("BDUSS", "STOKEN"));
 | --- | --- |
 | `FollowAsync(string)` / `FollowAsync(ulong)` | 关注贴吧 |
 | `UnfollowAsync(string)` / `UnfollowAsync(ulong)` | 取消关注 |
-| `LikeAsync(string)` / `UnlikeAsync(string)` | 旧别名兼容入口 |
 | `SignAsync(string)` | 单吧签到 |
 | `SignForumsAsync()` | 一键签到当前账号关注的贴吧 |
 | `SignGrowthAsync()` | 成长任务签到 |
@@ -113,8 +112,8 @@ using var accountClient = factory.CreateClient(new Account("BDUSS", "STOKEN"));
 | `GetImageByHashAsync(string, ForumImageSize)` | 按图片 hash 获取贴吧图片 |
 | `GetPortraitAsync(string, ForumImageSize)` | 按 portrait 获取头像 |
 | `GetFollowForumsAsync(...)` | 获取指定用户关注吧列表 |
-| `GetSelfFollowForumsAsync(...)` | 获取当前账号关注吧列表 |
-| `GetSelfFollowForumsV1Async(...)` | 获取旧版当前账号关注吧列表 |
+| `GetSelfFollowForumsAsync(...)` | 获取当前账号关注吧列表，返回 `SelfFollowForums`，包含 `IsSigned` 状态 |
+| `GetSelfFollowForumsV1Async(...)` | 获取当前账号关注吧列表的 V1 版本接口，返回 `SelfFollowForumsV1` 与显式分页信息 |
 | `GetDislikeForumsAsync(...)` | 获取首页推荐屏蔽贴吧列表 |
 | `DislikeAsync(...)` / `UndislikeAsync(...)` | 设置或取消首页推荐屏蔽 |
 
@@ -136,17 +135,25 @@ using var accountClient = factory.CreateClient(new Account("BDUSS", "STOKEN"));
 
 适用任务: 查资料、查主页、关注用户、黑名单、资料修改。
 
-### 推荐入口
+### 常用入口
 
-- `GetBasicInfoAsync(...)`
+- `GetUserInfoAppAsync(...)`
+- `GetUserInfoWebAsync(...)`
 - `GetProfileAsync(...)`
+- `GetHomepageAsync(...)`
 - `GetSelfInfoAsync()`
 - `GetSelfInfoInitNicknameAsync()`
 - `GetSelfInfoMoIndexAsync()`
 - `LoginAsync()`
 - `SetProfileAsync(...)`
+- `SetNicknameAsync(...)`
 - `GetBlacklistAsync()`
 - `SetBlacklistAsync(...)`
+- `GetBlacklistOldAsync(...)`
+- `AddBlacklistOldAsync(...)`
+- `RemoveBlacklistOldAsync(...)`
+
+`GetUserInfoAppAsync(...)` 和 `GetUserInfoWebAsync(...)` 是两组并列支持的 `user_info` 接口，分别对应 aiotieba `get_uinfo_getuserinfo_app` / `UserInfo_guinfo_app` 与 `get_uinfo_getuserinfo_web` / `UserInfo_guinfo_web`，并返回 `UserInfoGuInfoApp` 与 `UserInfoGuInfoWeb`。`GetProfileAsync(...)` 读取资料页信息，`GetHomepageAsync(...)` 读取主页内容和主页快照。它们也是分开的用户读取接口，不会合并成同一个入口。
 
 ### 补充读取和社交关系
 
@@ -161,14 +168,15 @@ using var accountClient = factory.CreateClient(new Account("BDUSS", "STOKEN"));
 - `GetThreadsAsync(...)`
 - `GetUserByTiebaUidAsync(...)`
 
-### 兼容入口
+### 并列支持的接口组
 
-- `GetBasicInfoWebAsync(...)`
-- `GetBlacklistLegacyAsync(...)`
-- `AddBlacklistLegacyAsync(...)`
-- `RemoveBlacklistLegacyAsync(...)`
-- `SetNicknameLegacyAsync(...)`
-- `GetAtsAsync(...)` 和 `GetRepliesAsync(...)`，为了旧入口兼容仍保留，但新的消息文档统一使用 `client.Messages`
+这些入口都是当前公开契约的一部分。它们对应不同的 aiotieba 接口，或者保留了不同的返回结果，按你的数据需求选择即可。
+
+- `GetUserInfoAppAsync(...)` / `GetUserInfoWebAsync(...)`：并列支持的 App 与 Web `user_info` 接口
+- `GetBlacklistAsync(...)` / `SetBlacklistAsync(...)` 与 `GetBlacklistOldAsync(...)` / `AddBlacklistOldAsync(...)` / `RemoveBlacklistOldAsync(...)`：并列支持的两组黑名单接口，分别返回 `BlacklistUsers` 与 `BlacklistOldUsers`，其中 `Old` 直接对应 upstream `_old` 这一组接口
+- `SetProfileAsync(...)` 与 `SetNicknameAsync(...)`：分开的资料写入接口，一组用于整组资料写入，一组用于单字段昵称写入
+
+消息读取能力已经完全归属 `client.Messages`；吧务封禁和 Bawu 写操作已经完全归属 `client.Admins`。
 
 ## 根级辅助导出
 
@@ -183,7 +191,7 @@ using var accountClient = factory.CreateClient(new Account("BDUSS", "STOKEN"));
 
 | 方法族 | 代表方法 |
 | --- | --- |
-| 吧务团队 | `AddBaWuAsync(...)`, `DelBaWuAsync(...)`, `GetBawuInfoAsync(...)` |
+| 吧务团队 | `AddBawuAsync(...)`, `DelBawuAsync(...)`, `GetBawuInfoAsync(...)`（分别对应 upstream `add_bawu` / `del_bawu`） |
 | 吧务权限 | `GetBawuPermAsync(...)`, `SetBawuPermAsync(...)` |
 | 吧务黑名单 | `AddBawuBlacklistAsync(...)`, `DelBawuBlacklistAsync(...)`, `GetBawuBlacklistAsync(...)` |
 | 吧务日志 | `GetBawuPostLogsAsync(...)`, `GetBawuUserLogsAsync(...)` |

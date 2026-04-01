@@ -1,6 +1,6 @@
 # How-to: Messages
 
-v3 把消息相关能力明确放在 `client.Messages`。如果你从旧代码迁移过来，`client.Users.GetAtsAsync(...)` 和 `client.Users.GetRepliesAsync(...)` 还在，但新的消息文档和示例都以 `Messages` 为准。
+v3 把消息相关能力明确放在 `client.Messages`。`@`、回复、私信、吧群消息和 push 解析都由这个模块公开承载，`client.Client` 只负责连接生命周期。
 
 ## 读取 @ 消息和回复消息
 

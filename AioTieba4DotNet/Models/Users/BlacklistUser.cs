@@ -3,7 +3,7 @@ using AioTieba4DotNet.Models.Shared;
 namespace AioTieba4DotNet.Models.Users;
 
 /// <summary>
-///     黑名单用户
+///     表示 aiotieba <c>get_blacklist</c> 返回的黑名单用户项。
 /// </summary>
 public class BlacklistUser : UserInfo
 {

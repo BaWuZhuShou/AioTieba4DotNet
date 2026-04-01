@@ -8,6 +8,7 @@ using AioTieba4DotNet.Models.Messages;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Modules;
 using AioTieba4DotNet.Protocols;
+using AioTieba4DotNet.Tests.Infrastructure;
 using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -16,6 +17,38 @@ namespace AioTieba4DotNet.Tests.Baseline;
 [TestClass]
 public sealed class MessagesModuleBehaviorTests
 {
+    [TestMethod]
+    public async Task MessagesModule_DelegatesGetAtsToInternalProtocol()
+    {
+        var expected = new AtMessages([], new Models.Threads.PageT { CurrentPage = 2 });
+        var protocol = new RecordingMessagesProtocol
+        {
+            AtMessagesResult = expected
+        };
+        var module = new MessagesModule(protocol);
+
+        var actual = await module.GetAtsAsync(2);
+
+        Assert.AreSame(expected, actual);
+        Assert.AreEqual(2, protocol.LastAtsPn);
+    }
+
+    [TestMethod]
+    public async Task MessagesModule_DelegatesGetRepliesToInternalProtocol()
+    {
+        var expected = new ReplyMessages([], new Models.Threads.PageT { CurrentPage = 3 });
+        var protocol = new RecordingMessagesProtocol
+        {
+            ReplyMessagesResult = expected
+        };
+        var module = new MessagesModule(protocol);
+
+        var actual = await module.GetRepliesAsync(3);
+
+        Assert.AreSame(expected, actual);
+        Assert.AreEqual(3, protocol.LastRepliesPn);
+    }
+
     [TestMethod]
     public async Task MessagesModule_DelegatesSendMessageToInternalProtocol()
     {
@@ -60,6 +93,23 @@ public sealed class MessagesModuleBehaviorTests
         Assert.AreEqual(1711111111L, notifications[0].CreateTime);
     }
 
+    [TestMethod]
+    public void MessagesModule_PublicContracts_FreezeCanonicalReadNames()
+    {
+        var messagesSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Contracts/IMessagesModule.cs",
+            "AioTieba4DotNet/Protocols/IMessagesProtocol.cs",
+            "AioTieba4DotNet/Modules/MessagesModule.cs");
+
+        RepositorySourceTextAssert.ContainsAll(
+            messagesSource,
+            "GetAtsAsync",
+            "GetRepliesAsync",
+            "SendMessageAsync",
+            "SetMessageReadAsync",
+            "ParsePushNotifications");
+    }
+
     private static byte[] BuildPushPayload()
     {
         var response = new PushNotifyResIdl();
@@ -79,6 +129,14 @@ public sealed class MessagesModuleBehaviorTests
 
     private sealed class RecordingMessagesProtocol : IMessagesProtocol
     {
+        public AtMessages AtMessagesResult { get; init; } = new([], new Models.Threads.PageT());
+
+        public ReplyMessages ReplyMessagesResult { get; init; } = new([], new Models.Threads.PageT());
+
+        public int? LastAtsPn { get; private set; }
+
+        public int? LastRepliesPn { get; private set; }
+
         public long? LastSendUserId { get; private set; }
 
         public string? LastSendContent { get; private set; }
@@ -91,11 +149,17 @@ public sealed class MessagesModuleBehaviorTests
 
         public int? LastRobotCode { get; private set; }
 
-        public Task<AtMessages> GetAtsAsync(int pn, CancellationToken cancellationToken = default) =>
-            Task.FromResult(new AtMessages([], new Models.Threads.PageT()));
+        public Task<AtMessages> GetAtsAsync(int pn, CancellationToken cancellationToken = default)
+        {
+            LastAtsPn = pn;
+            return Task.FromResult(AtMessagesResult);
+        }
 
-        public Task<ReplyMessages> GetRepliesAsync(int pn, CancellationToken cancellationToken = default) =>
-            Task.FromResult(new ReplyMessages([], new Models.Threads.PageT()));
+        public Task<ReplyMessages> GetRepliesAsync(int pn, CancellationToken cancellationToken = default)
+        {
+            LastRepliesPn = pn;
+            return Task.FromResult(ReplyMessagesResult);
+        }
 
         public Task<WsMsgGroups> GetGroupMessagesAsync(int getType, CancellationToken cancellationToken = default) =>
             Task.FromResult(new WsMsgGroups([]));

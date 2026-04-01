@@ -24,7 +24,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
 {
     private readonly ForumInfoCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
 
-    public async Task<bool> AddBaWuAsync(string fname, string userName, BawuType bawuType,
+    public async Task<bool> AddBawuAsync(string fname, string userName, BawuType bawuType,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -33,18 +33,18 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateEnum(bawuType, nameof(bawuType));
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true);
-        var fid = await ResolveForumIdAsync(nameof(AddBaWuAsync), capabilities, fname, cancellationToken);
+        var fid = await ResolveForumIdAsync(nameof(AddBawuAsync), capabilities, fname, cancellationToken);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
-                nameof(AddBaWuAsync),
+                nameof(AddBawuAsync),
                 capabilities,
                 (session, ct) => new AddBaWu(session.HttpCore).RequestAsync((long)fid, userName,
                     BawuTypeWireMapper.ToWireValue(bawuType), ct)),
             cancellationToken);
     }
 
-    public async Task<bool> DelBaWuAsync(string fname, string portrait, BawuType bawuType,
+    public async Task<bool> DelBawuAsync(string fname, string portrait, BawuType bawuType,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -53,11 +53,11 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateEnum(bawuType, nameof(bawuType));
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true);
-        var fid = await ResolveForumIdAsync(nameof(DelBaWuAsync), capabilities, fname, cancellationToken);
+        var fid = await ResolveForumIdAsync(nameof(DelBawuAsync), capabilities, fname, cancellationToken);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
-                nameof(DelBaWuAsync),
+                nameof(DelBawuAsync),
                 capabilities,
                 (session, ct) => new DelBaWu(session.HttpCore).RequestAsync((long)fid, portrait,
                     BawuTypeWireMapper.ToWireValue(bawuType), ct)),

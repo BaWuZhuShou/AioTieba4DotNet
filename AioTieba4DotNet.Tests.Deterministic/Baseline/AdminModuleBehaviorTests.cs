@@ -71,10 +71,10 @@ public sealed class AdminModuleBehaviorTests
 
         public BawuPerm BawuPermResult { get; init; } = new();
 
-        public Task<bool> AddBaWuAsync(string fname, string userName, BawuType bawuType,
+        public Task<bool> AddBawuAsync(string fname, string userName, BawuType bawuType,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-        public Task<bool> DelBaWuAsync(string fname, string portrait, BawuType bawuType,
+        public Task<bool> DelBawuAsync(string fname, string portrait, BawuType bawuType,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
         public Task<bool> AddBawuBlacklistAsync(string fname, long userId,

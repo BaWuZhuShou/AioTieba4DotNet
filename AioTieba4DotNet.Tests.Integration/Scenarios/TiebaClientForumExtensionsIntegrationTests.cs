@@ -42,7 +42,7 @@ public sealed class TiebaClientForumExtensionsIntegrationTests : TestBase
     }
 
     [TestMethod]
-    public async Task GetSelfFollowForumsV1Async_AuthenticatedAccount_ReturnsLegacyPageShape()
+    public async Task GetSelfFollowForumsV1Async_AuthenticatedAccount_ReturnsV1PeerShape()
     {
         EnsureAuthenticated();
 

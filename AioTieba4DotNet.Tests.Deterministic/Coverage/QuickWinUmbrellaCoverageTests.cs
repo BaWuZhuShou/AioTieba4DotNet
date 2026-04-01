@@ -151,7 +151,7 @@ public sealed class QuickWinUmbrellaCoverageTests
             ["page"] = new JObject { ["cur_page"] = 1, ["total_page"] = 2 }
         });
         var emptySelfFollowForums = SelfFollowForumsV1Mapper.FromTbData(new JObject());
-        var blacklistWithPerms = BlacklistUserMapper.FromTbData(new JObject
+        var blacklistWithPerms = MapBlacklistUser(new JObject
         {
             ["id"] = 8,
             ["portrait"] = "tb.1.blacklist?012345678901",
@@ -159,7 +159,7 @@ public sealed class QuickWinUmbrellaCoverageTests
             ["name_show"] = "Blocked User",
             ["perm_list"] = new JObject { ["follow"] = 1, ["interact"] = 0, ["chat"] = 1 }
         });
-        var blacklistFallback = BlacklistUserMapper.FromTbData(new JObject());
+        var blacklistFallback = MapBlacklistUser(new JObject());
         var squareForums = SquareForumsMapper.FromTbData(new GetForumSquareResIdl.Types.DataRes
         {
             ForumInfo =
@@ -194,10 +194,10 @@ public sealed class QuickWinUmbrellaCoverageTests
         Assert.IsFalse(emptySelfFollowForums.Page.HasMore);
         Assert.AreEqual(8L, blacklistWithPerms.UserId);
         Assert.AreEqual("tb.1.blacklist", blacklistWithPerms.Portrait);
-        Assert.IsTrue(blacklistWithPerms.BlockFollow);
-        Assert.IsFalse(blacklistWithPerms.BlockInteract);
-        Assert.IsTrue(blacklistWithPerms.BlockChat);
-        Assert.IsFalse(blacklistFallback.BlockFollow);
+        Assert.IsTrue(GetBlacklistUserFlag(blacklistWithPerms, "BlockFollow"));
+        Assert.IsFalse(GetBlacklistUserFlag(blacklistWithPerms, "BlockInteract"));
+        Assert.IsTrue(GetBlacklistUserFlag(blacklistWithPerms, "BlockChat"));
+        Assert.IsFalse(GetBlacklistUserFlag(blacklistFallback, "BlockFollow"));
         Assert.AreEqual(1, squareForums.Count);
         Assert.AreEqual(0, squareForums.Page.PageSize);
         Assert.AreEqual(0, squareForums.Page.CurrentPage);
@@ -358,7 +358,7 @@ public sealed class QuickWinUmbrellaCoverageTests
             ["followed_count"] = "7"
         });
         var emptyUserForum = UserInfoUfMapper.FromTbData(new JObject());
-        var blacklistAll = BlacklistUserMapper.FromTbData(new JObject
+        var blacklistAll = MapBlacklistUser(new JObject
         {
             ["id"] = 9,
             ["portrait"] = "tb.1.black",
@@ -482,9 +482,9 @@ public sealed class QuickWinUmbrellaCoverageTests
         Assert.AreEqual(0L, emptyUserForum.UserId);
         Assert.AreEqual(string.Empty, emptyUserForum.Portrait);
         Assert.IsFalse(emptyUserForum.IsLike);
-        Assert.IsTrue(blacklistAll.BlockFollow);
-        Assert.IsTrue(blacklistAll.BlockInteract);
-        Assert.IsTrue(blacklistAll.BlockChat);
+        Assert.IsTrue(GetBlacklistUserFlag(blacklistAll, "BlockFollow"));
+        Assert.IsTrue(GetBlacklistUserFlag(blacklistAll, "BlockInteract"));
+        Assert.IsTrue(GetBlacklistUserFlag(blacklistAll, "BlockChat"));
         Assert.IsNull(atMessage.Replyer);
         Assert.IsFalse(atMessage.IsFloor);
         Assert.IsFalse(atMessage.IsFirstPost);
@@ -702,4 +702,14 @@ public sealed class QuickWinUmbrellaCoverageTests
             return queue.Dequeue();
         }
     }
+
+    private static BlacklistUser MapBlacklistUser(JObject data) =>
+        (BlacklistUser)typeof(BlacklistUserMapper)
+            .GetMethod("FromTbData", BindingFlags.NonPublic | BindingFlags.Static)!
+            .Invoke(null, [data])!;
+
+    private static bool GetBlacklistUserFlag(BlacklistUser user, string propertyName) =>
+        (bool)typeof(BlacklistUser)
+            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)!
+            .GetValue(user)!;
 }

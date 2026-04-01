@@ -1,7 +1,7 @@
 namespace AioTieba4DotNet.Models.Forums;
 
 /// <summary>
-///     旧版当前账号关注的贴吧信息
+///     表示 aiotieba `get_self_follow_forums_v1` 中的 <c>SelfFollowForumV1</c> 项信息。
 /// </summary>
 public class SelfFollowForumV1
 {

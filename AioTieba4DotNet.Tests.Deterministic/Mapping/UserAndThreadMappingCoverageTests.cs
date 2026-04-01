@@ -185,7 +185,7 @@ public sealed class UserAndThreadMappingCoverageTests
     }
 
     [TestMethod]
-    public void BlacklistUsersMapper_FromTbData_MapsPermissions()
+    public void BlacklistUsersMapper_FromTbData_MapsUsers()
     {
         var mapped = BlacklistUsersMapper.FromTbData(new JObject
         {
@@ -269,7 +269,7 @@ public sealed class UserAndThreadMappingCoverageTests
     }
 
     [TestMethod]
-    public void UserPostssMapper_FromTbData_AssignsSharedUserAcrossNestedPosts()
+    public void UserPostGroupsMapper_FromTbData_AssignsSharedUserAcrossNestedPosts()
     {
         var response = new global::UserPostResIdl.Types.DataRes();
         var postList = CreateUserPostList(title: "ignored", forumId: 8, forumName: "forum", threadId: 9, postId: 10,
@@ -283,8 +283,8 @@ public sealed class UserAndThreadMappingCoverageTests
         });
         response.PostList.Add(postList);
 
-        var mapped = UserPostssMapper.FromTbData(response);
-        var empty = UserPostssMapper.FromTbData(new global::UserPostResIdl.Types.DataRes());
+        var mapped = UserPostGroupsMapper.FromTbData(response);
+        var empty = UserPostGroupsMapper.FromTbData(new global::UserPostResIdl.Types.DataRes());
 
         Assert.AreEqual(1, mapped.Count);
         Assert.AreEqual(1, mapped[0].Count);

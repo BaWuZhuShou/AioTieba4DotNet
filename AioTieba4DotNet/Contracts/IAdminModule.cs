@@ -10,23 +10,29 @@ public interface IAdminModule
     /// <summary>
     ///     添加吧务
     /// </summary>
+    /// <remarks>
+    ///     该方法保留 `Bawu` 作为公开根名称，并直接对应 upstream `add_bawu` family。
+    /// </remarks>
     /// <param name="fname">吧名</param>
     /// <param name="userName">目标用户名</param>
     /// <param name="bawuType">吧务类型</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>是否成功</returns>
-    Task<bool> AddBaWuAsync(string fname, string userName, BawuType bawuType,
+    Task<bool> AddBawuAsync(string fname, string userName, BawuType bawuType,
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     移除吧务
+    ///     删除吧务
     /// </summary>
+    /// <remarks>
+    ///     该方法保留 `Bawu` 作为公开根名称，并直接对应 upstream `del_bawu`。
+    /// </remarks>
     /// <param name="fname">吧名</param>
     /// <param name="portrait">目标用户 portrait</param>
     /// <param name="bawuType">吧务类型</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>是否成功</returns>
-    Task<bool> DelBaWuAsync(string fname, string portrait, BawuType bawuType,
+    Task<bool> DelBawuAsync(string fname, string portrait, BawuType bawuType,
         CancellationToken cancellationToken = default);
 
     /// <summary>

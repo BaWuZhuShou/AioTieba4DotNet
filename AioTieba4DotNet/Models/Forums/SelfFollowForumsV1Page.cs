@@ -1,7 +1,7 @@
 namespace AioTieba4DotNet.Models.Forums;
 
 /// <summary>
-///     旧版当前账号关注贴吧分页信息
+///     分页版当前账号关注贴吧分页信息
 /// </summary>
 public class SelfFollowForumsV1Page
 {

@@ -17,14 +17,14 @@ public sealed class AdminModule : IAdminModule
     }
 
     /// <inheritdoc/>
-    public Task<bool> AddBaWuAsync(string fname, string userName, BawuType bawuType,
+    public Task<bool> AddBawuAsync(string fname, string userName, BawuType bawuType,
         CancellationToken cancellationToken = default) =>
-        _protocol.AddBaWuAsync(fname, userName, bawuType, cancellationToken);
+        _protocol.AddBawuAsync(fname, userName, bawuType, cancellationToken);
 
     /// <inheritdoc/>
-    public Task<bool> DelBaWuAsync(string fname, string portrait, BawuType bawuType,
+    public Task<bool> DelBawuAsync(string fname, string portrait, BawuType bawuType,
         CancellationToken cancellationToken = default) =>
-        _protocol.DelBaWuAsync(fname, portrait, bawuType, cancellationToken);
+        _protocol.DelBawuAsync(fname, portrait, bawuType, cancellationToken);
 
     /// <inheritdoc/>
     public Task<bool> AddBawuBlacklistAsync(string fname, long userId, CancellationToken cancellationToken = default) =>

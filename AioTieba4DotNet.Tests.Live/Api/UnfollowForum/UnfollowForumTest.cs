@@ -5,18 +5,18 @@ using AioTieba4DotNet.Testing;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AioTieba4DotNet.Tests.Api.UnlikeForum;
+namespace AioTieba4DotNet.Tests.Api.UnfollowForum;
 
 [TestClass]
 [TestCategory(TestCategoryNames.Live)]
 [TestCategory(TestCategoryNames.ForumExtensions)]
 [TestSubject(typeof(TiebaClient))]
-public sealed class UnlikeForumTest : TestBase
+public sealed class UnfollowForumTest : TestBase
 {
     [TestMethod]
-    public async Task UnlikeAsync_UsesSafeForumFixtureAndRestoresOriginalState()
+    public async Task UnfollowAsync_UsesSafeForumFixtureAndRestoresOriginalState()
     {
-        var fixture = await RequireSafeForumFixtureAsync(nameof(UnlikeAsync_UsesSafeForumFixtureAndRestoresOriginalState));
+        var fixture = await RequireSafeForumFixtureAsync(nameof(UnfollowAsync_UsesSafeForumFixtureAndRestoresOriginalState));
         var wasFollowing = await IsForumFollowedAsync(fixture.Fid);
         Cleanup.RecordObject(TestCategoryNames.ForumExtensions, "forum", fixture.Fid.ToString(),
             TestCleanupObjectRelation.MutationTarget, $"safe forum follow state for {fixture.ResolvedName}");
@@ -42,7 +42,7 @@ public sealed class UnlikeForumTest : TestBase
             Assert.IsTrue(await IsForumFollowedAsync(fixture.Fid));
         }
 
-        var success = await Client.Forums.UnlikeAsync(fixture.ResolvedName);
+        var success = await Client.Forums.UnfollowAsync(fixture.ResolvedName);
 
         Assert.IsTrue(success);
         Assert.IsFalse(await IsForumFollowedAsync(fixture.Fid));

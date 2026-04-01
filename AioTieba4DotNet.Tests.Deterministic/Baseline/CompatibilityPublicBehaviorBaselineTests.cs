@@ -1,8 +1,11 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using AioTieba4DotNet.Contracts;
 using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Modules;
@@ -12,7 +15,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AioTieba4DotNet.Tests.Baseline;
 
 [TestClass]
-public class V1PublicBehaviorBaselineTests
+public sealed class CompatibilityPublicBehaviorBaselineTests
 {
     [TestMethod]
     public void TiebaClient_PublicShell_ExposesRetainedModules()
@@ -22,7 +25,31 @@ public class V1PublicBehaviorBaselineTests
         Assert.IsNotNull(client.Forums);
         Assert.IsNotNull(client.Threads);
         Assert.IsNotNull(client.Users);
+        Assert.IsNotNull(client.Admins);
+        Assert.IsNotNull(client.Messages);
         Assert.IsNotNull(client.Client);
+    }
+
+    [TestMethod]
+    public void ITiebaClient_PublicShell_FreezesNormalizedModulePropertySet()
+    {
+        var moduleProperties = typeof(ITiebaClient)
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+            .OrderBy(property => property.Name, StringComparer.Ordinal)
+            .Select(property => $"{property.Name}:{property.PropertyType.Name}")
+            .ToArray();
+
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                "Admins:IAdminModule",
+                "Client:IClientModule",
+                "Forums:IForumModule",
+                "Messages:IMessagesModule",
+                "Threads:IThreadModule",
+                "Users:IUserModule"
+            },
+            moduleProperties);
     }
 
     [TestMethod]

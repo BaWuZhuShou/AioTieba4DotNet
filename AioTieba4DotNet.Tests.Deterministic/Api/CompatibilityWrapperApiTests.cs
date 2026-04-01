@@ -19,7 +19,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AioTieba4DotNet.Tests.Api;
 
 [TestClass]
-public sealed class LegacyWrapperApiTests
+public sealed class CompatibilityWrapperApiTests
 {
     [TestMethod]
     public async Task AddBlacklistOld_RequestAsync_CoversEmptyBdussAndErrornoBranches()

@@ -57,6 +57,22 @@ public sealed class LocalVerificationContractTests
     ];
 
     [TestMethod]
+    public void Task11EvidenceFiles_Exist_And_AreNotEmpty()
+    {
+        var repositoryRoot = RepositoryPaths.FindRepositoryRoot();
+        foreach (var relativePath in new[]
+                 {
+                     ".sisyphus/evidence/task-11-deterministic-lane.md",
+                     ".sisyphus/evidence/task-11-test-search.md"
+                 })
+        {
+            var fullPath = Path.Combine(repositoryRoot, relativePath.Replace('/', Path.DirectorySeparatorChar));
+            Assert.IsTrue(File.Exists(fullPath), $"Expected task evidence file: {relativePath}");
+            Assert.IsTrue(new FileInfo(fullPath).Length > 0, $"Task evidence file must not be empty: {relativePath}");
+        }
+    }
+
+    [TestMethod]
     public void GovernanceContractFiles_Exist_And_AreNotEmpty()
     {
         var repositoryRoot = RepositoryPaths.FindRepositoryRoot();

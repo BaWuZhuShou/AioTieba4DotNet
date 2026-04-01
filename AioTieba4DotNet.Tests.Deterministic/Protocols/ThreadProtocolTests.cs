@@ -981,7 +981,7 @@ public class ThreadProtocolTests
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
         public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
@@ -1058,7 +1058,7 @@ public class ThreadProtocolTests
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
         public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>

@@ -1,5 +1,7 @@
 using AioTieba4DotNet.Api.GetForumLevel;
 using AioTieba4DotNet.Api.GetGroupMsg;
+using AioTieba4DotNet.Api.GetAts;
+using AioTieba4DotNet.Api.GetReplys;
 using AioTieba4DotNet.Api.InitWebSocket;
 using AioTieba4DotNet.Api.PushNotify;
 using AioTieba4DotNet.Api.SendMsg;
@@ -26,11 +28,31 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
     private readonly SendChatroomMessageHandler _sendChatroomMessageAsync =
         sendChatroomMessageAsync ?? DefaultSendChatroomMessageAsync;
 
-    public Task<AtMessages> GetAtsAsync(int pn, CancellationToken cancellationToken = default) =>
-        users.GetAtsAsync(pn, cancellationToken);
+    public async Task<AtMessages> GetAtsAsync(int pn, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        ValidatePageNumber(pn);
 
-    public Task<ReplyMessages> GetRepliesAsync(int pn, CancellationToken cancellationToken = default) =>
-        users.GetRepliesAsync(pn, cancellationToken);
+        return await dispatcher.ExecuteAsync(
+            new TiebaOperationDescriptor<AtMessages>(
+                nameof(GetAtsAsync),
+                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                (session, ct) => new GetAts(session.HttpCore).RequestAsync(pn, ct)),
+            cancellationToken);
+    }
+
+    public async Task<ReplyMessages> GetRepliesAsync(int pn, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        ValidatePageNumber(pn);
+
+        return await dispatcher.ExecuteAsync(
+            new TiebaOperationDescriptor<ReplyMessages>(
+                nameof(GetRepliesAsync),
+                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                (session, ct) => new GetReplys(session.HttpCore).RequestAsync(pn, ct)),
+            cancellationToken);
+    }
 
     private static Task<bool> DefaultSendChatroomMessageAsync(Account account, UserInfo selfInfo,
         ForumLevelInfo forumLevel, long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds,
@@ -192,6 +214,12 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
     {
         if (userId <= 0)
             throw new ArgumentOutOfRangeException(nameof(userId), userId, "User id must be positive.");
+    }
+
+    private static void ValidatePageNumber(int pn)
+    {
+        if (pn <= 0)
+            throw new ArgumentOutOfRangeException(nameof(pn), pn, "Page number must be positive.");
     }
 
     private static void ValidateGroupIds(IReadOnlyList<long> groupIds)

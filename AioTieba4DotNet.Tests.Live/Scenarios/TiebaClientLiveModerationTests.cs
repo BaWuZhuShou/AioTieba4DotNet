@@ -17,7 +17,7 @@ public sealed class TiebaClientLiveModerationTests : TestBase
     {
         EnsureAuthenticated();
 
-        var result = await Client.Users.BlockAsync("DNF", "some_portrait", 1, "test");
+        var result = await Client.Admins.BlockAsync("DNF", "some_portrait", 1, "test");
 
         Assert.IsTrue(result);
     }

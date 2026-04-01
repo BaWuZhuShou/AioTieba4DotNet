@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Reflection;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Models.Threads;
@@ -110,7 +111,7 @@ public sealed class NextWaveMapperCoverageTests
             NewGodData = new global::User.Types.NewGodInfo()
         });
 
-        var blacklistWithPerms = BlacklistUserMapper.FromTbData(new JObject
+        var blacklistWithPerms = MapBlacklistUser(new JObject
         {
             ["id"] = 46,
             ["portrait"] = "tb.1.black?012345678901",
@@ -123,7 +124,7 @@ public sealed class NextWaveMapperCoverageTests
                 ["chat"] = 1
             }
         });
-        var blacklistFallback = BlacklistUserMapper.FromTbData(new JObject
+        var blacklistFallback = MapBlacklistUser(new JObject
         {
             ["id"] = 47,
             ["portrait"] = "tb.1.raw",
@@ -208,13 +209,13 @@ public sealed class NextWaveMapperCoverageTests
 
         Assert.AreEqual(46L, blacklistWithPerms.UserId);
         Assert.AreEqual("tb.1.black", blacklistWithPerms.Portrait);
-        Assert.IsTrue(blacklistWithPerms.BlockFollow);
-        Assert.IsFalse(blacklistWithPerms.BlockInteract);
-        Assert.IsTrue(blacklistWithPerms.BlockChat);
+        Assert.IsTrue(GetBlacklistUserFlag(blacklistWithPerms, "BlockFollow"));
+        Assert.IsFalse(GetBlacklistUserFlag(blacklistWithPerms, "BlockInteract"));
+        Assert.IsTrue(GetBlacklistUserFlag(blacklistWithPerms, "BlockChat"));
         Assert.AreEqual(47L, blacklistFallback.UserId);
-        Assert.IsFalse(blacklistFallback.BlockFollow);
-        Assert.IsFalse(blacklistFallback.BlockInteract);
-        Assert.IsFalse(blacklistFallback.BlockChat);
+        Assert.IsFalse(GetBlacklistUserFlag(blacklistFallback, "BlockFollow"));
+        Assert.IsFalse(GetBlacklistUserFlag(blacklistFallback, "BlockInteract"));
+        Assert.IsFalse(GetBlacklistUserFlag(blacklistFallback, "BlockChat"));
 
         Assert.AreEqual(0, recoverPageNull.CurrentPage);
         Assert.AreEqual(0, recoverPageNull.PageSize);
@@ -366,4 +367,14 @@ public sealed class NextWaveMapperCoverageTests
         Assert.IsFalse(threadsMapped.Objs[1].VirtualImage.Enabled);
         Assert.AreEqual(string.Empty, threadsMapped.Objs[1].VirtualImage.State);
     }
+
+    private static BlacklistUser MapBlacklistUser(JObject data) =>
+        (BlacklistUser)typeof(BlacklistUserMapper)
+            .GetMethod("FromTbData", BindingFlags.NonPublic | BindingFlags.Static)!
+            .Invoke(null, [data])!;
+
+    private static bool GetBlacklistUserFlag(BlacklistUser user, string propertyName) =>
+        (bool)typeof(BlacklistUser)
+            .GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)!
+            .GetValue(user)!;
 }

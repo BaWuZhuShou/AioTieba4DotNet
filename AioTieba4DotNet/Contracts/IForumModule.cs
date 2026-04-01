@@ -43,14 +43,6 @@ public interface IForumModule
     /// <summary>
     ///     关注贴吧
     /// </summary>
-    /// <param name="fname">吧名</param>
-    /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>是否成功</returns>
-    Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     关注贴吧
-    /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>是否成功</returns>
@@ -63,14 +55,6 @@ public interface IForumModule
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>是否成功</returns>
     Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     取消关注贴吧
-    /// </summary>
-    /// <param name="fname">吧名</param>
-    /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>是否成功</returns>
-    Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     取消关注贴吧
@@ -135,17 +119,20 @@ public interface IForumModule
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>当前账号关注贴吧列表 <see cref="SelfFollowForums"/></returns>
+    /// <returns>当前账号关注贴吧列表 <see cref="SelfFollowForums"/>，包含签到状态</returns>
     Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn = 1, int rn = 200,
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     获取旧版当前账号关注贴吧列表
+    ///     获取当前账号关注贴吧 V1 列表
     /// </summary>
+    /// <remarks>
+    ///     该方法对应 aiotieba `get_self_follow_forums_v1`。<c>V1</c> 用于标识与 <see cref="GetSelfFollowForumsAsync"/> 并列支持的 V1 这一组接口，而不是泛指分页能力。
+    /// </remarks>
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>旧版关注贴吧列表 <see cref="SelfFollowForumsV1"/></returns>
+    /// <returns>V1 关注贴吧列表 <see cref="SelfFollowForumsV1"/>，保留独立分页返回形状</returns>
     Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn = 1, int rn = 20,
         CancellationToken cancellationToken = default);
 
@@ -410,14 +397,4 @@ public interface IForumModule
     Task<DislikeForums> GetDislikeForumsAsync(int pn = 1, int rn = 20,
         CancellationToken cancellationToken = default);
 
-    /// <summary>
-    ///     移除吧务
-    /// </summary>
-    /// <param name="fname">吧名</param>
-    /// <param name="portrait">用户 portrait</param>
-    /// <param name="baWuType">吧务类型</param>
-    /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>是否成功</returns>
-    Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-        CancellationToken cancellationToken = default);
 }

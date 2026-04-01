@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Api.DelBawu;
 using AioTieba4DotNet.Api.GetDislikeForums;
 using AioTieba4DotNet.Api.GetFid;
 using AioTieba4DotNet.Api.GetFollowForums;
@@ -26,15 +25,13 @@ using AioTieba4DotNet.Api.UndislikeForum;
 using AioTieba4DotNet.Api.UnlikeForum;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Models;
-using AioTieba4DotNet.Models.Admins;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Transport;
 using DislikeForumApi = AioTieba4DotNet.Api.DislikeForum.DislikeForum;
 
 namespace AioTieba4DotNet.Protocols;
 
-internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumInfoCache cache,
-    IAdminProtocol? adminProtocol = null) : IForumProtocol
+internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumInfoCache cache) : IForumProtocol
 {
     private readonly ForumInfoCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
 
@@ -92,9 +89,6 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await GetDetailAsync(fid, cancellationToken);
     }
 
-    public async Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default)
-        => await FollowAsync(fname, cancellationToken);
-
     public async Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -118,9 +112,6 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         var fid = await GetFidAsync(fname, cancellationToken);
         return await FollowAsync(fid, cancellationToken);
     }
-
-    public async Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default)
-        => await UnfollowAsync(fname, cancellationToken);
 
     public async Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default)
     {
@@ -631,26 +622,6 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
                 TiebaOperationCapabilities.WebSocketPreferred(requiresAuthentication: true),
                 (session, ct) => new GetDislikeForums(session.HttpCore, session.WsCore).RequestHttpAsync(pn, rn, ct),
                 (session, ct) => new GetDislikeForums(session.HttpCore, session.WsCore).RequestWsAsync(pn, rn, ct)),
-            cancellationToken);
-    }
-
-    public async Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-        CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (adminProtocol is not null && BawuTypeWireMapper.TryFromWireValue(baWuType, out var mappedType))
-            return await adminProtocol.DelBaWuAsync(fname, portrait, mappedType, cancellationToken);
-
-        await dispatcher.EnsureCanExecuteAsync(nameof(DelBaWuAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
-
-        var fid = await GetFidAsync(fname, cancellationToken);
-        return await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<bool>(
-                nameof(DelBaWuAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
-                (session, ct) => new DelBaWu(session.HttpCore).RequestAsync((long)fid, portrait, baWuType, ct)),
             cancellationToken);
     }
 

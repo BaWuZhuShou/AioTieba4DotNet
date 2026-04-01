@@ -16,6 +16,7 @@ using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Protocols;
 using AioTieba4DotNet.Session;
+using AioTieba4DotNet.Tests.Infrastructure;
 using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,6 +26,19 @@ namespace AioTieba4DotNet.Tests.Protocols;
 [TestClass]
 public sealed class MessagesProtocolTests
 {
+    [TestMethod]
+    public void MessageSources_FreezeCanonicalReadNames_AndRejectWrongOwners()
+    {
+        var messagesSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Contracts/IMessagesModule.cs",
+            "AioTieba4DotNet/Protocols/IMessagesProtocol.cs",
+            "AioTieba4DotNet/Protocols/MessagesProtocol.cs");
+        RepositorySourceTextAssert.ContainsAll(messagesSource, "GetAtsAsync", "GetRepliesAsync", "SetMessageReadAsync");
+
+        var userSource = RepositorySourceTextAssert.ReadRepositoryFiles("AioTieba4DotNet/Contracts/IUserModule.cs");
+        RepositorySourceTextAssert.DoesNotContainAny(userSource, "GetAtsAsync(", "GetRepliesAsync(");
+    }
+
     [TestMethod]
     public async Task MessageCursorStore_InitializesOrdersAndTracksPreviousMessageIds()
     {
@@ -75,18 +89,79 @@ public sealed class MessagesProtocolTests
     }
 
     [TestMethod]
-    public async Task MessagesProtocol_DelegatesAtAndReplyQueriesToUserProtocol()
+    public async Task MessagesProtocol_GetAtsAsync_PacksExpectedRequest()
     {
-        var users = new RecordingUserProtocol();
-        var protocol = CreateProtocol(new RecordingWsCore(), users);
+        var httpCore = new RecordingHttpCore
+        {
+            AppFormResponse = """
+                              {"error_code":0,"error_msg":"","at_list":[{"content":"reply body","fname":"csharp","thread_id":11,"post_id":22,"replyer":{"id":42,"portrait":"tb.1.replyer?012345678901","name":"replyer","name_show":"Replyer"},"is_floor":1,"is_first_post":1,"time":1711111111}],"page":{"page_size":20,"current_page":2,"total_page":3,"total_count":44,"has_more":1,"has_prev":0}}
+                              """,
+            AppProtoResponse = new global::ReplyMeResIdl
+            {
+                Error = new global::Error { Errorno = 0, Errmsg = string.Empty }
+            }.ToByteArray()
+        };
+        var protocol = CreateProtocol(CreateSession(httpCore, new RecordingWsCore()), new RecordingUserProtocol());
 
         var ats = await protocol.GetAtsAsync(2);
+
+        Assert.AreEqual(1, httpCore.SendAppFormCalls);
+        Assert.AreEqual(0, httpCore.SendAppProtoCalls);
+        Assert.AreEqual("/c/u/feed/atme", httpCore.LastAppFormUri?.AbsolutePath);
+        Assert.AreEqual("2", httpCore.LastAppFormData?.Single(entry => entry.Key == "pn").Value);
+        Assert.AreEqual(2, ats.Page.CurrentPage);
+        Assert.AreEqual("reply body", ats[0].Content);
+    }
+
+    [TestMethod]
+    public async Task MessagesProtocol_GetRepliesAsync_PacksExpectedRequest()
+    {
+        var httpCore = new RecordingHttpCore
+        {
+            AppFormResponse = """
+                              {"error_code":0,"error_msg":"","at_list":[],"page":{"page_size":20,"current_page":1,"total_page":1,"total_count":0,"has_more":0,"has_prev":0}}
+                              """,
+            AppProtoResponse = new global::ReplyMeResIdl
+            {
+                Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
+                Data = new global::ReplyMeResIdl.Types.DataRes
+                {
+                    Page = new global::Page
+                    {
+                        PageSize = 20,
+                        CurrentPage = 3,
+                        TotalPage = 4,
+                        TotalCount = 12,
+                        HasMore = 1,
+                        HasPrev = 1
+                    },
+                    ReplyList =
+                    {
+                        new global::ReplyMeResIdl.Types.DataRes.Types.ReplyList
+                        {
+                            Content = "reply content",
+                            Fname = "csharp",
+                            ThreadId = 11,
+                            QuotePid = 21,
+                            PostId = 22,
+                            Replyer = new global::User { Id = 42, Portrait = "tb.1.replyer?012345678901", Name = "replyer", NameShow = "Replyer" },
+                            QuoteUser = new global::User { Id = 43, Portrait = "tb.1.quote?012345678901", Name = "quote-user", NameShow = "Quote User" },
+                            ThreadAuthorUser = new global::User { Id = 44, Portrait = "tb.1.thread-author?012345678901", Name = "thread-author", NameShow = "Thread Author" },
+                            IsFloor = 1,
+                            Time = 1711111112
+                        }
+                    }
+                }
+            }.ToByteArray()
+        };
+        var protocol = CreateProtocol(CreateSession(httpCore, new RecordingWsCore()), new RecordingUserProtocol());
+
         var replies = await protocol.GetRepliesAsync(3);
 
-        Assert.AreEqual(2, users.LastAtPage);
-        Assert.AreEqual(3, users.LastReplyPage);
-        Assert.AreEqual(1, ats.Page.CurrentPage);
-        Assert.AreEqual(1, replies.Page.CurrentPage);
+        Assert.AreEqual(1, httpCore.SendAppProtoCalls);
+        Assert.AreEqual("/c/u/feed/replyme", httpCore.LastAppProtoUri?.AbsolutePath);
+        Assert.AreEqual(3, replies.Page.CurrentPage);
+        Assert.AreEqual("reply content", replies[0].Content);
     }
 
     [TestMethod]
@@ -395,6 +470,8 @@ public sealed class MessagesProtocolTests
         await ThrowsAsync<ArgumentNullException>(() => protocol.GetGroupMessagesAsync((IReadOnlyList<long>)null!, 1));
         await ThrowsAsync<ArgumentException>(() => protocol.GetGroupMessagesAsync([], 1));
         await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetGroupMessagesAsync([0], 1));
+        await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetAtsAsync(0));
+        await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetRepliesAsync(0));
         await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.SendMessageAsync(0, "hello"));
         await ThrowsAsync<ArgumentException>(() => protocol.SendMessageAsync(42, " "));
         await ThrowsAsync<ArgumentException>(() => protocol.SendMessageAsync(" ", "hello"));
@@ -617,19 +694,15 @@ public sealed class MessagesProtocolTests
 
     private sealed class RecordingUserProtocol : IUserProtocol
     {
-        public int LastAtPage { get; private set; }
-        public int LastReplyPage { get; private set; }
         public int GetSelfInfoCalls { get; private set; }
         public string? LastPanelInfoLookup { get; private set; }
         public UserInfoPanel PanelInfo { get; init; } = new() { UserId = 42, UserName = "resolved-user" };
         public UserInfo SelfInfo { get; init; } = new() { UserId = 42, UserName = "sender", Portrait = "tb.1.sender" };
 
         public Task<string> GetTbsAsync(CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserInfoGuInfoApp> GetBasicInfoAsync(int userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+    public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<UserInfoPf> GetProfileAsync(int userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<UserInfoPf> GetProfileAsync(string portraitOrUserName, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> BlockAsync(ulong fid, string portrait, int day, string reason, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> BlockAsync(string fname, string portrait, int day, string reason, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<bool> FollowAsync(string portrait, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<bool> UnfollowAsync(string portrait, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<UserList> GetFollowsAsync(long userId, int pn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
@@ -651,31 +724,21 @@ public sealed class MessagesProtocolTests
             Task.FromResult(SelfInfo);
         public Task<LoginResult> LoginAsync(CancellationToken cancellationToken = default) =>
             Task.FromResult(new LoginResult { User = SelfInfo });
-        public Task<AtMessages> GetAtsAsync(int pn, CancellationToken cancellationToken = default)
-        {
-            LastAtPage = pn;
-            return Task.FromResult(new AtMessages([], new PageT { CurrentPage = 1 }));
-        }
-        public Task<ReplyMessages> GetRepliesAsync(int pn, CancellationToken cancellationToken = default)
-        {
-            LastReplyPage = pn;
-            return Task.FromResult(new ReplyMessages([], new PageT { CurrentPage = 1 }));
-        }
         public Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<BlacklistOldUsers> GetBlacklistLegacyAsync(int pn, int rn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<BlacklistOldUsers> GetBlacklistOldAsync(int pn, int rn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<bool> SetBlacklistAsync(long userId, BlacklistType type, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> AddBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> RemoveBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<bool> AddBlacklistOldAsync(long userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<bool> RemoveBlacklistOldAsync(long userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<bool> RemoveFanAsync(long userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserInfoGuInfoWeb> GetBasicInfoWebAsync(int userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<UserForumInfo> GetUserForumInfoAsync(string fname, string portrait, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<RankUsers> GetRankUsersAsync(string fname, int pn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<Homepage> GetHomepageAsync(int userId, int pn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> SetNicknameLegacyAsync(string nickName, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<bool> SetNicknameAsync(string nickName, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<bool> SetProfileAsync(string nickName, string sign, Gender gender, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserPostss> GetPostsAsync(int userId, uint pn, uint rn, string version, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<UserPostGroups> GetPostsAsync(int userId, uint pn, uint rn, string version, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<UserThreads> GetThreadsAsync(int userId, uint pn, bool publicOnly, CancellationToken cancellationToken = default) => throw new NotImplementedException();
     }
 

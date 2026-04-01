@@ -5,18 +5,18 @@ using AioTieba4DotNet.Testing;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AioTieba4DotNet.Tests.Api.LikeForum;
+namespace AioTieba4DotNet.Tests.Api.FollowForum;
 
 [TestClass]
 [TestCategory(TestCategoryNames.Live)]
 [TestCategory(TestCategoryNames.ForumExtensions)]
 [TestSubject(typeof(TiebaClient))]
-public sealed class LikeForumTest : TestBase
+public sealed class FollowForumTest : TestBase
 {
     [TestMethod]
-    public async Task LikeAsync_UsesSafeForumFixtureAndRestoresOriginalState()
+    public async Task FollowAsync_UsesSafeForumFixtureAndRestoresOriginalState()
     {
-        var fixture = await RequireSafeForumFixtureAsync(nameof(LikeAsync_UsesSafeForumFixtureAndRestoresOriginalState));
+        var fixture = await RequireSafeForumFixtureAsync(nameof(FollowAsync_UsesSafeForumFixtureAndRestoresOriginalState));
         var wasFollowing = await IsForumFollowedAsync(fixture.Fid);
         Cleanup.RecordObject(TestCategoryNames.ForumExtensions, "forum", fixture.Fid.ToString(),
             TestCleanupObjectRelation.MutationTarget, $"safe forum follow state for {fixture.ResolvedName}");
@@ -42,7 +42,7 @@ public sealed class LikeForumTest : TestBase
             Assert.IsFalse(await IsForumFollowedAsync(fixture.Fid));
         }
 
-        var success = await Client.Forums.LikeAsync(fixture.ResolvedName);
+        var success = await Client.Forums.FollowAsync(fixture.ResolvedName);
 
         Assert.IsTrue(success);
         Assert.IsTrue(await IsForumFollowedAsync(fixture.Fid));

@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AioTieba4DotNet.Models;
@@ -7,6 +8,7 @@ using AioTieba4DotNet.Models.Shared;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Modules;
 using AioTieba4DotNet.Protocols;
+using AioTieba4DotNet.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AioTieba4DotNet.Tests.Baseline;
@@ -70,43 +72,62 @@ public class UserModuleBehaviorTests
     }
 
     [TestMethod]
-    public async Task UserModule_DelegatesGetBlacklistLegacyToInternalProtocol()
+    public async Task UserModule_DelegatesGetBlacklistToInternalProtocol()
     {
+        var expected = CreateBlacklistUsers(
+            new List<BlacklistUser>
+            {
+                new() { UserId = 456 }
+            });
         var protocol = new RecordingUserProtocol(new UserInfo())
         {
-            LegacyBlacklist = new BlacklistOldUsers([], new Models.Threads.PageT { CurrentPage = 3 })
+            BlacklistUsers = expected
         };
         var module = new UserModule(protocol);
 
-        var actual = await module.GetBlacklistLegacyAsync(3, 40);
+        var actual = await module.GetBlacklistAsync();
 
-        Assert.AreSame(protocol.LegacyBlacklist, actual);
-        Assert.AreEqual(3, protocol.LastLegacyBlacklistPn);
-        Assert.AreEqual(40, protocol.LastLegacyBlacklistRn);
+        Assert.AreSame(expected, actual);
     }
 
     [TestMethod]
-    public async Task UserModule_DelegatesAddBlacklistLegacyToInternalProtocol()
+    public async Task UserModule_DelegatesGetBlacklistOldToInternalProtocol()
+    {
+        var protocol = new RecordingUserProtocol(new UserInfo())
+        {
+            BlacklistOldUsers = CreateBlacklistOldUsers(new List<BlacklistOldUser>(), new Models.Threads.PageT { CurrentPage = 3 })
+        };
+        var module = new UserModule(protocol);
+
+        var actual = await module.GetBlacklistOldAsync(3, 40);
+
+        Assert.AreSame(protocol.BlacklistOldUsers, actual);
+        Assert.AreEqual(3, protocol.LastMutedBlacklistPn);
+        Assert.AreEqual(40, protocol.LastMutedBlacklistRn);
+    }
+
+    [TestMethod]
+    public async Task UserModule_DelegatesAddBlacklistOldToInternalProtocol()
     {
         var protocol = new RecordingUserProtocol(new UserInfo());
         var module = new UserModule(protocol);
 
-        var actual = await module.AddBlacklistLegacyAsync(456);
+        var actual = await module.AddBlacklistOldAsync(456);
 
         Assert.IsTrue(actual);
-        Assert.AreEqual(456, protocol.LastAddLegacyBlacklistUserId);
+        Assert.AreEqual(456, protocol.LastAddMutedBlacklistUserId);
     }
 
     [TestMethod]
-    public async Task UserModule_DelegatesRemoveBlacklistLegacyToInternalProtocol()
+    public async Task UserModule_DelegatesRemoveBlacklistOldToInternalProtocol()
     {
         var protocol = new RecordingUserProtocol(new UserInfo());
         var module = new UserModule(protocol);
 
-        var actual = await module.RemoveBlacklistLegacyAsync(789);
+        var actual = await module.RemoveBlacklistOldAsync(789);
 
         Assert.IsTrue(actual);
-        Assert.AreEqual(789, protocol.LastRemoveLegacyBlacklistUserId);
+        Assert.AreEqual(789, protocol.LastRemoveMutedBlacklistUserId);
     }
 
     [TestMethod]
@@ -126,7 +147,23 @@ public class UserModuleBehaviorTests
     }
 
     [TestMethod]
-    public async Task UserModule_DelegatesGetBasicInfoWebToInternalProtocol()
+    public async Task UserModule_DelegatesGetBasicInfoAppToInternalProtocol()
+    {
+        var expected = new UserInfoGuInfoApp { UserId = 123, UserName = "app-user" };
+        var protocol = new RecordingUserProtocol(new UserInfo())
+        {
+            BasicInfoApp = expected
+        };
+        var module = new UserModule(protocol);
+
+        var actual = await module.GetUserInfoAppAsync(123);
+
+        Assert.AreSame(expected, actual);
+        Assert.AreEqual(123, protocol.LastBasicInfoAppUserId);
+    }
+
+    [TestMethod]
+    public async Task UserModule_DelegatesGetUserInfoWebToInternalProtocol()
     {
         var expected = new UserInfoGuInfoWeb { UserId = 123, UserName = "web-user" };
         var protocol = new RecordingUserProtocol(new UserInfo())
@@ -135,7 +172,7 @@ public class UserModuleBehaviorTests
         };
         var module = new UserModule(protocol);
 
-        var actual = await module.GetBasicInfoWebAsync(123);
+        var actual = await module.GetUserInfoWebAsync(123);
 
         Assert.AreSame(expected, actual);
         Assert.AreEqual(123, protocol.LastBasicInfoWebUserId);
@@ -193,15 +230,15 @@ public class UserModuleBehaviorTests
     }
 
     [TestMethod]
-    public async Task UserModule_DelegatesSetNicknameLegacyToInternalProtocol()
+    public async Task UserModule_DelegatesSetNicknameToInternalProtocol()
     {
         var protocol = new RecordingUserProtocol(new UserInfo());
         var module = new UserModule(protocol);
 
-        var actual = await module.SetNicknameLegacyAsync("legacy-name");
+        var actual = await module.SetNicknameAsync("safe-name");
 
         Assert.IsTrue(actual);
-        Assert.AreEqual("legacy-name", protocol.LastLegacyNickname);
+        Assert.AreEqual("safe-name", protocol.LastNickname);
     }
 
     [TestMethod]
@@ -234,19 +271,82 @@ public class UserModuleBehaviorTests
         Assert.AreEqual(778899L, protocol.LastTiebaUid);
     }
 
+    [TestMethod]
+    public async Task UserModule_DelegatesGetPostsToInternalProtocol_AndReturnsUserPostGroups()
+    {
+        var expected = new UserPostGroups([new UserPosts([], 34, 56)]);
+        var protocol = new RecordingUserProtocol(new UserInfo())
+        {
+            UserPostGroups = expected
+        };
+        var module = new UserModule(protocol);
+
+        var actual = await module.GetPostsAsync(123, 2, 3, "8.9.8.5");
+
+        Assert.AreSame(expected, actual);
+        Assert.AreEqual(123, protocol.LastPostsUserId);
+        Assert.AreEqual((uint)2, protocol.LastPostsPn);
+        Assert.AreEqual((uint)3, protocol.LastPostsRn);
+        Assert.AreEqual("8.9.8.5", protocol.LastPostsVersion);
+    }
+
+    [TestMethod]
+    public void UserModule_PublicContracts_FreezePeerFamilies_AndRemovedNamesStayGone()
+    {
+        var userSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Contracts/IUserModule.cs",
+            "AioTieba4DotNet/Protocols/IUserProtocol.cs",
+            "AioTieba4DotNet/Modules/UserModule.cs");
+
+        RepositorySourceTextAssert.ContainsAll(
+            userSource,
+            "GetUserInfoAppAsync",
+            "GetUserInfoWebAsync",
+            "GetBlacklistAsync",
+            "GetBlacklistOldAsync",
+            "AddBlacklistOldAsync",
+            "RemoveBlacklistOldAsync",
+            "SetNicknameAsync",
+            "SetProfileAsync",
+            "UserPostGroups");
+        RepositorySourceTextAssert.DoesNotContainAny(
+            userSource,
+            "GetBlacklistPermissionsAsync",
+            "SetBlacklistPermissionsAsync",
+            "GetBlacklistMutedAsync",
+            "AddBlacklistMutedAsync",
+            "RemoveBlacklistMutedAsync",
+            "GetBlacklistLegacyAsync",
+            "AddBlacklistLegacyAsync",
+            "RemoveBlacklistLegacyAsync",
+            "GetBasicInfoAppAsync",
+            "GetBasicInfoWebAsync",
+            "SetNicknameLegacyAsync",
+            "UserPostss");
+    }
+
+    private static BlacklistUsers CreateBlacklistUsers(List<BlacklistUser> users) =>
+        (BlacklistUsers)Activator.CreateInstance(typeof(BlacklistUsers), users)!;
+
+    private static BlacklistOldUsers CreateBlacklistOldUsers(List<BlacklistOldUser> users,
+        Models.Threads.PageT page) =>
+        (BlacklistOldUsers)Activator.CreateInstance(typeof(BlacklistOldUsers), users, page)!;
+
     private sealed class RecordingUserProtocol(UserInfo selfInfo) : IUserProtocol
     {
         public long? LastBlacklistUserId { get; private set; }
 
         public BlacklistType? LastBlacklistType { get; private set; }
 
-        public int? LastLegacyBlacklistPn { get; private set; }
+        public int? LastMutedBlacklistPn { get; private set; }
 
-        public int? LastLegacyBlacklistRn { get; private set; }
+        public int? LastMutedBlacklistRn { get; private set; }
 
         public int? LastHomepageUserId { get; private set; }
 
         public int? LastHomepagePn { get; private set; }
+
+        public int? LastBasicInfoAppUserId { get; private set; }
 
         public int? LastBasicInfoWebUserId { get; private set; }
 
@@ -260,11 +360,11 @@ public class UserModuleBehaviorTests
 
         public int? LastRankUsersPn { get; private set; }
 
-        public string? LastLegacyNickname { get; private set; }
+        public string? LastNickname { get; private set; }
 
-        public long? LastAddLegacyBlacklistUserId { get; private set; }
+        public long? LastAddMutedBlacklistUserId { get; private set; }
 
-        public long? LastRemoveLegacyBlacklistUserId { get; private set; }
+        public long? LastRemoveMutedBlacklistUserId { get; private set; }
 
         public string? LastProfileNickname { get; private set; }
 
@@ -274,9 +374,23 @@ public class UserModuleBehaviorTests
 
         public long? LastTiebaUid { get; private set; }
 
-        public BlacklistOldUsers LegacyBlacklist { get; init; } = new([], new Models.Threads.PageT());
+        public int? LastPostsUserId { get; private set; }
+
+        public uint? LastPostsPn { get; private set; }
+
+        public uint? LastPostsRn { get; private set; }
+
+        public string? LastPostsVersion { get; private set; }
+
+        public BlacklistOldUsers BlacklistOldUsers { get; init; } =
+            CreateBlacklistOldUsers(new List<BlacklistOldUser>(), new Models.Threads.PageT());
+
+        public BlacklistUsers BlacklistUsers { get; init; } =
+            CreateBlacklistUsers(new List<BlacklistUser>());
 
         public Homepage Homepage { get; init; } = new([], new UserInfoPf { VImage = new VirtualImagePf() });
+
+        public UserInfoGuInfoApp BasicInfoApp { get; init; } = new();
 
         public UserInfoGuInfoWeb BasicInfoWeb { get; init; } = new();
 
@@ -286,6 +400,8 @@ public class UserModuleBehaviorTests
 
         public UserInfoTUid TiebaUidUser { get; init; } = new();
 
+        public UserPostGroups UserPostGroups { get; init; } = new(new List<UserPosts>());
+
         public UserInfo SelfInfoInitNickname { get; init; } = new();
 
         public UserInfo SelfInfoMoIndex { get; init; } = new();
@@ -294,20 +410,17 @@ public class UserModuleBehaviorTests
 
         public Task<string> GetTbsAsync(CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-        public Task<UserInfoGuInfoApp> GetBasicInfoAsync(int userId, CancellationToken cancellationToken = default) =>
-            throw new NotImplementedException();
+        public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            LastBasicInfoAppUserId = userId;
+            return Task.FromResult(BasicInfoApp);
+        }
 
         public Task<UserInfoPf> GetProfileAsync(int userId, CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
 
         public Task<UserInfoPf> GetProfileAsync(string portraitOrUserName, CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
-
-        public Task<bool> BlockAsync(ulong fid, string portrait, int day, string reason,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<bool> BlockAsync(string fname, string portrait, int day, string reason,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
         public Task<bool> FollowAsync(string portrait, CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
@@ -339,46 +452,41 @@ public class UserModuleBehaviorTests
         public Task<LoginResult> LoginAsync(CancellationToken cancellationToken = default) =>
             Task.FromResult(LoginResult);
 
-        public Task<AtMessages> GetAtsAsync(int pn, CancellationToken cancellationToken = default) =>
-            throw new NotImplementedException();
-
-        public Task<ReplyMessages> GetRepliesAsync(int pn, CancellationToken cancellationToken = default) =>
-            throw new NotImplementedException();
-
         public Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default) =>
-            throw new NotImplementedException();
+            Task.FromResult(BlacklistUsers);
 
-        public Task<BlacklistOldUsers> GetBlacklistLegacyAsync(int pn, int rn,
+        public Task<BlacklistOldUsers> GetBlacklistOldAsync(int pn, int rn,
             CancellationToken cancellationToken = default)
         {
-            LastLegacyBlacklistPn = pn;
-            LastLegacyBlacklistRn = rn;
-            return Task.FromResult(LegacyBlacklist);
+            LastMutedBlacklistPn = pn;
+            LastMutedBlacklistRn = rn;
+            return Task.FromResult(BlacklistOldUsers);
         }
 
-        public Task<bool> SetBlacklistAsync(long userId, BlacklistType type, CancellationToken cancellationToken = default)
+        public Task<bool> SetBlacklistAsync(long userId, BlacklistType type,
+            CancellationToken cancellationToken = default)
         {
             LastBlacklistUserId = userId;
             LastBlacklistType = type;
             return Task.FromResult(true);
         }
 
-        public Task<bool> AddBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default)
+        public Task<bool> AddBlacklistOldAsync(long userId, CancellationToken cancellationToken = default)
         {
-            LastAddLegacyBlacklistUserId = userId;
+            LastAddMutedBlacklistUserId = userId;
             return Task.FromResult(true);
         }
 
-        public Task<bool> RemoveBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default)
+        public Task<bool> RemoveBlacklistOldAsync(long userId, CancellationToken cancellationToken = default)
         {
-            LastRemoveLegacyBlacklistUserId = userId;
+            LastRemoveMutedBlacklistUserId = userId;
             return Task.FromResult(true);
         }
 
         public Task<bool> RemoveFanAsync(long userId, CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
 
-        public Task<UserInfoGuInfoWeb> GetBasicInfoWebAsync(int userId, CancellationToken cancellationToken = default)
+        public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default)
         {
             LastBasicInfoWebUserId = userId;
             return Task.FromResult(BasicInfoWeb);
@@ -414,9 +522,9 @@ public class UserModuleBehaviorTests
             return Task.FromResult(Homepage);
         }
 
-        public Task<bool> SetNicknameLegacyAsync(string nickName, CancellationToken cancellationToken = default)
+        public Task<bool> SetNicknameAsync(string nickName, CancellationToken cancellationToken = default)
         {
-            LastLegacyNickname = nickName;
+            LastNickname = nickName;
             return Task.FromResult(true);
         }
 
@@ -435,8 +543,15 @@ public class UserModuleBehaviorTests
             return Task.FromResult(TiebaUidUser);
         }
 
-        public Task<UserPostss> GetPostsAsync(int userId, uint pn, uint rn, string version,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<UserPostGroups> GetPostsAsync(int userId, uint pn, uint rn, string version,
+            CancellationToken cancellationToken = default)
+        {
+            LastPostsUserId = userId;
+            LastPostsPn = pn;
+            LastPostsRn = rn;
+            LastPostsVersion = version;
+            return Task.FromResult(UserPostGroups);
+        }
 
         public Task<UserThreads> GetThreadsAsync(int userId, uint pn, bool publicOnly,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();

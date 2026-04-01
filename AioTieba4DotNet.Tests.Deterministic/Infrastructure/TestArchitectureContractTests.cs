@@ -52,18 +52,20 @@ public sealed class TestArchitectureContractTests
     }
 
     [TestMethod]
-    public void LegacyMixedTestTree_NoLongerContainsActiveSourceFiles()
+    public void HistoricalMixedTestTree_ContainsNoActiveSourceFiles()
     {
         var legacyDirectory = RepositoryPaths.GetLegacyMixedTestDirectory();
-        var remainingSourceFiles = Directory.EnumerateFiles(legacyDirectory, "*.cs", SearchOption.AllDirectories)
-            .Where(path => !path.Contains("\\bin\\", StringComparison.OrdinalIgnoreCase))
-            .Where(path => !path.Contains("\\obj\\", StringComparison.OrdinalIgnoreCase))
-            .Where(path => !path.Contains("\\TestResults\\", StringComparison.OrdinalIgnoreCase))
-            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+        var remainingSourceFiles = Directory.Exists(legacyDirectory)
+            ? Directory.EnumerateFiles(legacyDirectory, "*.cs", SearchOption.AllDirectories)
+                .Where(path => !path.Contains("\\bin\\", StringComparison.OrdinalIgnoreCase))
+                .Where(path => !path.Contains("\\obj\\", StringComparison.OrdinalIgnoreCase))
+                .Where(path => !path.Contains("\\TestResults\\", StringComparison.OrdinalIgnoreCase))
+                .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                .ToArray()
+            : [];
 
         Assert.IsEmpty(remainingSourceFiles,
-            $"Legacy mixed test tree must not keep active source files:{Environment.NewLine}- "
+            $"Historical mixed test tree must not keep active source files:{Environment.NewLine}- "
             + string.Join(Environment.NewLine + "- ", remainingSourceFiles));
     }
 

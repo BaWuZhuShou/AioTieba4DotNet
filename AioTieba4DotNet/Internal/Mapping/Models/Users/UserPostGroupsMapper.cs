@@ -3,9 +3,9 @@ using AioTieba4DotNet.Models.Users;
 
 namespace AioTieba4DotNet.Internal.Mapping;
 
-internal static class UserPostssMapper
+internal static class UserPostGroupsMapper
 {
-    internal static UserPostss FromTbData(UserPostResIdl.Types.DataRes dataRes)
+    internal static UserPostGroups FromTbData(UserPostResIdl.Types.DataRes dataRes)
 
         {
 
@@ -13,7 +13,7 @@ internal static class UserPostssMapper
 
             objs.AddRange(dataRes.PostList.Select(AioTieba4DotNet.Internal.Mapping.UserPostsMapper.FromTbData));
 
-            if (objs.Count == 0) return new UserPostss(objs);
+            if (objs.Count == 0) return new UserPostGroups(objs);
 
             var postInfoList = dataRes.PostList[0];
 
@@ -23,7 +23,7 @@ internal static class UserPostssMapper
 
 
 
-            return new UserPostss(objs);
+            return new UserPostGroups(objs);
 
         }
 }

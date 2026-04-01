@@ -31,7 +31,7 @@ await client.Forums.FollowAsync("csharp");
 await client.Forums.UnfollowAsync("csharp");
 ```
 
-如果你在迁移旧代码，也可以继续看到 `LikeAsync(...)` 和 `UnlikeAsync(...)` 这两个兼容别名，但新文档统一使用 `FollowAsync(...)` / `UnfollowAsync(...)`。
+论坛公开关注写操作统一使用 `FollowAsync(...)` / `UnfollowAsync(...)` 这组名称。
 
 ## 查询某个用户或当前账号关注的贴吧
 
@@ -45,7 +45,7 @@ Console.WriteLine(selfFollowForums.Objs.Count);
 Console.WriteLine(anotherUserForums.Objs.Count);
 ```
 
-如果你需要旧版 follow 列表形状，v3 还保留了 `GetSelfFollowForumsV1Async(...)`。
+`GetSelfFollowForumsAsync(...)` 和 `GetSelfFollowForumsV1Async(...)` 是两组并列支持的接口。前者对应 aiotieba `get_self_follow_forums`，返回 `SelfFollowForums`，包含每个贴吧的 `IsSigned` 状态；后者对应 aiotieba `get_self_follow_forums_v1`，返回 `SelfFollowForumsV1` 并保留显式分页信息。这里的 `V1` 指的是 upstream 的 V1 这一组接口，不是泛指分页别名。
 
 ## 单吧签到、批量签到、成长任务签到
 

@@ -27,7 +27,7 @@ AioTieba4DotNet/
 - Public module families are `Forums`, `Threads`, `Users`, `Admins`, `Messages`, and `Client`.
 - `client.Messages` owns message reads, message sends, read-state updates, and push parsing.
 - `client.Client` stays limited to lifecycle helpers such as websocket initialization, z-id initialization, and sync.
-- `Client.cs` is an obsolete compatibility facade. Do not add new feature work there unless the task is explicitly about compatibility.
+- `Client.cs` is a retained compatibility facade. Do not add new feature work there unless the task is explicitly about compatibility.
 
 ## WHERE TO LOOK
 | Task | Location | Notes |
@@ -35,7 +35,7 @@ AioTieba4DotNet/
 | DI and composition | `DependencyInjection.cs`, `Clients/TiebaClient*.cs` | Direct, DI, and factory entrypoints should converge on the same composition behavior |
 | Public module behavior | `Modules/*.cs`, `Contracts/*.cs` | Public business surface and public contract shape |
 | Low-level request families | `Api/<Feature>/` | Keep family names and semantics aligned with upstream `aiotieba` |
-| Shared request plumbing | `Api/JsonApiBase.cs`, `Transport/TiebaOperationDispatcher.cs`, `Transport/ITiebaHttpCore.cs`, `Transport/ITiebaWsCore.cs` | Reuse the current transport, parsing, and dispatcher seams instead of reintroducing removed legacy request bases |
+| Shared request plumbing | `Api/JsonApiBase.cs`, `Transport/TiebaOperationDispatcher.cs`, `Transport/ITiebaHttpCore.cs`, `Transport/ITiebaWsCore.cs` | Reuse the current transport, parsing, and dispatcher seams instead of reintroducing superseded request-base patterns |
 | Public models | `Models/**` | Keep consumer-facing models protocol-agnostic |
 | Session and transport internals | `Session/**`, `Transport/**`, `Protocols/**`, `Internal/**` | Internal only; do not leak these into the public contract |
 | Generated protobuf outputs | `Api/Protobuf/*.cs`, `Api/*/Protobuf/*.cs` | Generated code, never hand-edit |
@@ -55,7 +55,7 @@ AioTieba4DotNet/
 - Exposing `Api/*`, transport internals, or generated protobuf types as the public product surface.
 - Inventing request parameters or business logic that upstream `aiotieba` does not have unless a task explicitly requires a product-level deviation.
 - Spreading message read or push behavior back into `client.Client` now that `Messages` is the public home for that family.
-- Treating legacy deletion tasks as license to remove compatibility entrypoints before docs, parity, and release notes say the removal is part of the active v3 contract.
+- Treating compatibility cleanup tasks as license to remove supported compatibility entrypoints before docs, parity, and release notes say the removal is part of the active v3 contract.
 
 ## TESTING LINKS
 - Deterministic coverage for library behavior lives in `../AioTieba4DotNet.Tests.Deterministic/`.

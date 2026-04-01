@@ -40,7 +40,7 @@ public sealed class UserSocialReadTest : TestBase
     {
         EnsureAuthenticated();
 
-        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetAtsAsync(1));
+        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Messages.GetAtsAsync(1));
 
         Assert.IsNotNull(result);
         Console.WriteLine($"atsCount={result.Count}, currentPage={result.Page.CurrentPage}, hasMore={result.Page.HasMore}");
@@ -51,38 +51,49 @@ public sealed class UserSocialReadTest : TestBase
     {
         EnsureAuthenticated();
 
-        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetRepliesAsync(1));
+        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Messages.GetRepliesAsync(1));
 
         Assert.IsNotNull(result);
         Console.WriteLine($"replyCount={result.Count}, currentPage={result.Page.CurrentPage}, hasMore={result.Page.HasMore}");
     }
 
     [TestMethod]
-    public async Task GetBlacklistAsync_ReadsBlacklistPage()
+    public async Task GetBlacklistAsync_ReadsBlacklistUsersPage()
     {
         EnsureAuthenticated();
 
         var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetBlacklistAsync());
 
         Assert.IsNotNull(result);
-        Console.WriteLine($"blacklistCount={result.Count}");
+        Console.WriteLine($"blacklistUsersCount={result.Count}");
     }
 
     [TestMethod]
-    public async Task GetBlacklistLegacyAsync_ReadsLegacyBlacklistPage()
+    public async Task GetBlacklistOldAsync_ReadsOldBlacklistPage()
     {
         EnsureAuthenticated();
 
-        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetBlacklistLegacyAsync(1, 20));
+        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetBlacklistOldAsync(1, 20));
+        var page = result.GetType().GetProperty("Page")?.GetValue(result);
+        var currentPage = page?.GetType().GetProperty("CurrentPage")?.GetValue(page);
 
         Assert.IsNotNull(result);
-        Console.WriteLine($"legacyBlacklistCount={result.Count}, currentPage={result.Page.CurrentPage}");
+        Console.WriteLine($"blacklistOldUsersCount={result.Count}, currentPage={currentPage}");
     }
 
     [TestMethod]
-    public async Task GetBasicInfoWebAsync_KnownUser_ReturnsCompatibleShape()
+    public async Task GetUserInfoAppAsync_KnownUser_ReturnsAppShape()
     {
-        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetBasicInfoWebAsync(1));
+        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetUserInfoAppAsync(1));
+
+        Assert.IsGreaterThan(0L, result.UserId);
+        Console.WriteLine($"basicInfoApp userId={result.UserId}, portrait={result.Portrait}");
+    }
+
+    [TestMethod]
+    public async Task GetUserInfoWebAsync_KnownUser_ReturnsCompatibleShape()
+    {
+        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetUserInfoWebAsync(1));
 
         Assert.IsGreaterThan(0L, result.UserId);
         Assert.IsFalse(result.Portrait.Contains('?', StringComparison.Ordinal));

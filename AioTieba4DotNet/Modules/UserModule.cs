@@ -23,8 +23,8 @@ public class UserModule : IUserModule
         _protocol.GetTbsAsync(cancellationToken);
 
     /// <inheritdoc/>
-    public Task<UserInfoGuInfoApp> GetBasicInfoAsync(int userId, CancellationToken cancellationToken = default) =>
-        _protocol.GetBasicInfoAsync(userId, cancellationToken);
+    public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default) =>
+        _protocol.GetUserInfoAppAsync(userId, cancellationToken);
 
     /// <inheritdoc/>
     public Task<UserInfoPf> GetProfileAsync(int userId, CancellationToken cancellationToken = default) =>
@@ -33,16 +33,6 @@ public class UserModule : IUserModule
     /// <inheritdoc/>
     public Task<UserInfoPf> GetProfileAsync(string portraitOrUserName, CancellationToken cancellationToken = default) =>
         _protocol.GetProfileAsync(portraitOrUserName, cancellationToken);
-
-    /// <inheritdoc/>
-    public Task<bool> BlockAsync(ulong fid, string portrait, int day = 1, string reason = "",
-        CancellationToken cancellationToken = default) =>
-        _protocol.BlockAsync(fid, portrait, day, reason, cancellationToken);
-
-    /// <inheritdoc/>
-    public Task<bool> BlockAsync(string fname, string portrait, int day = 1, string reason = "",
-        CancellationToken cancellationToken = default) =>
-        _protocol.BlockAsync(fname, portrait, day, reason, cancellationToken);
 
     /// <inheritdoc/>
     public Task<bool> FollowAsync(string portrait, CancellationToken cancellationToken = default) =>
@@ -85,21 +75,13 @@ public class UserModule : IUserModule
         _protocol.LoginAsync(cancellationToken);
 
     /// <inheritdoc/>
-    public Task<AtMessages> GetAtsAsync(int pn = 1, CancellationToken cancellationToken = default) =>
-        _protocol.GetAtsAsync(pn, cancellationToken);
-
-    /// <inheritdoc/>
-    public Task<ReplyMessages> GetRepliesAsync(int pn = 1, CancellationToken cancellationToken = default) =>
-        _protocol.GetRepliesAsync(pn, cancellationToken);
-
-    /// <inheritdoc/>
     public Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default) =>
         _protocol.GetBlacklistAsync(cancellationToken);
 
     /// <inheritdoc/>
-    public Task<BlacklistOldUsers> GetBlacklistLegacyAsync(int pn = 1, int rn = 20,
+    public Task<BlacklistOldUsers> GetBlacklistOldAsync(int pn = 1, int rn = 20,
         CancellationToken cancellationToken = default) =>
-        _protocol.GetBlacklistLegacyAsync(pn, rn, cancellationToken);
+        _protocol.GetBlacklistOldAsync(pn, rn, cancellationToken);
 
     /// <inheritdoc/>
     public Task<bool> SetBlacklistAsync(long userId, BlacklistType type = BlacklistType.All,
@@ -107,20 +89,20 @@ public class UserModule : IUserModule
         _protocol.SetBlacklistAsync(userId, type, cancellationToken);
 
     /// <inheritdoc/>
-    public Task<bool> AddBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default) =>
-        _protocol.AddBlacklistLegacyAsync(userId, cancellationToken);
+    public Task<bool> AddBlacklistOldAsync(long userId, CancellationToken cancellationToken = default) =>
+        _protocol.AddBlacklistOldAsync(userId, cancellationToken);
 
     /// <inheritdoc/>
-    public Task<bool> RemoveBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default) =>
-        _protocol.RemoveBlacklistLegacyAsync(userId, cancellationToken);
+    public Task<bool> RemoveBlacklistOldAsync(long userId, CancellationToken cancellationToken = default) =>
+        _protocol.RemoveBlacklistOldAsync(userId, cancellationToken);
 
     /// <inheritdoc/>
     public Task<bool> RemoveFanAsync(long userId, CancellationToken cancellationToken = default) =>
         _protocol.RemoveFanAsync(userId, cancellationToken);
 
     /// <inheritdoc/>
-    public Task<UserInfoGuInfoWeb> GetBasicInfoWebAsync(int userId, CancellationToken cancellationToken = default) =>
-        _protocol.GetBasicInfoWebAsync(userId, cancellationToken);
+    public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default) =>
+        _protocol.GetUserInfoWebAsync(userId, cancellationToken);
 
     /// <inheritdoc/>
     public Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait,
@@ -141,8 +123,8 @@ public class UserModule : IUserModule
         _protocol.GetHomepageAsync(userId, pn, cancellationToken);
 
     /// <inheritdoc/>
-    public Task<bool> SetNicknameLegacyAsync(string nickName, CancellationToken cancellationToken = default) =>
-        _protocol.SetNicknameLegacyAsync(nickName, cancellationToken);
+    public Task<bool> SetNicknameAsync(string nickName, CancellationToken cancellationToken = default) =>
+        _protocol.SetNicknameAsync(nickName, cancellationToken);
 
     /// <inheritdoc/>
     public Task<bool> SetProfileAsync(string nickName, string sign, Gender gender,
@@ -154,7 +136,7 @@ public class UserModule : IUserModule
         _protocol.GetUserByTiebaUidAsync(tiebaUid, cancellationToken);
 
     /// <inheritdoc/>
-    public Task<UserPostss> GetPostsAsync(int userId, uint pn = 1, uint rn = 20, string version = "8.9.8.5",
+    public Task<UserPostGroups> GetPostsAsync(int userId, uint pn = 1, uint rn = 20, string version = "8.9.8.5",
         CancellationToken cancellationToken = default) =>
         _protocol.GetPostsAsync(userId, pn, rn, version, cancellationToken);
 

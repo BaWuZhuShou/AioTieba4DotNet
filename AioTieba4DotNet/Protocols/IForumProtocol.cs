@@ -13,13 +13,9 @@ internal interface IForumProtocol
 
     Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default);
 
-    Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default);
-
     Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default);
 
     Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default);
-
-    Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default);
 
     Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default);
 
@@ -117,7 +113,4 @@ internal interface IForumProtocol
     Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default);
 
     Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn, CancellationToken cancellationToken = default);
-
-    Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-        CancellationToken cancellationToken = default);
 }

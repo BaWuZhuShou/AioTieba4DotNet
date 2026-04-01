@@ -18,6 +18,30 @@ namespace AioTieba4DotNet.Tests.ModelCoverage;
 public sealed class ModelCoverageTests
 {
     [TestMethod]
+    public void RenamedModelFamilies_UseNormalizedTypeNames_WithoutLegacyAliases()
+    {
+        var exportedTypeNames = typeof(TiebaClient).Assembly
+            .GetExportedTypes()
+            .Select(type => type.FullName)
+            .ToArray();
+
+        CollectionAssert.Contains(exportedTypeNames, typeof(UserPostGroups).FullName);
+        CollectionAssert.Contains(exportedTypeNames, typeof(BlacklistUsers).FullName);
+        CollectionAssert.Contains(exportedTypeNames, typeof(BlacklistOldUsers).FullName);
+        CollectionAssert.Contains(exportedTypeNames, typeof(UserInfoGuInfoApp).FullName);
+        CollectionAssert.Contains(exportedTypeNames, typeof(UserInfoGuInfoWeb).FullName);
+        CollectionAssert.Contains(exportedTypeNames, typeof(SelfFollowForumsV1).FullName);
+        CollectionAssert.Contains(exportedTypeNames, typeof(SelfFollowForumV1).FullName);
+        CollectionAssert.DoesNotContain(exportedTypeNames, "AioTieba4DotNet.Models.Users.UserPostss");
+        CollectionAssert.DoesNotContain(exportedTypeNames, "AioTieba4DotNet.Models.Users.BlacklistPermissions");
+        CollectionAssert.DoesNotContain(exportedTypeNames, "AioTieba4DotNet.Models.Users.BlacklistMutedUsers");
+        CollectionAssert.DoesNotContain(exportedTypeNames, "AioTieba4DotNet.Models.Users.UserInfoApp");
+        CollectionAssert.DoesNotContain(exportedTypeNames, "AioTieba4DotNet.Models.Users.UserInfoWeb");
+        CollectionAssert.DoesNotContain(exportedTypeNames, "AioTieba4DotNet.Models.Forums.SelfFollowForumsPaged");
+        CollectionAssert.DoesNotContain(exportedTypeNames, "AioTieba4DotNet.Models.Forums.SelfFollowForumV1Item");
+    }
+
+    [TestMethod]
     public void Containers_SupportEnumerationAndGuardMethods()
     {
         var fromList = new TestContainers(["a", "b"]);
@@ -288,8 +312,8 @@ public sealed class ModelCoverageTests
         var userPost = new UserPost { Contents = new Content { Frags = [new FragText { Text = "reply" }] }, Pid = 12, Fid = 34, Tid = 56 };
         var userPosts = new UserPosts([userPost], 34, 56);
         var userPostsFromEnumerable = new UserPosts((IEnumerable<UserPost>?)new[] { userPost }, 34, 56);
-        var userPostss = new UserPostss([userPosts]);
-        var userPostssFromEnumerable = new UserPostss((IEnumerable<UserPosts>?)new[] { userPosts });
+        var userPostGroups = new UserPostGroups([userPosts]);
+        var userPostGroupsFromEnumerable = new UserPostGroups((IEnumerable<UserPosts>?)new[] { userPosts });
         var userThread = new UserThread { Contents = new Content { Frags = [new FragText { Text = "thread body" }] }, Title = "thread title", Type = 70 };
         var userThreads = new UserThreads([userThread]);
         var userThreadsFromEnumerable = new UserThreads((IEnumerable<UserThread>?)new[] { userThread });
@@ -310,8 +334,8 @@ public sealed class ModelCoverageTests
         Assert.AreEqual(56L, userPosts.Tid);
         Assert.AreEqual(1, userPosts.Count);
         Assert.AreEqual(1, userPostsFromEnumerable.Count);
-        Assert.AreEqual(1, userPostss.Count);
-        Assert.AreEqual(1, userPostssFromEnumerable.Count);
+        Assert.AreEqual(1, userPostGroups.Count);
+        Assert.AreEqual(1, userPostGroupsFromEnumerable.Count);
         Assert.AreEqual("thread title\nthread body", userThread.Text);
         Assert.IsFalse(userThread.IsHelp);
         Assert.AreEqual(1, userThreads.Count);

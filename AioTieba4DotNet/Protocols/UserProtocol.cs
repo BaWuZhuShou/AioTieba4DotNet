@@ -1,14 +1,11 @@
 using AioTieba4DotNet.Api.AddBlacklistOld;
 using AioTieba4DotNet.Api.DelBlacklistOld;
-using BlockApi = AioTieba4DotNet.Api.Block.Block;
 using AioTieba4DotNet.Api.FollowUser;
-using AioTieba4DotNet.Api.GetAts;
 using AioTieba4DotNet.Api.GetBlacklist;
 using AioTieba4DotNet.Api.GetBlacklistOld;
 using AioTieba4DotNet.Api.GetFans;
 using AioTieba4DotNet.Api.GetFollows;
 using AioTieba4DotNet.Api.GetRankUsers;
-using AioTieba4DotNet.Api.GetReplys;
 using AioTieba4DotNet.Api.GetSelfInfoInitNickname;
 using AioTieba4DotNet.Api.GetSelfInfoMoIndex;
 using AioTieba4DotNet.Api.GetUInfoGetUserInfoApp;
@@ -33,8 +30,7 @@ using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Protocols;
 
-internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumProtocol forums,
-    IAdminProtocol? adminProtocol = null) : IUserProtocol
+internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumProtocol forums) : IUserProtocol
 {
     public async Task<string> GetTbsAsync(CancellationToken cancellationToken = default)
     {
@@ -48,13 +44,13 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<UserInfoGuInfoApp> GetBasicInfoAsync(int userId, CancellationToken cancellationToken = default)
+    public async Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<UserInfoGuInfoApp>(
-                nameof(GetBasicInfoAsync),
+                nameof(GetUserInfoAppAsync),
                 TiebaOperationCapabilities.HttpOnly(),
                 (session, ct) => new GetUInfoGetUserInfoApp(session.HttpCore).RequestAsync(userId, ct)),
             cancellationToken);
@@ -83,37 +79,6 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
                 TiebaOperationCapabilities.HttpOnly(),
                 (session, ct) => new GetUInfoProfile<string>(session.HttpCore).RequestAsync(portraitOrUserName, ct)),
             cancellationToken);
-    }
-
-    public async Task<bool> BlockAsync(ulong fid, string portrait, int day, string reason,
-        CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (adminProtocol is not null)
-            return await adminProtocol.BlockAsync(fid, portrait, day, reason, cancellationToken);
-
-        return await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<bool>(
-                nameof(BlockAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
-                (session, ct) => new BlockApi(session.HttpCore).RequestAsync(fid, portrait, day, reason, ct)),
-            cancellationToken);
-    }
-
-    public async Task<bool> BlockAsync(string fname, string portrait, int day, string reason,
-        CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (adminProtocol is not null)
-            return await adminProtocol.BlockAsync(fname, portrait, day, reason, cancellationToken);
-
-        await dispatcher.EnsureCanExecuteAsync(nameof(BlockAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
-
-        var fid = await forums.GetFidAsync(fname, cancellationToken);
-        return await BlockAsync(fid, portrait, day, reason, cancellationToken);
     }
 
     public async Task<bool> FollowAsync(string portrait, CancellationToken cancellationToken = default)
@@ -249,32 +214,6 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<AtMessages> GetAtsAsync(int pn, CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        ValidatePageNumber(pn);
-
-        return await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<AtMessages>(
-                nameof(GetAtsAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
-                (session, ct) => new GetAts(session.HttpCore).RequestAsync(pn, ct)),
-            cancellationToken);
-    }
-
-    public async Task<ReplyMessages> GetRepliesAsync(int pn, CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        ValidatePageNumber(pn);
-
-        return await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<ReplyMessages>(
-                nameof(GetRepliesAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
-                (session, ct) => new GetReplys(session.HttpCore).RequestAsync(pn, ct)),
-            cancellationToken);
-    }
-
     public async Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -287,7 +226,7 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<BlacklistOldUsers> GetBlacklistLegacyAsync(int pn, int rn,
+    public async Task<BlacklistOldUsers> GetBlacklistOldAsync(int pn, int rn,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -296,7 +235,7 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<BlacklistOldUsers>(
-                nameof(GetBlacklistLegacyAsync),
+                nameof(GetBlacklistOldAsync),
                 TiebaOperationCapabilities.WebSocketPreferred(requiresAuthentication: true),
                 (session, ct) => new GetBlacklistOld(session.HttpCore, session.WsCore).RequestHttpAsync(pn, rn, ct),
                 (session, ct) => new GetBlacklistOld(session.HttpCore, session.WsCore).RequestWsAsync(pn, rn, ct)),
@@ -317,27 +256,27 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<bool> AddBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default)
+    public async Task<bool> AddBlacklistOldAsync(long userId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         ValidateUserId(userId);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
-                nameof(AddBlacklistLegacyAsync),
+                nameof(AddBlacklistOldAsync),
                 TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
                 (session, ct) => new AddBlacklistOld(session.HttpCore).RequestAsync(userId, ct)),
             cancellationToken);
     }
 
-    public async Task<bool> RemoveBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default)
+    public async Task<bool> RemoveBlacklistOldAsync(long userId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         ValidateUserId(userId);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
-                nameof(RemoveBlacklistLegacyAsync),
+                nameof(RemoveBlacklistOldAsync),
                 TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
                 (session, ct) => new DelBlacklistOld(session.HttpCore).RequestAsync(userId, ct)),
             cancellationToken);
@@ -356,7 +295,7 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<UserInfoGuInfoWeb> GetBasicInfoWebAsync(int userId,
+    public async Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -364,7 +303,7 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<UserInfoGuInfoWeb>(
-                nameof(GetBasicInfoWebAsync),
+                nameof(GetUserInfoWebAsync),
                 TiebaOperationCapabilities.HttpOnly(),
                 (session, ct) => new GetUInfoGetUserInfoWeb(session.HttpCore).RequestAsync(userId, ct)),
             cancellationToken);
@@ -429,14 +368,14 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<bool> SetNicknameLegacyAsync(string nickName, CancellationToken cancellationToken = default)
+    public async Task<bool> SetNicknameAsync(string nickName, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         ValidateRequiredText(nameof(nickName), nickName, "Nickname must not be blank.");
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
-                nameof(SetNicknameLegacyAsync),
+                nameof(SetNicknameAsync),
                 TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
                 (session, ct) => new SetNicknameOld(session.HttpCore).RequestAsync(nickName, ct)),
             cancellationToken);
@@ -472,13 +411,13 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<UserPostss> GetPostsAsync(int userId, uint pn, uint rn, string version,
+    public async Task<UserPostGroups> GetPostsAsync(int userId, uint pn, uint rn, string version,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         return await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<UserPostss>(
+            new TiebaOperationDescriptor<UserPostGroups>(
                 nameof(GetPostsAsync),
                 TiebaOperationCapabilities.WebSocketPreferred(requiresAuthentication: true),
                 (session, ct) => new GetPosts(session.HttpCore, session.WsCore).RequestHttpAsync(userId, pn, rn,

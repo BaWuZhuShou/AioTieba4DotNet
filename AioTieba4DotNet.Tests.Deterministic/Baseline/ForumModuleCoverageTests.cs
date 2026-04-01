@@ -25,9 +25,7 @@ public sealed class ForumModuleCoverageTests
         Assert.AreEqual("csharp", await module.GetFnameAsync(123));
         Assert.IsNull(await module.GetDetailAsync(123));
         Assert.IsNull(await module.GetDetailAsync("csharp"));
-        Assert.IsTrue(await module.LikeAsync("csharp"));
         Assert.IsTrue(await module.FollowAsync("csharp"));
-        Assert.IsTrue(await module.UnlikeAsync("csharp"));
         Assert.IsTrue(await module.UnfollowAsync(123));
         Assert.IsTrue(await module.UnfollowAsync("csharp"));
         Assert.IsTrue(await module.SignAsync("csharp"));
@@ -50,7 +48,6 @@ public sealed class ForumModuleCoverageTests
         Assert.IsTrue(await module.DislikeAsync("csharp"));
         Assert.IsTrue(await module.UndislikeAsync(123));
         Assert.IsTrue(await module.UndislikeAsync("csharp"));
-        Assert.IsTrue(await module.DelBaWuAsync("csharp", "tb.1.safe", "assist"));
 
         Assert.AreEqual("csharp", protocol.LastFname);
         Assert.AreEqual(123UL, protocol.LastFid);
@@ -69,7 +66,6 @@ public sealed class ForumModuleCoverageTests
         Assert.AreEqual(42L, protocol.LastUserId);
         Assert.AreEqual(12, protocol.LastRankPageNumber);
         Assert.AreEqual(ForumRankType.Monthly, protocol.LastRankType);
-        Assert.AreEqual("assist", protocol.LastBawuType);
     }
 
     [TestMethod]
@@ -120,8 +116,6 @@ public sealed class ForumModuleCoverageTests
         public bool LastIsGood { get; private set; }
         public int LastRankPageNumber { get; private set; }
         public ForumRankType LastRankType { get; private set; }
-        public string? LastBawuType { get; private set; }
-
         public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default)
         {
             LastFname = fname;
@@ -146,12 +140,6 @@ public sealed class ForumModuleCoverageTests
             return Task.FromResult<ForumDetail>(null!);
         }
 
-        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default)
-        {
-            LastFname = fname;
-            return Task.FromResult(true);
-        }
-
         public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default)
         {
             LastFid = fid;
@@ -159,12 +147,6 @@ public sealed class ForumModuleCoverageTests
         }
 
         public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default)
-        {
-            LastFname = fname;
-            return Task.FromResult(true);
-        }
-
-        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default)
         {
             LastFname = fname;
             return Task.FromResult(true);
@@ -215,12 +197,12 @@ public sealed class ForumModuleCoverageTests
             return Task.FromResult<SelfFollowForums>(null!);
         }
 
-        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
             CancellationToken cancellationToken = default)
         {
             LastPageNumber = pn;
             LastPageSize = rn;
-            return Task.FromResult<SelfFollowForumsV1>(null!);
+        return Task.FromResult<SelfFollowForumsV1>(null!);
         }
 
         public Task<int> GetCidAsync(string fname, string cname = "", CancellationToken cancellationToken = default)
@@ -421,14 +403,6 @@ public sealed class ForumModuleCoverageTests
             return Task.FromResult<DislikeForums>(null!);
         }
 
-        public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-            CancellationToken cancellationToken = default)
-        {
-            LastFname = fname;
-            LastPortrait = portrait;
-            LastBawuType = baWuType;
-            return Task.FromResult(true);
-        }
     }
 
     private sealed class DefaultForumProtocolProbe : IForumProtocol
@@ -449,7 +423,7 @@ public sealed class ForumModuleCoverageTests
         public Task<Forum> GetForumAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult<Forum>(null!);
         public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<FollowForums>(null!);
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<SelfFollowForums>(null!);
-        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<SelfFollowForumsV1>(null!);
+    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<SelfFollowForumsV1>(null!);
         public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) => Task.FromResult(false);
         public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult(false);
         public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default) => Task.FromResult(false);

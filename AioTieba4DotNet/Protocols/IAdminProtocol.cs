@@ -4,10 +4,10 @@ namespace AioTieba4DotNet.Protocols;
 
 internal interface IAdminProtocol
 {
-    Task<bool> AddBaWuAsync(string fname, string userName, BawuType bawuType,
+    Task<bool> AddBawuAsync(string fname, string userName, BawuType bawuType,
         CancellationToken cancellationToken = default);
 
-    Task<bool> DelBaWuAsync(string fname, string portrait, BawuType bawuType,
+    Task<bool> DelBawuAsync(string fname, string portrait, BawuType bawuType,
         CancellationToken cancellationToken = default);
 
     Task<bool> AddBawuBlacklistAsync(string fname, long userId, CancellationToken cancellationToken = default);

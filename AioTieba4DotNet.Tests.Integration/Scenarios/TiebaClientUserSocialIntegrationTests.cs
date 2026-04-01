@@ -36,11 +36,27 @@ public sealed class TiebaClientUserSocialIntegrationTests : TestBase
     }
 
     [TestMethod]
-    public async Task GetBasicInfoWebAsync_KnownUser_ReturnsCompatibleShape()
+    public async Task GetUserInfoAppAsync_KnownUser_ReturnsAppShape()
     {
         try
         {
-            var userInfo = await Client.Users.GetBasicInfoWebAsync(1);
+        var userInfo = await Client.Users.GetUserInfoAppAsync(1);
+
+            Assert.IsNotNull(userInfo);
+            Assert.IsGreaterThan(0L, userInfo.UserId);
+        }
+        catch (TiebaException exception)
+        {
+            Assert.Inconclusive($"Skipping basic-info-app integration path in this environment: {exception.Message}");
+        }
+    }
+
+    [TestMethod]
+    public async Task GetUserInfoWebAsync_KnownUser_ReturnsCompatibleShape()
+    {
+        try
+        {
+        var userInfo = await Client.Users.GetUserInfoWebAsync(1);
 
             Assert.IsNotNull(userInfo);
             Assert.IsGreaterThan(0L, userInfo.UserId);
@@ -70,14 +86,25 @@ public sealed class TiebaClientUserSocialIntegrationTests : TestBase
     }
 
     [TestMethod]
-    public async Task GetBlacklistLegacyAsync_AuthenticatedAccount_ReturnsLegacyPageShape()
+    public async Task GetBlacklistAsync_AuthenticatedAccount_ReturnsPermissionShape()
     {
         EnsureAuthenticated();
 
-        var blacklist = await Client.Users.GetBlacklistLegacyAsync(1, 20);
+        var blacklist = await Client.Users.GetBlacklistAsync();
 
         Assert.IsNotNull(blacklist);
-        Assert.IsGreaterThanOrEqualTo(1, blacklist.Page.CurrentPage);
+        Assert.IsNotNull(blacklist.Objs);
+    }
+
+    [TestMethod]
+    public async Task GetBlacklistOldAsync_AuthenticatedAccount_ReturnsOldPageShape()
+    {
+        EnsureAuthenticated();
+
+        var blacklist = await Client.Users.GetBlacklistOldAsync(1, 20);
+
+        Assert.IsNotNull(blacklist);
+        Assert.IsNotNull(blacklist.Objs);
     }
 
     [TestMethod]

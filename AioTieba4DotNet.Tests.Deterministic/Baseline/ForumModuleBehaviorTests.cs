@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Modules;
 using AioTieba4DotNet.Protocols;
+using AioTieba4DotNet.Tests.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AioTieba4DotNet.Tests.Baseline;
@@ -41,6 +42,44 @@ public class ForumModuleBehaviorTests
 
         Assert.IsTrue(result);
         Assert.AreEqual(7356044UL, protocol.LastFollowFid);
+    }
+
+    [TestMethod]
+    public async Task ForumModule_GetSelfFollowForumsDelegatesToInternalProtocol()
+    {
+        var expected = new SelfFollowForums(
+            new List<SelfFollowForum> { new() { Fid = 7356044, Fname = CanonicalSafeForumName, IsSigned = true } },
+            hasMore: true);
+        var protocol = new RecordingForumProtocol(new Forum { Fid = 7356044, Fname = CanonicalSafeForumName })
+        {
+            SelfFollowForumsResult = expected
+        };
+        var module = new ForumModule(protocol);
+
+        var actual = await module.GetSelfFollowForumsAsync(2, 30);
+
+        Assert.AreSame(expected, actual);
+        Assert.AreEqual(2, protocol.LastSelfFollowForumsPn);
+        Assert.AreEqual(30, protocol.LastSelfFollowForumsRn);
+    }
+
+    [TestMethod]
+    public async Task ForumModule_GetSelfFollowForumsV1DelegatesToInternalProtocol()
+    {
+        var expected = new SelfFollowForumsV1(
+            new List<SelfFollowForumV1> { new() { Fid = 7356044, Fname = CanonicalSafeForumName } },
+            new SelfFollowForumsV1Page { CurrentPage = 3, TotalPage = 5 });
+        var protocol = new RecordingForumProtocol(new Forum { Fid = 7356044, Fname = CanonicalSafeForumName })
+        {
+            SelfFollowForumsV1Result = expected
+        };
+        var module = new ForumModule(protocol);
+
+        var actual = await module.GetSelfFollowForumsV1Async(3, 20);
+
+        Assert.AreSame(expected, actual);
+        Assert.AreEqual(3, protocol.LastSelfFollowForumsV1Pn);
+        Assert.AreEqual(20, protocol.LastSelfFollowForumsV1Rn);
     }
 
     [TestMethod]
@@ -137,6 +176,24 @@ public class ForumModuleBehaviorTests
         Assert.AreEqual(7356044UL, protocol.LastRoomListFid);
     }
 
+    [TestMethod]
+    public void ForumModule_PublicContracts_FreezePeerFamilies_AndRejectRemovedAliases()
+    {
+        var forumSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Contracts/IForumModule.cs",
+            "AioTieba4DotNet/Protocols/IForumProtocol.cs",
+            "AioTieba4DotNet/Modules/ForumModule.cs");
+
+        RepositorySourceTextAssert.ContainsAll(
+            forumSource,
+            "FollowAsync",
+            "UnfollowAsync",
+            "GetSelfFollowForumsAsync",
+            "GetSelfFollowForumsV1Async",
+            "SelfFollowForumsV1");
+        RepositorySourceTextAssert.DoesNotContainAny(forumSource, "LikeAsync", "UnlikeAsync", "DelBaWuAsync");
+    }
+
     private sealed class RecordingForumProtocol(Forum forum) : IForumProtocol
     {
         public string? LastFname { get; private set; }
@@ -159,7 +216,13 @@ public class ForumModuleBehaviorTests
         public DislikeForums? DislikeForumsResult { get; init; }
         public ExactSearches? SearchExactResult { get; init; }
         public RoomList? RoomListResult { get; init; }
+        public SelfFollowForums? SelfFollowForumsResult { get; init; }
+    public SelfFollowForumsV1? SelfFollowForumsV1Result { get; init; }
         public ulong LastRoomListFid { get; private set; }
+        public int LastSelfFollowForumsPn { get; private set; }
+        public int LastSelfFollowForumsRn { get; private set; }
+    public int LastSelfFollowForumsV1Pn { get; private set; }
+    public int LastSelfFollowForumsV1Rn { get; private set; }
 
         public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default) =>
             Task.FromResult(7356044UL);
@@ -173,16 +236,10 @@ public class ForumModuleBehaviorTests
         public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
 
-        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default) =>
-            throw new NotImplementedException();
-
         public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
             Task.FromResult(RecordFollow(fid));
 
         public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) =>
-            throw new NotImplementedException();
-
-        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
 
         public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
@@ -216,10 +273,20 @@ public class ForumModuleBehaviorTests
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            LastSelfFollowForumsPn = pn;
+            LastSelfFollowForumsRn = rn;
+            return Task.FromResult(SelfFollowForumsResult ?? new SelfFollowForums([], false));
+        }
 
-        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+        CancellationToken cancellationToken = default)
+    {
+        LastSelfFollowForumsV1Pn = pn;
+        LastSelfFollowForumsV1Rn = rn;
+        return Task.FromResult(SelfFollowForumsV1Result ?? new SelfFollowForumsV1([], new SelfFollowForumsV1Page()));
+    }
 
         public Task<int> GetCidAsync(string fname, string cname = "", CancellationToken cancellationToken = default)
         {
@@ -265,9 +332,6 @@ public class ForumModuleBehaviorTests
             GetDislikeForumsCalls++;
             return Task.FromResult(DislikeForumsResult ?? new DislikeForums([], new DislikeForumsPage()));
         }
-
-        public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
         private bool RecordFollow(ulong fid)
         {

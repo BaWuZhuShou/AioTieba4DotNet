@@ -74,9 +74,9 @@
 - `client.Messages.SendChatroomMessageAsync(...)`
 - `client.Messages.ParsePushNotifications(...)`
 
-## 需要旧的消息读入口怎么办
+## 想读取 `@` 或回复消息，但不知道该用哪个模块
 
-`client.Users.GetAtsAsync(...)` 和 `client.Users.GetRepliesAsync(...)` 还保留着，但它们只是兼容入口。新代码和新文档统一建议使用 `client.Messages`。
+直接使用 `client.Messages.GetAtsAsync(...)` 和 `client.Messages.GetRepliesAsync(...)`。消息读取属于 `Messages`，不属于 `Users` 或 `Client`。
 
 ## 想强制不用 WebSocket
 
@@ -102,8 +102,8 @@ using var client = new TiebaClient(new TiebaOptions
 
 先对照下面这组变化:
 
-- `Messages` 成为消息业务的 canonical 模块
-- `Admins` 成为吧务和后台管理的 canonical 模块
+- `Messages` 现在负责消息读取、私信和 push 解析
+- `Admins` 现在负责吧务和后台管理操作
 - `Client` 只保留生命周期方法
 - v3 只支持 `net10.0`
 

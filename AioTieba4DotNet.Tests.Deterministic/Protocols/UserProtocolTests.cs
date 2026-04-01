@@ -13,7 +13,9 @@ using AioTieba4DotNet.Session;
 using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Models.Shared;
+using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Protocols;
+using AioTieba4DotNet.Tests.Infrastructure;
 using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -26,34 +28,47 @@ public class UserProtocolTests
     private static readonly string ValidStoken = new('s', 64);
 
     [TestMethod]
+    public void UserSources_FreezePeerFamilies_AndRejectRemovedNames()
+    {
+        var userSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Contracts/IUserModule.cs",
+            "AioTieba4DotNet/Protocols/IUserProtocol.cs",
+            "AioTieba4DotNet/Protocols/UserProtocol.cs");
+
+        RepositorySourceTextAssert.ContainsAll(
+            userSource,
+            "GetUserInfoAppAsync",
+            "GetUserInfoWebAsync",
+            "GetBlacklistAsync",
+            "GetBlacklistOldAsync",
+            "AddBlacklistOldAsync",
+            "RemoveBlacklistOldAsync",
+            "SetBlacklistAsync",
+            "SetNicknameAsync",
+            "UserPostGroups");
+        RepositorySourceTextAssert.DoesNotContainAny(
+            userSource,
+            "GetBlacklistPermissionsAsync",
+            "SetBlacklistPermissionsAsync",
+            "GetBlacklistMutedAsync",
+            "AddBlacklistMutedAsync",
+            "RemoveBlacklistMutedAsync",
+            "GetBlacklistLegacyAsync",
+            "AddBlacklistLegacyAsync",
+            "RemoveBlacklistLegacyAsync",
+            "GetBasicInfoAppAsync",
+            "GetBasicInfoWebAsync",
+            "SetNicknameLegacyAsync",
+            "UserPostss");
+    }
+
+    [TestMethod]
     public async Task GetFansAsync_WithoutCredentials_FailsLocally_BeforeTransport()
     {
         var httpCore = new RecordingHttpCore();
         var protocol = CreateGuestProtocol(httpCore);
 
         await AssertAuthFailure(async () => await protocol.GetFansAsync(1, 1));
-
-        AssertTransportUnused(httpCore);
-    }
-
-    [TestMethod]
-    public async Task GetAtsAsync_WithoutCredentials_FailsLocally_BeforeTransport()
-    {
-        var httpCore = new RecordingHttpCore();
-        var protocol = CreateGuestProtocol(httpCore);
-
-        await AssertAuthFailure(async () => await protocol.GetAtsAsync(1));
-
-        AssertTransportUnused(httpCore);
-    }
-
-    [TestMethod]
-    public async Task GetRepliesAsync_WithoutCredentials_FailsLocally_BeforeTransport()
-    {
-        var httpCore = new RecordingHttpCore();
-        var protocol = CreateGuestProtocol(httpCore);
-
-        await AssertAuthFailure(async () => await protocol.GetRepliesAsync(1));
 
         AssertTransportUnused(httpCore);
     }
@@ -70,12 +85,12 @@ public class UserProtocolTests
     }
 
     [TestMethod]
-    public async Task GetBlacklistLegacyAsync_WithoutCredentials_FailsLocally_BeforeTransport()
+    public async Task GetBlacklistOldAsync_WithoutCredentials_FailsLocally_BeforeTransport()
     {
         var httpCore = new RecordingHttpCore();
         var protocol = CreateGuestProtocol(httpCore);
 
-        await AssertAuthFailure(async () => await protocol.GetBlacklistLegacyAsync(1, 20));
+        await AssertAuthFailure(async () => await protocol.GetBlacklistOldAsync(1, 20));
 
         AssertTransportUnused(httpCore);
     }
@@ -103,34 +118,34 @@ public class UserProtocolTests
     }
 
     [TestMethod]
-    public async Task AddBlacklistLegacyAsync_WithoutCredentials_FailsLocally_BeforeTransport()
+    public async Task AddBlacklistOldAsync_WithoutCredentials_FailsLocally_BeforeTransport()
     {
         var httpCore = new RecordingHttpCore();
         var protocol = CreateGuestProtocol(httpCore);
 
-        await AssertAuthFailure(async () => await protocol.AddBlacklistLegacyAsync(1));
+        await AssertAuthFailure(async () => await protocol.AddBlacklistOldAsync(1));
 
         AssertTransportUnused(httpCore);
     }
 
     [TestMethod]
-    public async Task RemoveBlacklistLegacyAsync_WithoutCredentials_FailsLocally_BeforeTransport()
+    public async Task RemoveBlacklistOldAsync_WithoutCredentials_FailsLocally_BeforeTransport()
     {
         var httpCore = new RecordingHttpCore();
         var protocol = CreateGuestProtocol(httpCore);
 
-        await AssertAuthFailure(async () => await protocol.RemoveBlacklistLegacyAsync(1));
+        await AssertAuthFailure(async () => await protocol.RemoveBlacklistOldAsync(1));
 
         AssertTransportUnused(httpCore);
     }
 
     [TestMethod]
-    public async Task SetNicknameLegacyAsync_WithoutCredentials_FailsLocally_BeforeTransport()
+    public async Task SetNicknameAsync_WithoutCredentials_FailsLocally_BeforeTransport()
     {
         var httpCore = new RecordingHttpCore();
         var protocol = CreateGuestProtocol(httpCore);
 
-        await AssertAuthFailure(async () => await protocol.SetNicknameLegacyAsync("legacy-name"));
+        await AssertAuthFailure(async () => await protocol.SetNicknameAsync("safe-name"));
 
         AssertTransportUnused(httpCore);
     }
@@ -189,7 +204,7 @@ public class UserProtocolTests
         var protocol = CreateProtocol(session);
 
         await AssertThrowsAsync<ArgumentOutOfRangeException>(async () => await protocol.GetFollowsAsync(1, 0));
-        await AssertThrowsAsync<ArgumentOutOfRangeException>(async () => await protocol.GetBlacklistLegacyAsync(1, 0));
+        await AssertThrowsAsync<ArgumentOutOfRangeException>(async () => await protocol.GetBlacklistOldAsync(1, 0));
         await AssertThrowsAsync<ArgumentOutOfRangeException>(async () => await protocol.GetUserForumInfoAsync(0UL, "tb.1.safe"));
         await AssertThrowsAsync<ArgumentOutOfRangeException>(async () => await protocol.GetUserByTiebaUidAsync(0));
 
@@ -197,19 +212,19 @@ public class UserProtocolTests
     }
 
     [TestMethod]
-    public async Task GetBlacklistLegacyAsync_UsesWebSocketPreferredPath_AndMapsUsers()
+    public async Task GetBlacklistOldAsync_UsesWebSocketPreferredPath_AndMapsUsers()
     {
         var httpCore = new RecordingHttpCore();
         var wsCore = new RecordingWsCore
         {
-            ResponsePayload = CreateLegacyBlacklistResponse().ToByteArray()
+            ResponsePayload = CreateMutedBlacklistResponse().ToByteArray()
         };
         using var session = CreateAuthenticatedSession(httpCore, wsCore, _ => Task.FromResult("tbs-123"),
             TiebaTransportMode.Auto);
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
 
-        var result = await protocol.GetBlacklistLegacyAsync(2, 30, cts.Token);
+        var result = await protocol.GetBlacklistOldAsync(2, 30, cts.Token);
 
         Assert.AreEqual(1, wsCore.ConnectCalls);
         Assert.AreEqual(303028, wsCore.LastCmd);
@@ -219,9 +234,10 @@ public class UserProtocolTests
         Assert.AreEqual(123L, result[0].UserId);
         Assert.AreEqual("tb.1.safe", result[0].Portrait);
         Assert.AreEqual("Safe User", result[0].NickNameOld);
-        Assert.AreEqual(2, result.Page.CurrentPage);
-        Assert.IsTrue(result.Page.HasMore);
-        Assert.IsFalse(result.Page.HasPrevious);
+        var oldPage = GetBlacklistOldPage(result);
+        Assert.AreEqual(2, oldPage.CurrentPage);
+        Assert.IsTrue(oldPage.HasMore);
+        Assert.IsFalse(oldPage.HasPrevious);
 
         var request = UserMuteQueryReqIdl.Parser.ParseFrom(wsCore.LastData);
         Assert.AreEqual(2U, request.Data.Pn);
@@ -230,11 +246,11 @@ public class UserProtocolTests
     }
 
     [TestMethod]
-    public async Task GetBlacklistLegacyAsync_WhenWebSocketUnavailable_FallsBackToHttp()
+    public async Task GetBlacklistOldAsync_WhenWebSocketUnavailable_FallsBackToHttp()
     {
         var httpCore = new RecordingHttpCore
         {
-            AppProtoResponse = CreateLegacyBlacklistResponse().ToByteArray()
+            AppProtoResponse = CreateMutedBlacklistResponse().ToByteArray()
         };
         var wsCore = new RecordingWsCore
         {
@@ -245,7 +261,7 @@ public class UserProtocolTests
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
 
-        var result = await protocol.GetBlacklistLegacyAsync(2, 30, cts.Token);
+        var result = await protocol.GetBlacklistOldAsync(2, 30, cts.Token);
 
         Assert.AreEqual(1, wsCore.ConnectCalls);
         Assert.AreEqual(1, httpCore.SendAppProtoCalls);
@@ -259,7 +275,7 @@ public class UserProtocolTests
     }
 
     [TestMethod]
-    public async Task AddBlacklistLegacyAsync_PropagatesCancellationToken_AndPacksRequest()
+    public async Task AddBlacklistOldAsync_PropagatesCancellationToken_AndPacksRequest()
     {
         var httpCore = new RecordingHttpCore
         {
@@ -269,7 +285,7 @@ public class UserProtocolTests
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
 
-        var result = await protocol.AddBlacklistLegacyAsync(12345, cts.Token);
+        var result = await protocol.AddBlacklistOldAsync(12345, cts.Token);
 
         Assert.IsTrue(result);
         Assert.AreEqual(cts.Token, httpCore.LastAppFormCancellationToken);
@@ -279,7 +295,7 @@ public class UserProtocolTests
     }
 
     [TestMethod]
-    public async Task RemoveBlacklistLegacyAsync_PropagatesCancellationToken_AndPacksRequest()
+    public async Task RemoveBlacklistOldAsync_PropagatesCancellationToken_AndPacksRequest()
     {
         var httpCore = new RecordingHttpCore
         {
@@ -289,7 +305,7 @@ public class UserProtocolTests
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
 
-        var result = await protocol.RemoveBlacklistLegacyAsync(12345, cts.Token);
+        var result = await protocol.RemoveBlacklistOldAsync(12345, cts.Token);
 
         Assert.IsTrue(result);
         Assert.AreEqual(cts.Token, httpCore.LastAppFormCancellationToken);
@@ -299,19 +315,19 @@ public class UserProtocolTests
     }
 
     [TestMethod]
-    public async Task SetNicknameLegacyAsync_BlankNickname_FailsBeforeTransport()
+    public async Task SetNicknameAsync_BlankNickname_FailsBeforeTransport()
     {
         var httpCore = new RecordingHttpCore();
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
 
-        await AssertThrowsAsync<ArgumentException>(async () => await protocol.SetNicknameLegacyAsync(" "));
+        await AssertThrowsAsync<ArgumentException>(async () => await protocol.SetNicknameAsync(" "));
 
         AssertTransportUnused(httpCore);
     }
 
     [TestMethod]
-    public async Task SetNicknameLegacyAsync_UsesWebFormQuery_AndPropagatesCancellationToken()
+    public async Task SetNicknameAsync_UsesWebFormQuery_AndPropagatesCancellationToken()
     {
         var httpCore = new RecordingHttpCore
         {
@@ -321,7 +337,7 @@ public class UserProtocolTests
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
 
-        var result = await protocol.SetNicknameLegacyAsync("Safe Nick", cts.Token);
+        var result = await protocol.SetNicknameAsync("Safe Nick", cts.Token);
 
         Assert.IsTrue(result);
         Assert.AreEqual(1, httpCore.SendWebFormCalls);
@@ -462,49 +478,6 @@ public class UserProtocolTests
     }
 
     [TestMethod]
-    public async Task GetRepliesAsync_ParsesProtobufResponse_AndPropagatesCancellationToken()
-    {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = new ReplyMeResIdl
-            {
-                Error = new Error { Errorno = 0 },
-                Data = new ReplyMeResIdl.Types.DataRes
-                {
-                    Page = new Page { CurrentPage = 1, HasMore = 0, HasPrev = 0 },
-                    ReplyList =
-                    {
-                        new ReplyMeResIdl.Types.DataRes.Types.ReplyList
-                        {
-                            ThreadId = 1001,
-                            PostId = 1002,
-                            QuotePid = 1003,
-                            Fname = "lol欧服",
-                            Content = "reply body",
-                            IsFloor = 1,
-                            Time = 1234567890,
-                            Replyer = new User { Id = 1, Name = "replyer", NameShow = "Replyer" },
-                            QuoteUser = new User { Id = 2, Name = "quoted", NameShow = "Quoted" },
-                            ThreadAuthorUser = new User { Id = 3, Name = "author", NameShow = "Author" }
-                        }
-                    }
-                }
-            }.ToByteArray()
-        };
-        using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
-        var protocol = CreateProtocol(session);
-        using var cts = new CancellationTokenSource();
-
-        var result = await protocol.GetRepliesAsync(1, cts.Token);
-
-        Assert.AreEqual(1, result.Count);
-        Assert.AreEqual("reply body", result[0].Content);
-        Assert.AreEqual("Replyer", result[0].Replyer?.ShowName);
-        Assert.AreEqual(1003, result[0].QuotePostId);
-        Assert.AreEqual(cts.Token, httpCore.LastAppProtoCancellationToken);
-    }
-
-    [TestMethod]
     public async Task GetSelfInfoAsync_ComposesInitNicknameAndMoIndex()
     {
         var httpCore = new RecordingHttpCore
@@ -603,7 +576,7 @@ public class UserProtocolTests
     }
 
     [TestMethod]
-    public async Task GetBasicInfoAsync_PropagatesCancellationToken_ToTransport()
+    public async Task GetUserInfoAppAsync_PropagatesCancellationToken_ToTransport()
     {
         var httpCore = new RecordingHttpCore
         {
@@ -628,14 +601,14 @@ public class UserProtocolTests
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
 
-        var result = await protocol.GetBasicInfoAsync(1, cts.Token);
+        var result = await protocol.GetUserInfoAppAsync(1, cts.Token);
 
         Assert.AreEqual("safe-user", result.UserName);
         Assert.AreEqual(cts.Token, httpCore.LastAppProtoCancellationToken);
     }
 
     [TestMethod]
-    public async Task GetBasicInfoWebAsync_ParsesWebShape_AndTrimsPortraitQuery()
+    public async Task GetUserInfoWebAsync_ParsesWebShape_AndTrimsPortraitQuery()
     {
         var httpCore = new RecordingHttpCore
         {
@@ -646,7 +619,7 @@ public class UserProtocolTests
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
 
-        var result = await protocol.GetBasicInfoWebAsync(123);
+        var result = await protocol.GetUserInfoWebAsync(123);
 
         Assert.AreEqual(123, result.UserId);
         Assert.AreEqual(string.Empty, result.UserName);
@@ -881,23 +854,6 @@ public class UserProtocolTests
 
         Assert.AreEqual("safe-user", result.UserName);
         Assert.AreEqual(cts.Token, httpCore.LastAppProtoCancellationToken);
-    }
-
-    [TestMethod]
-    public async Task BlockAsync_PropagatesCancellationToken_ToTransport()
-    {
-        var httpCore = new RecordingHttpCore
-        {
-            AppFormResponse = SuccessResponse
-        };
-        using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
-        var protocol = CreateProtocol(session);
-        using var cts = new CancellationTokenSource();
-
-        var result = await protocol.BlockAsync(1, "tb.1.safe", 1, "reason", cts.Token);
-
-        Assert.IsTrue(result);
-        Assert.AreEqual(cts.Token, httpCore.LastAppFormCancellationToken);
     }
 
     [TestMethod]
@@ -1138,7 +1094,7 @@ public class UserProtocolTests
         };
     }
 
-    private static UserMuteQueryResIdl CreateLegacyBlacklistResponse()
+    private static UserMuteQueryResIdl CreateMutedBlacklistResponse()
     {
         return new UserMuteQueryResIdl
         {
@@ -1151,7 +1107,7 @@ public class UserProtocolTests
                     new UserMuteQueryResIdl.Types.DataRes.Types.MuteUser
                     {
                         UserId = 123,
-                        Portrait = "tb.1.safe?from=legacy",
+                        Portrait = "tb.1.safe?from=muted",
                         UserName = "safe-user",
                         NameShow = "Safe User",
                         MuteTime = 1234567890
@@ -1368,7 +1324,7 @@ public class UserProtocolTests
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
         public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
@@ -1386,8 +1342,6 @@ public class UserProtocolTests
         public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-        public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
     }
 
     private sealed class RecordingForumProtocol : IForumProtocol
@@ -1414,16 +1368,10 @@ public class UserProtocolTests
         public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
 
-        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default) =>
-            throw new NotImplementedException();
-
         public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
 
         public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) =>
-            throw new NotImplementedException();
-
-        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
 
         public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
@@ -1450,7 +1398,7 @@ public class UserProtocolTests
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
         public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
@@ -1468,7 +1416,8 @@ public class UserProtocolTests
         public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-        public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
     }
+
+    private static Models.Threads.PageT GetBlacklistOldPage(BlacklistOldUsers users) =>
+        (Models.Threads.PageT)typeof(BlacklistOldUsers).GetProperty("Page")!.GetValue(users)!;
 }

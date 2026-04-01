@@ -159,10 +159,8 @@ public sealed class ForumDiscoveryModuleBehaviorTests
         public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default) => throw new NotImplementedException();
@@ -171,7 +169,7 @@ public sealed class ForumDiscoveryModuleBehaviorTests
         public Task<Forum> GetForumAsync(string fname, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<int> GetCidAsync(string fname, string cname = "", CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<int> GetCidAsync(ulong fid, string cname = "", CancellationToken cancellationToken = default) => throw new NotImplementedException();
         public Task<ForumImageBytes> GetImageBytesAsync(string imageUrl, CancellationToken cancellationToken = default) => throw new NotImplementedException();

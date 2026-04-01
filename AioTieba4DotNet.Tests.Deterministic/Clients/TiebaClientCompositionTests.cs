@@ -3,8 +3,10 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using System.Linq;
 using System.Threading.Tasks;
 using AioTieba4DotNet.Contracts;
+using AioTieba4DotNet.Tests.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,6 +16,25 @@ namespace AioTieba4DotNet.Tests.Clients;
 [TestClass]
 public sealed class TiebaClientCompositionTests
 {
+    [TestMethod]
+    public void TiebaClient_PublicContract_UsesSixNormalizedModules()
+    {
+        var moduleProperties = typeof(ITiebaClient)
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+            .OrderBy(property => property.Name, StringComparer.Ordinal)
+            .Select(property => property.Name)
+            .ToArray();
+
+        CollectionAssert.AreEqual(
+            new[] { "Admins", "Client", "Forums", "Messages", "Threads", "Users" },
+            moduleProperties);
+
+        var clientSource = RepositorySourceTextAssert.ReadRepositoryFiles(
+            "AioTieba4DotNet/Clients/ITiebaClient.cs",
+            "AioTieba4DotNet/Clients/TiebaClient.cs");
+        RepositorySourceTextAssert.ContainsAll(clientSource, "Admins", "Messages", "Client");
+    }
+
     [TestMethod]
     public async Task DirectFactoryAndDependencyInjectionClients_BehaveEquivalently()
     {

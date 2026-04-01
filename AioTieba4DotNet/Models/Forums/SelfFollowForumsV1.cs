@@ -3,15 +3,15 @@ using AioTieba4DotNet.Models.Shared;
 namespace AioTieba4DotNet.Models.Forums;
 
 /// <summary>
-///     旧版当前账号关注贴吧列表
+///     表示 aiotieba `get_self_follow_forums_v1` 返回的当前账号关注贴吧列表。
 /// </summary>
 public class SelfFollowForumsV1 : Containers<SelfFollowForumV1>
 {
     /// <summary>
-    ///     构造函数
+///     构造函数
     /// </summary>
-    /// <param name="objs">关注贴吧列表</param>
-    /// <param name="page">旧版分页信息</param>
+    /// <param name="objs">V1 关注贴吧列表</param>
+    /// <param name="page">分页信息</param>
     public SelfFollowForumsV1(List<SelfFollowForumV1> objs, SelfFollowForumsV1Page page) : base(objs)
     {
         ArgumentNullException.ThrowIfNull(page);
