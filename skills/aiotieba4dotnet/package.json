@@ -1,0 +1,59 @@
+{
+  "name": "@bawuzhushou/aiotieba4dotnet-skill",
+  "version": "1.0.0",
+  "description": "Official Chinese-first, code-generation-first AI skill for the published AioTieba4DotNet library.",
+  "license": "Unlicense",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BaWuZhuShou/AioTieba4DotNet.git",
+    "directory": "skills/aiotieba4dotnet"
+  },
+  "homepage": "https://github.com/BaWuZhuShou/AioTieba4DotNet/tree/master/skills/aiotieba4dotnet",
+  "keywords": [
+    "skill",
+    "ai-skill",
+    "opencode-skill",
+    "aiotieba4dotnet",
+    "tieba",
+    "dotnet",
+    "csharp",
+    "zh-CN"
+  ],
+  "files": [
+    "skill.json",
+    "SKILL.md",
+    "references/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "opencodeSkill": {
+    "skillName": "aiotieba4dotnet",
+    "manifest": "skill.json",
+    "entry": "SKILL.md",
+    "language": "zh-CN",
+    "mode": "code-generation",
+    "source": {
+      "type": "github-directory",
+      "repository": "BaWuZhuShou/AioTieba4DotNet",
+      "ref": "master",
+      "path": "skills/aiotieba4dotnet"
+    },
+    "installHints": {
+      "preferredManifest": "skill.json",
+      "packageName": "@bawuzhushou/aiotieba4dotnet-skill",
+      "packageManager": "npm-compatible",
+      "directory": "skills/aiotieba4dotnet",
+      "exampleCommands": [
+        "npx skills install @bawuzhushou/aiotieba4dotnet-skill",
+        "npx skills add github:BaWuZhuShou/AioTieba4DotNet/skills/aiotieba4dotnet"
+      ]
+    },
+    "references": [
+      "references/quickstart.md",
+      "references/method-recipes.md",
+      "references/scenario-templates.md",
+      "references/output-format.md"
+    ]
+  }
+}

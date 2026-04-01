@@ -97,6 +97,23 @@ Console.WriteLine(profile.ShowName);
 - [Release Notes v3](./docs/release-notes-v3.md): v3 的发布定位、亮点和本地验证要求。
 - [Parity v3](./docs/parity-v3.md): upstream 对齐账本和 v3 范围说明。
 
+## AI Skill 导出
+
+仓库额外导出了一个面向 **AioTieba4DotNet 库使用者** 的 AI skill，位置在 `skills/aiotieba4dotnet/`。
+
+- 发布包名：`@bawuzhushou/aiotieba4dotnet-skill`
+- 机器可读 manifest：`skills/aiotieba4dotnet/skill.json`
+- 包级 manifest：`skills/aiotieba4dotnet/package.json`
+- 目标：让 AI 按中文请求稳定生成使用这个库的最小可运行 C# 示例，而不是维护仓库源码
+
+如果安装器同时支持包元信息和 skill 元信息，优先读取 `skill.json` 获取 skill 入口、语言、模式和引用文件，再用 `package.json` 读取发布信息。
+
+如果你的 skill 工具链支持 `npx skills` 风格的安装，典型用法可以写成：
+
+```bash
+npx skills install BaWuZhuShou/AioTieba4DotNet
+```
+
 ## 公开模块概览
 
 ### `client.Forums`

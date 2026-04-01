@@ -88,3 +88,6 @@ AioTieba4DotNet/
 - If library work changes user-visible behavior, ensure the docs contract stays aligned with `README.md`, the task
   guides, `docs/modules.md`, `docs/advanced.md`, `docs/troubleshooting.md`, release notes, migration notes, and
   `docs/parity-v3.md`.
+- If library work changes public usage patterns, install identity, or the consumer-facing module surface, also keep the
+  exported skill package under `../skills/aiotieba4dotnet/` aligned, including `SKILL.md`, `skill.json`, and
+  `package.json`.

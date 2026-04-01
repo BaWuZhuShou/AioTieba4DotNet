@@ -16,6 +16,7 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 ├── AioTieba4DotNet.Tests.Live/        # credentialed and mutation-capable verification
 ├── ProtoGenerator/                    # protobuf generator for Api/**/*.proto
 ├── docs/                              # user-facing docs plus parity and migration docs
+├── skills/                            # exported AI skill packages for external installation and reuse
 ├── .github/                           # build, publish, and release automation
 ├── .junie/                            # durable maintenance rules and architecture knowledge
 └── aiotieba/                          # upstream Python reference only
@@ -32,6 +33,7 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 | Live verification | `AioTieba4DotNet.Tests.Live/` | Credentialed, mutation-capable, cleanup-aware scenarios |
 | Generator maintenance | `ProtoGenerator/` | Regenerates `.proto` outputs under `AioTieba4DotNet/Api/**/Protobuf` |
 | Docs contract and IA | `README.md`, `docs/getting-started.md`, `docs/*.md` | README routes to task guides, reference, advanced, troubleshooting, migration, release notes, and parity ledger |
+| Exported AI skill package | `skills/aiotieba4dotnet/` | Portable consumer-facing skill package with `SKILL.md`, `skill.json`, and `package.json` |
 | Parity truth | `docs/parity-v3.md` | Authoritative v3 parity ledger against upstream export scope |
 | Historical backlog only | `docs/todo.md` | Stale history and backlog notes, not active product truth |
 | Local verification entrypoints | `scripts/test-lane.*`, `scripts/verify-local.*` | Canonical local and agent-run verification commands |
@@ -41,6 +43,7 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 - The active product baseline is v3 on `net10.0` only. Do not leave active guide text claiming `net8.0`, `net9.0`, multi-target support, or a live v2 release line.
 - `docs/parity-v3.md` is the parity truth. `docs/todo.md` is historical context only and must not be presented as the authoritative parity ledger.
 - The user-facing docs contract is anchored by `README.md` and the required docs list enforced locally by `scripts/verify-local.*`.
+- Exported skill packages under `skills/` are distribution artifacts, not repo-local `.agents` helpers. Keep their `SKILL.md`, `skill.json`, `package.json`, and README mentions aligned when install identity or public usage guidance changes.
 - GitHub Actions must stay build-only. They validate restore, build, codegen, and packaging, but they do not run `dotnet test` or invoke local verification contracts.
 - Local and agent-run verification uses four lanes only: `deterministic`, `integration`, `live`, and `sequence-dry-run`.
 - `aiotieba/` is reference material only. Never treat it as maintained product code, release scope, or coverage scope.
