@@ -272,3 +272,9 @@ aiotieba
 
 .output.txt
 .agents
+
+# Local agent and packaging artifacts
+.sisyphus/
+skills-lock.json
+**/coverage.json
+nupkg/
