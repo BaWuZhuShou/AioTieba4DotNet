@@ -10,7 +10,7 @@ on:
 
 jobs:
     contract:
-        name: Build and contract gate
+        name: Build, codegen, and packaging gate
         runs-on: ubuntu-latest
 
         steps:
@@ -39,9 +39,6 @@ jobs:
                         printf 'Generated protobuf outputs are out of date.\n'
                         exit 1
                     fi
-
-            -   name: Validate local verification contract
-                run: bash ./scripts/verify-local.sh --validate-only
 
             -   name: Verify package can be packed
                 run: dotnet pack AioTieba4DotNet/AioTieba4DotNet.csproj --configuration Release --no-build --output ./artifacts --nologo

@@ -53,24 +53,12 @@ jobs:
                         exit 1
                     fi
 
-    release-contracts:
-        name: Validate release docs and evidence contract
-        runs-on: ubuntu-latest
-
-        steps:
-            -   name: Checkout code
-                uses: actions/checkout@v6
-
-            -   name: Validate local verification contract
-                run: bash ./scripts/verify-local.sh --validate-only
-
     package:
         name: Package release artifacts
         runs-on: ubuntu-latest
         needs:
             - build
             - generator-consistency
-            - release-contracts
         outputs:
             version: ${{ steps.version.outputs.version }}
             prerelease: ${{ steps.version.outputs.prerelease }}

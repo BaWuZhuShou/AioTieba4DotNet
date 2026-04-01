@@ -96,11 +96,11 @@ v3 的根客户端稳定为:
 
 ## 发布治理
 
-v3 发布线继续采用 **build/codegen/docs/packaging/evidence contract only** 的治理模型。
+v3 发布线继续采用 **build/codegen/packaging only** 的 GitHub Actions 治理模型。
 
 - GitHub Actions **不运行 `dotnet test`**
 - deterministic、integration、live 验证都通过本地或 agent 环境执行
-- release gate 在 pack / publish 之前检查 restore、build、codegen、docs-contract、packaging 和 evidence presence
+- GitHub Actions release gate 在 pack / publish 之前检查 restore、build、codegen 和 packaging
 
 ## 本地验证契约
 

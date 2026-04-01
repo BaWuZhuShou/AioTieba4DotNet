@@ -40,8 +40,8 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 - Treat this root guide as repo routing only. Put durable cross-cutting rules in `.junie/guidelines.md`, and put local implementation rules in the nearest child `AGENTS.md`.
 - The active product baseline is v3 on `net10.0` only. Do not leave active guide text claiming `net8.0`, `net9.0`, multi-target support, or a live v2 release line.
 - `docs/parity-v3.md` is the parity truth. `docs/todo.md` is historical context only and must not be presented as the authoritative parity ledger.
-- The user-facing docs contract is anchored by `README.md` and the required docs list enforced by `scripts/verify-local.*`.
-- GitHub Actions must stay build-only. They validate restore, build, codegen, docs contract, packaging, and evidence presence, but they do not run `dotnet test`.
+- The user-facing docs contract is anchored by `README.md` and the required docs list enforced locally by `scripts/verify-local.*`.
+- GitHub Actions must stay build-only. They validate restore, build, codegen, and packaging, but they do not run `dotnet test` or invoke local verification contracts.
 - Local and agent-run verification uses four lanes only: `deterministic`, `integration`, `live`, and `sequence-dry-run`.
 - `aiotieba/` is reference material only. Never treat it as maintained product code, release scope, or coverage scope.
 

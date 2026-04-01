@@ -56,8 +56,8 @@
 ## 7. CI 与本地验证边界
 - GitHub Actions 必须保持 **build-only**。
 - GitHub Actions 不运行任何 `dotnet test`，也不运行 secret-backed lane。
-- 当前 release gate 只允许以下检查族：`restore`、`build`、`codegen`、`docs-contract`、`packaging`、`evidence-presence`。
-- 测试执行、凭据门控、live cleanup 和 lane 证据属于本地或 agent-run 范围，通过 `scripts/test-lane.*` 与 `scripts/verify-local.*` 管理。
+- 当前 GitHub Actions gate 只允许以下检查族：`restore`、`build`、`codegen`、`packaging`。
+- 测试执行、凭据门控、live cleanup、lane 证据，以及 docs / evidence contract 都属于本地或 agent-run 范围，通过 `scripts/test-lane.*` 与 `scripts/verify-local.*` 管理。
 - `.sisyphus/evidence/local-verification.manifest.json` 与其 schema 是本地验证契约的一部分，不能把它们降级成可选材料。
 
 ## 8. Coverage scope

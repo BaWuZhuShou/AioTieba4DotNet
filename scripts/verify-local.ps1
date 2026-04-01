@@ -226,9 +226,7 @@ $expectedManifest = [ordered]@{
             'restore',
             'build',
             'codegen',
-            'docs-contract',
-            'packaging',
-            'evidence-presence'
+            'packaging'
         )
     }
     requiredDocs = $requiredDocs

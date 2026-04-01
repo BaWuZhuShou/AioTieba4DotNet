@@ -150,8 +150,7 @@ Console.WriteLine(profile.ShowName);
   版 [aiotieba](https://github.com/lumina37/aiotieba)。
 - **生成链路**: 修改 `.proto` 后请运行 `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`，不要手改生成的 `.cs`
   文件。
-- **本地验证**: GitHub Actions 只做 restore、build、codegen、docs、packaging 和 evidence contract
-  检查。deterministic、integration、live 验证通过 `scripts/test-lane.*` 与 `scripts/verify-local.*` 在本地或 agent 环境执行。
+- **本地验证**: GitHub Actions 只做 restore、build、codegen 和 packaging 检查。deterministic、integration、live 验证，以及本地 docs / evidence contract，通过 `scripts/test-lane.*` 与 `scripts/verify-local.*` 在本地或 agent 环境执行。
 
 ## 友情链接
 
