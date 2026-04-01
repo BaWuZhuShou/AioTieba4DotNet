@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using AioTieba4DotNet.Contracts;
 using AioTieba4DotNet.Models.Threads;
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Protocols;
 
 namespace AioTieba4DotNet.Modules;
@@ -40,6 +41,34 @@ public class ThreadModule : IThreadModule
     public Task<Comments> GetCommentsAsync(long tid, long pid, int pn = 1, bool isComment = false,
         CancellationToken cancellationToken = default) =>
         _protocol.GetCommentsAsync(tid, pid, pn, isComment, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<Recovers> GetRecoversAsync(string fname, int pn = 1, int rn = 10, long? userId = null,
+        CancellationToken cancellationToken = default) =>
+        _protocol.GetRecoversAsync(fname, pn, rn, userId, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<Recovers> GetRecoversAsync(ulong fid, int pn = 1, int rn = 10, long? userId = null,
+        CancellationToken cancellationToken = default) =>
+        _protocol.GetRecoversAsync(fid, pn, rn, userId, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<RecoverInfo> GetRecoverInfoAsync(string fname, long tid, long pid = 0,
+        CancellationToken cancellationToken = default) =>
+        _protocol.GetRecoverInfoAsync(fname, tid, pid, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<RecoverInfo> GetRecoverInfoAsync(ulong fid, long tid, long pid = 0,
+        CancellationToken cancellationToken = default) =>
+        _protocol.GetRecoverInfoAsync(fid, tid, pid, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<TabMap> GetTabMapAsync(string fname, CancellationToken cancellationToken = default) =>
+        _protocol.GetTabMapAsync(fname, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<TabMap> GetTabMapAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        _protocol.GetTabMapAsync(fid, cancellationToken);
 
     /// <inheritdoc/>
     public Task<bool> AgreeAsync(long tid, long pid = 0, bool isComment = false, bool isDisagree = false,

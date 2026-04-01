@@ -1,6 +1,18 @@
-﻿<Project>
+<Project>
     <PropertyGroup>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <TargetFramework Condition="'$(TargetFramework)' == '' And '$(TargetFrameworks)' == ''">net10.0</TargetFramework>
+        <LangVersion>14.0</LangVersion>
+        <Deterministic>true</Deterministic>
+        <DeterministicSourcePaths>true</DeterministicSourcePaths>
+        <DebugType>portable</DebugType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisLevel>latest-recommended</AnalysisLevel>
+        <AnalysisMode>Recommended</AnalysisMode>
+        <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+        <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TF_BUILD)' == 'true' Or '$(GITHUB_ACTIONS)' == 'true' Or '$(APPVEYOR)' == 'true' Or '$(CI)' == 'true'">

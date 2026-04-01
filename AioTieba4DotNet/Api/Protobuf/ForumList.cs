@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from ForumList.proto</summary>
-public static partial class ForumListReflection {
+internal static partial class ForumListReflection {
 
   #region Descriptor
   /// <summary>File descriptor for ForumList.proto</summary>
@@ -38,7 +38,7 @@ public static partial class ForumListReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class ForumList : pb::IMessage<ForumList>
+internal sealed partial class ForumList : pb::IMessage<ForumList>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif

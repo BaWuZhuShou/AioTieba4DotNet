@@ -1,8 +1,9 @@
-﻿using AioTieba4DotNet.Abstractions;
+﻿using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
+using AioTieba4DotNet.Models;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetComments;
@@ -12,11 +13,12 @@ namespace AioTieba4DotNet.Api.GetComments;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
-/// <param name="mode">请求模式</param>
 [PythonApi("aiotieba.api.get_comments")]
-internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRequestMode mode = TiebaRequestMode.Http)
-    : ProtoApiWsBase<Comments>(httpCore, wsCore, mode)
+internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
+    private readonly ITiebaHttpCore _httpCore = httpCore;
+    private readonly ITiebaWsCore _wsCore = wsCore;
+
     private const int Cmd = 302002;
 
     private static byte[] PackProto(long tid, long pid, int pn, bool isComment, string? bduss)
@@ -44,28 +46,9 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRe
     private static Comments ParseBody(byte[] body)
     {
         var resProto = PbFloorResIdl.Parser.ParseFrom(body);
-        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
+        ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         return AioTieba4DotNet.Internal.Mapping.CommentsMapper.FromTbData(resProto.Data);
-    }
-
-    /// <summary>
-    ///     发送获取楼中楼回复请求
-    /// </summary>
-    /// <param name="tid">主题帖 ID</param>
-/// <param name="pid">回复 ID (pid) 或楼中楼回复 ID (spid)</param>
-/// <param name="pn">页码</param>
-/// <param name="isComment">如果 pid 是楼中楼回复 ID (spid) 则为 true</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>楼中楼回复列表</returns>
-    public async Task<Comments> RequestAsync(long tid, long pid, int pn, bool isComment,
-        CancellationToken cancellationToken = default)
-    {
-        return await ExecuteAsync(
-            ct => RequestHttpAsync(tid, pid, pn, isComment, ct),
-            ct => RequestWsAsync(tid, pid, pn, isComment, ct),
-            cancellationToken
-        );
     }
 
     /// <summary>
@@ -80,10 +63,10 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRe
     public async Task<Comments> RequestHttpAsync(long tid, long pid, int pn, bool isComment,
         CancellationToken cancellationToken = default)
     {
-        var data = PackProto(tid, pid, pn, isComment, HttpCore.Account?.Bduss);
+        var data = PackProto(tid, pid, pn, isComment, _httpCore.Account?.Bduss);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/pb/floor") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -99,8 +82,8 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore, TiebaRe
     public async Task<Comments> RequestWsAsync(long tid, long pid, int pn, bool isComment,
         CancellationToken cancellationToken = default)
     {
-        var data = PackProto(tid, pid, pn, isComment, WsCore.Account?.Bduss);
-        var response = await WsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        var data = PackProto(tid, pid, pn, isComment, _wsCore.Account?.Bduss);
+        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

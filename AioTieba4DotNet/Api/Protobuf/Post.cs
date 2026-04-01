@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from Post.proto</summary>
-public static partial class PostReflection {
+internal static partial class PostReflection {
 
   #region Descriptor
   /// <summary>File descriptor for Post.proto</summary>
@@ -58,7 +58,7 @@ public static partial class PostReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class Post : pb::IMessage<Post>
+internal sealed partial class Post : pb::IMessage<Post>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -839,7 +839,7 @@ public sealed partial class Post : pb::IMessage<Post>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class SubPost : pb::IMessage<SubPost>
+    internal sealed partial class SubPost : pb::IMessage<SubPost>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -1027,7 +1027,7 @@ public sealed partial class Post : pb::IMessage<Post>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class SignatureData : pb::IMessage<SignatureData>
+    internal sealed partial class SignatureData : pb::IMessage<SignatureData>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -1218,7 +1218,7 @@ public sealed partial class Post : pb::IMessage<Post>
       public static partial class Types {
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class SignatureContent : pb::IMessage<SignatureContent>
+        internal sealed partial class SignatureContent : pb::IMessage<SignatureContent>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif
@@ -1459,7 +1459,7 @@ public sealed partial class Post : pb::IMessage<Post>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class CustomFigure : pb::IMessage<CustomFigure>
+    internal sealed partial class CustomFigure : pb::IMessage<CustomFigure>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -1658,7 +1658,7 @@ public sealed partial class Post : pb::IMessage<Post>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class CustomState : pb::IMessage<CustomState>
+    internal sealed partial class CustomState : pb::IMessage<CustomState>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -1857,7 +1857,7 @@ public sealed partial class Post : pb::IMessage<Post>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class ChatContent : pb::IMessage<ChatContent>
+    internal sealed partial class ChatContent : pb::IMessage<ChatContent>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -2056,7 +2056,7 @@ public sealed partial class Post : pb::IMessage<Post>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class SpriteMemeInfo : pb::IMessage<SpriteMemeInfo>
+    internal sealed partial class SpriteMemeInfo : pb::IMessage<SpriteMemeInfo>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif

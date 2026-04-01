@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from SubPostList.proto</summary>
-public static partial class SubPostListReflection {
+internal static partial class SubPostListReflection {
 
   #region Descriptor
   /// <summary>File descriptor for SubPostList.proto</summary>
@@ -42,7 +42,7 @@ public static partial class SubPostListReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class SubPostList : pb::IMessage<SubPostList>
+internal sealed partial class SubPostList : pb::IMessage<SubPostList>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -507,7 +507,7 @@ public sealed partial class SubPostList : pb::IMessage<SubPostList>
 
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class SubPost : pb::IMessage<SubPost>
+internal sealed partial class SubPost : pb::IMessage<SubPost>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif

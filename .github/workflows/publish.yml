@@ -1,18 +1,14 @@
-﻿name: Publish to NuGet
+name: Publish to NuGet
 
 on:
     push:
         tags:
-            - 'v*.*.*'  # 监听以 v 开头的标签推送
+            - 'v*.*.*'
 
 jobs:
-    verify:
-        name: Verify release lane (${{ matrix.framework }})
+    build:
+        name: Build release lane
         runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                framework: [ net8.0, net9.0, net10.0 ]
 
         steps:
             -   name: Checkout code
@@ -21,19 +17,13 @@ jobs:
             -   name: Setup .NET SDK
                 uses: actions/setup-dotnet@v5
                 with:
-                    dotnet-version: |
-                        8.x
-                        9.x
-                        10.x
+                    dotnet-version: 10.x
 
             -   name: Restore dependencies
                 run: dotnet restore AioTieba4DotNet.sln --nologo
 
             -   name: Build solution
                 run: dotnet build AioTieba4DotNet.sln --configuration Release --no-restore --nologo
-
-            -   name: Run deterministic tests for ${{ matrix.framework }}
-                run: dotnet test AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-build -f ${{ matrix.framework }} --filter "TestCategory!=Integration&TestCategory!=Live" --nologo
 
     generator-consistency:
         name: Verify generated protobuf outputs
@@ -46,10 +36,7 @@ jobs:
             -   name: Setup .NET SDK
                 uses: actions/setup-dotnet@v5
                 with:
-                    dotnet-version: |
-                        8.x
-                        9.x
-                        10.x
+                    dotnet-version: 10.x
 
             -   name: Restore dependencies
                 run: dotnet restore AioTieba4DotNet.sln --nologo
@@ -62,101 +49,98 @@ jobs:
                 run: |
                     if [[ -n "$(git status --short --untracked-files=all -- AioTieba4DotNet)" ]]; then
                         git status --short --untracked-files=all -- AioTieba4DotNet
-                        echo "Generated protobuf outputs are out of date."
+                        printf 'Generated protobuf outputs are out of date.\n'
                         exit 1
                     fi
 
-    migration-docs:
-        name: Verify migration docs exist
+    release-contracts:
+        name: Validate release docs and evidence contract
         runs-on: ubuntu-latest
 
         steps:
             -   name: Checkout code
                 uses: actions/checkout@v6
 
-            -   name: Check release migration artifacts
+            -   name: Validate local verification contract
+                run: bash ./scripts/verify-local.sh --validate-only
+
+    package:
+        name: Package release artifacts
+        runs-on: ubuntu-latest
+        needs:
+            - build
+            - generator-consistency
+            - release-contracts
+        outputs:
+            version: ${{ steps.version.outputs.version }}
+            prerelease: ${{ steps.version.outputs.prerelease }}
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v6
+
+            -   name: Setup .NET SDK
+                uses: actions/setup-dotnet@v5
+                with:
+                    dotnet-version: 10.x
+
+            -   name: Preflight release tag version
+                id: version
                 shell: bash
                 run: |
-                    required_files=(
-                        docs/migration-v1-to-v2.md
-                        docs/release-notes-v2.md
-                    )
+                    VERSION="${GITHUB_REF_NAME#v}"
 
-                    missing=0
-                    for file in "${required_files[@]}"; do
-                        if [[ ! -f "$file" ]]; then
-                            echo "Missing required release artifact: $file"
-                            missing=1
-                        fi
-                    done
-
-                    if (( missing != 0 )); then
+                    if [[ ! "$VERSION" =~ ^3\.0\.0(-(preview|rc)\.[0-9]+)?$ ]]; then
+                        printf "Release tag '%s' produced VERSION='%s'.\n" "$GITHUB_REF_NAME" "$VERSION"
+                        printf 'Expected v3.0.0, v3.0.0-preview.N, or v3.0.0-rc.N so the v3 release line only publishes preview, rc, and GA cutover tags.\n'
                         exit 1
                     fi
 
-                    printf 'Found release artifacts:\n'
-                    printf ' - %s\n' "${required_files[@]}"
+                    if [[ "$VERSION" =~ -(preview|rc)\.[0-9]+$ ]]; then
+                        PRERELEASE=true
+                    else
+                        PRERELEASE=false
+                    fi
+
+                    printf 'version=%s\n' "$VERSION" >> "$GITHUB_OUTPUT"
+                    printf 'prerelease=%s\n' "$PRERELEASE" >> "$GITHUB_OUTPUT"
+
+            -   name: Restore dependencies
+                run: dotnet restore --nologo
+
+            -   name: Build the project
+                run: dotnet build --configuration Release --no-restore -p:Version=${{ steps.version.outputs.version }} --nologo
+
+            -   name: Pack the project
+                run: dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=${{ steps.version.outputs.version }} --nologo
+
+            -   name: Validate packed artifacts
+                shell: bash
+                run: bash ./.github/scripts/validate-package-artifacts.sh "./nupkg" "AioTieba4DotNet.${{ steps.version.outputs.version }}"
+
+            -   name: Upload package artifacts
+                uses: actions/upload-artifact@v4
+                with:
+                    name: nuget-package-${{ steps.version.outputs.version }}
+                    path: ./nupkg/*
+                    if-no-files-found: error
 
     publish:
         # `.github/workflows/publish.yml` is part of the external nuget.org trusted publishing contract.
         # If this workflow file is renamed, the nuget.org trusted publishing policy must be updated to match `publish.yml`.
         runs-on: ubuntu-latest
         needs:
-            - verify
-            - generator-consistency
-            - migration-docs
+            - package
         permissions:
             contents: write
             id-token: write
 
         steps:
-            -   name: Checkout code
-                uses: actions/checkout@v6
+            -   name: Download package artifacts
+                uses: actions/download-artifact@v4
                 with:
-                    fetch-depth: 0
-
-            -   name: Setup .NET SDK
-                uses: actions/setup-dotnet@v5
-                with:
-                    dotnet-version: |
-                        8.x
-                        9.x
-                        10.x
-
-            -   name: Preflight release tag version
-                shell: bash
-                run: |
-                    VERSION="${GITHUB_REF_NAME#v}"
-
-                    if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-(preview|rc)\.[0-9]+)?$ ]]; then
-                        echo "Release tag '$GITHUB_REF_NAME' produced VERSION='$VERSION'."
-                        echo "Expected vX.Y.Z, vX.Y.Z-preview.N, or vX.Y.Z-rc.N so only GA, preview, and rc releases are published."
-                        exit 1
-                    fi
-
-                    echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-
-            -   name: Determine release channel
-                shell: bash
-                run: |
-                    if [[ "${VERSION}" =~ -(preview|rc)\.[0-9]+$ ]]; then
-                        echo "PRERELEASE=true" >> $GITHUB_ENV
-                    else
-                        echo "PRERELEASE=false" >> $GITHUB_ENV
-                    fi
-
-            -   name: Restore dependencies
-                run: dotnet restore --nologo
-
-            -   name: Build the project
-                run: dotnet build --configuration Release --no-restore -p:Version=${{ env.VERSION }} --nologo
-
-            -   name: Pack the project
-                run: dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=${{ env.VERSION }} --nologo
-
-            -   name: Validate packed artifacts
-                shell: bash
-                run: bash ./.github/scripts/validate-package-artifacts.sh "./nupkg" "AioTieba4DotNet.${{ env.VERSION }}"
+                    name: nuget-package-${{ needs.package.outputs.version }}
+                    path: ./nupkg
 
             -   name: Login to NuGet
                 id: login
@@ -173,6 +157,6 @@ jobs:
                         ./nupkg/*.snupkg
                     generate_release_notes: true
                     draft: false
-                    prerelease: ${{ env.PRERELEASE == 'true' }}
+                    prerelease: ${{ needs.package.outputs.prerelease == 'true' }}
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

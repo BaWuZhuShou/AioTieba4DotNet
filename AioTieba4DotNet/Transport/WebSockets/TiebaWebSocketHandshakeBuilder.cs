@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
-using AioTieba4DotNet.Core;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
 using Google.Protobuf;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

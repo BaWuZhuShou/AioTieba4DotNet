@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from ProfileResIdl.proto</summary>
-public static partial class ProfileResIdlReflection {
+internal static partial class ProfileResIdlReflection {
 
   #region Descriptor
   /// <summary>File descriptor for ProfileResIdl.proto</summary>
@@ -45,7 +45,7 @@ public static partial class ProfileResIdlReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class ProfileResIdl : pb::IMessage<ProfileResIdl>
+internal sealed partial class ProfileResIdl : pb::IMessage<ProfileResIdl>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -302,7 +302,7 @@ public sealed partial class ProfileResIdl : pb::IMessage<ProfileResIdl>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class DataRes : pb::IMessage<DataRes>
+    internal sealed partial class DataRes : pb::IMessage<DataRes>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -631,7 +631,7 @@ public sealed partial class ProfileResIdl : pb::IMessage<ProfileResIdl>
       public static partial class Types {
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class Anti : pb::IMessage<Anti>
+        internal sealed partial class Anti : pb::IMessage<Anti>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif
@@ -904,7 +904,7 @@ public sealed partial class ProfileResIdl : pb::IMessage<ProfileResIdl>
 
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class UserAgreeInfo : pb::IMessage<UserAgreeInfo>
+        internal sealed partial class UserAgreeInfo : pb::IMessage<UserAgreeInfo>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif

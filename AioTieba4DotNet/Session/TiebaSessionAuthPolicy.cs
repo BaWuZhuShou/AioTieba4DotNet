@@ -1,5 +1,3 @@
-using AioTieba4DotNet.Exceptions;
-
 namespace AioTieba4DotNet.Session;
 
 internal static class TiebaSessionAuthPolicy

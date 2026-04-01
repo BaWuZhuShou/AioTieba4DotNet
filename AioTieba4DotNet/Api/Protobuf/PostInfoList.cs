@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from PostInfoList.proto</summary>
-public static partial class PostInfoListReflection {
+internal static partial class PostInfoListReflection {
 
   #region Descriptor
   /// <summary>File descriptor for PostInfoList.proto</summary>
@@ -54,7 +54,7 @@ public static partial class PostInfoListReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class PostInfoList : pb::IMessage<PostInfoList>
+internal sealed partial class PostInfoList : pb::IMessage<PostInfoList>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -1016,7 +1016,7 @@ public sealed partial class PostInfoList : pb::IMessage<PostInfoList>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class PostInfoContent : pb::IMessage<PostInfoContent>
+    internal sealed partial class PostInfoContent : pb::IMessage<PostInfoContent>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -1318,7 +1318,7 @@ public sealed partial class PostInfoList : pb::IMessage<PostInfoList>
       public static partial class Types {
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class Abstract : pb::IMessage<Abstract>
+        internal sealed partial class Abstract : pb::IMessage<Abstract>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using AioTieba4DotNet.Models.Threads;
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Models;
 
-namespace AioTieba4DotNet;
+namespace AioTieba4DotNet.Contracts;
 
 /// <summary>
 ///     主题帖模块契约
@@ -65,6 +65,68 @@ public interface IThreadModule
     /// <returns>楼中楼列表 <see cref="Comments"/></returns>
     Task<Comments> GetCommentsAsync(long tid, long pid, int pn = 1,
         bool isComment = false, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     按吧名获取回收站列表。
+    /// </summary>
+    /// <param name="fname">A forum name.</param>
+    /// <param name="pn">A page number.</param>
+    /// <param name="rn">A page size.</param>
+    /// <param name="userId">A deleted-post author user id filter, or <see langword="null" /> to query all authors.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A recover list.</returns>
+    Task<Recovers> GetRecoversAsync(string fname, int pn = 1, int rn = 10, long? userId = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     按吧 ID 获取回收站列表。
+    /// </summary>
+    /// <param name="fid">A forum id.</param>
+    /// <param name="pn">A page number.</param>
+    /// <param name="rn">A page size.</param>
+    /// <param name="userId">A deleted-post author user id filter, or <see langword="null" /> to query all authors.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A recover list.</returns>
+    Task<Recovers> GetRecoversAsync(ulong fid, int pn = 1, int rn = 10, long? userId = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     按吧名获取回收站条目的正文详情。
+    /// </summary>
+    /// <param name="fname">A forum name.</param>
+    /// <param name="tid">A thread id.</param>
+    /// <param name="pid">A post id, or <c>0</c> to inspect a recovered thread entry.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A recover-detail model.</returns>
+    Task<RecoverInfo> GetRecoverInfoAsync(string fname, long tid, long pid = 0,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     按吧 ID 获取回收站条目的正文详情。
+    /// </summary>
+    /// <param name="fid">A forum id.</param>
+    /// <param name="tid">A thread id.</param>
+    /// <param name="pid">A post id, or <c>0</c> to inspect a recovered thread entry.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A recover-detail model.</returns>
+    Task<RecoverInfo> GetRecoverInfoAsync(ulong fid, long tid, long pid = 0,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     按吧名获取贴吧分区映射。
+    /// </summary>
+    /// <param name="fname">A forum name.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A tab-name to tab-id map.</returns>
+    Task<TabMap> GetTabMapAsync(string fname, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     按吧 ID 获取贴吧分区映射。
+    /// </summary>
+    /// <param name="fid">A forum id.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A tab-name to tab-id map.</returns>
+    Task<TabMap> GetTabMapAsync(ulong fid, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     点赞或点踩内容

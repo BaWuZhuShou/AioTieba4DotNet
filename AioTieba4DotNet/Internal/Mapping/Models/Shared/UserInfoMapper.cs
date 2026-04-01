@@ -42,6 +42,16 @@ internal static class UserInfoMapper
         };
     }
 
+    internal static UserInfo FromTbData(GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo data)
+    {
+        return new UserInfo
+        {
+            UserId = data.UserId,
+            Portrait = NormalizePortrait(data.Portrait ?? string.Empty),
+            UserName = data.UserName
+        };
+    }
+
     private static string NormalizePortrait(string portrait)
     {
         if (portrait.Contains('?'))

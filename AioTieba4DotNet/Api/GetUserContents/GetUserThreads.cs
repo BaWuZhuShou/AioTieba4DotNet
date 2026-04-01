@@ -1,8 +1,9 @@
-﻿using AioTieba4DotNet.Abstractions;
+﻿using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
+using AioTieba4DotNet.Models;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetUserContents;
@@ -12,14 +13,15 @@ namespace AioTieba4DotNet.Api.GetUserContents;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
-/// <param name="mode">请求模式</param>
 [RequireBduss]
 [PythonApi("aiotieba.api.get_user_contents.get_threads")]
 internal class GetUserThreads(
     ITiebaHttpCore httpCore,
-    ITiebaWsCore wsCore,
-    TiebaRequestMode mode = TiebaRequestMode.Http) : ProtoApiWsBase<UserThreads>(httpCore, wsCore, mode)
+    ITiebaWsCore wsCore)
 {
+    private readonly ITiebaHttpCore _httpCore = httpCore;
+    private readonly ITiebaWsCore _wsCore = wsCore;
+
     private const int Cmd = 303002;
 
     private static byte[] PackProto(Account account, int userId, uint pn, bool publicOnly)
@@ -45,27 +47,9 @@ internal class GetUserThreads(
     private static UserThreads ParseBody(byte[] body)
     {
         var resProto = UserPostResIdl.Parser.ParseFrom(body);
-        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
+        ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         return AioTieba4DotNet.Internal.Mapping.UserThreadsMapper.FromTbData(resProto.Data);
-    }
-
-/// <summary>
-///     发送获取用户发布主题帖列表请求
-/// </summary>
-/// <param name="userId">用户 ID (uid)</param>
-/// <param name="pn">页码</param>
-/// <param name="publicOnly">是否只获取公开的主题帖</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>主题帖列表实体</returns>
-    public async Task<UserThreads> RequestAsync(int userId, uint pn, bool publicOnly,
-        CancellationToken cancellationToken = default)
-    {
-        return await ExecuteAsync(
-            ct => RequestHttpAsync(userId, pn, publicOnly, ct),
-            ct => RequestWsAsync(userId, pn, publicOnly, ct),
-            cancellationToken
-        );
     }
 
 /// <summary>
@@ -79,11 +63,11 @@ internal class GetUserThreads(
     public async Task<UserThreads> RequestHttpAsync(int userId, uint pn, bool publicOnly,
         CancellationToken cancellationToken = default)
     {
-        var data = PackProto(HttpCore.Account!, userId, pn, publicOnly);
+        var data = PackProto(_httpCore.Account!, userId, pn, publicOnly);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/userpost") { Query = $"cmd={Cmd}" }
             .Uri;
 
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -98,8 +82,8 @@ internal class GetUserThreads(
     public async Task<UserThreads> RequestWsAsync(int userId, uint pn, bool publicOnly,
         CancellationToken cancellationToken = default)
     {
-        var data = PackProto(WsCore.Account!, userId, pn, publicOnly);
-        var response = await WsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        var data = PackProto(_wsCore.Account!, userId, pn, publicOnly);
+        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

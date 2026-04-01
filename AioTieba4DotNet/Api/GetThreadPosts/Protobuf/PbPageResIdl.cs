@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from PbPageResIdl.proto</summary>
-public static partial class PbPageResIdlReflection {
+internal static partial class PbPageResIdlReflection {
 
   #region Descriptor
   /// <summary>File descriptor for PbPageResIdl.proto</summary>
@@ -42,7 +42,7 @@ public static partial class PbPageResIdlReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class PbPageResIdl : pb::IMessage<PbPageResIdl>
+internal sealed partial class PbPageResIdl : pb::IMessage<PbPageResIdl>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -299,7 +299,7 @@ public sealed partial class PbPageResIdl : pb::IMessage<PbPageResIdl>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class DataRes : pb::IMessage<DataRes>
+    internal sealed partial class DataRes : pb::IMessage<DataRes>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif

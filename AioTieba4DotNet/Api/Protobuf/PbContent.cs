@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from PbContent.proto</summary>
-public static partial class PbContentReflection {
+internal static partial class PbContentReflection {
 
   #region Descriptor
   /// <summary>File descriptor for PbContent.proto</summary>
@@ -49,7 +49,7 @@ public static partial class PbContentReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class PbContent : pb::IMessage<PbContent>
+internal sealed partial class PbContent : pb::IMessage<PbContent>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -898,7 +898,7 @@ public sealed partial class PbContent : pb::IMessage<PbContent>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class TiebaPlusInfo : pb::IMessage<TiebaPlusInfo>
+    internal sealed partial class TiebaPlusInfo : pb::IMessage<TiebaPlusInfo>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -1430,7 +1430,7 @@ public sealed partial class PbContent : pb::IMessage<PbContent>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class Item : pb::IMessage<Item>
+    internal sealed partial class Item : pb::IMessage<Item>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif

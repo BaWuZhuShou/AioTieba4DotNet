@@ -1,4 +1,4 @@
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Models.Threads;
 
 namespace AioTieba4DotNet.Internal.Mapping;

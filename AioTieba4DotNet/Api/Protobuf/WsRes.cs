@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from WsRes.proto</summary>
-public static partial class WsResReflection {
+internal static partial class WsResReflection {
 
   #region Descriptor
   /// <summary>File descriptor for WsRes.proto</summary>
@@ -40,7 +40,7 @@ public static partial class WsResReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class WSRes : pb::IMessage<WSRes>
+internal sealed partial class WSRes : pb::IMessage<WSRes>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -371,7 +371,7 @@ public sealed partial class WSRes : pb::IMessage<WSRes>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class Payload : pb::IMessage<Payload>
+    internal sealed partial class Payload : pb::IMessage<Payload>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -570,7 +570,7 @@ public sealed partial class WSRes : pb::IMessage<WSRes>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class Error : pb::IMessage<Error>
+    internal sealed partial class Error : pb::IMessage<Error>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif

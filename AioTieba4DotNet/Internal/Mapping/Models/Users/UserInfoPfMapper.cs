@@ -1,5 +1,5 @@
 ﻿using AioTieba4DotNet.Models.Users;
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Models;
 
 namespace AioTieba4DotNet.Internal.Mapping;
 

@@ -1,3 +1,4 @@
+using AioTieba4DotNet.Contracts;
 using System.IO;
 
 namespace AioTieba4DotNet.Transport.Http;
@@ -8,7 +9,7 @@ internal sealed class TiebaHttpExecutionPolicy(TimeSpan requestTimeout, int maxR
 
     internal bool HasReadRetries => maxReadRetryAttempts > 0;
 
-    internal static TiebaHttpExecutionPolicy FromOptions(global::AioTieba4DotNet.TiebaOptions options) =>
+    internal static TiebaHttpExecutionPolicy FromOptions(TiebaOptions options) =>
         new(options.RequestTimeout, options.MaxReadRetryAttempts);
 
     internal async Task<HttpResponseMessage> SendAsync(HttpClient httpClient, TiebaHttpRequestDescriptor descriptor,

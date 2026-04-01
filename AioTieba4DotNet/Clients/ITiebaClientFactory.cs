@@ -1,3 +1,5 @@
+using AioTieba4DotNet.Contracts;
+
 namespace AioTieba4DotNet;
 
 /// <summary>
@@ -19,4 +21,11 @@ public interface ITiebaClientFactory
     /// <param name="stoken">用户 STOKEN</param>
     /// <returns><see cref="ITiebaClient"/> 实例</returns>
     ITiebaClient CreateClient(string bduss, string? stoken = null);
+
+    /// <summary>
+    ///     按公开账户对象创建客户端
+    /// </summary>
+    /// <param name="account">账户凭据对象</param>
+    /// <returns><see cref="ITiebaClient"/> 实例</returns>
+    ITiebaClient CreateClient(AioTieba4DotNet.Contracts.Account account);
 }

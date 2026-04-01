@@ -1,5 +1,3 @@
-using AioTieba4DotNet.Exceptions;
-
 namespace AioTieba4DotNet.Transport.Http;
 
 internal static class TiebaHttpErrorNormalizer

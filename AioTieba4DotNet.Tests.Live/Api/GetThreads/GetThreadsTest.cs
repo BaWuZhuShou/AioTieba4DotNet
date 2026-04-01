@@ -1,0 +1,42 @@
+using System;
+using System.Threading.Tasks;
+using AioTieba4DotNet.Contracts;
+using AioTieba4DotNet.Models;
+using AioTieba4DotNet.Testing;
+using JetBrains.Annotations;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace AioTieba4DotNet.Tests.Api.GetThreads;
+
+[TestClass]
+[TestCategory(TestCategoryNames.Live)]
+[TestCategory(TestCategoryNames.ThreadRead)]
+[TestSubject(typeof(AioTieba4DotNet.Api.GetThreads.GetThreads))]
+public sealed class GetThreadsTest : TestBase
+{
+    private const string SafeForumQuery = "lol欧服吧";
+    private const string CanonicalSafeForumName = "lol欧服";
+
+    [TestMethod]
+    public async Task TestRequestAsync()
+    {
+        using var client = CreateClient(TiebaTransportMode.Http);
+        var threads = ((ITiebaClient)client).Threads;
+        var result = await threads.GetThreadsAsync(CanonicalSafeForumName, 1, 10, ThreadSortType.Reply);
+
+        Assert.IsNotNull(result);
+        Assert.IsNotNull(result.Objs);
+        Assert.IsNotNull(result.Forum);
+        Assert.AreEqual(CanonicalSafeForumName, result.Forum.Fname);
+
+        Console.WriteLine(
+            $"safeForumQuery={SafeForumQuery}, canonicalFname={result.Forum.Fname}, pn=1, rn=10, sort={ThreadSortType.Reply}, returnedThreads={result.Objs.Count}");
+
+        if (result.Objs.Count > 0)
+        {
+            var thread = result.Objs[0];
+            Assert.IsFalse(string.IsNullOrWhiteSpace(thread.Title));
+            Console.WriteLine($"sample tid={thread.Tid}, pid={thread.Pid}, title={thread.Title}");
+        }
+    }
+}

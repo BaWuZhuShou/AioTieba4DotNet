@@ -1,19 +1,31 @@
-using AioTieba4DotNet.Exceptions;
+using System.Net.Http;
+using AioTieba4DotNet.Contracts;
 
 namespace AioTieba4DotNet;
 
 /// <summary>
 ///     默认贴吧客户端工厂实现
 /// </summary>
-/// <param name="httpClientFactory"><see cref="IHttpClientFactory"/> 实例</param>
-public sealed class TiebaClientFactory(IHttpClientFactory httpClientFactory) : ITiebaClientFactory
+public sealed class TiebaClientFactory : ITiebaClientFactory
 {
-    /// <inheritdoc/>
-    public ITiebaClient CreateClient(TiebaOptions options)
+    private readonly TiebaClientComposition _composition;
+
+    /// <summary>
+    ///     使用 <see cref="IHttpClientFactory"/> 创建可复用的客户端工厂。
+    /// </summary>
+    /// <param name="httpClientFactory"><see cref="IHttpClientFactory"/> 实例。</param>
+    public TiebaClientFactory(IHttpClientFactory httpClientFactory)
+        : this(TiebaClientComposition.CreateForDependencyInjection(httpClientFactory))
     {
-        var httpClient = httpClientFactory.CreateClient(DependencyInjection.HttpClientName);
-        return new TiebaClient(TiebaClientComposition.CreateRuntime(options, httpClient));
     }
+
+    internal TiebaClientFactory(TiebaClientComposition composition)
+    {
+        _composition = composition;
+    }
+
+    /// <inheritdoc/>
+    public ITiebaClient CreateClient(TiebaOptions options) => _composition.CreateClient(options);
 
     /// <inheritdoc/>
     public ITiebaClient CreateClient(string bduss, string? stoken = null)
@@ -22,5 +34,12 @@ public sealed class TiebaClientFactory(IHttpClientFactory httpClientFactory) : I
             throw new TiebaConfigurationException("The bduss overload requires a non-empty BDUSS value.");
 
         return CreateClient(new TiebaOptions { Bduss = bduss, Stoken = stoken });
+    }
+
+    /// <inheritdoc/>
+    public ITiebaClient CreateClient(AioTieba4DotNet.Contracts.Account account)
+    {
+        ArgumentNullException.ThrowIfNull(account);
+        return CreateClient(account.ToTiebaOptions());
     }
 }

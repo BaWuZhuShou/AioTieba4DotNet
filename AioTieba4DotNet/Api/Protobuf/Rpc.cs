@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from Rpc.proto</summary>
-public static partial class RpcReflection {
+internal static partial class RpcReflection {
 
   #region Descriptor
   /// <summary>File descriptor for Rpc.proto</summary>
@@ -58,7 +58,7 @@ public static partial class RpcReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class ChunkInfo : pb::IMessage<ChunkInfo>
+internal sealed partial class ChunkInfo : pb::IMessage<ChunkInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -294,7 +294,7 @@ public sealed partial class ChunkInfo : pb::IMessage<ChunkInfo>
 
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class EventTimestamp : pb::IMessage<EventTimestamp>
+internal sealed partial class EventTimestamp : pb::IMessage<EventTimestamp>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -530,7 +530,7 @@ public sealed partial class EventTimestamp : pb::IMessage<EventTimestamp>
 
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class RpcNotifyMeta : pb::IMessage<RpcNotifyMeta>
+internal sealed partial class RpcNotifyMeta : pb::IMessage<RpcNotifyMeta>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -829,7 +829,7 @@ public sealed partial class RpcNotifyMeta : pb::IMessage<RpcNotifyMeta>
 
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class RpcRequestMeta : pb::IMessage<RpcRequestMeta>
+internal sealed partial class RpcRequestMeta : pb::IMessage<RpcRequestMeta>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -1165,7 +1165,7 @@ public sealed partial class RpcRequestMeta : pb::IMessage<RpcRequestMeta>
 
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class RpcResponseMeta : pb::IMessage<RpcResponseMeta>
+internal sealed partial class RpcResponseMeta : pb::IMessage<RpcResponseMeta>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -1538,7 +1538,7 @@ public sealed partial class RpcResponseMeta : pb::IMessage<RpcResponseMeta>
 
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class RpcMeta : pb::IMessage<RpcMeta>
+internal sealed partial class RpcMeta : pb::IMessage<RpcMeta>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif

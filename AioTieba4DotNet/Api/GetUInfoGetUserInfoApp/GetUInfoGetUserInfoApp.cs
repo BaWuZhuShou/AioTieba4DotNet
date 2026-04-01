@@ -1,7 +1,8 @@
-﻿using AioTieba4DotNet.Abstractions;
+﻿using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Core;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetUInfoGetUserInfoApp;
@@ -11,8 +12,10 @@ namespace AioTieba4DotNet.Api.GetUInfoGetUserInfoApp;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_uinfo_getuserinfo_app")]
-internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
+internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore)
 {
+    private readonly ITiebaHttpCore _httpCore = httpCore;
+
     private const int Cmd = 303024;
 
     private static byte[] PackProto(int userId)
@@ -24,7 +27,7 @@ internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : ProtoApiBase(ht
     private static UserInfoGuInfoApp ParseBody(byte[] body)
     {
         var resProto = GetUserInfoResIdl.Parser.ParseFrom(body);
-        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
+        ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var dataUser = resProto.Data.User;
         return AioTieba4DotNet.Internal.Mapping.UserInfoGuInfoAppMapper.FromTbData(dataUser);
@@ -41,7 +44,7 @@ internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore) : ProtoApiBase(ht
         var data = PackProto(userId);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getuserinfo") { Query = $"cmd={Cmd}" }
             .Uri;
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

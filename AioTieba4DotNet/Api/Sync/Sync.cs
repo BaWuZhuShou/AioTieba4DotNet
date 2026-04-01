@@ -1,6 +1,7 @@
-using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Core;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.Sync;

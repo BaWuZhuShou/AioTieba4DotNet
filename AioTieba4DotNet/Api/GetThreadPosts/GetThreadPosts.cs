@@ -1,8 +1,9 @@
-﻿using AioTieba4DotNet.Abstractions;
+﻿using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
+using AioTieba4DotNet.Models;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetThreadPosts;
@@ -12,14 +13,14 @@ namespace AioTieba4DotNet.Api.GetThreadPosts;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
-/// <param name="mode">请求模式</param>
 [PythonApi("aiotieba.api.get_posts")]
 internal class GetThreadPosts(
     ITiebaHttpCore httpCore,
-    ITiebaWsCore wsCore,
-    TiebaRequestMode mode = TiebaRequestMode.Http)
-    : ProtoApiWsBase<Posts>(httpCore, wsCore, mode)
+    ITiebaWsCore wsCore)
 {
+    private readonly ITiebaHttpCore _httpCore = httpCore;
+    private readonly ITiebaWsCore _wsCore = wsCore;
+
     private const int Cmd = 302001;
 
     private static byte[] PackProto(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments,
@@ -51,32 +52,9 @@ internal class GetThreadPosts(
     private static Posts ParseBody(byte[] body)
     {
         var resProto = PbPageResIdl.Parser.ParseFrom(body);
-        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
+        ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         return AioTieba4DotNet.Internal.Mapping.PostsMapper.FromTbData(resProto.Data);
-    }
-
-    /// <summary>
-    ///     发送获取主题帖内回复列表请求
-    /// </summary>
-    /// <param name="tid">主题帖 ID (tid)</param>
-    /// <param name="pn">页码</param>
-    /// <param name="rn">每页请求数量</param>
-    /// <param name="sort">排序方式 (0:按回复时间, 1:按发布时间, 2:热门排序)</param>
-/// <param name="onlyThreadAuthor">是否只看楼主</param>
-/// <param name="withComments">是否包含楼中楼回复</param>
-/// <param name="commentRn">每层楼显示的楼中楼数量</param>
-/// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>回复列表实体</returns>
-    public async Task<Posts> RequestAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments,
-        int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
-    {
-        return await ExecuteAsync(
-            ct => RequestHttpAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree, ct),
-            ct => RequestWsAsync(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree, ct),
-            cancellationToken
-        );
     }
 
     /// <summary>
@@ -96,10 +74,10 @@ internal class GetThreadPosts(
         bool withComments, int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
     {
         var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree,
-            HttpCore.Account?.Bduss);
+            _httpCore.Account?.Bduss);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/pb/page") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -120,8 +98,8 @@ internal class GetThreadPosts(
         bool withComments, int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
     {
         var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree,
-            WsCore.Account?.Bduss);
-        var response = await WsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+            _wsCore.Account?.Bduss);
+        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

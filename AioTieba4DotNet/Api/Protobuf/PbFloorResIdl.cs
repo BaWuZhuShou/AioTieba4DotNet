@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from PbFloorResIdl.proto</summary>
-public static partial class PbFloorResIdlReflection {
+internal static partial class PbFloorResIdlReflection {
 
   #region Descriptor
   /// <summary>File descriptor for PbFloorResIdl.proto</summary>
@@ -42,7 +42,7 @@ public static partial class PbFloorResIdlReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class PbFloorResIdl : pb::IMessage<PbFloorResIdl>
+internal sealed partial class PbFloorResIdl : pb::IMessage<PbFloorResIdl>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -299,7 +299,7 @@ public sealed partial class PbFloorResIdl : pb::IMessage<PbFloorResIdl>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class DataRes : pb::IMessage<DataRes>
+    internal sealed partial class DataRes : pb::IMessage<DataRes>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif

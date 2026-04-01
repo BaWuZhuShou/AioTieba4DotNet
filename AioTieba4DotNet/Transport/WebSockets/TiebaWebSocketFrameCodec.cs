@@ -1,8 +1,9 @@
 using System.Buffers.Binary;
 using System.IO.Compression;
 using System.Security.Cryptography;
-using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Exceptions;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
+using AioTieba4DotNet;
 
 namespace AioTieba4DotNet.Transport.WebSockets;
 

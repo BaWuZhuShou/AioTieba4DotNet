@@ -1,15 +1,18 @@
-using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
+using AioTieba4DotNet.Models;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.SetBlacklist;
 
 [RequireBduss]
 [PythonApi("aiotieba.api.set_blacklist")]
-internal class SetBlacklist(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
+internal class SetBlacklist(ITiebaHttpCore httpCore)
 {
+    private readonly ITiebaHttpCore _httpCore = httpCore;
+
     private const int Cmd = 309697;
 
     private static byte[] PackProto(Account account, long userId, BlacklistType type)
@@ -35,14 +38,14 @@ internal class SetBlacklist(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
     private static void ParseBody(byte[] body)
     {
         var resProto = SetUserBlackResIdl.Parser.ParseFrom(body);
-        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
+        ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
     }
 
     public async Task<bool> RequestAsync(long userId, BlacklistType type, CancellationToken cancellationToken = default)
     {
-        var data = PackProto(HttpCore.Account!, userId, type);
+        var data = PackProto(_httpCore.Account!, userId, type);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/user/setUserBlack") { Query = $"cmd={Cmd}" }.Uri;
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         ParseBody(result);
         return true;
     }

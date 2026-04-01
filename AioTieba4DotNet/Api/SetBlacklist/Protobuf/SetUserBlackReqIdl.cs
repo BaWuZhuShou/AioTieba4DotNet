@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from SetUserBlackReqIdl.proto</summary>
-public static partial class SetUserBlackReqIdlReflection {
+internal static partial class SetUserBlackReqIdlReflection {
 
   #region Descriptor
   /// <summary>File descriptor for SetUserBlackReqIdl.proto</summary>
@@ -41,7 +41,7 @@ public static partial class SetUserBlackReqIdlReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class SetUserBlackReqIdl : pb::IMessage<SetUserBlackReqIdl>
+internal sealed partial class SetUserBlackReqIdl : pb::IMessage<SetUserBlackReqIdl>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -252,7 +252,7 @@ public sealed partial class SetUserBlackReqIdl : pb::IMessage<SetUserBlackReqIdl
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class DataReq : pb::IMessage<DataReq>
+    internal sealed partial class DataReq : pb::IMessage<DataReq>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -546,7 +546,7 @@ public sealed partial class SetUserBlackReqIdl : pb::IMessage<SetUserBlackReqIdl
       public static partial class Types {
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class PermissionList : pb::IMessage<PermissionList>
+        internal sealed partial class PermissionList : pb::IMessage<PermissionList>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif

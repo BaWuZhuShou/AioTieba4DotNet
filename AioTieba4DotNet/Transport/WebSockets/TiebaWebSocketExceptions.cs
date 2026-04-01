@@ -1,5 +1,3 @@
-using AioTieba4DotNet.Exceptions;
-
 namespace AioTieba4DotNet.Transport.WebSockets;
 
 internal sealed class TiebaWebSocketUnavailableException(string message, Exception? innerException = null)

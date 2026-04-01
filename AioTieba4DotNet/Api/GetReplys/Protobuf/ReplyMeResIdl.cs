@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from ReplyMeResIdl.proto</summary>
-public static partial class ReplyMeResIdlReflection {
+internal static partial class ReplyMeResIdlReflection {
 
   #region Descriptor
   /// <summary>File descriptor for ReplyMeResIdl.proto</summary>
@@ -45,7 +45,7 @@ public static partial class ReplyMeResIdlReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class ReplyMeResIdl : pb::IMessage<ReplyMeResIdl>
+internal sealed partial class ReplyMeResIdl : pb::IMessage<ReplyMeResIdl>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -302,7 +302,7 @@ public sealed partial class ReplyMeResIdl : pb::IMessage<ReplyMeResIdl>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class DataRes : pb::IMessage<DataRes>
+    internal sealed partial class DataRes : pb::IMessage<DataRes>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -539,7 +539,7 @@ public sealed partial class ReplyMeResIdl : pb::IMessage<ReplyMeResIdl>
       public static partial class Types {
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class ReplyList : pb::IMessage<ReplyList>
+        internal sealed partial class ReplyList : pb::IMessage<ReplyList>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif

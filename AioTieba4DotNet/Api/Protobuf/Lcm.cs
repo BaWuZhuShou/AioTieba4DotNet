@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from Lcm.proto</summary>
-public static partial class LcmReflection {
+internal static partial class LcmReflection {
 
   #region Descriptor
   /// <summary>File descriptor for Lcm.proto</summary>
@@ -53,7 +53,7 @@ public static partial class LcmReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class Common : pb::IMessage<Common>
+internal sealed partial class Common : pb::IMessage<Common>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -622,7 +622,7 @@ public sealed partial class Common : pb::IMessage<Common>
 
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class LcmNotify : pb::IMessage<LcmNotify>
+internal sealed partial class LcmNotify : pb::IMessage<LcmNotify>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -858,7 +858,7 @@ public sealed partial class LcmNotify : pb::IMessage<LcmNotify>
 
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class LcmRequest : pb::IMessage<LcmRequest>
+internal sealed partial class LcmRequest : pb::IMessage<LcmRequest>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -1288,7 +1288,7 @@ public sealed partial class LcmRequest : pb::IMessage<LcmRequest>
 
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class LcmResponse : pb::IMessage<LcmResponse>
+internal sealed partial class LcmResponse : pb::IMessage<LcmResponse>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -1635,7 +1635,7 @@ public sealed partial class LcmResponse : pb::IMessage<LcmResponse>
 
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class RpcData : pb::IMessage<RpcData>
+internal sealed partial class RpcData : pb::IMessage<RpcData>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif

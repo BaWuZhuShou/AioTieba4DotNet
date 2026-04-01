@@ -1,8 +1,9 @@
-using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Exceptions;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
+using AioTieba4DotNet;
 using AioTieba4DotNet.Internal.Mapping;
 using Newtonsoft.Json.Linq;
 

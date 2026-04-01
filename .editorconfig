@@ -96,5 +96,17 @@ csharp_using_directive_placement = outside_namespace:suggestion
 
 #### 自动生成的代码 ####
 
-[**/Protobuf/*.cs]
+[AioTieba4DotNet/**/Protobuf/**/*.cs]
+generated_code = true
+
+[**/*.g.cs]
+generated_code = true
+
+[**/*.g.i.cs]
+generated_code = true
+
+[**/*.generated.cs]
+generated_code = true
+
+[**/obj/**/*.cs]
 generated_code = true

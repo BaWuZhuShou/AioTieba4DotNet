@@ -176,34 +176,6 @@ internal static class ContentMapper
 
                 {
 
-                    case 4:
-
-                    {
-
-                        var at = AioTieba4DotNet.Internal.Mapping.FragAtMapper.FromTbData(content);
-
-                        ats.Add(at);
-
-                        frags.Add(at);
-
-                        break;
-
-                    }
-
-                    case 1:
-
-                    {
-
-                        var link = AioTieba4DotNet.Internal.Mapping.FragLinkMapper.FromTbData(content);
-
-                        links.Add(link);
-
-                        frags.Add(link);
-
-                        break;
-
-                    }
-
                     case 10:
 
                     // video

@@ -1,4 +1,4 @@
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Models;
 
 namespace AioTieba4DotNet.Models.Shared;
 

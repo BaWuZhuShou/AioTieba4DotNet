@@ -1,3 +1,4 @@
+using AioTieba4DotNet.Contracts;
 using AioTieba4DotNet.Modules;
 
 namespace AioTieba4DotNet;
@@ -20,11 +21,20 @@ public sealed class TiebaClient : ITiebaClient
     }
 
     /// <summary>
+    ///     使用公开账户对象创建客户端
+    /// </summary>
+    /// <param name="account">账户凭据对象</param>
+    public TiebaClient(AioTieba4DotNet.Contracts.Account account)
+        : this((account ?? throw new ArgumentNullException(nameof(account))).ToTiebaOptions())
+    {
+    }
+
+    /// <summary>
     ///     使用配置创建客户端
     /// </summary>
     /// <param name="options">客户端配置</param>
     public TiebaClient(TiebaOptions options)
-        : this(TiebaClientComposition.CreateRuntime(options))
+        : this(TiebaClientComposition.Direct.CreateRuntime(options))
     {
     }
 
@@ -34,6 +44,8 @@ public sealed class TiebaClient : ITiebaClient
         Forums = runtime.Forums;
         Threads = runtime.Threads;
         Users = runtime.Users;
+        Admins = runtime.Admins;
+        Messages = runtime.Messages;
         Client = runtime.Client;
     }
 
@@ -45,6 +57,12 @@ public sealed class TiebaClient : ITiebaClient
 
     /// <inheritdoc/>
     public IUserModule Users { get; }
+
+    /// <inheritdoc/>
+    public IAdminModule Admins { get; }
+
+    /// <inheritdoc/>
+    public IMessagesModule Messages { get; }
 
     /// <inheritdoc/>
     public IClientModule Client { get; }

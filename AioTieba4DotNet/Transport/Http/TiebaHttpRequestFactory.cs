@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
-using AioTieba4DotNet.Core;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
 
 namespace AioTieba4DotNet.Transport.Http;
 
@@ -39,8 +40,8 @@ internal static class TiebaHttpRequestFactory
         var multipartContent = new MultipartFormDataContent();
         multipartContent.Add(byteArrayContent);
 
-        var boundary = multipartContent.Headers.ContentType?.Parameters.FirstOrDefault(header => header.Name == "boundary");
-        if (boundary != null) boundary.Value = boundary.Value?.Replace("\"", string.Empty);
+        var boundary = multipartContent.Headers.ContentType!.Parameters.First(header => header.Name == "boundary");
+        boundary.Value = boundary.Value!.Replace("\"", string.Empty);
 
         var request = new HttpRequestMessage(HttpMethod.Post, descriptor.Uri) { Content = multipartContent };
         request.Headers.Add("User-Agent", $"aiotieba/{Const.Version}");

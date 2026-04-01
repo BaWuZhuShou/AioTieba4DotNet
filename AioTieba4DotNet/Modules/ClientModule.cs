@@ -1,3 +1,4 @@
+using AioTieba4DotNet.Contracts;
 using AioTieba4DotNet.Protocols;
 
 namespace AioTieba4DotNet.Modules;

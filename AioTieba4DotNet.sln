@@ -1,6 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioTieba4DotNet.Tests", "AioTieba4DotNet.Tests\AioTieba4DotNet.Tests.csproj", "{2C0F482A-EE96-3056-6121-BFC54D1565A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioTieba4DotNet.Testing", "AioTieba4DotNet.Testing\AioTieba4DotNet.Testing.csproj", "{6BEE22A8-5B61-4F8F-92AE-5232780E5D32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioTieba4DotNet.Tests.Deterministic", "AioTieba4DotNet.Tests.Deterministic\AioTieba4DotNet.Tests.Deterministic.csproj", "{998E5B67-1DB8-4F34-B08A-2F771987A419}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioTieba4DotNet.Tests.Integration", "AioTieba4DotNet.Tests.Integration\AioTieba4DotNet.Tests.Integration.csproj", "{67B932F0-72A3-4B15-9E87-C52BB94D3B4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioTieba4DotNet.Tests.Live", "AioTieba4DotNet.Tests.Live\AioTieba4DotNet.Tests.Live.csproj", "{91084D84-9D7F-4F4E-B8F1-7DCC12F1D9A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioTieba4DotNet", "AioTieba4DotNet\AioTieba4DotNet.csproj", "{44F54383-4B37-F6E0-73FE-5F3574ED2B97}"
 EndProject
@@ -12,10 +18,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2C0F482A-EE96-3056-6121-BFC54D1565A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C0F482A-EE96-3056-6121-BFC54D1565A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C0F482A-EE96-3056-6121-BFC54D1565A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C0F482A-EE96-3056-6121-BFC54D1565A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BEE22A8-5B61-4F8F-92AE-5232780E5D32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BEE22A8-5B61-4F8F-92AE-5232780E5D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BEE22A8-5B61-4F8F-92AE-5232780E5D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BEE22A8-5B61-4F8F-92AE-5232780E5D32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{998E5B67-1DB8-4F34-B08A-2F771987A419}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{998E5B67-1DB8-4F34-B08A-2F771987A419}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{998E5B67-1DB8-4F34-B08A-2F771987A419}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{998E5B67-1DB8-4F34-B08A-2F771987A419}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67B932F0-72A3-4B15-9E87-C52BB94D3B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67B932F0-72A3-4B15-9E87-C52BB94D3B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67B932F0-72A3-4B15-9E87-C52BB94D3B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67B932F0-72A3-4B15-9E87-C52BB94D3B4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91084D84-9D7F-4F4E-B8F1-7DCC12F1D9A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91084D84-9D7F-4F4E-B8F1-7DCC12F1D9A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91084D84-9D7F-4F4E-B8F1-7DCC12F1D9A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91084D84-9D7F-4F4E-B8F1-7DCC12F1D9A1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{44F54383-4B37-F6E0-73FE-5F3574ED2B97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{44F54383-4B37-F6E0-73FE-5F3574ED2B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44F54383-4B37-F6E0-73FE-5F3574ED2B97}.Release|Any CPU.ActiveCfg = Release|Any CPU

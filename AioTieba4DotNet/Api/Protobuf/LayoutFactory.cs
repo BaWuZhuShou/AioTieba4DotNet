@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from LayoutFactory.proto</summary>
-public static partial class LayoutFactoryReflection {
+internal static partial class LayoutFactoryReflection {
 
   #region Descriptor
   /// <summary>File descriptor for LayoutFactory.proto</summary>
@@ -39,7 +39,7 @@ public static partial class LayoutFactoryReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class LayoutFactory : pb::IMessage<LayoutFactory>
+internal sealed partial class LayoutFactory : pb::IMessage<LayoutFactory>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -287,7 +287,7 @@ public sealed partial class LayoutFactory : pb::IMessage<LayoutFactory>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class FeedLayout : pb::IMessage<FeedLayout>
+    internal sealed partial class FeedLayout : pb::IMessage<FeedLayout>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -478,7 +478,7 @@ public sealed partial class LayoutFactory : pb::IMessage<LayoutFactory>
       public static partial class Types {
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class FeedKV : pb::IMessage<FeedKV>
+        internal sealed partial class FeedKV : pb::IMessage<FeedKV>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif

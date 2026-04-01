@@ -1,4 +1,4 @@
-namespace AioTieba4DotNet;
+namespace AioTieba4DotNet.Contracts;
 
 /// <summary>
 ///     客户端传输模式

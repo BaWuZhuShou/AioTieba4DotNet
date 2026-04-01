@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from GetForumDetailResIdl.proto</summary>
-public static partial class GetForumDetailResIdlReflection {
+internal static partial class GetForumDetailResIdlReflection {
 
   #region Descriptor
   /// <summary>File descriptor for GetForumDetailResIdl.proto</summary>
@@ -47,7 +47,7 @@ public static partial class GetForumDetailResIdlReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class GetForumDetailResIdl : pb::IMessage<GetForumDetailResIdl>
+internal sealed partial class GetForumDetailResIdl : pb::IMessage<GetForumDetailResIdl>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -304,7 +304,7 @@ public sealed partial class GetForumDetailResIdl : pb::IMessage<GetForumDetailRe
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class DataRes : pb::IMessage<DataRes>
+    internal sealed partial class DataRes : pb::IMessage<DataRes>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -561,7 +561,7 @@ public sealed partial class GetForumDetailResIdl : pb::IMessage<GetForumDetailRe
       public static partial class Types {
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class RecommendForumInfo : pb::IMessage<RecommendForumInfo>
+        internal sealed partial class RecommendForumInfo : pb::IMessage<RecommendForumInfo>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif
@@ -1019,7 +1019,7 @@ public sealed partial class GetForumDetailResIdl : pb::IMessage<GetForumDetailRe
 
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class ManagerElectionTab : pb::IMessage<ManagerElectionTab>
+        internal sealed partial class ManagerElectionTab : pb::IMessage<ManagerElectionTab>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif

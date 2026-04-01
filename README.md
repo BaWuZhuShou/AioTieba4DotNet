@@ -1,59 +1,60 @@
 ﻿# AioTieba4DotNet
 
-🚀 面向 .NET 8/9/10 的异步贴吧客户端。v2 保留 `TiebaClient`、DI 注册、`ITiebaClientFactory` 与模块化入口，并统一采用策略驱动的传输与显式的鉴权异常模型。
+面向 .NET 10 的异步贴吧客户端。v3 保留 `TiebaClient`、`ITiebaClient`、`AddAioTiebaClient(...)` 和 `ITiebaClientFactory` 这条主线，同时把公开能力稳定在六个模块上：`Forums`、`Threads`、`Users`、`Admins`、`Messages`、`Client`。
 
 [![NuGet version (AioTieba4DotNet)](https://img.shields.io/nuget/v/AioTieba4DotNet.svg?style=flat-square)](https://www.nuget.org/packages/AioTieba4DotNet/)
 [![CodeQL](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/codeql-analysis.yml)
 [![QQ Group](https://img.shields.io/badge/QQ%E7%BE%A4-278662447-blue)](https://qm.qq.com/q/a0I1RepoA2)
 
----
+## v3 公开契约速览
 
-## ✨ v2 公开契约
+- **支持矩阵**: v3 只支持 `net10.0`。
+- **客户端入口**: 继续使用 `TiebaClient`、`ITiebaClient`、`AddAioTiebaClient(...)`、`ITiebaClientFactory`。
+- **模块边界**: `Forums`、`Threads`、`Users`、`Admins`、`Messages`、`Client`。
+- **传输策略**: 公开层继续通过 `TiebaOptions.TransportMode` 控制，默认 `Auto`，唯一公开覆盖为 `Http`。
+- **消息能力**: 消息读写与 push 解析统一在 `client.Messages`，`client.Client` 只保留生命周期与连接初始化职责。
+- **异常模型**: 本地凭据缺失抛出 `TiebaAuthenticationException`，配置错误抛出 `TiebaConfigurationException`，服务端业务拒绝抛出 `TieBaServerException`。
 
-- **保留的入口**：`TiebaClient`、`ITiebaClient`、`AddAioTiebaClient(...)`、`ITiebaClientFactory`。
-- **保留的模块**：`Forums`、`Threads`、`Users`、`Client` 四个模块。
-- **传输策略收口**：公开层只保留 `TiebaOptions.TransportMode`；默认 `Auto`，唯一公开覆写为 `Http`。
-- **显式鉴权失败**：缺少本地必需凭据时直接抛出 `TiebaAuthenticationException`，不再依赖旧版“发出请求后拿到服务端形状错误”的路径。
-- **多协议仍然可用**：WebSocket 仍是内部优先路径，但业务方法不再暴露 `mode` 参数，也不再要求调用方手动切协议。
-
----
-
-## 📦 安装
+## 安装
 
 ```shell
 dotnet add package AioTieba4DotNet
 ```
 
----
+## 30 秒快速开始
 
-## 🚀 快速开始
-
-### 1. 直接创建客户端
+### 访客读取
 
 ```csharp
 using AioTieba4DotNet;
 
-// 访客模式：适合只读脚本
-using var guestClient = new TiebaClient();
+using var client = new TiebaClient();
 
-var fid = await guestClient.Forums.GetFidAsync("csharp");
-Console.WriteLine($"贴吧 ID: {fid}");
+var fid = await client.Forums.GetFidAsync("csharp");
+var threads = await client.Threads.GetThreadsAsync("csharp");
 
-// 鉴权模式：适合签到、发帖、管理等操作
-using var authenticatedClient = new TiebaClient("你的BDUSS", "你的STOKEN");
-await authenticatedClient.Forums.SignAsync("csharp");
-
-var threads = await authenticatedClient.Threads.GetThreadsAsync("csharp");
-foreach (var thread in threads.Objs)
-{
-    Console.WriteLine($"标题: {thread.Title} | 作者: {thread.User?.ShowName}");
-}
+Console.WriteLine($"fid = {fid}");
+Console.WriteLine($"当前页主题数 = {threads.Objs.Count}");
 ```
 
-### 2. 用 `TiebaOptions` 控制传输与超时策略
+### 已登录任务
 
 ```csharp
 using AioTieba4DotNet;
+
+using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+
+await client.Forums.SignAsync("csharp");
+
+var replies = await client.Messages.GetRepliesAsync();
+Console.WriteLine($"回复消息页数 = {replies.Page?.CurrentPage}");
+```
+
+### 用 `TiebaOptions` 控制超时和传输
+
+```csharp
+using AioTieba4DotNet;
+using AioTieba4DotNet.Contracts;
 
 using var client = new TiebaClient(new TiebaOptions
 {
@@ -64,117 +65,86 @@ using var client = new TiebaClient(new TiebaOptions
     MaxReadRetryAttempts = 1
 });
 
-await client.Threads.AddPostAsync("csharp", 1234567890, "这是一条通过统一传输策略发送的回复");
+var profile = await client.Users.GetProfileAsync("某个 portrait 或用户名");
+Console.WriteLine(profile.ShowName);
 ```
 
-> `TransportMode = Auto` 是默认行为：支持 WebSocket 的请求会优先尝试 WebSocket，不支持或当前不可用时统一回退到 HTTP。业务方法本身不再暴露 `mode` 参数。
+## 文档导航
 
-### 3. 依赖注入模式
+### 1. 上手
 
-```csharp
-using AioTieba4DotNet;
+- [Getting Started](./docs/getting-started.md): 从安装、创建客户端到 DI 注册的完整入门路径。
 
-builder.Services.AddAioTiebaClient(options =>
-{
-    options.Bduss = builder.Configuration["Tieba:Bduss"];
-    options.Stoken = builder.Configuration["Tieba:Stoken"];
-    options.RequestTimeout = TimeSpan.FromSeconds(20);
-});
-```
+### 2. 按任务找答案
 
-```csharp
-public class MyService(ITiebaClient tiebaClient)
-{
-    public async Task DoWorkAsync(CancellationToken cancellationToken)
-    {
-        var profile = await tiebaClient.Users.GetProfileAsync("某个ID", cancellationToken);
-        // ...
-    }
-}
-```
+- [How-to: Forums](./docs/how-to-forums.md): 查吧、关注、签到、搜索、统计。
+- [How-to: Threads](./docs/how-to-threads.md): 读帖、回复、楼中楼、互动、吧务操作。
+- [How-to: Users](./docs/how-to-users.md): 用户资料、社交关系、黑名单、主页与资料修改。
+- [How-to: Messages](./docs/how-to-messages.md): @、回复、私信、吧群消息、push 解析。
 
-### 4. 多账户模式
+### 3. 参考与深入说明
 
-```csharp
-public class MyBot(ITiebaClientFactory factory)
-{
-    public async Task RunAsync()
-    {
-        using var client1 = factory.CreateClient("BDUSS_1", "STOKEN_1");
-        using var client2 = factory.CreateClient(new TiebaOptions
-        {
-            Bduss = "BDUSS_2",
-            TransportMode = TiebaTransportMode.Http
-        });
+- [Modules Reference](./docs/modules.md): 根客户端、模块、DI、factory、选项与模块方法索引。
+- [Advanced](./docs/advanced.md): 传输策略、DI、自定义 `HttpClient`、多账户、生命周期、异常模型。
+- [Troubleshooting](./docs/troubleshooting.md): 凭据、配置、超时、消息与常见迁移问题排查。
 
-        await client1.Forums.SignAsync("csharp");
-        await client2.Forums.SignAsync("dotnet");
-    }
-}
-```
+### 4. 迁移、发布与范围说明
 
----
+- [Migration v2 to v3](./docs/migration-v2-to-v3.md): 从 v2 升级到 v3 时最需要关注的 breaking changes 和替代路径。
+- [Release Notes v3](./docs/release-notes-v3.md): v3 的发布定位、亮点和本地验证要求。
+- [Parity v3](./docs/parity-v3.md): upstream 对齐账本和 v3 范围说明。
 
-## 📖 文档入口
-
-- [功能模块详细说明](./docs/modules.md) - 当前保留的 `Forums` / `Threads` / `Users` / `Client` 模块能力。
-- [高级用法](./docs/advanced.md) - DI、传输策略、异常模型、自定义 `HttpClient`、多账户与生命周期。
-- [v1 到 v2 迁移指南](./docs/migration-v1-to-v2.md) - 所有 intentional breaking changes、旧→新示例与移除理由。
-- [v2 发布说明](./docs/release-notes-v2.md) - major 升级摘要、发布节奏与 cutover 清单。
-- [待实现功能清单 (TODO)](./docs/todo.md) - 冻结 upstream 基线之外仍未覆盖的能力。
-
----
-
-## 🛠️ 模块概览
+## 公开模块概览
 
 ### `client.Forums`
 
-- 贴吧 ID / 吧名 / 详情 / forumInfo 查询
-- 关注 / 取消关注 / 签到
-- 吧务移除 (`DelBaWuAsync`)
+- 贴吧 ID、名称、详情、`forumInfo`
+- 关注、取消关注、签到、批量签到、成长签到
+- 精确搜索、排行、统计、图片与头像辅助
 
 ### `client.Threads`
 
-- 主题帖、回帖、楼中楼读取
-- 点赞 / 点踩 / 取消点赞 / 取消点踩
+- 主题帖、回帖、楼中楼、分区映射、回收站读取
+- 点赞、点踩、取消点赞、取消点踩
 - 回复、删除、批量删除、加精、置顶、移动、推荐、恢复、隐私设置
 
 ### `client.Users`
 
-- TBS、自身信息、资料页、关注/粉丝/黑名单、@/回复消息
-- 关注 / 取关 / 封禁 / 拉黑 / 移除粉丝
-- 用户主题帖 / 回复列表查询
+- TBS、自身信息、资料页、主页、吧内用户信息
+- 关注、粉丝、黑名单、移除粉丝、封禁兼容入口
+- 资料修改、旧版兼容黑名单与昵称接口
+
+### `client.Admins`
+
+- 吧务团队、吧务权限、吧务黑名单
+- 吧务日志、封禁列表、解封申诉
+- 需要明确权限和安全夹具的后台管理写操作
+
+### `client.Messages`
+
+- `GetAtsAsync()`、`GetRepliesAsync()`
+- `GetGroupMessagesAsync(...)`、`SendMessageAsync(...)`
+- `SendChatroomMessageAsync(...)`、`SetMessageReadAsync(...)`
+- `ParsePushNotifications(...)`
 
 ### `client.Client`
 
-- `InitWebSocketAsync()`：按需预热 WebSocket 链路
-- `InitZIdAsync()`：初始化 ZID
-- `SyncAsync()`：同步客户端标识
+- `InitWebSocketAsync()`
+- `InitZIdAsync()`
+- `SyncAsync()`
 
-> `client.Client` 表示客户端元数据与连接相关能力。
+## 开发与贡献
 
----
+- **对齐 upstream**: 任何 API 的参数语义、请求打包、响应解析和错误处理都必须严格参照 Python 版 [aiotieba](https://github.com/lumina37/aiotieba)。
+- **生成链路**: 修改 `.proto` 后请运行 `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`，不要手改生成的 `.cs` 文件。
+- **本地验证**: GitHub Actions 只做 restore、build、codegen、docs、packaging 和 evidence contract 检查。deterministic、integration、live 验证通过 `scripts/test-lane.*` 与 `scripts/verify-local.*` 在本地或 agent 环境执行。
 
-## ⚠️ 从 v1 升级
-
-v2 是一次 major 升级。请在修改现有代码前先阅读 [migration-v1-to-v2.md](./docs/migration-v1-to-v2.md)，其中包含完整的 breaking inventory、旧→新示例、以及 cutover 前的升级清单。
-
----
-
-## 🛠️ 开发与贡献
-
-- **对齐原版**：任何 API 的参数语义、请求打包、响应解析和错误处理都必须严格参照 Python 版 [aiotieba](https://github.com/lumina37/aiotieba)。
-- **生成链路**：修改 `.proto` 后请运行 `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`；不要手改生成的 `.cs` 文件。
-- **质量门禁**：发布和主要验证都以 `dotnet restore`、`dotnet build`、多 TFM 确定性测试、generator consistency、migration docs 检查为准。
-
----
-
-## 🤝 友情链接
+## 友情链接
 
 - 原版 Python 实现: [aiotieba](https://github.com/lumina37/aiotieba)
 - 吧务管理器: [TiebaManager](https://github.com/dog194/TiebaManager)
 - Protobuf 定义: [tbclient.protobuf](https://github.com/n0099/tbclient.protobuf)
 
-## 📄 开源协议
+## 开源协议
 
 [Unlicense](LICENSE)

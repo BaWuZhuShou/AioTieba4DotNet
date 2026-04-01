@@ -1,7 +1,8 @@
+using AioTieba4DotNet.Contracts;
 using AioTieba4DotNet.Models.Shared;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Protocols;
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Models;
 
 namespace AioTieba4DotNet.Modules;
 
@@ -72,6 +73,18 @@ public class UserModule : IUserModule
         _protocol.GetSelfInfoAsync(cancellationToken);
 
     /// <inheritdoc/>
+    public Task<UserInfo> GetSelfInfoInitNicknameAsync(CancellationToken cancellationToken = default) =>
+        _protocol.GetSelfInfoInitNicknameAsync(cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<UserInfo> GetSelfInfoMoIndexAsync(CancellationToken cancellationToken = default) =>
+        _protocol.GetSelfInfoMoIndexAsync(cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<LoginResult> LoginAsync(CancellationToken cancellationToken = default) =>
+        _protocol.LoginAsync(cancellationToken);
+
+    /// <inheritdoc/>
     public Task<AtMessages> GetAtsAsync(int pn = 1, CancellationToken cancellationToken = default) =>
         _protocol.GetAtsAsync(pn, cancellationToken);
 
@@ -84,13 +97,61 @@ public class UserModule : IUserModule
         _protocol.GetBlacklistAsync(cancellationToken);
 
     /// <inheritdoc/>
+    public Task<BlacklistOldUsers> GetBlacklistLegacyAsync(int pn = 1, int rn = 20,
+        CancellationToken cancellationToken = default) =>
+        _protocol.GetBlacklistLegacyAsync(pn, rn, cancellationToken);
+
+    /// <inheritdoc/>
     public Task<bool> SetBlacklistAsync(long userId, BlacklistType type = BlacklistType.All,
         CancellationToken cancellationToken = default) =>
         _protocol.SetBlacklistAsync(userId, type, cancellationToken);
 
     /// <inheritdoc/>
+    public Task<bool> AddBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default) =>
+        _protocol.AddBlacklistLegacyAsync(userId, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<bool> RemoveBlacklistLegacyAsync(long userId, CancellationToken cancellationToken = default) =>
+        _protocol.RemoveBlacklistLegacyAsync(userId, cancellationToken);
+
+    /// <inheritdoc/>
     public Task<bool> RemoveFanAsync(long userId, CancellationToken cancellationToken = default) =>
         _protocol.RemoveFanAsync(userId, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<UserInfoGuInfoWeb> GetBasicInfoWebAsync(int userId, CancellationToken cancellationToken = default) =>
+        _protocol.GetBasicInfoWebAsync(userId, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait,
+        CancellationToken cancellationToken = default) =>
+        _protocol.GetUserForumInfoAsync(fid, portrait, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<UserForumInfo> GetUserForumInfoAsync(string fname, string portrait,
+        CancellationToken cancellationToken = default) =>
+        _protocol.GetUserForumInfoAsync(fname, portrait, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<RankUsers> GetRankUsersAsync(string fname, int pn = 1, CancellationToken cancellationToken = default) =>
+        _protocol.GetRankUsersAsync(fname, pn, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<Homepage> GetHomepageAsync(int userId, int pn = 1, CancellationToken cancellationToken = default) =>
+        _protocol.GetHomepageAsync(userId, pn, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<bool> SetNicknameLegacyAsync(string nickName, CancellationToken cancellationToken = default) =>
+        _protocol.SetNicknameLegacyAsync(nickName, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<bool> SetProfileAsync(string nickName, string sign, Gender gender,
+        CancellationToken cancellationToken = default) =>
+        _protocol.SetProfileAsync(nickName, sign, gender, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default) =>
+        _protocol.GetUserByTiebaUidAsync(tiebaUid, cancellationToken);
 
     /// <inheritdoc/>
     public Task<UserPostss> GetPostsAsync(int userId, uint pn = 1, uint rn = 20, string version = "8.9.8.5",

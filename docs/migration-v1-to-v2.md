@@ -237,7 +237,7 @@ catch (TieBaServerException)
 
 ```csharp
 // v2：缺少本地必需凭据时先抛 TiebaAuthenticationException
-using AioTieba4DotNet.Exceptions;
+using AioTieba4DotNet;
 
 try
 {

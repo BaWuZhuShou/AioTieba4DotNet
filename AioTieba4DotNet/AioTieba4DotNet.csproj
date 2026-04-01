@@ -1,24 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Id>TbClient</Id>
+        <PackageId>AioTieba4DotNet</PackageId>
         <Title>贴吧操作库</Title>
         <Authors>Juicpt</Authors>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <UserSecretsId>8bd67551-0cb1-4639-b33c-d5f2f082615d</UserSecretsId>
-        <Version>0.0.1-dev</Version>
-        <Description>贴吧操作库</Description>
+        <VersionPrefix>3.0.0</VersionPrefix>
+        <Description>面向 .NET 10 的 AioTieba v3 异步贴吧客户端。</Description>
         <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/BaWuZhuShou/AioTieba4DotNet.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageProjectUrl>https://github.com/BaWuZhuShou/AioTieba4DotNet</PackageProjectUrl>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
-        <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
         <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
 
@@ -30,18 +28,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.33.3"/>
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.1"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
-        <PackageReference Include="System.IO.Hashing" Version="10.0.1"/>
+        <PackageReference Include="Google.Protobuf" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Microsoft.Extensions.Http" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Options" />
+        <PackageReference Include="Newtonsoft.Json" />
+        <PackageReference Include="System.IO.Hashing" />
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="AioTieba4DotNet.Tests"/>
+        <InternalsVisibleTo Include="AioTieba4DotNet.Testing" />
+        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Deterministic" />
+        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Integration" />
+        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Live" />
     </ItemGroup>
 
     <ItemGroup>

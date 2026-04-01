@@ -1,7 +1,8 @@
-﻿using AioTieba4DotNet.Abstractions;
+﻿using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Core;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetForumDetail;
@@ -11,8 +12,10 @@ namespace AioTieba4DotNet.Api.GetForumDetail;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.get_forum_detail")]
-internal class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
+internal class GetForumDetail(ITiebaHttpCore httpCore)
 {
+    private readonly ITiebaHttpCore _httpCore = httpCore;
+
     private const int Cmd = 303021;
 
     private static byte[] PackProto(long fid)
@@ -30,7 +33,7 @@ internal class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
     private static ForumDetail ParseBody(byte[] body)
     {
         var resProto = GetForumDetailResIdl.Parser.ParseFrom(body);
-        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
+        ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var dataForum = resProto.Data;
 
@@ -49,7 +52,7 @@ internal class GetForumDetail(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
         var requestUri =
             new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/forum/getforumdetail") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from SetUserBlackResIdl.proto</summary>
-public static partial class SetUserBlackResIdlReflection {
+internal static partial class SetUserBlackResIdlReflection {
 
   #region Descriptor
   /// <summary>File descriptor for SetUserBlackResIdl.proto</summary>
@@ -37,7 +37,7 @@ public static partial class SetUserBlackResIdlReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class SetUserBlackResIdl : pb::IMessage<SetUserBlackResIdl>
+internal sealed partial class SetUserBlackResIdl : pb::IMessage<SetUserBlackResIdl>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif

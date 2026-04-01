@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from SimpleForum.proto</summary>
-public static partial class SimpleForumReflection {
+internal static partial class SimpleForumReflection {
 
   #region Descriptor
   /// <summary>File descriptor for SimpleForum.proto</summary>
@@ -38,7 +38,7 @@ public static partial class SimpleForumReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class SimpleForum : pb::IMessage<SimpleForum>
+internal sealed partial class SimpleForum : pb::IMessage<SimpleForum>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif

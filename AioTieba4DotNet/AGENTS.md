@@ -1,58 +1,67 @@
 # AioTieba4DotNet Library Guide
 
 ## OVERVIEW
-This directory is the maintained C# library. Public surface area lives in `TiebaClient`, DI registration, public entities, and `Modules/*`; low-level API implementations stay internal.
+This directory contains the maintained v3 .NET 10 library. Public callers come in through `TiebaClient`, `ITiebaClient`, `AddAioTiebaClient(...)`, and `ITiebaClientFactory`, then work through six public modules: `Forums`, `Threads`, `Users`, `Admins`, `Messages`, and `Client`.
 
 ## STRUCTURE
 ```text
 AioTieba4DotNet/
-├── Abstractions/   # public contracts for client, modules, and core seams
-├── Api/            # low-level endpoint implementations, feature entities, protobuf assets
-├── Attributes/     # metadata such as PythonApi / RequireBduss
-├── Core/           # transport, auth, crypto, cache, factory, async init helpers
-├── Entities/       # shared public entities
-├── Enums/          # request modes and shared enums
-├── Exceptions/     # TiebaException / TieBaServerException surface
-├── Modules/        # public business facades over Api layer
+├── Clients/          # direct client entrypoints and internal composition helpers
+├── Contracts/        # public module contracts, options, enums
+├── Api/              # internal low-level endpoints, protobuf assets, request families
+├── Attributes/       # PythonApi / RequireBduss markers and similar metadata
+├── Exceptions/       # public exception types stored in-folder, exposed from root namespace
+├── Internal/         # internal helpers and protocol-to-model mapping glue
+├── Models/           # public DTOs and enums
+├── Modules/          # public business facades over internal protocols and APIs
+├── Protocols/        # internal orchestration between modules, session, and transport
+├── Session/          # internal auth and lifecycle state
+├── Transport/        # internal HTTP, WebSocket, and message transport machinery
 ├── DependencyInjection.cs
-└── TiebaClient.cs
+└── GlobalUsings.cs
 ```
+
+## PUBLIC SURFACE BASELINE
+- v3 supports `net10.0` only.
+- Public entrypoints remain `TiebaClient`, `ITiebaClient`, `AddAioTiebaClient(...)`, `ITiebaClientFactory`, and `TiebaClientFactory`.
+- Public module families are `Forums`, `Threads`, `Users`, `Admins`, `Messages`, and `Client`.
+- `client.Messages` owns message reads, message sends, read-state updates, and push parsing.
+- `client.Client` stays limited to lifecycle helpers such as websocket initialization, z-id initialization, and sync.
+- `Client.cs` is an obsolete compatibility facade. Do not add new feature work there unless the task is explicitly about compatibility.
 
 ## WHERE TO LOOK
 | Task | Location | Notes |
 |------|----------|-------|
-| Register library in DI | `DependencyInjection.cs` | Adds HttpClient, cores, modules, client factory |
-| Direct client composition | `TiebaClient.cs`, `Core/TiebaClientFactory.cs` | Manual and DI-based entrypoints |
-| Add or port a low-level endpoint | `Api/<Feature>/` | Keep file/folder names aligned with upstream behavior |
-| Reuse request plumbing | `Api/ApiBase.cs`, `Api/JsonApiBase.cs`, `Api/ProtoApiBase.cs` | Error checks, parsing, dual-mode dispatch |
-| Expose user-facing behavior | `Modules/*.cs` | Public surface should call internal Api implementations |
-| Transport / auth / cache changes | `Core/` | `HttpCore`, `WebsocketCore`, `Signer`, `TbCrypto`, `ForumInfoCache`, `AsyncInit<T>` |
-| Shared public contracts | `Abstractions/`, `Entities/` | Keep protocol-specific types out of consumer surface |
-| Update tests with behavior changes | `../AioTieba4DotNet.Tests/` | Mirror source area and reuse `TestBase` |
+| DI and composition | `DependencyInjection.cs`, `Clients/TiebaClient*.cs` | Direct, DI, and factory entrypoints should converge on the same composition behavior |
+| Public module behavior | `Modules/*.cs`, `Contracts/*.cs` | Public business surface and public contract shape |
+| Low-level request families | `Api/<Feature>/` | Keep family names and semantics aligned with upstream `aiotieba` |
+| Shared request plumbing | `Api/JsonApiBase.cs`, `Transport/TiebaOperationDispatcher.cs`, `Transport/ITiebaHttpCore.cs`, `Transport/ITiebaWsCore.cs` | Reuse the current transport, parsing, and dispatcher seams instead of reintroducing removed legacy request bases |
+| Public models | `Models/**` | Keep consumer-facing models protocol-agnostic |
+| Session and transport internals | `Session/**`, `Transport/**`, `Protocols/**`, `Internal/**` | Internal only; do not leak these into the public contract |
+| Generated protobuf outputs | `Api/Protobuf/*.cs`, `Api/*/Protobuf/*.cs` | Generated code, never hand-edit |
 
 ## CONVENTIONS
-- `Modules/*`, `TiebaClient`, and `DependencyInjection.AddAioTiebaClient` are the public entry surface.
-- `Api/*` classes, including base classes, stay `internal`; do not expose low-level request classes directly.
-- New APIs should mirror upstream `aiotieba` behavior and naming as closely as practical.
-- Add `[PythonApi("aiotieba.api....")]` to every API implementation so upstream mapping stays searchable.
-- Apply `[RequireBduss]` on authenticated APIs.
-- Reuse `JsonApiBase`, `ProtoApiBase`, `ApiWsBase<TResult>`, or `ProtoApiWsBase<TResult>` instead of open-coded request pipelines.
-- Prefer protobuf when upstream supports it; include `CommonReq` and keep field packing aligned with upstream.
-- Public XML docs should use `<see cref="..."/>` for complex public types.
-- Entity conversion helpers such as `FromTbData` stay `internal`.
-- `*/Protobuf/*.cs` files are generated outputs. Edit `.proto`, then rerun `ProtoGenerator`; never patch generated C# by hand.
-- Use `HttpCore.Send*Async` helpers from API code; do not manually manage `HttpResponseMessage` disposal there.
-- Use `AsyncInit<T>` for shared async one-time initialization and `ForumInfoCache` for forum name/Fid translation.
+- Keep the approved consumer-facing surface at the root `AioTieba4DotNet` namespace plus `Contracts/*` and `Models/*`. Folder placement does not automatically mean a consumer-facing namespace.
+- Keep low-level `Api/*` classes `internal`. Public callers should reach behavior through modules and contracts, not by constructing request classes.
+- Mirror upstream `aiotieba` request semantics, naming, packing, parsing, and observable behavior as closely as the C# contract allows.
+- Add `[PythonApi("aiotieba.api....")]` to API implementations so parity tracing remains searchable.
+- Apply `[RequireBduss]` on authenticated API classes.
+- Reuse the existing base classes and `HttpCore.Send*Async` helpers instead of reimplementing transport selection, parsing, or response disposal.
+- Prefer protobuf-backed implementations where upstream supports them, and keep `CommonReq` packing aligned with the upstream family.
+- Keep protobuf transport and generated types out of the public DTO contract. Public models belong under `Models/**`; protocol-to-model conversion belongs under internal mapping code.
+- If `.proto` files change, rerun `ProtoGenerator`. Do not patch generated `*.cs` outputs by hand.
 
 ## ANTI-PATTERNS
-- Putting public feature logic directly under `Api/` instead of exposing it through `Modules/*`.
-- Re-implementing `CheckError`, `ParseBody`, or request-mode dispatch instead of reusing the base classes.
-- Exposing protobuf transport types as user-facing entities.
-- Inventing request parameters or protocol behavior that upstream `aiotieba` does not have unless explicitly requested.
-- Adding new functionality to obsolete compatibility wrapper `Client.cs` unless the goal is backward compatibility.
+- Exposing `Api/*`, transport internals, or generated protobuf types as the public product surface.
+- Inventing request parameters or business logic that upstream `aiotieba` does not have unless a task explicitly requires a product-level deviation.
+- Spreading message read or push behavior back into `client.Client` now that `Messages` is the public home for that family.
+- Treating legacy deletion tasks as license to remove compatibility entrypoints before docs, parity, and release notes say the removal is part of the active v3 contract.
+
+## TESTING LINKS
+- Deterministic coverage for library behavior lives in `../AioTieba4DotNet.Tests.Deterministic/`.
+- Real-link staged verification lives in `../AioTieba4DotNet.Tests.Integration/` and `../AioTieba4DotNet.Tests.Live/`.
+- Shared gates, fixtures, cleanup orchestration, and sequencing truth live in `../AioTieba4DotNet.Testing/`.
 
 ## NOTES
-- `Client.cs` is an obsolete compatibility facade; prefer `TiebaClient` in new code and docs.
-- If a change introduces durable library rules, sync them back into `../.junie/guidelines.md`.
-- Follow the repository SemVer policy in `../.junie/guidelines.md`; version bumps are determined by changes to public API surface, documented behavior, and supported target frameworks.
-- Keep `Api/Protobuf/` and feature-local `Protobuf/` folders documented by parent guidance only; they do not need their own AGENTS file.
+- If library work changes durable cross-cutting policy, also sync `.junie/guidelines.md`.
+- If library work changes user-visible behavior, ensure the docs contract stays aligned with `README.md`, the task guides, `docs/modules.md`, `docs/advanced.md`, `docs/troubleshooting.md`, release notes, migration notes, and `docs/parity-v3.md`.

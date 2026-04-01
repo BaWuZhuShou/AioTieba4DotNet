@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from User.proto</summary>
-public static partial class UserReflection {
+internal static partial class UserReflection {
 
   #region Descriptor
   /// <summary>File descriptor for User.proto</summary>
@@ -71,7 +71,7 @@ public static partial class UserReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class User : pb::IMessage<User>
+internal sealed partial class User : pb::IMessage<User>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -1395,7 +1395,7 @@ public sealed partial class User : pb::IMessage<User>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class Icon : pb::IMessage<Icon>
+    internal sealed partial class Icon : pb::IMessage<Icon>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -1594,7 +1594,7 @@ public sealed partial class User : pb::IMessage<User>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class PrivSets : pb::IMessage<PrivSets>
+    internal sealed partial class PrivSets : pb::IMessage<PrivSets>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -2089,7 +2089,7 @@ public sealed partial class User : pb::IMessage<User>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class LikeForumInfo : pb::IMessage<LikeForumInfo>
+    internal sealed partial class LikeForumInfo : pb::IMessage<LikeForumInfo>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -2325,7 +2325,7 @@ public sealed partial class User : pb::IMessage<User>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class UserVipInfo : pb::IMessage<UserVipInfo>
+    internal sealed partial class UserVipInfo : pb::IMessage<UserVipInfo>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -2561,7 +2561,7 @@ public sealed partial class User : pb::IMessage<User>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class TshowInfo : pb::IMessage<TshowInfo>
+    internal sealed partial class TshowInfo : pb::IMessage<TshowInfo>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -2760,7 +2760,7 @@ public sealed partial class User : pb::IMessage<User>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class NewGodInfo : pb::IMessage<NewGodInfo>
+    internal sealed partial class NewGodInfo : pb::IMessage<NewGodInfo>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -3033,7 +3033,7 @@ public sealed partial class User : pb::IMessage<User>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class UserGrowth : pb::IMessage<UserGrowth>
+    internal sealed partial class UserGrowth : pb::IMessage<UserGrowth>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -3232,7 +3232,7 @@ public sealed partial class User : pb::IMessage<User>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class VirtualImageInfo : pb::IMessage<VirtualImageInfo>
+    internal sealed partial class VirtualImageInfo : pb::IMessage<VirtualImageInfo>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -3480,7 +3480,7 @@ public sealed partial class User : pb::IMessage<User>
       public static partial class Types {
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class PersonalState : pb::IMessage<PersonalState>
+        internal sealed partial class PersonalState : pb::IMessage<PersonalState>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif

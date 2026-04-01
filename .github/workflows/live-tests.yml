@@ -1,4 +1,4 @@
-name: Live Tests
+name: Local Verification Contract
 
 on:
     schedule:
@@ -6,34 +6,20 @@ on:
     workflow_dispatch:
 
 jobs:
-    live-tests:
-        name: Live lane (${{ matrix.framework }})
+    contract:
+        name: Validate local-only test governance
         runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                framework: [ net8.0, net9.0, net10.0 ]
 
         steps:
             -   name: Checkout repository
                 uses: actions/checkout@v6
 
-            -   name: Setup .NET SDK
-                uses: actions/setup-dotnet@v5
-                with:
-                    dotnet-version: |
-                        8.x
-                        9.x
-                        10.x
+            -   name: Validate local verification contract
+                run: bash ./scripts/verify-local.sh --validate-only
 
-            -   name: Restore dependencies
-                run: dotnet restore AioTieba4DotNet.sln --nologo
-
-            -   name: Build tests for ${{ matrix.framework }}
-                run: dotnet build AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-restore -f ${{ matrix.framework }} --nologo
-
-            -   name: Run live and integration tests for ${{ matrix.framework }}
-                run: dotnet test AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-build -f ${{ matrix.framework }} --filter "TestCategory=Integration|TestCategory=Live" --nologo
-                env:
-                    TIEBA_BDUSS: ${{ secrets.TIEBA_BDUSS }}
-                    TIEBA_STOKEN: ${{ secrets.TIEBA_STOKEN }}
+            -   name: Explain local-only verification lanes
+                shell: bash
+                run: |
+                    printf 'GitHub Actions does not run deterministic, integration, or live test lanes.\n'
+                    printf 'Use scripts/test-lane.ps1 or scripts/test-lane.sh in a controlled local or agent environment.\n'
+                    printf 'Update .sisyphus/evidence/local-verification.manifest.json after refreshing local evidence.\n'

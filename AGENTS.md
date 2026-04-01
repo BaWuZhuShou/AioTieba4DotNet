@@ -1,66 +1,71 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-27
-**Commit:** dc756a5
+**Generated:** 2026-03-31
 **Branch:** master
 
 ## OVERVIEW
-AioTieba4DotNet is a multi-target .NET Tieba client library plus tests and a protobuf generator. The maintained product is the C# solution; `aiotieba/` is an upstream Python reference tree kept only for comparison and should not be treated as part of the shipping .NET codebase.
+AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping product is the C# solution rooted in `AioTieba4DotNet/`; `aiotieba/` stays in the repo only as an upstream Python reference for parity checks and implementation comparison.
 
 ## STRUCTURE
 ```text
 .
-├── AioTieba4DotNet/         # main library; architecture rules live in child AGENTS
-├── AioTieba4DotNet.Tests/   # MSTest project mirroring source areas
-├── ProtoGenerator/          # standalone protobuf code generator
-├── docs/                    # user-facing docs and parity backlog
-├── .github/                 # CodeQL, publish, release automation
-├── .junie/                  # durable AI/project guidance
-└── aiotieba/                # upstream Python reference only
+├── AioTieba4DotNet/                   # shipping library; library-specific rules live in child AGENTS
+├── AioTieba4DotNet.Testing/           # shared test infrastructure, fixture gates, sequencing manifest
+├── AioTieba4DotNet.Tests.Deterministic/ # offline deterministic and coverage-bearing tests
+├── AioTieba4DotNet.Tests.Integration/ # controlled real-link verification
+├── AioTieba4DotNet.Tests.Live/        # credentialed and mutation-capable verification
+├── ProtoGenerator/                    # protobuf generator for Api/**/*.proto
+├── docs/                              # user-facing docs plus parity and migration docs
+├── .github/                           # build, publish, and release automation
+├── .junie/                            # durable maintenance rules and architecture knowledge
+└── aiotieba/                          # upstream Python reference only
 ```
 
 ## WHERE TO LOOK
 | Task | Location | Notes |
 |------|----------|-------|
-| Repo-wide architecture rules | `.junie/guidelines.md` | Durable rule source; update when new core knowledge stabilizes |
-| Main C# implementation work | `AioTieba4DotNet/` | Child `AGENTS.md` has library-specific guidance |
-| Find public entrypoints | `AioTieba4DotNet/TiebaClient.cs`, `AioTieba4DotNet/DependencyInjection.cs` | Direct client + DI composition |
-| Run or extend tests | `AioTieba4DotNet.Tests/` | `TestBase.cs` wires config, account, HttpCore, WebsocketCore |
-| Regenerate protobuf outputs | `ProtoGenerator/Program.cs` | Scans `AioTieba4DotNet/Api/**/*.proto` |
-| Check missing upstream parity | `docs/todo.md` | Backlog of Python features not yet ported |
-| Release / package flow | `.github/workflows/publish.yml` | Tag-driven NuGet + GitHub release |
-| Compare upstream behavior | `aiotieba/` | Reference only; do not fold Python-specific rules into C# code |
+| Durable cross-cutting rules | `.junie/guidelines.md` | Source of truth for stable maintenance, testing, release, and coverage rules |
+| Main library work | `AioTieba4DotNet/` | Start in `AioTieba4DotNet/AGENTS.md` for library boundaries and public surface rules |
+| Shared test sequencing and fixtures | `AioTieba4DotNet.Testing/` | `TestBase`, fixture gates, cleanup orchestration, sequencing manifest |
+| Deterministic verification | `AioTieba4DotNet.Tests.Deterministic/` | Offline tests and coverage-bearing lane |
+| Integration verification | `AioTieba4DotNet.Tests.Integration/` | Staged real-link checks using the sequencing manifest |
+| Live verification | `AioTieba4DotNet.Tests.Live/` | Credentialed, mutation-capable, cleanup-aware scenarios |
+| Generator maintenance | `ProtoGenerator/` | Regenerates `.proto` outputs under `AioTieba4DotNet/Api/**/Protobuf` |
+| Docs contract and IA | `README.md`, `docs/getting-started.md`, `docs/*.md` | README routes to task guides, reference, advanced, troubleshooting, migration, release notes, and parity ledger |
+| Parity truth | `docs/parity-v3.md` | Authoritative v3 parity ledger against upstream export scope |
+| Historical backlog only | `docs/todo.md` | Stale history and backlog notes, not active product truth |
+| Local verification entrypoints | `scripts/test-lane.*`, `scripts/verify-local.*` | Canonical local and agent-run verification commands |
 
 ## CONVENTIONS
-- Treat `.junie/guidelines.md` as the authoritative long-lived rule file; AGENTS should stay concise and local.
-- Keep repo-level guidance directional here; detailed implementation rules belong in child AGENTS files.
-- Package lock files are enabled repo-wide in `Directory.Build.props`.
-- CI sets `ContinuousIntegrationBuild`; release publishing is tag-driven.
-- There is no repo-specific task runner; use `dotnet` CLI directly.
-- `aiotieba/` is for behavior comparison only. User clarification: it is unrelated to the maintained .NET product itself.
+- Treat this root guide as repo routing only. Put durable cross-cutting rules in `.junie/guidelines.md`, and put local implementation rules in the nearest child `AGENTS.md`.
+- The active product baseline is v3 on `net10.0` only. Do not leave active guide text claiming `net8.0`, `net9.0`, multi-target support, or a live v2 release line.
+- `docs/parity-v3.md` is the parity truth. `docs/todo.md` is historical context only and must not be presented as the authoritative parity ledger.
+- The user-facing docs contract is anchored by `README.md` and the required docs list enforced by `scripts/verify-local.*`.
+- GitHub Actions must stay build-only. They validate restore, build, codegen, docs contract, packaging, and evidence presence, but they do not run `dotnet test`.
+- Local and agent-run verification uses four lanes only: `deterministic`, `integration`, `live`, and `sequence-dry-run`.
+- `aiotieba/` is reference material only. Never treat it as maintained product code, release scope, or coverage scope.
 
-## ANTI-PATTERNS (THIS PROJECT)
-- Treating `aiotieba/` as part of the maintained C# codebase.
-- Hand-editing generated protobuf C# instead of editing `.proto` and regenerating.
-- Adding request parameters or business logic that do not exist in upstream `aiotieba` unless explicitly required.
-- Manually disposing `HttpResponseMessage` inside API-layer code.
-- Assuming every API supports WebSocket; some paths still fall back to HTTP.
-
-## UNIQUE STYLES
-- Top-level docs stay selective; most operational detail should live in the nearest child AGENTS file.
-- `docs/todo.md` is the working parity map against upstream Python capabilities.
-- The compatibility wrapper `AioTieba4DotNet/Client.cs` is obsolete; prefer `TiebaClient`.
+## ANTI-PATTERNS
+- Treating `docs/todo.md` as current parity truth.
+- Adding stale guide text that claims the repo still ships multi-target or v2-era baselines.
+- Hand-editing generated protobuf C# instead of editing `.proto` files and rerunning `ProtoGenerator`.
+- Putting test-lane or cleanup policy in GitHub Actions instead of the local verification scripts and sequencing manifest.
+- Treating the `Cleanup` sequencing wave as a runnable MSTest category filter instead of a synthetic compensation stage.
 
 ## COMMANDS
 ```bash
 dotnet restore --nologo
 dotnet build AioTieba4DotNet.sln --configuration Release --no-restore
-dotnet test AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj
+pwsh ./scripts/verify-local.ps1
+pwsh ./scripts/test-lane.ps1 deterministic
+pwsh ./scripts/test-lane.ps1 integration
+pwsh ./scripts/test-lane.ps1 live
+pwsh ./scripts/test-lane.ps1 sequence-dry-run
 dotnet run --project ProtoGenerator/ProtoGenerator.csproj
 dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=<version> --nologo
 ```
 
 ## NOTES
-- If a change alters durable architecture or maintenance rules, mirror that knowledge back into `.junie/guidelines.md`.
-- Keep generated / output folders (`bin/`, `obj/`, `TestResults/`) out of any documentation hierarchy decisions.
-- Start in `AioTieba4DotNet/AGENTS.md` for implementation work; come back here for repo routing only.
+- If a task changes stable maintenance rules, coverage scope, release policy, or test-lane governance, sync that knowledge into `.junie/guidelines.md`.
+- If a task changes library boundaries or public surface expectations, sync the local guidance in `AioTieba4DotNet/AGENTS.md`.
+- Keep child guides concise and local. Avoid copying large rule blocks across repo root, library, testing, and generator guides.

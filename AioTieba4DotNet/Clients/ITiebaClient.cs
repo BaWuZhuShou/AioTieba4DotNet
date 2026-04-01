@@ -1,3 +1,5 @@
+using AioTieba4DotNet.Contracts;
+
 namespace AioTieba4DotNet;
 
 /// <summary>
@@ -19,6 +21,16 @@ public interface ITiebaClient : IDisposable
     ///     用户模块
     /// </summary>
     IUserModule Users { get; }
+
+    /// <summary>
+    ///     吧务 / 后台管理模块
+    /// </summary>
+    IAdminModule Admins { get; }
+
+    /// <summary>
+    ///     消息模块
+    /// </summary>
+    IMessagesModule Messages { get; }
 
     /// <summary>
     ///     客户端元数据模块

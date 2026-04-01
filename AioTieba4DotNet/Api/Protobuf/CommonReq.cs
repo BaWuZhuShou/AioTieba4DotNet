@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from CommonReq.proto</summary>
-public static partial class CommonReqReflection {
+internal static partial class CommonReqReflection {
 
   #region Descriptor
   /// <summary>File descriptor for CommonReq.proto</summary>
@@ -54,7 +54,7 @@ public static partial class CommonReqReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class CommonReq : pb::IMessage<CommonReq>
+internal sealed partial class CommonReq : pb::IMessage<CommonReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif

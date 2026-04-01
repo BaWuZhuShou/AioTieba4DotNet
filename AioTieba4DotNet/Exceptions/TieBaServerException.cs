@@ -1,4 +1,4 @@
-﻿namespace AioTieba4DotNet.Exceptions;
+﻿namespace AioTieba4DotNet;
 
 /// <summary>
 ///     贴吧服务端异常

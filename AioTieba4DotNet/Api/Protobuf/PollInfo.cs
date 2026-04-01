@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from PollInfo.proto</summary>
-public static partial class PollInfoReflection {
+internal static partial class PollInfoReflection {
 
   #region Descriptor
   /// <summary>File descriptor for PollInfo.proto</summary>
@@ -39,7 +39,7 @@ public static partial class PollInfoReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class PollInfo : pb::IMessage<PollInfo>
+internal sealed partial class PollInfo : pb::IMessage<PollInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -378,7 +378,7 @@ public sealed partial class PollInfo : pb::IMessage<PollInfo>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class PollOption : pb::IMessage<PollOption>
+    internal sealed partial class PollOption : pb::IMessage<PollOption>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif

@@ -1,4 +1,4 @@
-namespace AioTieba4DotNet.Exceptions;
+namespace AioTieba4DotNet;
 
 /// <summary>
 ///     传输异常

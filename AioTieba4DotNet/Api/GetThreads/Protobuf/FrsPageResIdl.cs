@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from FrsPageResIdl.proto</summary>
-public static partial class FrsPageResIdlReflection {
+internal static partial class FrsPageResIdlReflection {
 
   #region Descriptor
   /// <summary>File descriptor for FrsPageResIdl.proto</summary>
@@ -56,7 +56,7 @@ public static partial class FrsPageResIdlReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class FrsPageResIdl : pb::IMessage<FrsPageResIdl>
+internal sealed partial class FrsPageResIdl : pb::IMessage<FrsPageResIdl>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -313,7 +313,7 @@ public sealed partial class FrsPageResIdl : pb::IMessage<FrsPageResIdl>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class DataRes : pb::IMessage<DataRes>
+    internal sealed partial class DataRes : pb::IMessage<DataRes>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -760,7 +760,7 @@ public sealed partial class FrsPageResIdl : pb::IMessage<FrsPageResIdl>
       public static partial class Types {
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class ForumInfo : pb::IMessage<ForumInfo>
+        internal sealed partial class ForumInfo : pb::IMessage<ForumInfo>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif
@@ -1210,7 +1210,7 @@ public sealed partial class FrsPageResIdl : pb::IMessage<FrsPageResIdl>
           public static partial class Types {
             [global::System.SerializableAttribute]
             [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-            public sealed partial class Manager : pb::IMessage<Manager>
+            internal sealed partial class Manager : pb::IMessage<Manager>
             #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
                 , pb::IBufferMessage
             #endif
@@ -1377,7 +1377,7 @@ public sealed partial class FrsPageResIdl : pb::IMessage<FrsPageResIdl>
 
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class NavTabInfo : pb::IMessage<NavTabInfo>
+        internal sealed partial class NavTabInfo : pb::IMessage<NavTabInfo>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif
@@ -1565,7 +1565,7 @@ public sealed partial class FrsPageResIdl : pb::IMessage<FrsPageResIdl>
 
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class ForumRuleStatus : pb::IMessage<ForumRuleStatus>
+        internal sealed partial class ForumRuleStatus : pb::IMessage<ForumRuleStatus>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif
@@ -1764,7 +1764,7 @@ public sealed partial class FrsPageResIdl : pb::IMessage<FrsPageResIdl>
 
         [global::System.SerializableAttribute]
         [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-        public sealed partial class PageData : pb::IMessage<PageData>
+        internal sealed partial class PageData : pb::IMessage<PageData>
         #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
             , pb::IBufferMessage
         #endif

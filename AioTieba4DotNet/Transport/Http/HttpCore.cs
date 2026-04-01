@@ -1,6 +1,7 @@
-using AioTieba4DotNet.Abstractions;
+using AioTieba4DotNet.Contracts;
+using AioTieba4DotNet.Session;
 
-namespace AioTieba4DotNet.Core;
+namespace AioTieba4DotNet.Transport.Http;
 
 internal sealed class HttpCore : ITiebaHttpCore, IDisposable
 {
@@ -9,11 +10,11 @@ internal sealed class HttpCore : ITiebaHttpCore, IDisposable
     private bool _disposed;
 
     internal HttpCore(HttpClient? httpClient = null)
-        : this(new global::AioTieba4DotNet.TiebaOptions(), httpClient)
+        : this(new TiebaOptions(), httpClient)
     {
     }
 
-    internal HttpCore(global::AioTieba4DotNet.TiebaOptions options, HttpClient? httpClient = null,
+    internal HttpCore(TiebaOptions options, HttpClient? httpClient = null,
         bool ownsHttpClient = false)
         : this(global::AioTieba4DotNet.Transport.Http.TiebaHttpExecutionPolicy.FromOptions(options), httpClient,
             ownsHttpClient)

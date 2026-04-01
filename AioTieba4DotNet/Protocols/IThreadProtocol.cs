@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using AioTieba4DotNet.Models.Threads;
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Models;
 
 namespace AioTieba4DotNet.Protocols;
 
@@ -17,6 +17,22 @@ internal interface IThreadProtocol
 
     Task<Comments> GetCommentsAsync(long tid, long pid, int pn, bool isComment,
         CancellationToken cancellationToken = default);
+
+    Task<Recovers> GetRecoversAsync(string fname, int pn, int rn, long? userId,
+        CancellationToken cancellationToken = default);
+
+    Task<Recovers> GetRecoversAsync(ulong fid, int pn, int rn, long? userId,
+        CancellationToken cancellationToken = default);
+
+    Task<RecoverInfo> GetRecoverInfoAsync(string fname, long tid, long pid,
+        CancellationToken cancellationToken = default);
+
+    Task<RecoverInfo> GetRecoverInfoAsync(ulong fid, long tid, long pid,
+        CancellationToken cancellationToken = default);
+
+    Task<TabMap> GetTabMapAsync(string fname, CancellationToken cancellationToken = default);
+
+    Task<TabMap> GetTabMapAsync(ulong fid, CancellationToken cancellationToken = default);
 
     Task<bool> AgreeAsync(long tid, long pid, bool isComment, bool isDisagree, bool isUndo,
         CancellationToken cancellationToken = default);

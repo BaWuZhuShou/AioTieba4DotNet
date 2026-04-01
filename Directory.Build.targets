@@ -1,0 +1,12 @@
+<Project>
+    <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+        <CollectCoverage>true</CollectCoverage>
+        <Threshold>100</Threshold>
+        <ThresholdType>line,branch</ThresholdType>
+        <ThresholdStat>total</ThresholdStat>
+        <IncludeTestAssembly>false</IncludeTestAssembly>
+        <ExcludeAssembliesWithoutSources>MissingAny</ExcludeAssembliesWithoutSources>
+        <ExcludeByFile>$(MSBuildThisFileDirectory)AioTieba4DotNet\**\Protobuf\**\*.cs,$(MSBuildThisFileDirectory)AioTieba4DotNet.Testing\**\*.cs,$(MSBuildThisFileDirectory)**\*.g.cs,$(MSBuildThisFileDirectory)**\*.g.i.cs,$(MSBuildThisFileDirectory)**\*.generated.cs,$(MSBuildThisFileDirectory)**\obj\**\*.cs</ExcludeByFile>
+        <ExcludeByAttribute>GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+    </PropertyGroup>
+</Project>

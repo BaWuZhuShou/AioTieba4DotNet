@@ -1,6 +1,7 @@
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
-using AioTieba4DotNet.Core;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
 
 namespace AioTieba4DotNet.Transport.WebSockets;
 

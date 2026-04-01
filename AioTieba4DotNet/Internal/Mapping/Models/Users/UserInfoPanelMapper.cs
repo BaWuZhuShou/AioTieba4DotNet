@@ -1,5 +1,6 @@
-using AioTieba4DotNet.Core;
-using AioTieba4DotNet.Enums;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
+using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Models.Users;
 using Newtonsoft.Json.Linq;
 

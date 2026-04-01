@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from WsReq.proto</summary>
-public static partial class WsReqReflection {
+internal static partial class WsReqReflection {
 
   #region Descriptor
   /// <summary>File descriptor for WsReq.proto</summary>
@@ -37,7 +37,7 @@ public static partial class WsReqReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class WSReq : pb::IMessage<WSReq>
+internal sealed partial class WSReq : pb::IMessage<WSReq>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -322,7 +322,7 @@ public sealed partial class WSReq : pb::IMessage<WSReq>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class Payload : pb::IMessage<Payload>
+    internal sealed partial class Payload : pb::IMessage<Payload>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif

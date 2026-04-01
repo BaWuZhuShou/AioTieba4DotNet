@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from Agree.proto</summary>
-public static partial class AgreeReflection {
+internal static partial class AgreeReflection {
 
   #region Descriptor
   /// <summary>File descriptor for Agree.proto</summary>
@@ -36,7 +36,7 @@ public static partial class AgreeReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class Agree : pb::IMessage<Agree>
+internal sealed partial class Agree : pb::IMessage<Agree>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif

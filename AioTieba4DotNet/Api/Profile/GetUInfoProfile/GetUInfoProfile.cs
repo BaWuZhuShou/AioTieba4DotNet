@@ -1,7 +1,8 @@
-﻿using AioTieba4DotNet.Abstractions;
+﻿using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Core;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Session;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.Profile.GetUInfoProfile;
@@ -12,8 +13,10 @@ namespace AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 /// <typeparam name="T">请求参数类型 (支持 int/long 作为 uid，或 string 作为 portrait/用户名)</typeparam>
 /// <param name="httpCore">Http 核心组件</param>
 [PythonApi("aiotieba.api.profile")]
-internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : ProtoApiBase(httpCore)
+internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore)
 {
+    private readonly ITiebaHttpCore _httpCore = httpCore;
+
     private const int Cmd = 303012;
 
     private static byte[] PackProto<TP>(TP uidOrPortrait)
@@ -43,7 +46,7 @@ internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : ProtoApiBase(httpCo
     private static UserInfoPf ParseBody(byte[] body)
     {
         var resProto = ProfileResIdl.Parser.ParseFrom(body);
-        CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
+        ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var resProtoData = resProto.Data;
         return AioTieba4DotNet.Internal.Mapping.UserInfoPfMapper.FromTbData(resProtoData);
@@ -60,7 +63,7 @@ internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore) : ProtoApiBase(httpCo
         var data = PackProto(requestParams);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/profile") { Query = $"cmd={Cmd}" }
             .Uri;
-        var result = await HttpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

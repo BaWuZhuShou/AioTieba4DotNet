@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from ThreadInfo.proto</summary>
-public static partial class ThreadInfoReflection {
+internal static partial class ThreadInfoReflection {
 
   #region Descriptor
   /// <summary>File descriptor for ThreadInfo.proto</summary>
@@ -64,7 +64,7 @@ public static partial class ThreadInfoReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class ThreadInfo : pb::IMessage<ThreadInfo>
+internal sealed partial class ThreadInfo : pb::IMessage<ThreadInfo>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -1500,7 +1500,7 @@ public sealed partial class ThreadInfo : pb::IMessage<ThreadInfo>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class OriginThreadInfo : pb::IMessage<OriginThreadInfo>
+    internal sealed partial class OriginThreadInfo : pb::IMessage<OriginThreadInfo>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -2017,7 +2017,7 @@ public sealed partial class ThreadInfo : pb::IMessage<ThreadInfo>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class CustomFigure : pb::IMessage<CustomFigure>
+    internal sealed partial class CustomFigure : pb::IMessage<CustomFigure>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif
@@ -2216,7 +2216,7 @@ public sealed partial class ThreadInfo : pb::IMessage<ThreadInfo>
 
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class CustomState : pb::IMessage<CustomState>
+    internal sealed partial class CustomState : pb::IMessage<CustomState>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif

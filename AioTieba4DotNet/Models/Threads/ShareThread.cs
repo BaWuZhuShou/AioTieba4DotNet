@@ -11,7 +11,7 @@ public class ShareThread
     /// <summary>
     ///     文本内容
     /// </summary>
-    public string Text => Title != "" ? $"{Title}\n{Content.Texts}" : Content.Texts.ToString() ?? "";
+    public string Text => Title != "" ? $"{Title}\n{Content.Texts}" : Content.Texts.ToString();
 
     /// <summary>
     ///     正文内容碎片列表

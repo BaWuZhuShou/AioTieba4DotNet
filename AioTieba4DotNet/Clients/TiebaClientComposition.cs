@@ -1,28 +1,53 @@
+using AioTieba4DotNet.Contracts;
 using AioTieba4DotNet.Modules;
+using AioTieba4DotNet.Internal;
+using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Protocols;
-using AioTieba4DotNet.Core;
 using AioTieba4DotNet.Session;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet;
 
-internal static class TiebaClientComposition
+internal sealed class TiebaClientComposition
 {
-    internal static TiebaClientRuntime CreateRuntime(TiebaOptions options, HttpClient? httpClient = null)
+    private readonly Func<HttpClient?> _createHttpClient;
+
+    private TiebaClientComposition(Func<HttpClient?> createHttpClient)
     {
-        var session = new TiebaClientSession(options, httpClient);
-        var transport = new LegacyTransportContext(session);
+        _createHttpClient = createHttpClient;
+    }
+
+    internal static TiebaClientComposition Direct { get; } = new(static () => null);
+
+    internal static TiebaClientComposition CreateForDependencyInjection(IHttpClientFactory httpClientFactory)
+    {
+        ArgumentNullException.ThrowIfNull(httpClientFactory);
+        return new(() => httpClientFactory.CreateClient(DependencyInjection.HttpClientName));
+    }
+
+    internal TiebaClient CreateClient(TiebaOptions options) => new(CreateRuntime(options));
+
+    internal TiebaClientRuntime CreateRuntime(TiebaOptions options)
+    {
+        TiebaOptionsValidator.Validate(options);
+
+        var session = new TiebaClientSession(options, _createHttpClient());
+        var dispatcher = new TiebaOperationDispatcher(session);
         var forumCache = new ForumInfoCache();
-        var forumProtocol = new LegacyForumProtocol(transport, forumCache);
-        var threadProtocol = new LegacyThreadProtocol(transport, forumProtocol);
-        var userProtocol = new LegacyUserProtocol(transport, forumProtocol);
-        var clientProtocol = new LegacyClientProtocol(transport);
+        var adminProtocol = new AdminProtocol(dispatcher, forumCache);
+        var forumProtocol = new ForumProtocol(dispatcher, forumCache, adminProtocol);
+        var threadProtocol = new ThreadProtocol(dispatcher, forumProtocol);
+        var userProtocol = new UserProtocol(dispatcher, forumProtocol, adminProtocol);
+        var messagesProtocol = new MessagesProtocol(dispatcher, userProtocol);
+        var clientProtocol = new ClientProtocol(dispatcher);
 
         return new TiebaClientRuntime(
             session,
             new ForumModule(forumProtocol),
             new ThreadModule(threadProtocol),
             new UserModule(userProtocol),
+            new AdminModule(adminProtocol),
+            new MessagesModule(messagesProtocol),
             new ClientModule(clientProtocol));
     }
 }
@@ -32,4 +57,6 @@ internal sealed record TiebaClientRuntime(
     IForumModule Forums,
     IThreadModule Threads,
     IUserModule Users,
+    IAdminModule Admins,
+    IMessagesModule Messages,
     IClientModule Client);

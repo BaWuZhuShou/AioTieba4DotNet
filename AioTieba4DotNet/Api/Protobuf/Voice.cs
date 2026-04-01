@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from Voice.proto</summary>
-public static partial class VoiceReflection {
+internal static partial class VoiceReflection {
 
   #region Descriptor
   /// <summary>File descriptor for Voice.proto</summary>
@@ -36,7 +36,7 @@ public static partial class VoiceReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class Voice : pb::IMessage<Voice>
+internal sealed partial class Voice : pb::IMessage<Voice>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif

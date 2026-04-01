@@ -1,6 +1,9 @@
 using System.Net;
+using AioTieba4DotNet.Contracts;
+using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Transport.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace AioTieba4DotNet;
@@ -21,8 +24,10 @@ public static class DependencyInjection
     public static IServiceCollection AddAioTiebaClient(this IServiceCollection services,
         Action<TiebaOptions>? configureOptions = null)
     {
-        services.AddOptions<TiebaOptions>();
-        if (configureOptions != null) services.Configure(configureOptions);
+        var optionsBuilder = services.AddOptions<TiebaOptions>();
+        if (configureOptions != null) optionsBuilder.Configure(configureOptions);
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<TiebaOptions>, TiebaOptionsValidationService>());
+        optionsBuilder.ValidateOnStart();
 
         // 注册专用的 HttpClient，配置连接池、Cookie 容器和 GZip 压缩
         services.AddHttpClient(HttpClientName, client =>
@@ -30,15 +35,26 @@ public static class DependencyInjection
             TiebaHttpClientFactory.ConfigureNamedClient(client);
         }).ConfigurePrimaryHttpMessageHandler(TiebaHttpClientFactory.CreatePrimaryHandler);
 
+        services.TryAddSingleton(sp =>
+            TiebaClientComposition.CreateForDependencyInjection(sp.GetRequiredService<IHttpClientFactory>()));
+
         services.AddScoped<ITiebaClient>(sp =>
         {
-            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
-            var httpClient = httpClientFactory.CreateClient(HttpClientName);
-            var options = sp.GetRequiredService<IOptions<TiebaOptions>>().Value;
-            return new TiebaClient(TiebaClientComposition.CreateRuntime(options, httpClient));
+            var composition = sp.GetRequiredService<TiebaClientComposition>();
+            TiebaOptions options;
+            try
+            {
+                options = sp.GetRequiredService<IOptions<TiebaOptions>>().Value;
+            }
+            catch (OptionsValidationException exception)
+            {
+                throw new TiebaConfigurationException(exception.Message);
+            }
+
+            return composition.CreateClient(options);
         });
 
-        services.AddSingleton<ITiebaClientFactory, TiebaClientFactory>();
+        services.AddSingleton<ITiebaClientFactory>(sp => new TiebaClientFactory(sp.GetRequiredService<TiebaClientComposition>()));
 
         return services;
     }

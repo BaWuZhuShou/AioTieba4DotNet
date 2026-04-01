@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from Error.proto</summary>
-public static partial class ErrorReflection {
+internal static partial class ErrorReflection {
 
   #region Descriptor
   /// <summary>File descriptor for Error.proto</summary>
@@ -36,7 +36,7 @@ public static partial class ErrorReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class Error : pb::IMessage<Error>
+internal sealed partial class Error : pb::IMessage<Error>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif

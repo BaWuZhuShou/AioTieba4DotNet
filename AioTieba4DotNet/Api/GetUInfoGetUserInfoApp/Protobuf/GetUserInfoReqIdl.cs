@@ -10,7 +10,7 @@ using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 /// <summary>Holder for reflection information generated from GetUserInfoReqIdl.proto</summary>
-public static partial class GetUserInfoReqIdlReflection {
+internal static partial class GetUserInfoReqIdlReflection {
 
   #region Descriptor
   /// <summary>File descriptor for GetUserInfoReqIdl.proto</summary>
@@ -37,7 +37,7 @@ public static partial class GetUserInfoReqIdlReflection {
 #region Messages
 [global::System.SerializableAttribute]
 [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-public sealed partial class GetUserInfoReqIdl : pb::IMessage<GetUserInfoReqIdl>
+internal sealed partial class GetUserInfoReqIdl : pb::IMessage<GetUserInfoReqIdl>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
 #endif
@@ -248,7 +248,7 @@ public sealed partial class GetUserInfoReqIdl : pb::IMessage<GetUserInfoReqIdl>
   public static partial class Types {
     [global::System.SerializableAttribute]
     [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-    public sealed partial class DataReq : pb::IMessage<DataReq>
+    internal sealed partial class DataReq : pb::IMessage<DataReq>
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
         , pb::IBufferMessage
     #endif

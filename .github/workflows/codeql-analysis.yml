@@ -1,21 +1,17 @@
-﻿name: "CodeQL"
+name: "CodeQL"
 
 on:
     push:
-        branches: [ "main", "master", "v2" ]
+        branches: [ "main", "master" ]
     pull_request:
-        branches: [ "main", "master", "v2" ]
+        branches: [ "main", "master" ]
     schedule:
         -   cron: '30 18 * * 4'
 
 jobs:
-    verify:
-        name: Validate (${{ matrix.framework }})
+    contract:
+        name: Build and contract gate
         runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                framework: [ net8.0, net9.0, net10.0 ]
 
         steps:
             -   name: Checkout repository
@@ -24,24 +20,36 @@ jobs:
             -   name: Setup .NET SDK
                 uses: actions/setup-dotnet@v5
                 with:
-                    dotnet-version: |
-                        8.x
-                        9.x
-                        10.x
+                    dotnet-version: 10.x
 
             -   name: Restore dependencies
                 run: dotnet restore AioTieba4DotNet.sln --nologo
 
-            -   name: Build tests for ${{ matrix.framework }}
-                run: dotnet build AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-restore -f ${{ matrix.framework }} --nologo
+            -   name: Build solution
+                run: dotnet build AioTieba4DotNet.sln --configuration Release --no-restore --nologo
 
-            -   name: Run deterministic tests for ${{ matrix.framework }}
-                run: dotnet test AioTieba4DotNet.Tests/AioTieba4DotNet.Tests.csproj --configuration Release --no-build -f ${{ matrix.framework }} --filter "TestCategory!=Integration&TestCategory!=Live" --nologo
+            -   name: Regenerate protobuf outputs
+                run: dotnet run --project ProtoGenerator/ProtoGenerator.csproj
+
+            -   name: Check generator consistency
+                shell: bash
+                run: |
+                    if [[ -n "$(git status --short --untracked-files=all -- AioTieba4DotNet)" ]]; then
+                        git status --short --untracked-files=all -- AioTieba4DotNet
+                        printf 'Generated protobuf outputs are out of date.\n'
+                        exit 1
+                    fi
+
+            -   name: Validate local verification contract
+                run: bash ./scripts/verify-local.sh --validate-only
+
+            -   name: Verify package can be packed
+                run: dotnet pack AioTieba4DotNet/AioTieba4DotNet.csproj --configuration Release --no-build --output ./artifacts --nologo
 
     analyze:
         name: Analyze
         runs-on: ubuntu-latest
-        needs: verify
+        needs: contract
         permissions:
             actions: read
             contents: read
@@ -59,10 +67,7 @@ jobs:
             -   name: Setup .NET SDK
                 uses: actions/setup-dotnet@v5
                 with:
-                    dotnet-version: |
-                        8.x
-                        9.x
-                        10.x
+                    dotnet-version: 10.x
 
             -   name: Initialize CodeQL
                 uses: github/codeql-action/init@v3
