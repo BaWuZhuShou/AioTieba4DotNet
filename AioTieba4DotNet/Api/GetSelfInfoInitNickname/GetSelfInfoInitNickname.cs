@@ -23,8 +23,7 @@ internal class GetSelfInfoInitNickname(ITiebaHttpCore httpCore) : JsonApiBase(ht
     {
         var data = new List<KeyValuePair<string, string>>
         {
-            new("BDUSS", HttpCore.Account?.Bduss ?? string.Empty),
-            new("_client_version", Const.MainVersion)
+            new("BDUSS", HttpCore.Account?.Bduss ?? string.Empty), new("_client_version", Const.MainVersion)
         };
 
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/s/initNickname").Uri;

@@ -13,7 +13,7 @@ internal class DelPosts(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseResult(string body)
     {
-        JsonApiBase.ParseBody(body);
+        ParseBody(body);
         return true;
     }
 

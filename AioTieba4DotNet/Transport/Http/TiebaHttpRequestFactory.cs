@@ -68,6 +68,11 @@ internal static class TiebaHttpRequestFactory
         return request;
     }
 
-    private static HttpRequestMessage CreateWebFormRequest(TiebaHttpRequestDescriptor descriptor) =>
-        new(HttpMethod.Post, descriptor.Uri) { Content = new FormUrlEncodedContent(descriptor.FormData!) };
+    private static HttpRequestMessage CreateWebFormRequest(TiebaHttpRequestDescriptor descriptor)
+    {
+        return new HttpRequestMessage(HttpMethod.Post, descriptor.Uri)
+        {
+            Content = new FormUrlEncodedContent(descriptor.FormData!)
+        };
+    }
 }

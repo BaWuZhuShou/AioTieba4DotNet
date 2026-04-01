@@ -28,7 +28,8 @@ public class FragText : IFrag
     {
         return new Dictionary<string, object> { { "type", "0" }, { "text", Text } };
     }
-   /// <summary>
+
+    /// <summary>
     ///     格式设置成员
     /// </summary>
     /// <returns>string</returns>

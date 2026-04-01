@@ -28,21 +28,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-        <PackageReference Include="Microsoft.Extensions.Http" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-        <PackageReference Include="Microsoft.Extensions.Options" />
-        <PackageReference Include="Newtonsoft.Json" />
-        <PackageReference Include="System.IO.Hashing" />
+        <PackageReference Include="Google.Protobuf"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+        <PackageReference Include="Microsoft.Extensions.Http"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+        <PackageReference Include="Microsoft.Extensions.Options"/>
+        <PackageReference Include="Newtonsoft.Json"/>
+        <PackageReference Include="System.IO.Hashing"/>
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="AioTieba4DotNet.Testing" />
-        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Deterministic" />
-        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Integration" />
-        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Live" />
+        <InternalsVisibleTo Include="AioTieba4DotNet.Testing"/>
+        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Deterministic"/>
+        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Integration"/>
+        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Live"/>
     </ItemGroup>
 
     <ItemGroup>

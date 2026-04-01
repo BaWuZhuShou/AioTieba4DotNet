@@ -48,30 +48,43 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
     /// <summary>
     ///     建立 WebSocket 连接并执行初始化握手
     /// </summary>
-    public Task ConnectAsync(CancellationToken cancellationToken = default) => _engine.ConnectAsync(cancellationToken);
+    public Task ConnectAsync(CancellationToken cancellationToken = default)
+    {
+        return _engine.ConnectAsync(cancellationToken);
+    }
 
     /// <summary>
     ///     发送原始 WSReq 对象
     /// </summary>
-    public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) =>
-        _engine.SendAsync(req, cancellationToken);
+    public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+    {
+        return _engine.SendAsync(req, cancellationToken);
+    }
 
     /// <summary>
     ///     发送业务请求并异步等待对应的响应
     /// </summary>
     public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
-        CancellationToken cancellationToken = default) => _engine.SendAsync(cmd, data, encrypt, cancellationToken);
+        CancellationToken cancellationToken = default)
+    {
+        return _engine.SendAsync(cmd, data, encrypt, cancellationToken);
+    }
 
     /// <summary>
     ///     监听消息推送流
     /// </summary>
-    public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) =>
-        _engine.ListenAsync(cancellationToken);
+    public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+    {
+        return _engine.ListenAsync(cancellationToken);
+    }
 
     /// <summary>
     ///     优雅关闭连接
     /// </summary>
-    public Task CloseAsync(CancellationToken cancellationToken = default) => _engine.CloseAsync(cancellationToken);
+    public Task CloseAsync(CancellationToken cancellationToken = default)
+    {
+        return _engine.CloseAsync(cancellationToken);
+    }
 
     /// <summary>
     ///     释放 WebSocket 引擎与底层连接资源。
@@ -85,8 +98,10 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
     /// <summary>
     ///     打包原始字节流为贴吧 WebSocket 协议格式
     /// </summary>
-    internal byte[] PackWsBytes(byte[] data, int cmd, int reqId, bool encrypt = true) =>
-        _frameCodec.Pack(data, cmd, reqId, Account, encrypt);
+    internal byte[] PackWsBytes(byte[] data, int cmd, int reqId, bool encrypt = true)
+    {
+        return _frameCodec.Pack(data, cmd, reqId, Account, encrypt);
+    }
 
     /// <summary>
     ///     解析贴吧 WebSocket 协议包，处理解密与解压

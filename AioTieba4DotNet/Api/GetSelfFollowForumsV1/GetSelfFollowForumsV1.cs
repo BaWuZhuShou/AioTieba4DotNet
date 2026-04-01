@@ -22,11 +22,7 @@ internal sealed class GetSelfFollowForumsV1(ITiebaHttpCore httpCore) : JsonApiBa
 
     public async Task<SelfFollowForumsV1> RequestAsync(int pn, int rn, CancellationToken cancellationToken = default)
     {
-        var parameters = new List<KeyValuePair<string, string>>
-        {
-            new("pn", pn.ToString()),
-            new("rn", rn.ToString())
-        };
+        var parameters = new List<KeyValuePair<string, string>> { new("pn", pn.ToString()), new("rn", rn.ToString()) };
 
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/mg/o/getForumHome").Uri;
         var result = await HttpCore.SendWebGetAsync(requestUri, parameters, cancellationToken);

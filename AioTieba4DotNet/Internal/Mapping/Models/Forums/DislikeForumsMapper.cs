@@ -20,9 +20,7 @@ internal static class DislikeForumsMapper
 
         var page = new DislikeForumsPage
         {
-            CurrentPage = data.CurPage,
-            HasMore = data.HasMore != 0,
-            HasPrevious = data.CurPage > 1
+            CurrentPage = data.CurPage, HasMore = data.HasMore != 0, HasPrevious = data.CurPage > 1
         };
 
         return new DislikeForums(objs, page);

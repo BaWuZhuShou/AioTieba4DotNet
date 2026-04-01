@@ -52,6 +52,7 @@ public class ShareThread
     ///     投票内容
     /// </summary>
     public VoteInfo? VoteInfo { get; init; }
+
     /// <summary>
     ///     格式设置
     /// </summary>

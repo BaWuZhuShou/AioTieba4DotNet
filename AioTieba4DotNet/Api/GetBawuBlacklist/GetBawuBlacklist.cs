@@ -10,13 +10,10 @@ namespace AioTieba4DotNet.Api.GetBawuBlacklist;
 [PythonApi("aiotieba.api.get_bawu_blacklist")]
 internal sealed class GetBawuBlacklist(ITiebaHttpCore httpCore)
 {
-    public async Task<BawuBlacklistUsers> RequestAsync(string fname, int pn, CancellationToken cancellationToken = default)
+    public async Task<BawuBlacklistUsers> RequestAsync(string fname, int pn,
+        CancellationToken cancellationToken = default)
     {
-        var parameters = new List<KeyValuePair<string, string>>
-        {
-            new("word", fname),
-            new("pn", pn.ToString())
-        };
+        var parameters = new List<KeyValuePair<string, string>> { new("word", fname), new("pn", pn.ToString()) };
 
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/bawu2/platform/listBlackUser").Uri;
         var result = await httpCore.SendWebGetAsync(requestUri, parameters, cancellationToken);

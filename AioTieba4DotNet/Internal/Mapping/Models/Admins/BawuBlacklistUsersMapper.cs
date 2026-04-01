@@ -16,14 +16,15 @@ internal static partial class BawuBlacklistUsersMapper
             .ToList();
 
         var (currentPage, totalPage, totalCount, hasMore, hasPrevious) = AdminHtmlParsing.ParseCommonPage(html);
-        return new BawuBlacklistUsers(users, new BawuBlacklistPage
-        {
-            CurrentPage = currentPage,
-            TotalPage = totalPage,
-            TotalCount = totalCount,
-            HasMore = hasMore,
-            HasPrevious = hasPrevious
-        });
+        return new BawuBlacklistUsers(users,
+            new BawuBlacklistPage
+            {
+                CurrentPage = currentPage,
+                TotalPage = totalPage,
+                TotalCount = totalCount,
+                HasMore = hasMore,
+                HasPrevious = hasPrevious
+            });
     }
 
     private static BawuBlacklistUser? MapRow(string rowHtml)
@@ -43,6 +44,7 @@ internal static partial class BawuBlacklistUsersMapper
         };
     }
 
-    [GeneratedRegex("<td[^>]*class=(['\"])[^'\"]*left_cell[^'\"]*\\1[^>]*>.*?<a[^>]*href=(['\"])(?<href>.*?)\\2", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    [GeneratedRegex("<td[^>]*class=(['\"])[^'\"]*left_cell[^'\"]*\\1[^>]*>.*?<a[^>]*href=(['\"])(?<href>.*?)\\2",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex HomeHrefRegex();
 }

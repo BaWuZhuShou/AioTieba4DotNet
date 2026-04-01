@@ -48,10 +48,16 @@ public sealed class ExactSearch
     public int CreateTime { get; init; }
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is ExactSearch other && Pid == other.Pid;
+    public override bool Equals(object? obj)
+    {
+        return obj is ExactSearch other && Pid == other.Pid;
+    }
 
     /// <inheritdoc />
-    public override int GetHashCode() => Pid.GetHashCode();
+    public override int GetHashCode()
+    {
+        return Pid.GetHashCode();
+    }
 }
 
 /// <summary>

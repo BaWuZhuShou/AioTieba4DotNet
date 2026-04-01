@@ -15,7 +15,9 @@ public static class TiebaLogging
         get
         {
             lock (SyncRoot)
+            {
                 return _factory;
+            }
         }
     }
 
@@ -25,7 +27,10 @@ public static class TiebaLogging
         return Factory.CreateLogger(categoryName);
     }
 
-    public static ILogger<TCategoryName> GetLogger<TCategoryName>() => Factory.CreateLogger<TCategoryName>();
+    public static ILogger<TCategoryName> GetLogger<TCategoryName>()
+    {
+        return Factory.CreateLogger<TCategoryName>();
+    }
 
     public static ILoggerFactory EnableFileLog(string filePath, LogLevel minimumLevel = LogLevel.Information)
     {
@@ -58,8 +63,10 @@ public static class TiebaLogging
     {
         private readonly ConcurrentDictionary<string, FileLogger> _loggers = new(StringComparer.Ordinal);
 
-        public ILogger CreateLogger(string categoryName) =>
-            _loggers.GetOrAdd(categoryName, name => new FileLogger(filePath, name, minimumLevel));
+        public ILogger CreateLogger(string categoryName)
+        {
+            return _loggers.GetOrAdd(categoryName, name => new FileLogger(filePath, name, minimumLevel));
+        }
 
         public void Dispose()
         {
@@ -70,9 +77,15 @@ public static class TiebaLogging
     {
         private static readonly object FileLock = new();
 
-        public IDisposable BeginScope<TState>(TState state) where TState : notnull => NullScope.Instance;
+        public IDisposable BeginScope<TState>(TState state) where TState : notnull
+        {
+            return NullScope.Instance;
+        }
 
-        public bool IsEnabled(LogLevel logLevel) => logLevel >= minimumLevel;
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return logLevel >= minimumLevel;
+        }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
             Func<TState, Exception?, string> formatter)

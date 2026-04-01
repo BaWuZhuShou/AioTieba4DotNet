@@ -14,10 +14,7 @@ internal sealed class GetRankForums(ITiebaHttpCore httpCore) : JsonApiBase(httpC
     {
         var data = new List<KeyValuePair<string, string>>
         {
-            new("kw", fname),
-            new("type", ((int)rankType).ToString()),
-            new("pn", pn.ToString()),
-            new("ie", "utf-8")
+            new("kw", fname), new("type", ((int)rankType).ToString()), new("pn", pn.ToString()), new("ie", "utf-8")
         };
 
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/sign/index").Uri;

@@ -23,21 +23,21 @@ public sealed class GetThreadPostsTest : TestBase
             threadModule,
             forum,
             nameof(TestRequest),
-            maxThreadPages: 5,
-            threadPageSize: 10,
-            threadSort: ThreadSortType.Reply);
+            5,
+            10,
+            ThreadSortType.Reply);
         var tid = sample.Tid;
         Console.WriteLine(
             $"safeForumQuery={sample.Forum.Query}, resolvedFname={sample.Forum.ResolvedName}, sample tid={tid}, threadsPn={sample.ThreadsPageNumber}, threadsRn={sample.ThreadsPageSize}, threadsSort={sample.ThreadsSort}");
         var result = await threadModule.GetPostsAsync(
             tid,
-            pn: 1,
-            rn: 10,
-            sort: PostSortType.Hot,
-            onlyThreadAuthor: false,
-            withComments: true,
-            commentRn: 2,
-            commentSortByAgree: true);
+            1,
+            10,
+            PostSortType.Hot,
+            false,
+            true,
+            2,
+            true);
 
         Assert.IsNotNull(result);
         Assert.IsNotNull(result.Objs);

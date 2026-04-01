@@ -33,10 +33,16 @@ public sealed class SquareForum
     public bool IsFollowed { get; init; }
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is SquareForum other && Fid == other.Fid;
+    public override bool Equals(object? obj)
+    {
+        return obj is SquareForum other && Fid == other.Fid;
+    }
 
     /// <inheritdoc />
-    public override int GetHashCode() => Fid.GetHashCode();
+    public override int GetHashCode()
+    {
+        return Fid.GetHashCode();
+    }
 }
 
 /// <summary>

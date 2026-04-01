@@ -12,7 +12,8 @@ namespace AioTieba4DotNet.Api.GetUserForumInfo;
 [PythonApi("aiotieba.api.get_user_forum_info")]
 internal sealed class GetUserForumInfo(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    public async Task<UserForumInfo> RequestAsync(ulong fid, string portrait, CancellationToken cancellationToken = default)
+    public async Task<UserForumInfo> RequestAsync(ulong fid, string portrait,
+        CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>
         {

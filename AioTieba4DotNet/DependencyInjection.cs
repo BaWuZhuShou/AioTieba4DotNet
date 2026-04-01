@@ -26,14 +26,13 @@ public static class DependencyInjection
     {
         var optionsBuilder = services.AddOptions<TiebaOptions>();
         if (configureOptions != null) optionsBuilder.Configure(configureOptions);
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<TiebaOptions>, TiebaOptionsValidationService>());
+        services.TryAddEnumerable(ServiceDescriptor
+            .Singleton<IValidateOptions<TiebaOptions>, TiebaOptionsValidationService>());
         optionsBuilder.ValidateOnStart();
 
         // 注册专用的 HttpClient，配置连接池、Cookie 容器和 GZip 压缩
-        services.AddHttpClient(HttpClientName, client =>
-        {
-            TiebaHttpClientFactory.ConfigureNamedClient(client);
-        }).ConfigurePrimaryHttpMessageHandler(TiebaHttpClientFactory.CreatePrimaryHandler);
+        services.AddHttpClient(HttpClientName, client => { TiebaHttpClientFactory.ConfigureNamedClient(client); })
+            .ConfigurePrimaryHttpMessageHandler(TiebaHttpClientFactory.CreatePrimaryHandler);
 
         services.TryAddSingleton(sp =>
             TiebaClientComposition.CreateForDependencyInjection(sp.GetRequiredService<IHttpClientFactory>()));
@@ -54,7 +53,8 @@ public static class DependencyInjection
             return composition.CreateClient(options);
         });
 
-        services.AddSingleton<ITiebaClientFactory>(sp => new TiebaClientFactory(sp.GetRequiredService<TiebaClientComposition>()));
+        services.AddSingleton<ITiebaClientFactory>(sp =>
+            new TiebaClientFactory(sp.GetRequiredService<TiebaClientComposition>()));
 
         return services;
     }

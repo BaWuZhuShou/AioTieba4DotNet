@@ -75,14 +75,8 @@ public class UserModuleBehaviorTests
     public async Task UserModule_DelegatesGetBlacklistToInternalProtocol()
     {
         var expected = CreateBlacklistUsers(
-            new List<BlacklistUser>
-            {
-                new() { UserId = 456 }
-            });
-        var protocol = new RecordingUserProtocol(new UserInfo())
-        {
-            BlacklistUsers = expected
-        };
+            new List<BlacklistUser> { new() { UserId = 456 } });
+        var protocol = new RecordingUserProtocol(new UserInfo()) { BlacklistUsers = expected };
         var module = new UserModule(protocol);
 
         var actual = await module.GetBlacklistAsync();
@@ -95,7 +89,8 @@ public class UserModuleBehaviorTests
     {
         var protocol = new RecordingUserProtocol(new UserInfo())
         {
-            BlacklistOldUsers = CreateBlacklistOldUsers(new List<BlacklistOldUser>(), new Models.Threads.PageT { CurrentPage = 3 })
+            BlacklistOldUsers = CreateBlacklistOldUsers(new List<BlacklistOldUser>(),
+                new Models.Threads.PageT { CurrentPage = 3 })
         };
         var module = new UserModule(protocol);
 
@@ -150,10 +145,7 @@ public class UserModuleBehaviorTests
     public async Task UserModule_DelegatesGetBasicInfoAppToInternalProtocol()
     {
         var expected = new UserInfoGuInfoApp { UserId = 123, UserName = "app-user" };
-        var protocol = new RecordingUserProtocol(new UserInfo())
-        {
-            BasicInfoApp = expected
-        };
+        var protocol = new RecordingUserProtocol(new UserInfo()) { BasicInfoApp = expected };
         var module = new UserModule(protocol);
 
         var actual = await module.GetUserInfoAppAsync(123);
@@ -166,10 +158,7 @@ public class UserModuleBehaviorTests
     public async Task UserModule_DelegatesGetUserInfoWebToInternalProtocol()
     {
         var expected = new UserInfoGuInfoWeb { UserId = 123, UserName = "web-user" };
-        var protocol = new RecordingUserProtocol(new UserInfo())
-        {
-            BasicInfoWeb = expected
-        };
+        var protocol = new RecordingUserProtocol(new UserInfo()) { BasicInfoWeb = expected };
         var module = new UserModule(protocol);
 
         var actual = await module.GetUserInfoWebAsync(123);
@@ -182,10 +171,7 @@ public class UserModuleBehaviorTests
     public async Task UserModule_DelegatesGetUserForumInfoByFidToInternalProtocol()
     {
         var expected = new UserForumInfo { Fname = "csharp" };
-        var protocol = new RecordingUserProtocol(new UserInfo())
-        {
-            UserForumInfo = expected
-        };
+        var protocol = new RecordingUserProtocol(new UserInfo()) { UserForumInfo = expected };
         var module = new UserModule(protocol);
 
         var actual = await module.GetUserForumInfoAsync(123UL, "tb.1.safe");
@@ -199,10 +185,7 @@ public class UserModuleBehaviorTests
     public async Task UserModule_DelegatesGetUserForumInfoByNameToInternalProtocol()
     {
         var expected = new UserForumInfo { Fname = "csharp" };
-        var protocol = new RecordingUserProtocol(new UserInfo())
-        {
-            UserForumInfo = expected
-        };
+        var protocol = new RecordingUserProtocol(new UserInfo()) { UserForumInfo = expected };
         var module = new UserModule(protocol);
 
         var actual = await module.GetUserForumInfoAsync("csharp", "tb.1.safe");
@@ -216,10 +199,7 @@ public class UserModuleBehaviorTests
     public async Task UserModule_DelegatesGetRankUsersToInternalProtocol()
     {
         var expected = new RankUsers([], new Models.Threads.PageT { CurrentPage = 4 });
-        var protocol = new RecordingUserProtocol(new UserInfo())
-        {
-            RankUsers = expected
-        };
+        var protocol = new RecordingUserProtocol(new UserInfo()) { RankUsers = expected };
         var module = new UserModule(protocol);
 
         var actual = await module.GetRankUsersAsync("csharp", 4);
@@ -259,10 +239,7 @@ public class UserModuleBehaviorTests
     public async Task UserModule_DelegatesGetUserByTiebaUidToInternalProtocol()
     {
         var expected = new UserInfoTUid { UserId = 123, TiebaUid = 778899 };
-        var protocol = new RecordingUserProtocol(new UserInfo())
-        {
-            TiebaUidUser = expected
-        };
+        var protocol = new RecordingUserProtocol(new UserInfo()) { TiebaUidUser = expected };
         var module = new UserModule(protocol);
 
         var actual = await module.GetUserByTiebaUidAsync(778899);
@@ -275,10 +252,7 @@ public class UserModuleBehaviorTests
     public async Task UserModule_DelegatesGetPostsToInternalProtocol_AndReturnsUserPostGroups()
     {
         var expected = new UserPostGroups([new UserPosts([], 34, 56)]);
-        var protocol = new RecordingUserProtocol(new UserInfo())
-        {
-            UserPostGroups = expected
-        };
+        var protocol = new RecordingUserProtocol(new UserInfo()) { UserPostGroups = expected };
         var module = new UserModule(protocol);
 
         var actual = await module.GetPostsAsync(123, 2, 3, "8.9.8.5");
@@ -325,12 +299,16 @@ public class UserModuleBehaviorTests
             "UserPostss");
     }
 
-    private static BlacklistUsers CreateBlacklistUsers(List<BlacklistUser> users) =>
-        (BlacklistUsers)Activator.CreateInstance(typeof(BlacklistUsers), users)!;
+    private static BlacklistUsers CreateBlacklistUsers(List<BlacklistUser> users)
+    {
+        return (BlacklistUsers)Activator.CreateInstance(typeof(BlacklistUsers), users)!;
+    }
 
     private static BlacklistOldUsers CreateBlacklistOldUsers(List<BlacklistOldUser> users,
-        Models.Threads.PageT page) =>
-        (BlacklistOldUsers)Activator.CreateInstance(typeof(BlacklistOldUsers), users, page)!;
+        Models.Threads.PageT page)
+    {
+        return (BlacklistOldUsers)Activator.CreateInstance(typeof(BlacklistOldUsers), users, page)!;
+    }
 
     private sealed class RecordingUserProtocol(UserInfo selfInfo) : IUserProtocol
     {
@@ -408,7 +386,10 @@ public class UserModuleBehaviorTests
 
         public LoginResult LoginResult { get; init; } = new() { User = new UserInfo(), Tbs = "tbs-123" };
 
-        public Task<string> GetTbsAsync(CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<string> GetTbsAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
         {
@@ -416,44 +397,72 @@ public class UserModuleBehaviorTests
             return Task.FromResult(BasicInfoApp);
         }
 
-        public Task<UserInfoPf> GetProfileAsync(int userId, CancellationToken cancellationToken = default) =>
+        public Task<UserInfoPf> GetProfileAsync(int userId, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<UserInfoPf> GetProfileAsync(string portraitOrUserName, CancellationToken cancellationToken = default) =>
+        public Task<UserInfoPf> GetProfileAsync(string portraitOrUserName,
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(string portrait, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(string portrait, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(string portrait, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(string portrait, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<UserList> GetFollowsAsync(long userId, int pn, CancellationToken cancellationToken = default) =>
+        public Task<UserList> GetFollowsAsync(long userId, int pn, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<UserList> GetFansAsync(long userId, int pn, CancellationToken cancellationToken = default) =>
+        public Task<UserList> GetFansAsync(long userId, int pn, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait, CancellationToken cancellationToken = default) =>
+        public Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait,
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<UserInfoJson> GetUserInfoJsonAsync(string username, CancellationToken cancellationToken = default) =>
+        public Task<UserInfoJson> GetUserInfoJsonAsync(string username, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<UserInfo> GetSelfInfoAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(selfInfo);
+        public Task<UserInfo> GetSelfInfoAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(selfInfo);
+        }
 
-        public Task<UserInfo> GetSelfInfoInitNicknameAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(SelfInfoInitNickname);
+        public Task<UserInfo> GetSelfInfoInitNicknameAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(SelfInfoInitNickname);
+        }
 
-        public Task<UserInfo> GetSelfInfoMoIndexAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(SelfInfoMoIndex);
+        public Task<UserInfo> GetSelfInfoMoIndexAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(SelfInfoMoIndex);
+        }
 
-        public Task<LoginResult> LoginAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(LoginResult);
+        public Task<LoginResult> LoginAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(LoginResult);
+        }
 
-        public Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(BlacklistUsers);
+        public Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(BlacklistUsers);
+        }
 
         public Task<BlacklistOldUsers> GetBlacklistOldAsync(int pn, int rn,
             CancellationToken cancellationToken = default)
@@ -483,8 +492,10 @@ public class UserModuleBehaviorTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> RemoveFanAsync(long userId, CancellationToken cancellationToken = default) =>
+        public Task<bool> RemoveFanAsync(long userId, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default)
         {
@@ -554,6 +565,9 @@ public class UserModuleBehaviorTests
         }
 
         public Task<UserThreads> GetThreadsAsync(int userId, uint pn, bool publicOnly,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

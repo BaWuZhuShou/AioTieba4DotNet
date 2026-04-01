@@ -39,8 +39,7 @@ public sealed class TestArchitectureContractTests
     {
         var projectFiles = new[]
         {
-            RepositoryPaths.GetDeterministicTestProjectPath(),
-            RepositoryPaths.GetIntegrationTestProjectPath(),
+            RepositoryPaths.GetDeterministicTestProjectPath(), RepositoryPaths.GetIntegrationTestProjectPath(),
             RepositoryPaths.GetLiveTestProjectPath()
         };
 
@@ -169,10 +168,8 @@ public sealed class TestArchitectureContractTests
             .ToArray();
 
         foreach (var taggedStage in taggedStages)
-        {
             Assert.IsTrue(allowedStages.Contains(taggedStage),
                 $"Stage '{taggedStage}' is tagged in {projectDirectoryName} but missing from the '{laneCategory}' manifest lane.");
-        }
     }
 
     private static void AssertTaggedStagesExactlyMatchLane(string projectDirectoryName, string laneCategory,
@@ -194,6 +191,7 @@ public sealed class TestArchitectureContractTests
             .OrderBy(stageName => stageName, StringComparer.Ordinal)
             .ToArray();
 
-        CollectionAssert.AreEqual(expectedStages.OrderBy(stageName => stageName, StringComparer.Ordinal).ToArray(), taggedStages);
+        CollectionAssert.AreEqual(expectedStages.OrderBy(stageName => stageName, StringComparer.Ordinal).ToArray(),
+            taggedStages);
     }
 }

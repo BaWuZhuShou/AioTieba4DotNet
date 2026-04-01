@@ -43,7 +43,8 @@ public sealed class GetCommentsTest : TestBase
         catch (TieBaServerException ex)
         {
             Console.WriteLine($"请求失败 (贴吧服务器返回错误): {ex.Message}");
-            Assert.Inconclusive($"Comments API sample expired for safe forum source tid={tid}, pid={pid}: {ex.Message}");
+            Assert.Inconclusive(
+                $"Comments API sample expired for safe forum source tid={tid}, pid={pid}: {ex.Message}");
         }
     }
 
@@ -55,13 +56,13 @@ public sealed class GetCommentsTest : TestBase
             threadModule,
             forum,
             nameof(TestRequest),
-            maxThreadPages: 5,
-            threadPageSize: 10,
-            maxThreadsPerPage: 5,
-            postPageSize: 20,
-            previewCommentCount: 2,
-            threadSort: ThreadSortType.Reply,
-            postSort: PostSortType.Hot);
+            5,
+            10,
+            5,
+            20,
+            2,
+            ThreadSortType.Reply,
+            PostSortType.Hot);
         Console.WriteLine(
             $"discovered safe sample from forum={sample.ThreadSample.Forum.ResolvedName}, tid={sample.ThreadSample.Tid}, pid={sample.Pid}, threadPage={sample.ThreadSample.ThreadsPageNumber}, replyNum={sample.ReplyCount}, previewComments={sample.PreviewCommentCount}");
         return sample;

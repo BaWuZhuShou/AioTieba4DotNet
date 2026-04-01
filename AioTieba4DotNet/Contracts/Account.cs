@@ -12,9 +12,8 @@ public sealed class Account
 
     public string Stoken { get; init; }
 
-    public TiebaOptions ToTiebaOptions() => new()
+    public TiebaOptions ToTiebaOptions()
     {
-        Bduss = Bduss,
-        Stoken = Stoken
-    };
+        return new TiebaOptions { Bduss = Bduss, Stoken = Stoken };
+    }
 }

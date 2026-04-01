@@ -8,11 +8,7 @@ internal static class LastReplyersMapper
     {
         ArgumentNullException.ThrowIfNull(data);
 
-        var forum = new Forum
-        {
-            Fid = data.Forum?.Id ?? 0,
-            Fname = data.Forum?.Name ?? string.Empty
-        };
+        var forum = new Forum { Fid = data.Forum?.Id ?? 0, Fname = data.Forum?.Name ?? string.Empty };
 
         var pageSize = data.Page?.PageSize ?? 0;
         var currentPage = data.Page?.CurrentPage ?? 0;
@@ -47,12 +43,11 @@ internal static class LastReplyersMapper
                     UserName = author.Name,
                     NickNameOld = author.NameShow
                 },
-                LastReplyer = new LastReplyer
-                {
-                    UserId = lastReplyer.Id,
-                    UserName = lastReplyer.Name,
-                    NickNameOld = lastReplyer.NameShow
-                },
+                LastReplyer =
+                    new LastReplyer
+                    {
+                        UserId = lastReplyer.Id, UserName = lastReplyer.Name, NickNameOld = lastReplyer.NameShow
+                    },
                 IsGood = thread.IsGood != 0,
                 IsTop = thread.IsTop != 0,
                 CreateTime = thread.CreateTime,

@@ -1,6 +1,7 @@
 ﻿# AioTieba4DotNet
 
-面向 .NET 10 的异步贴吧客户端。v3 保留 `TiebaClient`、`ITiebaClient`、`AddAioTiebaClient(...)` 和 `ITiebaClientFactory` 这条主线，同时把公开能力稳定在六个模块上：`Forums`、`Threads`、`Users`、`Admins`、`Messages`、`Client`。
+面向 .NET 10 的异步贴吧客户端。v3 保留 `TiebaClient`、`ITiebaClient`、`AddAioTiebaClient(...)` 和 `ITiebaClientFactory`
+这条主线，同时把公开能力稳定在六个模块上：`Forums`、`Threads`、`Users`、`Admins`、`Messages`、`Client`。
 
 [![NuGet version (AioTieba4DotNet)](https://img.shields.io/nuget/v/AioTieba4DotNet.svg?style=flat-square)](https://www.nuget.org/packages/AioTieba4DotNet/)
 [![CodeQL](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/codeql-analysis.yml)
@@ -13,7 +14,8 @@
 - **模块边界**: `Forums`、`Threads`、`Users`、`Admins`、`Messages`、`Client`。
 - **传输策略**: 公开层继续通过 `TiebaOptions.TransportMode` 控制，默认 `Auto`，唯一公开覆盖为 `Http`。
 - **消息能力**: 消息读写与 push 解析统一在 `client.Messages`，`client.Client` 只保留生命周期与连接初始化职责。
-- **异常模型**: 本地凭据缺失抛出 `TiebaAuthenticationException`，配置错误抛出 `TiebaConfigurationException`，服务端业务拒绝抛出 `TieBaServerException`。
+- **异常模型**: 本地凭据缺失抛出 `TiebaAuthenticationException`，配置错误抛出 `TiebaConfigurationException`，服务端业务拒绝抛出
+  `TieBaServerException`。
 
 ## 安装
 
@@ -77,7 +79,8 @@ Console.WriteLine(profile.ShowName);
 
 ### 2. 按任务找答案
 
-- [How-to: Forums](./docs/how-to-forums.md): 查吧、关注、签到、搜索、统计，以及 `SelfFollowForums` / `SelfFollowForumsV1` 这两组并列支持的接口。
+- [How-to: Forums](./docs/how-to-forums.md): 查吧、关注、签到、搜索、统计，以及 `SelfFollowForums` / `SelfFollowForumsV1`
+  这两组并列支持的接口。
 - [How-to: Threads](./docs/how-to-threads.md): 读帖、回复、楼中楼、互动、吧务操作。
 - [How-to: Users](./docs/how-to-users.md): 用户资料、社交关系、对应 aiotieba `user_info` 的两组用户信息接口、黑名单两组接口，以及主页与资料修改。
 - [How-to: Messages](./docs/how-to-messages.md): @、回复、私信、吧群消息、push 解析。
@@ -113,8 +116,10 @@ Console.WriteLine(profile.ShowName);
 
 - TBS、自身信息、资料页、主页、吧内用户信息
 - 关注、粉丝、黑名单、移除粉丝
-- `GetUserInfoAppAsync(...)` 与 `GetUserInfoWebAsync(...)`，分别对应 aiotieba `get_uinfo_getuserinfo_app` 和 `get_uinfo_getuserinfo_web`
-- `GetBlacklistAsync(...)` 与 `GetBlacklistOldAsync(...)` / `AddBlacklistOldAsync(...)` / `RemoveBlacklistOldAsync(...)`，分别对应当前黑名单接口和 `_old` 这一组接口
+- `GetUserInfoAppAsync(...)` 与 `GetUserInfoWebAsync(...)`，分别对应 aiotieba `get_uinfo_getuserinfo_app` 和
+  `get_uinfo_getuserinfo_web`
+- `GetBlacklistAsync(...)` 与 `GetBlacklistOldAsync(...)` / `AddBlacklistOldAsync(...)` / `RemoveBlacklistOldAsync(...)`
+  ，分别对应当前黑名单接口和 `_old` 这一组接口
 - `GetProfileAsync(...)` 与 `GetHomepageAsync(...)` 这两类分开的用户读取操作
 - 资料修改、黑名单与昵称写入
 
@@ -122,7 +127,8 @@ Console.WriteLine(profile.ShowName);
 
 - 吧务团队、吧务权限、吧务黑名单
 - 吧务日志、封禁列表、解封申诉
-- `AddBawuAsync(...)`、`DelBawuAsync(...)`、`BlockAsync(...)` 等后台管理写操作，其中 `Bawu` 直接对应 upstream `add_bawu` / `del_bawu`
+- `AddBawuAsync(...)`、`DelBawuAsync(...)`、`BlockAsync(...)` 等后台管理写操作，其中 `Bawu` 直接对应 upstream `add_bawu` /
+  `del_bawu`
 - 需要明确权限和安全夹具的后台管理写操作
 
 ### `client.Messages`
@@ -140,9 +146,12 @@ Console.WriteLine(profile.ShowName);
 
 ## 开发与贡献
 
-- **对齐 upstream**: 任何 API 的参数语义、请求打包、响应解析和错误处理都必须严格参照 Python 版 [aiotieba](https://github.com/lumina37/aiotieba)。
-- **生成链路**: 修改 `.proto` 后请运行 `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`，不要手改生成的 `.cs` 文件。
-- **本地验证**: GitHub Actions 只做 restore、build、codegen、docs、packaging 和 evidence contract 检查。deterministic、integration、live 验证通过 `scripts/test-lane.*` 与 `scripts/verify-local.*` 在本地或 agent 环境执行。
+- **对齐 upstream**: 任何 API 的参数语义、请求打包、响应解析和错误处理都必须严格参照 Python
+  版 [aiotieba](https://github.com/lumina37/aiotieba)。
+- **生成链路**: 修改 `.proto` 后请运行 `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`，不要手改生成的 `.cs`
+  文件。
+- **本地验证**: GitHub Actions 只做 restore、build、codegen、docs、packaging 和 evidence contract
+  检查。deterministic、integration、live 验证通过 `scripts/test-lane.*` 与 `scripts/verify-local.*` 在本地或 agent 环境执行。
 
 ## 友情链接
 

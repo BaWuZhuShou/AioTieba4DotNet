@@ -21,7 +21,9 @@ public sealed class AdminMutationSafetyTest : TestBase
     public void SafeTargetUserNameFixture_IsExplicitlyRequired_ForLiveAddBaWuMutations()
     {
         EnsureAdminMutationManualGate(nameof(SafeTargetUserNameFixture_IsExplicitlyRequired_ForLiveAddBaWuMutations));
-        var userName = RequireSafeTargetUserNameFixture(nameof(SafeTargetUserNameFixture_IsExplicitlyRequired_ForLiveAddBaWuMutations));
+        var userName =
+            RequireSafeTargetUserNameFixture(
+                nameof(SafeTargetUserNameFixture_IsExplicitlyRequired_ForLiveAddBaWuMutations));
 
         Console.WriteLine($"safeTargetUserName={userName}");
     }
@@ -29,8 +31,11 @@ public sealed class AdminMutationSafetyTest : TestBase
     [TestMethod]
     public void SafeTargetUserIdFixture_IsExplicitlyRequired_ForLiveBlacklistAndUnblockMutations()
     {
-        EnsureAdminMutationManualGate(nameof(SafeTargetUserIdFixture_IsExplicitlyRequired_ForLiveBlacklistAndUnblockMutations));
-        var userId = RequireSafeTargetUserIdFixture(nameof(SafeTargetUserIdFixture_IsExplicitlyRequired_ForLiveBlacklistAndUnblockMutations));
+        EnsureAdminMutationManualGate(
+            nameof(SafeTargetUserIdFixture_IsExplicitlyRequired_ForLiveBlacklistAndUnblockMutations));
+        var userId =
+            RequireSafeTargetUserIdFixture(
+                nameof(SafeTargetUserIdFixture_IsExplicitlyRequired_ForLiveBlacklistAndUnblockMutations));
 
         Console.WriteLine($"safeTargetUserId={userId}");
     }
@@ -38,8 +43,11 @@ public sealed class AdminMutationSafetyTest : TestBase
     [TestMethod]
     public void SafeTargetPortraitFixture_IsExplicitlyRequired_ForLiveBaWuRollbackMutations()
     {
-        EnsureAdminMutationManualGate(nameof(SafeTargetPortraitFixture_IsExplicitlyRequired_ForLiveBaWuRollbackMutations));
-        var portrait = RequireSafeTargetPortraitFixture(nameof(SafeTargetPortraitFixture_IsExplicitlyRequired_ForLiveBaWuRollbackMutations));
+        EnsureAdminMutationManualGate(
+            nameof(SafeTargetPortraitFixture_IsExplicitlyRequired_ForLiveBaWuRollbackMutations));
+        var portrait =
+            RequireSafeTargetPortraitFixture(
+                nameof(SafeTargetPortraitFixture_IsExplicitlyRequired_ForLiveBaWuRollbackMutations));
 
         Console.WriteLine($"safeTargetPortrait={portrait}");
     }

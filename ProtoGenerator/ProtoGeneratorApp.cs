@@ -80,19 +80,13 @@ internal static class ProtoGeneratorApp
             }
 
             if (!string.IsNullOrWhiteSpace(result.StandardOutput))
-            {
-                await output.WriteLineAsync($"输出: {result.StandardOutput.TrimEnd()}" );
-            }
+                await output.WriteLineAsync($"输出: {result.StandardOutput.TrimEnd()}");
 
             if (!string.IsNullOrWhiteSpace(result.StandardError))
-            {
-                await output.WriteLineAsync($"错误: {result.StandardError.TrimEnd()}" );
-            }
+                await output.WriteLineAsync($"错误: {result.StandardError.TrimEnd()}");
 
             if (!string.IsNullOrWhiteSpace(result.FailureReason))
-            {
                 await output.WriteLineAsync($"异常: {result.FailureReason}");
-            }
 
             await output.WriteLineAsync($"❌ 失败: {target.ProjectRelativePath}");
             failCount++;
@@ -106,10 +100,7 @@ internal static class ProtoGeneratorApp
         await output.WriteLineAsync($"⏱️  耗时: {stopwatch.Elapsed.TotalSeconds:F2}s");
         await output.WriteLineAsync($"✅ 成功: {successCount}");
 
-        if (failCount > 0)
-        {
-            await output.WriteLineAsync($"❌ 失败: {failCount}");
-        }
+        if (failCount > 0) await output.WriteLineAsync($"❌ 失败: {failCount}");
 
         await output.WriteLineAsync("========================================");
         await output.WriteLineAsync();

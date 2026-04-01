@@ -13,13 +13,13 @@ namespace AioTieba4DotNet.Api.Sign;
 [PythonApi("aiotieba.api.sign_forum")]
 internal class Sign(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-/// <summary>
-///     发送贴吧签到请求
-/// </summary>
-/// <param name="fname">吧名</param>
-/// <param name="fid">吧 ID (fid)</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>操作是否成功</returns>
+    /// <summary>
+    ///     发送贴吧签到请求
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <param name="fid">吧 ID (fid)</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(string fname, ulong fid, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>

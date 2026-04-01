@@ -34,7 +34,9 @@ public sealed class ReleaseMetadataContractTests
         Assert.AreEqual("AioTieba4DotNet", propertyGroup.Element("PackageId")?.Value);
         Assert.AreEqual("3.0.0", propertyGroup.Element("VersionPrefix")?.Value);
         Assert.AreEqual("false", propertyGroup.Element("GeneratePackageOnBuild")?.Value);
-        Assert.IsNull(propertyGroup.Element("Id"), "Legacy package Id metadata should not remain in the v3 package project.");
-        Assert.IsNull(propertyGroup.Element("Version"), "The project should rely on VersionPrefix plus release-tag overrides instead of a stale fixed Version value.");
+        Assert.IsNull(propertyGroup.Element("Id"),
+            "Legacy package Id metadata should not remain in the v3 package project.");
+        Assert.IsNull(propertyGroup.Element("Version"),
+            "The project should rely on VersionPrefix plus release-tag overrides instead of a stale fixed Version value.");
     }
 }

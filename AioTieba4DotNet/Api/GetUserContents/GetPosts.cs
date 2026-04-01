@@ -41,7 +41,7 @@ internal class GetPosts(
         ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var dataForum = resProto.Data;
-        return AioTieba4DotNet.Internal.Mapping.UserPostGroupsMapper.FromTbData(dataForum);
+        return Internal.Mapping.UserPostGroupsMapper.FromTbData(dataForum);
     }
 
     /// <summary>

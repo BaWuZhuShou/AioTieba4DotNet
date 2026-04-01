@@ -30,37 +30,34 @@ public sealed class UserProfileWrapperBranchCoverageTests
     [TestMethod]
     public async Task UserProfileWrappers_CoverHappyBranchesAndRequestShapes()
     {
-        var httpCore = new RoutingHttpCore
-        {
-            Account = new Account(new string('b', 192), new string('s', 64))
-        };
+        var httpCore = new RoutingHttpCore { Account = new Account(new string('b', 192), new string('s', 64)) };
         httpCore.EnqueueAppFormResponse("/c/u/fans/page", """
-                                                     {"error_code":0,"error_msg":"","user_list":[{"id":42,"portrait":"tb.1.target","name":"target-user","name_show":"Target"}],"page":{"current_page":2,"has_more":1,"has_prev":0}}
-                                                     """);
+                                                          {"error_code":0,"error_msg":"","user_list":[{"id":42,"portrait":"tb.1.target","name":"target-user","name_show":"Target"}],"page":{"current_page":2,"has_more":1,"has_prev":0}}
+                                                          """);
         httpCore.EnqueueWebGetResponse("/f/commit/share/fnameShareApi", """
-                                                 {"no":0,"error":"","data":{"fid":7356044}}
-                                                 """);
+                                                                        {"no":0,"error":"","data":{"fid":7356044}}
+                                                                        """);
         httpCore.EnqueueAppFormResponse("/c/f/frs/frsBottom", """
-                                                     {"error_code":0,"error_msg":"","forum":{"id":7356044,"name":"lol欧服吧","first_class":"游戏","second_class":"英雄联盟","avatar":"avatar","slogan":"safe forum","member_num":1,"post_num":2,"thread_num":3,"managers":[]}}
-                                                     """);
+                                                              {"error_code":0,"error_msg":"","forum":{"id":7356044,"name":"lol欧服吧","first_class":"游戏","second_class":"英雄联盟","avatar":"avatar","slogan":"safe forum","member_num":1,"post_num":2,"thread_num":3,"managers":[]}}
+                                                              """);
         httpCore.EnqueueAppFormResponse("/c/s/initNickname", """
-                                                     {"error_code":0,"error_msg":"","user_info":{"user_name":"self-user","name_show":"Old Name","tieba_uid":778899}}
-                                                     """);
+                                                             {"error_code":0,"error_msg":"","user_info":{"user_name":"self-user","name_show":"Old Name","tieba_uid":778899}}
+                                                             """);
         httpCore.EnqueueWebGetResponse("/mo/q/newmoindex", """
-                                                 {"no":0,"error":"","data":{"id":123,"portrait":"tb.1.safe","name":"mo-user","user_sex":1,"post_num":12,"fans_num":34,"concern_num":56,"like_forum_num":78,"intro":"hello","vipInfo":{"v_status":3}}}
-                                                 """);
+                                                           {"no":0,"error":"","data":{"id":123,"portrait":"tb.1.safe","name":"mo-user","user_sex":1,"post_num":12,"fans_num":34,"concern_num":56,"like_forum_num":78,"intro":"hello","vipInfo":{"v_status":3}}}
+                                                           """);
         httpCore.EnqueueWebGetResponse("/im/pcmsg/query/getUserInfo", """
-                                                 {"errno":0,"errmsg":"","chatUser":{"uid":123,"uname":"123","portrait":"tb.1.safe?from=pc","show_nickname":"Safe User"}}
-                                                 """);
+                                                                      {"errno":0,"errmsg":"","chatUser":{"uid":123,"uname":"123","portrait":"tb.1.safe?from=pc","show_nickname":"Safe User"}}
+                                                                      """);
         httpCore.EnqueueAppFormResponse("/home/get/panel", """
-                                                     {"no":0,"error":"","data":{"portrait":"tb.1.safe?from=pc","name":"safe-user","show_nickname":"Safe User","name_show":"Safe User","gender":"male","tb_age":"-","post_num":"12","followed_count":"34","vipInfo":{"v_status":3}}}
-                                                     """);
+                                                           {"no":0,"error":"","data":{"portrait":"tb.1.safe?from=pc","name":"safe-user","show_nickname":"Safe User","name_show":"Safe User","gender":"male","tb_age":"-","post_num":"12","followed_count":"34","vipInfo":{"v_status":3}}}
+                                                           """);
         httpCore.EnqueueAppFormResponse("/home/get/panel", """
-                                                     {"no":0,"error":"","data":{"portrait":"safe-user","name":"safe-user","show_nickname":"Safe User","name_show":"Safe User","gender":"male","tb_age":"2.5","post_num":"12","followed_count":"34","vipInfo":{"v_status":0}}}
-                                                     """);
+                                                           {"no":0,"error":"","data":{"portrait":"safe-user","name":"safe-user","show_nickname":"Safe User","name_show":"Safe User","gender":"male","tb_age":"2.5","post_num":"12","followed_count":"34","vipInfo":{"v_status":0}}}
+                                                           """);
         httpCore.EnqueueWebGetResponse("/i/sys/user_json", """
-                                                 {"creator":{"id":321,"portrait":"tb.1.safe?from=pc","name":"safe-user","name_show":"Safe User"}}
-                                                 """);
+                                                           {"creator":{"id":321,"portrait":"tb.1.safe?from=pc","name":"safe-user","name_show":"Safe User"}}
+                                                           """);
 
         var fans = await new GetFans(httpCore).RequestAsync(42, 2);
         Assert.AreEqual("42", httpCore.GetAppFormValue("uid"));
@@ -106,35 +103,32 @@ public sealed class UserProfileWrapperBranchCoverageTests
     [TestMethod]
     public async Task UserProfileWrappers_CoverFallbackBranches_AndThrowPaths()
     {
-        var httpCore = new RoutingHttpCore
-        {
-            Account = new Account(new string('b', 192), new string('s', 64))
-        };
+        var httpCore = new RoutingHttpCore { Account = new Account(new string('b', 192), new string('s', 64)) };
         httpCore.EnqueueAppFormResponse("/c/u/fans/page", """
-                                                     {"error_code":0,"error_msg":"","page":{"current_page":0,"has_more":0,"has_prev":0}}
-                                                     """);
+                                                          {"error_code":0,"error_msg":"","page":{"current_page":0,"has_more":0,"has_prev":0}}
+                                                          """);
         httpCore.EnqueueWebGetResponse("/f/commit/share/fnameShareApi", """
-                                                 {"no":0,"error":"","data":{"fid":0}}
-                                                 """);
+                                                                        {"no":0,"error":"","data":{"fid":0}}
+                                                                        """);
         httpCore.EnqueueAppFormResponse("/c/f/frs/frsBottom", """
-                                                     {"error_code":0,"error_msg":"","not_forum":{}}
-                                                     """);
+                                                              {"error_code":0,"error_msg":"","not_forum":{}}
+                                                              """);
         httpCore.EnqueueAppFormResponse("/c/s/initNickname", """
-                                                     {"error_code":0,"error_msg":""}
-                                                     """);
+                                                             {"error_code":0,"error_msg":""}
+                                                             """);
         httpCore.EnqueueWebGetResponse("/mo/q/newmoindex", """
-                                                 {"no":0,"error":""}
-                                                 """);
+                                                           {"no":0,"error":""}
+                                                           """);
         httpCore.EnqueueWebGetResponse("/im/pcmsg/query/getUserInfo", """
-                                                 {"errno":0,"errmsg":""}
-                                                 """);
+                                                                      {"errno":0,"errmsg":""}
+                                                                      """);
         httpCore.EnqueueAppFormResponse("/home/get/panel", """
-                                                     {"no":0,"error":""}
-                                                     """);
+                                                           {"no":0,"error":""}
+                                                           """);
         httpCore.EnqueueWebGetResponse("/i/sys/user_json", string.Empty);
         httpCore.EnqueueWebGetResponse("/i/sys/user_json", """
-                                                 {"foo":1}
-                                                 """);
+                                                           {"foo":1}
+                                                           """);
 
         var fans = await new GetFans(httpCore).RequestAsync(42, 2);
         var fidException = await ThrowsAsync<TieBaServerException>(async () =>
@@ -192,10 +186,16 @@ public sealed class UserProfileWrapperBranchCoverageTests
             Enqueue(_webGetResponses, path, response);
         }
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -205,8 +205,10 @@ public sealed class UserProfileWrapperBranchCoverageTests
             return Task.FromResult(Dequeue(_appFormResponses, uri.AbsolutePath));
         }
 
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
             CancellationToken cancellationToken = default)
@@ -217,13 +219,25 @@ public sealed class UserProfileWrapperBranchCoverageTests
         }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
-        public string GetAppFormValue(string key) => LastAppFormData.Last(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData.Last(entry => entry.Key == key).Value;
+        }
 
-        public string LastAppFormValue(string key) => GetAppFormValue(key);
+        public string LastAppFormValue(string key)
+        {
+            return GetAppFormValue(key);
+        }
 
-        public string GetWebGetValue(string key) => LastWebGetParameters.Last(entry => entry.Key == key).Value;
+        public string GetWebGetValue(string key)
+        {
+            return LastWebGetParameters.Last(entry => entry.Key == key).Value;
+        }
 
         private static void Enqueue(Dictionary<string, Queue<string>> responses, string path, string response)
         {

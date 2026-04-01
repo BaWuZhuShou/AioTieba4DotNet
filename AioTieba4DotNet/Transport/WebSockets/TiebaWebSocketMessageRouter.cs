@@ -23,8 +23,10 @@ internal sealed class TiebaWebSocketMessageRouter
         if (_pending.TryRemove(reqId, out var pending)) pending.TrySetCanceled(cancellationToken);
     }
 
-    internal bool TryRemovePending(int reqId, out TaskCompletionSource<WSRes>? pending) =>
-        _pending.TryRemove(reqId, out pending);
+    internal bool TryRemovePending(int reqId, out TaskCompletionSource<WSRes>? pending)
+    {
+        return _pending.TryRemove(reqId, out pending);
+    }
 
     internal bool TryCompletePending(WSRes response)
     {
@@ -35,27 +37,29 @@ internal sealed class TiebaWebSocketMessageRouter
         return true;
     }
 
-    internal Task PublishAsync(WSRes response, CancellationToken cancellationToken) =>
-        _pushChannel.Writer.WriteAsync(response, cancellationToken).AsTask();
+    internal Task PublishAsync(WSRes response, CancellationToken cancellationToken)
+    {
+        return _pushChannel.Writer.WriteAsync(response, cancellationToken).AsTask();
+    }
 
     internal void FailPending(Exception exception)
     {
         foreach (var entry in _pending)
-        {
-            if (_pending.TryRemove(entry.Key, out var pending)) pending.TrySetException(exception);
-        }
+            if (_pending.TryRemove(entry.Key, out var pending))
+                pending.TrySetException(exception);
     }
 
-    internal void Complete(Exception? exception = null) => _pushChannel.Writer.TryComplete(exception);
+    internal void Complete(Exception? exception = null)
+    {
+        _pushChannel.Writer.TryComplete(exception);
+    }
 
     internal async IAsyncEnumerable<WSRes> ListenAsync(
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         while (await _pushChannel.Reader.WaitToReadAsync(cancellationToken))
-        {
-            while (_pushChannel.Reader.TryRead(out var response))
-                yield return response;
-        }
+        while (_pushChannel.Reader.TryRead(out var response))
+            yield return response;
 
         await _pushChannel.Reader.Completion.WaitAsync(cancellationToken);
     }

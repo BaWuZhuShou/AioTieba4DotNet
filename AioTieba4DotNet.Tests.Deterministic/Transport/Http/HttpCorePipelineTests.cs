@@ -50,7 +50,8 @@ public class HttpCorePipelineTests
         var httpCore = new HttpCore(new HttpClient(handler));
         var payload = new byte[] { 1, 2, 3, 4 };
 
-        var result = await httpCore.SendAppProtoAsync(new Uri("https://tiebac.baidu.com/c/f/frs/page?cmd=301001"), payload);
+        var result =
+            await httpCore.SendAppProtoAsync(new Uri("https://tiebac.baidu.com/c/f/frs/page?cmd=301001"), payload);
 
         CollectionAssert.AreEqual(new byte[] { 9, 8, 7 }, result);
         Assert.AreEqual(HttpMethod.Post, handler.LastRequest!.Method);
@@ -64,7 +65,8 @@ public class HttpCorePipelineTests
             .Single(parameter => parameter.Name == "boundary").Value!;
         Assert.DoesNotContain('"', boundary);
 
-        var contentDisposition = ((MultipartFormDataContent)handler.LastRequest.Content).First().Headers.ContentDisposition;
+        var contentDisposition =
+            ((MultipartFormDataContent)handler.LastRequest.Content).First().Headers.ContentDisposition;
         Assert.AreEqual("data", contentDisposition!.Name!.Trim('"'));
         Assert.AreEqual("file", contentDisposition.FileName!.Trim('"'));
 
@@ -130,11 +132,9 @@ public class HttpCorePipelineTests
                 Content = new StringContent("retry-success", Encoding.UTF8)
             };
         });
-        var httpCore = new HttpCore(new TiebaOptions
-        {
-            RequestTimeout = Timeout.InfiniteTimeSpan,
-            MaxReadRetryAttempts = 1
-        }, new HttpClient(handler));
+        var httpCore =
+            new HttpCore(new TiebaOptions { RequestTimeout = Timeout.InfiniteTimeSpan, MaxReadRetryAttempts = 1 },
+                new HttpClient(handler));
 
         var result = await httpCore.SendWebGetAsync(new Uri("http://tieba.baidu.com/i/sys/user_json"),
             new List<KeyValuePair<string, string>> { new("un", "tester") });
@@ -156,11 +156,9 @@ public class HttpCorePipelineTests
                 Content = new StringContent("unreachable", Encoding.UTF8)
             };
         });
-        var httpCore = new HttpCore(new TiebaOptions
-        {
-            RequestTimeout = TimeSpan.FromMilliseconds(50),
-            MaxReadRetryAttempts = 1
-        }, new HttpClient(handler));
+        var httpCore =
+            new HttpCore(new TiebaOptions { RequestTimeout = TimeSpan.FromMilliseconds(50), MaxReadRetryAttempts = 1 },
+                new HttpClient(handler));
 
         try
         {
@@ -186,10 +184,8 @@ public class HttpCorePipelineTests
                 Content = new StringContent("unreachable", Encoding.UTF8)
             };
         });
-        var httpCore = new HttpCore(new TiebaOptions
-        {
-            RequestTimeout = TimeSpan.FromMilliseconds(50)
-        }, new HttpClient(handler));
+        var httpCore = new HttpCore(new TiebaOptions { RequestTimeout = TimeSpan.FromMilliseconds(50) },
+            new HttpClient(handler));
 
         try
         {
@@ -221,7 +217,8 @@ public class HttpCorePipelineTests
             _asyncResponseFactory = (request, _) => Task.FromResult(responseFactory(request));
         }
 
-        internal RecordingHandler(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFactory)
+        internal RecordingHandler(
+            Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFactory)
         {
             _asyncResponseFactory = responseFactory;
         }
@@ -258,7 +255,8 @@ public class HttpCorePipelineTests
 
         private static HttpContent CloneMultipartContent(MultipartFormDataContent original)
         {
-            var boundary = original.Headers.ContentType!.Parameters.Single(parameter => parameter.Name == "boundary").Value!;
+            var boundary = original.Headers.ContentType!.Parameters.Single(parameter => parameter.Name == "boundary")
+                .Value!;
             var clone = new MultipartFormDataContent(boundary);
 
             foreach (var part in original)
@@ -272,7 +270,8 @@ public class HttpCorePipelineTests
 
             clone.Headers.ContentType!.Parameters.Clear();
             foreach (var parameter in original.Headers.ContentType.Parameters)
-                clone.Headers.ContentType.Parameters.Add(new System.Net.Http.Headers.NameValueHeaderValue(parameter.Name,
+                clone.Headers.ContentType.Parameters.Add(new System.Net.Http.Headers.NameValueHeaderValue(
+                    parameter.Name,
                     parameter.Value));
 
             return clone;

@@ -43,17 +43,15 @@ public sealed class LowLevelHelperCoverageTests
         Assert.AreEqual(ValidateOptionsResult.Success, service.Validate(Options.DefaultName, good));
         var failure = service.Validate(null, bad);
         Assert.IsFalse(failure.Succeeded);
-        StringAssert.Contains(string.Join(" ", failure.Failures ?? Array.Empty<string>()), "Stoken cannot be supplied without Bduss.");
+        StringAssert.Contains(string.Join(" ", failure.Failures ?? Array.Empty<string>()),
+            "Stoken cannot be supplied without Bduss.");
 
         var guestFromNull = TiebaSessionState.FromAccount(null);
         var guestFromBlank = TiebaSessionState.FromAccount(new Account());
         var pendingAuth = TiebaSessionState.FromAccount(new Account(new string('b', 192)));
         var readyAuth = TiebaSessionState.FromAccount(new Account(new string('b', 192))
         {
-            Tbs = "tbs-1",
-            ClientId = "client-1",
-            SampleId = "sample-1",
-            ZId = "z-1"
+            Tbs = "tbs-1", ClientId = "client-1", SampleId = "sample-1", ZId = "z-1"
         });
 
         Assert.IsFalse(guestFromNull.IsAuthenticated);
@@ -101,26 +99,26 @@ public sealed class LowLevelHelperCoverageTests
         StringAssert.Contains(webGet.RequestUri.Query, "b=2");
         Assert.AreEqual(HttpMethod.Post, webForm.Method);
         StringAssert.Contains(await webForm.Content!.ReadAsStringAsync(), "x=y");
-        await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => TiebaHttpRequestFactory.CreateMessageAsync(customDescriptor));
+        await Assert.ThrowsExactlyAsync<InvalidOperationException>(() =>
+            TiebaHttpRequestFactory.CreateMessageAsync(customDescriptor));
 
         var infinitePolicy = TiebaHttpExecutionPolicy.FromOptions(new TiebaOptions
         {
-            RequestTimeout = Timeout.InfiniteTimeSpan,
-            MaxReadRetryAttempts = 0
+            RequestTimeout = Timeout.InfiniteTimeSpan, MaxReadRetryAttempts = 0
         });
         Assert.IsFalse(infinitePolicy.HasReadRetries);
 
         var retryPolicy = TiebaHttpExecutionPolicy.FromOptions(new TiebaOptions
         {
-            RequestTimeout = TimeSpan.FromMilliseconds(200),
-            MaxReadRetryAttempts = 1
+            RequestTimeout = TimeSpan.FromMilliseconds(200), MaxReadRetryAttempts = 1
         });
         Assert.IsTrue(retryPolicy.HasReadRetries);
 
         var retryDescriptor = TiebaHttpRequestDescriptor.AppForm(new Uri("https://tiebac.baidu.com/retry"),
             [new KeyValuePair<string, string>("a", "1")]);
         var retryRequestCalls = 0;
-        var retryResponse = await retryPolicy.SendAsync(new HttpClient(new SwitchingHandler(_ => new HttpResponseMessage(HttpStatusCode.OK))),
+        var retryResponse = await retryPolicy.SendAsync(
+            new HttpClient(new SwitchingHandler(_ => new HttpResponseMessage(HttpStatusCode.OK))),
             ct =>
             {
                 retryRequestCalls++;
@@ -129,9 +127,9 @@ public sealed class LowLevelHelperCoverageTests
 
                 return TiebaHttpRequestFactory.CreateMessageAsync(retryDescriptor, ct);
             },
-            allowRetry: true,
-            requestKind: TiebaHttpRequestKind.AppForm,
-            cancellationToken: default);
+            true,
+            TiebaHttpRequestKind.AppForm,
+            default);
 
         var noRetryRequestCalls = 0;
         var noRetryException = await Assert.ThrowsExactlyAsync<TiebaTransportException>(() => retryPolicy.SendAsync(
@@ -141,29 +139,28 @@ public sealed class LowLevelHelperCoverageTests
                 noRetryRequestCalls++;
                 throw new IOException("boom");
             },
-            allowRetry: false,
-            requestKind: TiebaHttpRequestKind.AppForm,
-            cancellationToken: default));
+            false,
+            TiebaHttpRequestKind.AppForm,
+            default));
 
         var timeoutPolicy = TiebaHttpExecutionPolicy.FromOptions(new TiebaOptions
         {
-            RequestTimeout = TimeSpan.FromMilliseconds(200),
-            MaxReadRetryAttempts = 0
+            RequestTimeout = TimeSpan.FromMilliseconds(200), MaxReadRetryAttempts = 0
         });
         var timeoutHandler = new SwitchingHandler(_ => new HttpResponseMessage(HttpStatusCode.OK));
         var timeoutClient = new HttpClient(timeoutHandler);
         var timeoutResponse = await timeoutPolicy.SendAsync(timeoutClient,
             ct => TiebaHttpRequestFactory.CreateMessageAsync(retryDescriptor, ct),
-            allowRetry: false,
-            requestKind: TiebaHttpRequestKind.AppForm,
-            cancellationToken: default);
+            false,
+            TiebaHttpRequestKind.AppForm,
+            default);
 
         var infiniteResponse = await infinitePolicy.SendAsync(
             new HttpClient(new SwitchingHandler(_ => new HttpResponseMessage(HttpStatusCode.OK))),
             ct => TiebaHttpRequestFactory.CreateMessageAsync(retryDescriptor, ct),
-            allowRetry: false,
-            requestKind: TiebaHttpRequestKind.AppForm,
-            cancellationToken: default);
+            false,
+            TiebaHttpRequestKind.AppForm,
+            default);
 
         Assert.AreEqual(2, retryRequestCalls);
         Assert.AreEqual(HttpStatusCode.OK, retryResponse.StatusCode);
@@ -182,14 +179,20 @@ public sealed class LowLevelHelperCoverageTests
         var blocks = new Blocks([block], new BlocksPage { HasMore = true, HasPrevious = false });
         var blocksNoMore = new Blocks([], new BlocksPage { HasMore = false, HasPrevious = true });
         var blocksNullException = Assert.ThrowsExactly<ArgumentNullException>(() => new Blocks([], null!));
-        var squareForum = new SquareForum { Fid = 40, Fname = "square", MemberNum = 2, PostNum = 3, IsFollowed = true };
-        var squareForums = new SquareForums([squareForum], new SquareForumsPage { HasMore = false, HasPrevious = false });
+        var squareForum = new SquareForum
+        {
+            Fid = 40,
+            Fname = "square",
+            MemberNum = 2,
+            PostNum = 3,
+            IsFollowed = true
+        };
+        var squareForums =
+            new SquareForums([squareForum], new SquareForumsPage { HasMore = false, HasPrevious = false });
         var squareForumsMore = new SquareForums([], new SquareForumsPage { HasMore = true, HasPrevious = true });
         var internalLink = new FragLink
         {
-            RawUrl = new Uri("https://example.com/forum/thread"),
-            Title = "internal",
-            Text = "body"
+            RawUrl = new Uri("https://example.com/forum/thread"), Title = "internal", Text = "body"
         };
         var externalLinkWithUrl = new FragLink
         {
@@ -198,8 +201,7 @@ public sealed class LowLevelHelperCoverageTests
         };
         var externalLinkWithoutUrl = new FragLink
         {
-            RawUrl = new Uri("https://tieba.baidu.com/mo/q/checkurl"),
-            Text = "fallback"
+            RawUrl = new Uri("https://tieba.baidu.com/mo/q/checkurl"), Text = "fallback"
         };
         var shareWithTitle = new ShareThread
         {
@@ -220,12 +222,9 @@ public sealed class LowLevelHelperCoverageTests
             Tid = 36,
             Pid = 37
         };
-        var shareMapped = ShareThreadMapper.FromTbData(new global::ThreadInfo.Types.OriginThreadInfo
+        var shareMapped = ShareThreadMapper.FromTbData(new ThreadInfo.Types.OriginThreadInfo
         {
-            Title = "shared empty",
-            Fid = 41,
-            Fname = "forum-empty",
-            Tid = "0"
+            Title = "shared empty", Fid = 41, Fname = "forum-empty", Tid = "0"
         });
 
         Assert.AreEqual("blocked-nick", block.NickName);
@@ -268,18 +267,14 @@ public sealed class LowLevelHelperCoverageTests
         return (TiebaHttpRequestDescriptor)Activator.CreateInstance(
             typeof(TiebaHttpRequestDescriptor),
             BindingFlags.Instance | BindingFlags.NonPublic,
-            binder: null,
-            args: new object[] { (TiebaHttpRequestKind)999, new Uri("https://tiebac.baidu.com/custom"), null!, null!, false },
-            culture: null)!;
+            null,
+            new object[] { (TiebaHttpRequestKind)999, new Uri("https://tiebac.baidu.com/custom"), null!, null!, false },
+            null)!;
     }
 
     private static Content CreateContent(string text)
     {
-        return new Content
-        {
-            Texts = [new FragText { Text = text }],
-            Frags = [new FragText { Text = text }]
-        };
+        return new Content { Texts = [new FragText { Text = text }], Frags = [new FragText { Text = text }] };
     }
 
     private sealed class SwitchingHandler : HttpMessageHandler
@@ -300,7 +295,8 @@ public sealed class LowLevelHelperCoverageTests
 
         public int CallCount { get; private set; }
 
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+            CancellationToken cancellationToken)
         {
             CallCount++;
             return Task.FromResult(_responseFactory(CallCount - 1));

@@ -7,29 +7,24 @@ internal static class UserPostsMapper
 {
     internal static UserPosts FromTbData(PostInfoList dataRes)
 
+    {
+        var fid = (long)dataRes.ForumId;
+
+        var tid = (long)dataRes.ThreadId;
+
+        List<UserPost> objs = [];
+
+        foreach (var userPost in dataRes.Content.Select(UserPostMapper.FromTbData))
+
         {
+            userPost.Fid = fid;
 
-            var fid = (long)dataRes.ForumId;
+            userPost.Tid = tid;
 
-            var tid = (long)dataRes.ThreadId;
-
-            List<UserPost> objs = [];
-
-            foreach (var userPost in dataRes.Content.Select(AioTieba4DotNet.Internal.Mapping.UserPostMapper.FromTbData))
-
-            {
-
-                userPost.Fid = fid;
-
-                userPost.Tid = tid;
-
-                objs.Add(userPost);
-
-            }
-
-
-
-            return new UserPosts(objs, fid, tid);
-
+            objs.Add(userPost);
         }
+
+
+        return new UserPosts(objs, fid, tid);
+    }
 }

@@ -42,10 +42,8 @@ internal sealed class GetDislikeForums(ITiebaHttpCore httpCore, ITiebaWsCore wsC
     public async Task<DislikeForums> RequestHttpAsync(int pn, int rn, CancellationToken cancellationToken = default)
     {
         var data = PackProto(_httpCore.Account!, pn, rn);
-        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getDislikeList")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var requestUri =
+            new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getDislikeList") { Query = $"cmd={Cmd}" }.Uri;
 
         var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(result);

@@ -40,27 +40,27 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
         return frsPageResIdl.ToByteArray();
     }
 
-    private static global::AioTieba4DotNet.Models.Threads.Threads ParseBody(byte[] body)
+    private static Threads ParseBody(byte[] body)
     {
         var resProto = FrsPageResIdl.Parser.ParseFrom(body);
         ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var dataForum = resProto.Data;
 
-        return AioTieba4DotNet.Internal.Mapping.ThreadsMapper.FromTbData(dataForum);
+        return Internal.Mapping.ThreadsMapper.FromTbData(dataForum);
     }
 
     /// <summary>
     ///     通过 HTTP 获取贴吧主题帖列表
     /// </summary>
-/// <param name="fname">吧名</param>
-/// <param name="pn">页码</param>
-/// <param name="rn">每页请求数量</param>
-/// <param name="sort">排序方式</param>
-/// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>主题帖列表实体</returns>
-    public async Task<global::AioTieba4DotNet.Models.Threads.Threads> RequestHttpAsync(string fname, int pn, int rn, int sort, int isGood,
+    /// <param name="fname">吧名</param>
+    /// <param name="pn">页码</param>
+    /// <param name="rn">每页请求数量</param>
+    /// <param name="sort">排序方式</param>
+    /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>主题帖列表实体</returns>
+    public async Task<Threads> RequestHttpAsync(string fname, int pn, int rn, int sort, int isGood,
         CancellationToken cancellationToken = default)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);
@@ -73,14 +73,14 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     /// <summary>
     ///     通过 Websocket 获取贴吧主题帖列表
     /// </summary>
-/// <param name="fname">吧名</param>
-/// <param name="pn">页码</param>
-/// <param name="rn">每页请求数量</param>
-/// <param name="sort">排序方式</param>
-/// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>主题帖列表实体</returns>
-    public async Task<global::AioTieba4DotNet.Models.Threads.Threads> RequestWsAsync(string fname, int pn, int rn, int sort, int isGood,
+    /// <param name="fname">吧名</param>
+    /// <param name="pn">页码</param>
+    /// <param name="rn">每页请求数量</param>
+    /// <param name="sort">排序方式</param>
+    /// <param name="isGood">是否只看精品贴 (1:是, 0:否)</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>主题帖列表实体</returns>
+    public async Task<Threads> RequestWsAsync(string fname, int pn, int rn, int sort, int isGood,
         CancellationToken cancellationToken = default)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);

@@ -64,7 +64,8 @@ public class FragLink : IFrag
         var queryParams = HttpUtility.ParseQueryString(query);
         return queryParams[key] ?? string.Empty;
     }
-   /// <summary>
+
+    /// <summary>
     ///     格式设置成员
     /// </summary>
     /// <returns>string</returns>

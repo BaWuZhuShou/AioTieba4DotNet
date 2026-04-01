@@ -14,9 +14,7 @@ internal sealed class SignGrowth(ITiebaHttpCore httpCore) : JsonApiBase(httpCore
 
         var data = new List<KeyValuePair<string, string>>
         {
-            new("tbs", HttpCore.Account?.Tbs ?? string.Empty),
-            new("act_type", actType),
-            new("cuid", "-")
+            new("tbs", HttpCore.Account?.Tbs ?? string.Empty), new("act_type", actType), new("cuid", "-")
         };
 
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/mo/q/usergrowth/commitUGTaskInfo").Uri;

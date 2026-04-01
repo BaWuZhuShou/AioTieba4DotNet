@@ -24,10 +24,7 @@ internal sealed class SendMsg(ITiebaWsCore wsCore)
         {
             Data = new CommitPersonalMsgReqIdl.Types.DataReq
             {
-                ToUid = userId,
-                Content = content,
-                MsgType = 1,
-                RecordId = recordId
+                ToUid = userId, Content = content, MsgType = 1, RecordId = recordId
             }
         };
 

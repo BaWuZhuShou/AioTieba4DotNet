@@ -8,11 +8,6 @@ internal static class ForumLevelInfoMapper
     {
         ArgumentNullException.ThrowIfNull(data);
 
-        return new ForumLevelInfo
-        {
-            LevelName = data.LevelName,
-            UserLevel = data.UserLevel,
-            IsLike = data.IsLike != 0
-        };
+        return new ForumLevelInfo { LevelName = data.LevelName, UserLevel = data.UserLevel, IsLike = data.IsLike != 0 };
     }
 }

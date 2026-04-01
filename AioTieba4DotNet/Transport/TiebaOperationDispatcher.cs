@@ -6,7 +6,10 @@ namespace AioTieba4DotNet.Transport;
 
 internal sealed class TiebaOperationDispatcher(TiebaClientSession session)
 {
-    internal Account RequireAuthenticatedAccount(string operationName) => session.RequireAuthenticatedAccount(operationName);
+    internal Account RequireAuthenticatedAccount(string operationName)
+    {
+        return session.RequireAuthenticatedAccount(operationName);
+    }
 
     internal async Task EnsureCanExecuteAsync(string operationName, TiebaOperationCapabilities capabilities,
         CancellationToken cancellationToken = default)
@@ -49,7 +52,7 @@ internal sealed class TiebaOperationDispatcher(TiebaClientSession session)
         CancellationToken cancellationToken)
     {
         var executor = descriptor.ExecuteHttpAsync
-            ?? throw CreateUnsupportedPathException(descriptor, "No HTTP execution path exists.");
+                       ?? throw CreateUnsupportedPathException(descriptor, "No HTTP execution path exists.");
 
         return await ExecuteAndApplyMutationAsync(descriptor, executor, cancellationToken);
     }
@@ -57,7 +60,7 @@ internal sealed class TiebaOperationDispatcher(TiebaClientSession session)
     private async Task<TResult> ExecuteWebSocketPreferredAsync<TResult>(TiebaOperationDescriptor<TResult> descriptor,
         CancellationToken cancellationToken)
     {
-        if (session.Options.TransportMode == Contracts.TiebaTransportMode.Http ||
+        if (session.Options.TransportMode == TiebaTransportMode.Http ||
             descriptor.ExecuteWebSocketAsync is null)
             return await ExecuteHttpAsync(descriptor, cancellationToken);
 
@@ -80,7 +83,7 @@ internal sealed class TiebaOperationDispatcher(TiebaClientSession session)
         CancellationToken cancellationToken)
     {
         var executor = descriptor.ExecuteWebSocketAsync
-            ?? throw CreateUnsupportedPathException(descriptor, "No WebSocket execution path exists.");
+                       ?? throw CreateUnsupportedPathException(descriptor, "No WebSocket execution path exists.");
 
         await session.WarmUpWebSocketAsync(descriptor.Name, cancellationToken);
         return await ExecuteAndApplyMutationAsync(descriptor, executor, cancellationToken);
@@ -106,6 +109,9 @@ internal sealed class TiebaOperationDispatcher(TiebaClientSession session)
     private static TiebaUnsupportedOperationException CreateUnsupportedPathException<TResult>(
         TiebaOperationDescriptor<TResult> descriptor,
         string reason,
-        Exception? innerException = null) =>
-        new($"Operation '{descriptor.Name}' has no valid transport path. {reason}", innerException);
+        Exception? innerException = null)
+    {
+        return new TiebaUnsupportedOperationException(
+            $"Operation '{descriptor.Name}' has no valid transport path. {reason}", innerException);
+    }
 }

@@ -7,25 +7,16 @@ internal static class UserPostMapper
 {
     internal static UserPost FromTbData(PostInfoList.Types.PostInfoContent dataRes)
 
+    {
+        var contents = ContentMapper.FromTbData(dataRes);
+
+
+        return new UserPost
         {
-
-            var contents = AioTieba4DotNet.Internal.Mapping.ContentMapper.FromTbData(dataRes);
-
-
-
-            return new UserPost
-
-            {
-
-                Contents = contents,
-
-                Pid = (int)dataRes.PostId,
-
-                IsComment = dataRes.PostType != 0,
-
-                CreateTime = (int)dataRes.CreateTime
-
-            };
-
-        }
+            Contents = contents,
+            Pid = (int)dataRes.PostId,
+            IsComment = dataRes.PostType != 0,
+            CreateTime = (int)dataRes.CreateTime
+        };
+    }
 }

@@ -49,15 +49,15 @@ internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore)
         ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var resProtoData = resProto.Data;
-        return AioTieba4DotNet.Internal.Mapping.UserInfoPfMapper.FromTbData(resProtoData);
+        return Internal.Mapping.UserInfoPfMapper.FromTbData(resProtoData);
     }
 
-/// <summary>
-///     发送获取用户详细主页信息请求
-/// </summary>
-/// <param name="requestParams">uid (int/long) 或 portrait/用户名 (string)</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>用户详细主页信息</returns>
+    /// <summary>
+    ///     发送获取用户详细主页信息请求
+    /// </summary>
+    /// <param name="requestParams">uid (int/long) 或 portrait/用户名 (string)</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>用户详细主页信息</returns>
     public async Task<UserInfoPf> RequestAsync(T requestParams, CancellationToken cancellationToken = default)
     {
         var data = PackProto(requestParams);

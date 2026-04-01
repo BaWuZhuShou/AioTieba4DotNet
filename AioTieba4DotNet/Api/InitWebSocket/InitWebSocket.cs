@@ -15,10 +15,11 @@ internal sealed class InitWebSocket(ITiebaWsCore wsCore)
     public async Task<IReadOnlyList<WsMsgGroupInfo>> RequestAsync(CancellationToken cancellationToken = default)
     {
         var account = wsCore.Account
-            ?? throw new InvalidOperationException("An authenticated account is required for websocket initialization.");
+                      ?? throw new InvalidOperationException(
+                          "An authenticated account is required for websocket initialization.");
 
         var payload = new TiebaWebSocketHandshakeBuilder().Pack(account);
-        var response = await wsCore.SendAsync(Cmd, payload, encrypt: false, cancellationToken: cancellationToken);
+        var response = await wsCore.SendAsync(Cmd, payload, false, cancellationToken);
         return ParseResponse(response.Payload.Data.ToByteArray());
     }
 

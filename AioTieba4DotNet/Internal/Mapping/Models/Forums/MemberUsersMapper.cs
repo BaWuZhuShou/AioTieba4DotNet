@@ -32,15 +32,7 @@ internal static partial class MemberUsersMapper
     {
         var paginationMatch = PaginationRegex.Match(body);
         if (!paginationMatch.Success)
-        {
-            return new MemberUsersPage
-            {
-                CurrentPage = 1,
-                TotalPage = 1,
-                HasMore = false,
-                HasPrevious = false
-            };
-        }
+            return new MemberUsersPage { CurrentPage = 1, TotalPage = 1, HasMore = false, HasPrevious = false };
 
         var content = paginationMatch.Groups["content"].Value;
         var current = ParseInt(CurrentPageRegex.Match(content).Groups["current"].Value, 1);
@@ -48,16 +40,19 @@ internal static partial class MemberUsersMapper
 
         return new MemberUsersPage
         {
-            CurrentPage = current,
-            TotalPage = total,
-            HasMore = current < total,
-            HasPrevious = current > 1
+            CurrentPage = current, TotalPage = total, HasMore = current < total, HasPrevious = current > 1
         };
     }
 
-    private static string HtmlDecode(string value) => WebUtility.HtmlDecode(value).Trim();
+    private static string HtmlDecode(string value)
+    {
+        return WebUtility.HtmlDecode(value).Trim();
+    }
 
-    private static int ParseInt(string value, int defaultValue = 0) => int.TryParse(value, out var parsed) ? parsed : defaultValue;
+    private static int ParseInt(string value, int defaultValue = 0)
+    {
+        return int.TryParse(value, out var parsed) ? parsed : defaultValue;
+    }
 
     [GeneratedRegex("<div[^>]*class=\"[^\"]*tbui_pagination[^\"]*\"[^>]*>(?<content>.*?)</div>",
         RegexOptions.IgnoreCase | RegexOptions.Singleline)]

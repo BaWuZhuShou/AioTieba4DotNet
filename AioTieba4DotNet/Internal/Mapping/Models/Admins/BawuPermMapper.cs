@@ -12,7 +12,6 @@ internal static class BawuPermMapper
         var permissions = BawuPermType.None;
         var permissionSetting = data.GetValue("perm_setting") as JObject;
         if (permissionSetting is not null)
-        {
             foreach (var category in new[] { "category_user", "category_thread" })
             {
                 if (permissionSetting.GetValue(category) is not JArray entries)
@@ -33,16 +32,18 @@ internal static class BawuPermMapper
                     };
                 }
             }
-        }
 
         return new BawuPerm { Permissions = permissions };
     }
 
-    private static bool IsEnabled(JToken? token) => token?.Type switch
+    private static bool IsEnabled(JToken? token)
     {
-        JTokenType.Boolean => token.Value<bool>(),
-        JTokenType.Integer => token.Value<int>() != 0,
-        JTokenType.String => !string.IsNullOrWhiteSpace(token.Value<string>()) && token.Value<string>() != "0",
-        _ => false
-    };
+        return token?.Type switch
+        {
+            JTokenType.Boolean => token.Value<bool>(),
+            JTokenType.Integer => token.Value<int>() != 0,
+            JTokenType.String => !string.IsNullOrWhiteSpace(token.Value<string>()) && token.Value<string>() != "0",
+            _ => false
+        };
+    }
 }

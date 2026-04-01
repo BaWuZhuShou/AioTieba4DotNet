@@ -35,7 +35,8 @@ public class FragVoice : IFrag
             { "type", "10" }, { "voice_md5", Md5 }, { "during_time", Duration * 1000 }
         };
     }
-  /// <summary>
+
+    /// <summary>
     ///     是否存在音频
     /// </summary>
     /// <returns>如果音频 MD5 不为空则返回 true</returns>

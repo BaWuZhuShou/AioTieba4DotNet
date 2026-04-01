@@ -6,13 +6,18 @@ public sealed class FragUnknown : IFrag
 
     public override string Text { get; init; } = string.Empty;
 
-    public override string GetFragType() => nameof(FragUnknown);
-
-    public override Dictionary<string, object> ToDict() => new()
+    public override string GetFragType()
     {
-        ["type"] = Type,
-        ["text"] = Text
-    };
+        return nameof(FragUnknown);
+    }
 
-    public override string ToString() => $"{GetFragType()} {nameof(Type)}: {Type}, {nameof(Text)}: {Text}";
+    public override Dictionary<string, object> ToDict()
+    {
+        return new Dictionary<string, object> { ["type"] = Type, ["text"] = Text };
+    }
+
+    public override string ToString()
+    {
+        return $"{GetFragType()} {nameof(Type)}: {Type}, {nameof(Text)}: {Text}";
+    }
 }

@@ -15,7 +15,8 @@ public sealed class TiebaClientThreadReadIntegrationTests : TestBase
     [TestMethod]
     public async Task GetPostsAndCommentsAsync_SafeForumFirstThread_ReturnsStableReadShape()
     {
-        var forum = await RequireSafeForumFixtureAsync(nameof(GetPostsAndCommentsAsync_SafeForumFirstThread_ReturnsStableReadShape));
+        var forum = await RequireSafeForumFixtureAsync(
+            nameof(GetPostsAndCommentsAsync_SafeForumFirstThread_ReturnsStableReadShape));
         using var client = CreateClient(TiebaTransportMode.Http);
         var threads = await client.Threads.GetThreadsAsync(forum.ResolvedName, 1, 20);
         if (threads.Objs.Count == 0)
@@ -44,7 +45,8 @@ public sealed class TiebaClientThreadReadIntegrationTests : TestBase
     public async Task GetTabMapAsync_SafeForum_ReturnsStandaloneMapAndPreservesThreadTabDictionary()
     {
         EnsureAuthenticated();
-        var forum = await RequireSafeForumFixtureAsync(nameof(GetTabMapAsync_SafeForum_ReturnsStandaloneMapAndPreservesThreadTabDictionary));
+        var forum = await RequireSafeForumFixtureAsync(
+            nameof(GetTabMapAsync_SafeForum_ReturnsStandaloneMapAndPreservesThreadTabDictionary));
         using var client = CreateClient(TiebaTransportMode.Http);
 
         var tabMap = await client.Threads.GetTabMapAsync(forum.ResolvedName);
@@ -54,7 +56,8 @@ public sealed class TiebaClientThreadReadIntegrationTests : TestBase
         Assert.IsNotNull(threads.TabDictionary);
         foreach (var pair in threads.TabDictionary)
         {
-            Assert.IsTrue(tabMap.TryGetValue(pair.Key, out var tabId), $"Standalone tab map did not contain '{pair.Key}'.");
+            Assert.IsTrue(tabMap.TryGetValue(pair.Key, out var tabId),
+                $"Standalone tab map did not contain '{pair.Key}'.");
             Assert.AreEqual(pair.Value, tabId);
         }
     }
@@ -63,7 +66,8 @@ public sealed class TiebaClientThreadReadIntegrationTests : TestBase
     public async Task GetRecoversAsync_SafeForum_ReturnsRecoverPageShape_WhenModeratorAccessAllows()
     {
         EnsureAuthenticated();
-        var forum = await RequireSafeForumFixtureAsync(nameof(GetRecoversAsync_SafeForum_ReturnsRecoverPageShape_WhenModeratorAccessAllows));
+        var forum = await RequireSafeForumFixtureAsync(
+            nameof(GetRecoversAsync_SafeForum_ReturnsRecoverPageShape_WhenModeratorAccessAllows));
 
         try
         {
@@ -83,13 +87,15 @@ public sealed class TiebaClientThreadReadIntegrationTests : TestBase
     public async Task GetRecoverInfoAsync_SafeForumFirstRecover_ReturnsRecoverBody_WhenRecoverExists()
     {
         EnsureAuthenticated();
-        var forum = await RequireSafeForumFixtureAsync(nameof(GetRecoverInfoAsync_SafeForumFirstRecover_ReturnsRecoverBody_WhenRecoverExists));
+        var forum = await RequireSafeForumFixtureAsync(
+            nameof(GetRecoverInfoAsync_SafeForumFirstRecover_ReturnsRecoverBody_WhenRecoverExists));
 
         try
         {
             var recovers = await Client.Threads.GetRecoversAsync(forum.ResolvedName, 1, 10);
             if (recovers.Count == 0)
-                Assert.Inconclusive($"Skipping recover-detail scenario: forum '{forum.ResolvedName}' returned no recover entries.");
+                Assert.Inconclusive(
+                    $"Skipping recover-detail scenario: forum '{forum.ResolvedName}' returned no recover entries.");
 
             var recover = recovers[0];
             var info = await Client.Threads.GetRecoverInfoAsync(forum.ResolvedName, recover.Tid, recover.Pid);

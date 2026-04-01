@@ -22,7 +22,8 @@ internal class SetBlacklist(ITiebaHttpCore httpCore)
             Data = new SetUserBlackReqIdl.Types.DataReq
             {
                 BlackUid = userId,
-                Common = new CommonReq { BDUSS = account.Bduss, ClientType = 2, ClientVersion = Const.MainVersion },
+                Common =
+                    new CommonReq { BDUSS = account.Bduss, ClientType = 2, ClientVersion = Const.MainVersion },
                 PermList = new SetUserBlackReqIdl.Types.DataReq.Types.PermissionList
                 {
                     Follow = (type & BlacklistType.Follow) != 0 ? 1 : 2,
@@ -44,7 +45,8 @@ internal class SetBlacklist(ITiebaHttpCore httpCore)
     public async Task<bool> RequestAsync(long userId, BlacklistType type, CancellationToken cancellationToken = default)
     {
         var data = PackProto(_httpCore.Account!, userId, type);
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/user/setUserBlack") { Query = $"cmd={Cmd}" }.Uri;
+        var requestUri =
+            new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/user/setUserBlack") { Query = $"cmd={Cmd}" }.Uri;
         var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         ParseBody(result);
         return true;

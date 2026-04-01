@@ -28,7 +28,8 @@ public class TiebaOptions
     public TimeSpan RequestTimeout
     {
         get => _timeout.RequestTimeout;
-        set => _timeout = new TimeoutConfig { RequestTimeout = value, MaxReadRetryAttempts = _timeout.MaxReadRetryAttempts };
+        set => _timeout =
+            new TimeoutConfig { RequestTimeout = value, MaxReadRetryAttempts = _timeout.MaxReadRetryAttempts };
     }
 
     /// <summary>

@@ -29,36 +29,37 @@ public sealed class Task18TinyBranchFamilyCoverageTests
     [TestMethod]
     public void TinyBranchFamilyMappers_CoverFallbackAndBranchPaths()
     {
-        var bawuMapped = BawuInfoMapper.FromTbData(new global::GetBawuInfoResIdl.Types.DataRes
+        var bawuMapped = BawuInfoMapper.FromTbData(new GetBawuInfoResIdl.Types.DataRes
         {
-            BawuTeamInfo = new global::GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam
+            BawuTeamInfo = new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam
             {
                 TotalNum = 1,
                 BawuTeamList =
                 {
-                    new global::GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes
+                    new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes
                     {
                         RoleName = "吧主",
                         RoleInfo =
                         {
-                            new global::GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes.Types.BawuRoleInfoPub
-                            {
-                                UserId = 42,
-                                Portrait = "tb.1.bawu?012345678901",
-                                UserName = "bawu-user",
-                                NameShow = "Bawu User",
-                                UserLevel = 7
-                            }
+                            new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes.
+                                Types.BawuRoleInfoPub
+                                {
+                                    UserId = 42,
+                                    Portrait = "tb.1.bawu?012345678901",
+                                    UserName = "bawu-user",
+                                    NameShow = "Bawu User",
+                                    UserLevel = 7
+                                }
                         }
                     }
                 }
             }
         });
-        var bawuFallback = BawuInfoMapper.FromTbData(new global::GetBawuInfoResIdl.Types.DataRes());
+        var bawuFallback = BawuInfoMapper.FromTbData(new GetBawuInfoResIdl.Types.DataRes());
 
-        var forumDetailTrue = ForumDetailMapper.FromTbData(new global::GetForumDetailResIdl.Types.DataRes
+        var forumDetailTrue = ForumDetailMapper.FromTbData(new GetForumDetailResIdl.Types.DataRes
         {
-            ForumInfo = new global::GetForumDetailResIdl.Types.DataRes.Types.RecommendForumInfo
+            ForumInfo = new GetForumDetailResIdl.Types.DataRes.Types.RecommendForumInfo
             {
                 ForumId = 7356044,
                 ForumName = "csharp",
@@ -69,14 +70,14 @@ public sealed class Task18TinyBranchFamilyCoverageTests
                 MemberCount = 11,
                 ThreadCount = 22
             },
-            ElectionTab = new global::GetForumDetailResIdl.Types.DataRes.Types.ManagerElectionTab
+            ElectionTab = new GetForumDetailResIdl.Types.DataRes.Types.ManagerElectionTab
             {
                 NewStrategyText = "已有吧主"
             }
         });
-        var forumDetailFalse = ForumDetailMapper.FromTbData(new global::GetForumDetailResIdl.Types.DataRes
+        var forumDetailFalse = ForumDetailMapper.FromTbData(new GetForumDetailResIdl.Types.DataRes
         {
-            ForumInfo = new global::GetForumDetailResIdl.Types.DataRes.Types.RecommendForumInfo
+            ForumInfo = new GetForumDetailResIdl.Types.DataRes.Types.RecommendForumInfo
             {
                 ForumId = 1,
                 ForumName = "plain",
@@ -87,14 +88,14 @@ public sealed class Task18TinyBranchFamilyCoverageTests
                 MemberCount = 1,
                 ThreadCount = 2
             },
-            ElectionTab = new global::GetForumDetailResIdl.Types.DataRes.Types.ManagerElectionTab
+            ElectionTab = new GetForumDetailResIdl.Types.DataRes.Types.ManagerElectionTab
             {
                 NewStrategyText = "暂无吧主"
             }
         });
-        var forumDetailNull = ForumDetailMapper.FromTbData(new global::GetForumDetailResIdl.Types.DataRes
+        var forumDetailNull = ForumDetailMapper.FromTbData(new GetForumDetailResIdl.Types.DataRes
         {
-            ForumInfo = new global::GetForumDetailResIdl.Types.DataRes.Types.RecommendForumInfo
+            ForumInfo = new GetForumDetailResIdl.Types.DataRes.Types.RecommendForumInfo
             {
                 ForumId = 2,
                 ForumName = "null-election",
@@ -107,9 +108,9 @@ public sealed class Task18TinyBranchFamilyCoverageTests
             }
         });
 
-        var notifyParsed = WsNotifyMapper.FromTbData(new global::PushNotifyResIdl.Types.PusherMsg
+        var notifyParsed = WsNotifyMapper.FromTbData(new PushNotifyResIdl.Types.PusherMsg
         {
-            Data = new global::PushNotifyResIdl.Types.PusherMsg.Types.PusherMsgInfo
+            Data = new PushNotifyResIdl.Types.PusherMsg.Types.PusherMsgInfo
             {
                 GroupId = 100,
                 MsgId = 200,
@@ -118,9 +119,9 @@ public sealed class Task18TinyBranchFamilyCoverageTests
                 GroupType = 5
             }
         });
-        var notifyFallback = WsNotifyMapper.FromTbData(new global::PushNotifyResIdl.Types.PusherMsg
+        var notifyFallback = WsNotifyMapper.FromTbData(new PushNotifyResIdl.Types.PusherMsg
         {
-            Data = new global::PushNotifyResIdl.Types.PusherMsg.Types.PusherMsgInfo
+            Data = new PushNotifyResIdl.Types.PusherMsg.Types.PusherMsgInfo
             {
                 GroupId = 101,
                 MsgId = 201,
@@ -130,11 +131,11 @@ public sealed class Task18TinyBranchFamilyCoverageTests
             }
         });
 
-        var oldUsersMapped = BlacklistOldUsersMapper.FromTbData(new global::UserMuteQueryResIdl.Types.DataRes
+        var oldUsersMapped = BlacklistOldUsersMapper.FromTbData(new UserMuteQueryResIdl.Types.DataRes
         {
             MuteUser =
             {
-                new global::UserMuteQueryResIdl.Types.DataRes.Types.MuteUser
+                new UserMuteQueryResIdl.Types.DataRes.Types.MuteUser
                 {
                     UserId = 1,
                     UserName = "old-user",
@@ -142,7 +143,7 @@ public sealed class Task18TinyBranchFamilyCoverageTests
                     Portrait = "tb.1.old?012345678901",
                     NameShow = "Old User"
                 },
-                new global::UserMuteQueryResIdl.Types.DataRes.Types.MuteUser
+                new UserMuteQueryResIdl.Types.DataRes.Types.MuteUser
                 {
                     UserId = 2,
                     UserName = "raw-user",
@@ -151,18 +152,13 @@ public sealed class Task18TinyBranchFamilyCoverageTests
                     NameShow = "Raw User"
                 }
             },
-            Page = new global::Page
-            {
-                CurrentPage = 2,
-                HasMore = 1,
-                HasPrev = 0
-            }
+            Page = new Page { CurrentPage = 2, HasMore = 1, HasPrev = 0 }
         });
-        var oldUsersFallback = BlacklistOldUsersMapper.FromTbData(new global::UserMuteQueryResIdl.Types.DataRes
+        var oldUsersFallback = BlacklistOldUsersMapper.FromTbData(new UserMuteQueryResIdl.Types.DataRes
         {
             MuteUser =
             {
-                new global::UserMuteQueryResIdl.Types.DataRes.Types.MuteUser
+                new UserMuteQueryResIdl.Types.DataRes.Types.MuteUser
                 {
                     UserId = 3,
                     UserName = "fallback-user",
@@ -177,24 +173,14 @@ public sealed class Task18TinyBranchFamilyCoverageTests
         {
             ["list"] = new JArray
             {
-                new JObject
-                {
-                    ["forum_id"] = 7356044UL,
-                    ["forum_name"] = "csharp",
-                    ["level_id"] = 7
-                }
+                new JObject { ["forum_id"] = 7356044UL, ["forum_name"] = "csharp", ["level_id"] = 7 }
             },
-            ["page"] = new JObject
-            {
-                ["cur_page"] = 2,
-                ["total_page"] = 4
-            }
+            ["page"] = new JObject { ["cur_page"] = 2, ["total_page"] = 4 }
         });
         var selfFollowFallback = SelfFollowForumsV1Mapper.FromTbData(new JObject());
         var selfFollowPartialPageFallback = SelfFollowForumsV1Mapper.FromTbData(new JObject
         {
-            ["list"] = new JArray(),
-            ["page"] = new JObject()
+            ["list"] = new JArray(), ["page"] = new JObject()
         });
 
         Assert.AreEqual(1, bawuMapped.All.Count);
@@ -275,7 +261,8 @@ public sealed class Task18TinyBranchFamilyCoverageTests
                               {"error_code":0,"error_msg":"","user":{"id":42,"portrait":"tb.1.login?012345678901","name":"login-user"}}
                               """
         };
-        var missingUserException = await ThrowsAsync<NullReferenceException>(() => new Login(missingUserCore).RequestAsync());
+        var missingUserException =
+            await ThrowsAsync<NullReferenceException>(() => new Login(missingUserCore).RequestAsync());
         var missingAnti = await new Login(missingAntiCore).RequestAsync();
 
         var recoverPageNull = RecoverPageMapper.FromTbData(null);
@@ -321,10 +308,7 @@ public sealed class Task18TinyBranchFamilyCoverageTests
         };
         var postWithoutSign = new ThreadPost
         {
-            Content = CreateContent("plain body"),
-            Pid = 12,
-            AuthorId = 13,
-            Floor = 2
+            Content = CreateContent("plain body"), Pid = 12, AuthorId = 13, Floor = 2
         };
         var recoverWithTitle = new RecoverInfo
         {
@@ -443,11 +427,7 @@ public sealed class Task18TinyBranchFamilyCoverageTests
 
     private static Content CreateContent(string text)
     {
-        return new Content
-        {
-            Texts = [new FragText { Text = text }],
-            Frags = [new FragText { Text = text }]
-        };
+        return new Content { Texts = [new FragText { Text = text }], Frags = [new FragText { Text = text }] };
     }
 
     private static async Task<TException> ThrowsAsync<TException>(Func<Task> action)
@@ -478,10 +458,16 @@ public sealed class Task18TinyBranchFamilyCoverageTests
 
         public IReadOnlyList<KeyValuePair<string, string>>? LastAppFormData { get; private set; }
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -491,16 +477,26 @@ public sealed class Task18TinyBranchFamilyCoverageTests
             return Task.FromResult(AppFormResponse);
         }
 
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
-        public string GetAppFormValue(string key) => LastAppFormData!.Last(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData!.Last(entry => entry.Key == key).Value;
+        }
     }
-
 }

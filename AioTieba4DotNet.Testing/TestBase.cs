@@ -19,7 +19,7 @@ public abstract class TestBase : IAsyncDisposable
     protected TestBase()
     {
         Environment = TiebaTestEnvironment.Current;
-        var account = new AioTieba4DotNet.Session.Account(Environment.Bduss, Environment.Stoken);
+        var account = new Session.Account(Environment.Bduss, Environment.Stoken);
         HttpCore httpCore = new();
         httpCore.SetAccount(account);
         WebsocketCore websocketCore = new(account);
@@ -70,7 +70,7 @@ public abstract class TestBase : IAsyncDisposable
 
     protected bool IsAuthenticated => Environment.HasCredentials;
 
-    protected TiebaClient CreateClient(global::AioTieba4DotNet.Contracts.TiebaTransportMode transportMode)
+    protected TiebaClient CreateClient(TiebaTransportMode transportMode)
     {
         return new TiebaClient(new TiebaOptions
         {
@@ -120,10 +120,8 @@ public abstract class TestBase : IAsyncDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(operationName);
 
         if (string.IsNullOrWhiteSpace(ConfiguredSafeForumQuery))
-        {
             Assert.Inconclusive(
                 $"Skipping {operationName}: no safe forum query is configured. Set TIEBA_SAFEFORUMQUERY or TieBa:SafeForumQuery.");
-        }
 
         var resolvedName = string.IsNullOrWhiteSpace(ConfiguredCanonicalSafeForumName)
             ? ConfiguredSafeForumQuery
@@ -206,10 +204,8 @@ public abstract class TestBase : IAsyncDisposable
         {
             var cleanupReport = Cleanup.GetLastExecutionReport();
             if (cleanupReport is not null)
-            {
                 foreach (var line in cleanupReport.ToDisplayLines())
                     Console.WriteLine(line);
-            }
 
             Client.Dispose();
             (WebsocketCore as IDisposable)?.Dispose();

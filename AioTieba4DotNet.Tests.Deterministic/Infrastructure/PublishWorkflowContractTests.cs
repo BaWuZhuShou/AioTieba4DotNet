@@ -14,56 +14,30 @@ public sealed class PublishWorkflowContractTests
     private const string LegacyApiKeyName = "NUGET_" + "API_KEY";
     private static readonly string LegacySecretReference = string.Concat("secrets.", LegacyApiKeyName);
     private static readonly string RepositoryRoot = FindRepositoryRoot();
-    private static readonly string PublishWorkflowPath = Path.Combine(RepositoryRoot, ".github", "workflows", "publish.yml");
+
+    private static readonly string PublishWorkflowPath =
+        Path.Combine(RepositoryRoot, ".github", "workflows", "publish.yml");
+
     private static readonly string[] IgnoredPathSegments = [".git", "bin", "obj", "TestResults"];
 
     private static readonly string TrustedPublishingWorkflowFixture = string.Join(Environment.NewLine, new[]
     {
-        "name: Publish to NuGet",
-        string.Empty,
-        "on:",
-        "    push:",
-        "        tags:",
-        "            - 'v*.*.*'",
-        string.Empty,
-        "jobs:",
-        "    release-contracts:",
-        "        steps:",
+        "name: Publish to NuGet", string.Empty, "on:", "    push:", "        tags:", "            - 'v*.*.*'",
+        string.Empty, "jobs:", "    release-contracts:", "        steps:",
         "            -   name: Validate local verification contract",
-        "                run: bash ./scripts/verify-local.sh --validate-only",
-        string.Empty,
-        "    package:",
-        "        needs:",
-        "            - release-contracts",
-        "        steps:",
-        "            -   name: Preflight release tag version",
-        "                id: version",
-        "                shell: bash",
-        "                run: |",
+        "                run: bash ./scripts/verify-local.sh --validate-only", string.Empty, "    package:",
+        "        needs:", "            - release-contracts", "        steps:",
+        "            -   name: Preflight release tag version", "                id: version",
+        "                shell: bash", "                run: |",
         "                    if [[ \"${VERSION}\" =~ -(preview|rc)\\.[0-9]+$ ]]; then",
-        "                        printf 'prerelease=true\\n' >> \"$GITHUB_OUTPUT\"",
-        "                    fi",
-        string.Empty,
-        "            -   name: Pack the project",
+        "                        printf 'prerelease=true\\n' >> \"$GITHUB_OUTPUT\"", "                    fi",
+        string.Empty, "            -   name: Pack the project",
         "                run: dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=${{ steps.version.outputs.version }} --nologo",
-        string.Empty,
-        "    publish:",
-        "        needs:",
-        "            - package",
-        "        permissions:",
-        "            contents: write",
-        "            id-token: write",
-        string.Empty,
-        "        steps:",
-        "            -   name: Download package artifacts",
-        "                uses: actions/download-artifact@v4",
-        string.Empty,
-        "            -   name: Login to NuGet",
-        "                id: login",
-        "                uses: NuGet/login@v1",
-        string.Empty,
-        "            -   name: Push to NuGet",
-        string.Concat(
+        string.Empty, "    publish:", "        needs:", "            - package", "        permissions:",
+        "            contents: write", "            id-token: write", string.Empty, "        steps:",
+        "            -   name: Download package artifacts", "                uses: actions/download-artifact@v4",
+        string.Empty, "            -   name: Login to NuGet", "                id: login",
+        "                uses: NuGet/login@v1", string.Empty, "            -   name: Push to NuGet", string.Concat(
             "                run: dotnet nuget push ./nupkg/*.nupkg --api-key \"",
             PublishWorkflowContract.TrustedPublishingApiKeyOutputReference,
             "\" --source https://api.nuget.org/v3/index.json --skip-duplicate")
@@ -80,20 +54,23 @@ public sealed class PublishWorkflowContractTests
     [TestMethod]
     public void TrustedPublishingWorkflowFixture_RequiredContractIsSatisfied()
     {
-        PublishWorkflowContract.AssertSatisfied(TrustedPublishingWorkflowFixture, "trusted publishing workflow fixture");
+        PublishWorkflowContract.AssertSatisfied(TrustedPublishingWorkflowFixture,
+            "trusted publishing workflow fixture");
     }
 
     [TestMethod]
     public void WorkflowUsingLegacyLongLivedNuGetApiKeySecret_FailsWithConcreteContractMessage()
     {
-        var tempDirectory = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"publish-workflow-contract-{Guid.NewGuid():N}"));
+        var tempDirectory =
+            Directory.CreateDirectory(Path.Combine(Path.GetTempPath(),
+                $"publish-workflow-contract-{Guid.NewGuid():N}"));
         var fixturePath = Path.Combine(tempDirectory.FullName, "publish.yml");
-        var workflowText = string.Join(Environment.NewLine, new[]
-        {
-            TrustedPublishingWorkflowFixture,
-            "env:",
-            $"    {LegacyApiKeyName}: ${{{{ {LegacySecretReference} }}}}"
-        });
+        var workflowText = string.Join(Environment.NewLine,
+            new[]
+            {
+                TrustedPublishingWorkflowFixture, "env:",
+                $"    {LegacyApiKeyName}: ${{{{ {LegacySecretReference} }}}}"
+            });
 
         try
         {
@@ -127,7 +104,9 @@ public sealed class PublishWorkflowContractTests
     [TestMethod]
     public void WorkflowRunningDotnetTest_FailsWithConcreteContractMessage()
     {
-        var workflowText = TrustedPublishingWorkflowFixture + Environment.NewLine + "    verify:" + Environment.NewLine + "        steps:" + Environment.NewLine + "            -   run: dotnet test";
+        var workflowText = TrustedPublishingWorkflowFixture + Environment.NewLine + "    verify:" +
+                           Environment.NewLine + "        steps:" + Environment.NewLine +
+                           "            -   run: dotnet test";
 
         var exception = Assert.Throws<AssertFailedException>(() =>
             PublishWorkflowContract.AssertSatisfied(workflowText, "regressed workflow fixture"));
@@ -168,14 +147,16 @@ public sealed class PublishWorkflowContractTests
         if (relativePath.StartsWith(Path.Combine(".sisyphus", "plans"), StringComparison.OrdinalIgnoreCase))
             return true;
 
-        var segments = relativePath.Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries);
+        var segments = relativePath.Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
+            StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var segment in segments)
         {
             if (segment.EndsWith("-clone", StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            if (Array.Exists(IgnoredPathSegments, ignored => string.Equals(segment, ignored, StringComparison.OrdinalIgnoreCase)))
+            if (Array.Exists(IgnoredPathSegments,
+                    ignored => string.Equals(segment, ignored, StringComparison.OrdinalIgnoreCase)))
                 return true;
         }
 
@@ -200,8 +181,9 @@ public sealed class PublishWorkflowContractTests
 
     private static string FormatRepositoryScanFailureMessage(IEnumerable<string> hits)
     {
-        return $"Repository must not contain a legacy long-lived NuGet API key fallback reference.{Environment.NewLine}- "
-               + string.Join(Environment.NewLine + "- ", hits);
+        return
+            $"Repository must not contain a legacy long-lived NuGet API key fallback reference.{Environment.NewLine}- "
+            + string.Join(Environment.NewLine + "- ", hits);
     }
 
     private static string? TryExtractIndentedBlock(string text, int indentation, string header)
@@ -235,7 +217,8 @@ public sealed class PublishWorkflowContractTests
     {
         var lines = NormalizeLineEndings(jobText).Split('\n');
         var stepsHeader = new string(' ', 8) + "steps:";
-        var stepsIndex = Array.FindIndex(lines, line => string.Equals(line.TrimEnd(), stepsHeader, StringComparison.Ordinal));
+        var stepsIndex = Array.FindIndex(lines,
+            line => string.Equals(line.TrimEnd(), stepsHeader, StringComparison.Ordinal));
         if (stepsIndex < 0) return [];
 
         List<string> steps = [];
@@ -273,7 +256,9 @@ public sealed class PublishWorkflowContractTests
     }
 
     private static string NormalizeLineEndings(string text)
-        => text.Replace("\r\n", "\n", StringComparison.Ordinal);
+    {
+        return text.Replace("\r\n", "\n", StringComparison.Ordinal);
+    }
 
     private static string FindRepositoryRoot()
     {
@@ -347,11 +332,10 @@ public sealed class PublishWorkflowContractTests
             if (!normalizedWorkflowText.Contains("push:", StringComparison.Ordinal)
                 || !normalizedWorkflowText.Contains("tags:", StringComparison.Ordinal)
                 || !normalizedWorkflowText.Contains("v*.*.*", StringComparison.Ordinal))
-            {
                 violations.Add(MissingTagTriggerMessage);
-            }
 
-            if (normalizedWorkflowText.Contains(string.Concat("secrets.", "NUGET_", "API_KEY"), StringComparison.Ordinal))
+            if (normalizedWorkflowText.Contains(string.Concat("secrets.", "NUGET_", "API_KEY"),
+                    StringComparison.Ordinal))
                 violations.Add(ForbiddenLegacyApiKeyMessage);
 
             if (normalizedWorkflowText.Contains("dotnet test", StringComparison.Ordinal))
@@ -363,7 +347,8 @@ public sealed class PublishWorkflowContractTests
                 violations.Add(MissingReleaseContractJobMessage);
                 violations.Add(MissingReleaseContractValidationMessage);
             }
-            else if (!releaseContractsJobText.Contains("bash ./scripts/verify-local.sh --validate-only", StringComparison.Ordinal))
+            else if (!releaseContractsJobText.Contains("bash ./scripts/verify-local.sh --validate-only",
+                         StringComparison.Ordinal))
             {
                 violations.Add(MissingReleaseContractValidationMessage);
             }
@@ -379,9 +364,7 @@ public sealed class PublishWorkflowContractTests
             {
                 if (!packageJobText.Contains("needs:", StringComparison.Ordinal)
                     || !packageJobText.Contains("release-contracts", StringComparison.Ordinal))
-                {
                     violations.Add(MissingPackageNeedsReleaseContractsMessage);
-                }
 
                 if (!packageJobText.Contains("dotnet pack", StringComparison.Ordinal))
                     violations.Add(MissingPackageJobMessage);
@@ -404,27 +387,22 @@ public sealed class PublishWorkflowContractTests
 
             if (!publishJobText.Contains("needs:", StringComparison.Ordinal)
                 || !publishJobText.Contains("package", StringComparison.Ordinal))
-            {
                 violations.Add(MissingPublishNeedsPackageMessage);
-            }
 
             if (!publishJobText.Contains("id-token: write", StringComparison.Ordinal))
                 violations.Add(MissingIdTokenPermissionMessage);
 
             var steps = ExtractStepBlocks(publishJobText);
-            var loginStepIndex = steps.FindIndex(step => step.Contains("uses: NuGet/login@v1", StringComparison.Ordinal));
+            var loginStepIndex =
+                steps.FindIndex(step => step.Contains("uses: NuGet/login@v1", StringComparison.Ordinal));
             if (loginStepIndex < 0 || !steps[loginStepIndex].Contains("id: login", StringComparison.Ordinal))
                 violations.Add(MissingNuGetLoginMessage);
 
             var pushStepIndex = steps.FindIndex(step => step.Contains("dotnet nuget push", StringComparison.Ordinal));
             if (pushStepIndex < 0)
-            {
                 violations.Add(MissingDotnetNuGetPushMessage);
-            }
             else if (!steps[pushStepIndex].Contains(TrustedPublishingApiKeyArgument, StringComparison.Ordinal))
-            {
                 violations.Add(MissingTrustedPublishingApiKeyWiringMessage);
-            }
 
             if (loginStepIndex < 0 || pushStepIndex < 0 || pushStepIndex != loginStepIndex + 1)
                 violations.Add(MissingImmediateNuGetLoginMessage);
@@ -440,8 +418,9 @@ public sealed class PublishWorkflowContractTests
 
         private static string FormatFailureMessage(string workflowLabel, IEnumerable<string> violations)
         {
-            return $"{workflowLabel} must satisfy the trusted publishing and release governance contract.{Environment.NewLine}- "
-                   + string.Join(Environment.NewLine + "- ", violations);
+            return
+                $"{workflowLabel} must satisfy the trusted publishing and release governance contract.{Environment.NewLine}- "
+                + string.Join(Environment.NewLine + "- ", violations);
         }
     }
 }

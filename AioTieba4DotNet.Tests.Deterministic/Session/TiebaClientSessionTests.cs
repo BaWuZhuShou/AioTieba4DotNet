@@ -89,7 +89,8 @@ public sealed class TiebaClientSessionTests
         using var session = CreateAuthenticatedSession(httpCore, new StubWsCore(), _ => Task.FromResult("tbs-456"));
         session.UpdateTbs("tbs-123");
 
-        var refreshedTbs = await session.RefreshTbsAsync(nameof(RefreshTbsAsync_ReplacesCachedTbs_AndKeepsReadyStateVisible));
+        var refreshedTbs =
+            await session.RefreshTbsAsync(nameof(RefreshTbsAsync_ReplacesCachedTbs_AndKeepsReadyStateVisible));
 
         Assert.AreEqual("tbs-456", refreshedTbs);
         Assert.AreEqual(TiebaSessionResourceState.Ready, session.CurrentState.TbsState);
@@ -172,7 +173,7 @@ public sealed class TiebaClientSessionTests
     {
         var handler = new TrackingHandler();
         var httpCore = new HttpCore(new TiebaOptions(), new HttpClient(handler),
-            ownsHttpClient: true);
+            true);
         using var session = new TiebaClientSession(
             new TiebaOptions { TransportMode = TiebaTransportMode.Http },
             httpCore,
@@ -230,11 +231,7 @@ public sealed class TiebaClientSessionTests
         var httpCore = new StubHttpCore();
         var wsCore = new StubWsCore();
         using var session = new TiebaClientSession(
-            new TiebaOptions
-            {
-                Bduss = ValidBduss,
-                TransportMode = TiebaTransportMode.Http
-            },
+            new TiebaOptions { Bduss = ValidBduss, TransportMode = TiebaTransportMode.Http },
             httpCore,
             wsCore);
 
@@ -277,12 +274,7 @@ public sealed class TiebaClientSessionTests
         Func<CancellationToken, Task<string>> loadTbsAsync)
     {
         return new TiebaClientSession(
-            new TiebaOptions
-            {
-                Bduss = ValidBduss,
-                Stoken = ValidStoken,
-                TransportMode = TiebaTransportMode.Http
-            },
+            new TiebaOptions { Bduss = ValidBduss, Stoken = ValidStoken, TransportMode = TiebaTransportMode.Http },
             httpCore,
             wsCore,
             loadTbsAsync);
@@ -302,19 +294,33 @@ public sealed class TiebaClientSessionTests
         }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => Task.FromResult(AppFormResponse);
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(AppFormResponse);
+        }
 
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private sealed class StubWsCore : ITiebaWsCore
@@ -326,18 +332,31 @@ public sealed class TiebaClientSessionTests
             Account = newAccount;
         }
 
-        public Task ConnectAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task ConnectAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) =>
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class TrackingHandler : HttpMessageHandler
@@ -345,7 +364,10 @@ public sealed class TiebaClientSessionTests
         internal bool IsDisposed { get; private set; }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
-            CancellationToken cancellationToken) => throw new NotImplementedException();
+            CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
 
         protected override void Dispose(bool disposing)
         {

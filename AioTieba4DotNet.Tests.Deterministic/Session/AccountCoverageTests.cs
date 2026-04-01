@@ -69,7 +69,7 @@ public sealed class AccountCoverageTests
         Assert.AreEqual("custom-c3aid", account.C3Aid);
         CollectionAssert.AreEqual(customCbcKey, account.AesCbcSecKey);
 
-        var ecbField = typeof(Account).GetField("_aesEcbSecKey", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var ecbField = typeof(Account).GetField("_aesEcbSecKey", BindingFlags.NonPublic | BindingFlags.Instance);
         ecbField!.SetValue(account, customEcbKey);
 
         CollectionAssert.AreEqual(customEcbKey, account.AesEcbSecKey);
@@ -134,11 +134,11 @@ public sealed class AccountCoverageTests
     public void Account_PreseededFields_ReturnExistingValuesWithoutRegeneration()
     {
         var account = new Account();
-        var uuidField = typeof(Account).GetField("_uuid", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var cuidField = typeof(Account).GetField("_cuid", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var ecbKeyField = typeof(Account).GetField("_aesEcbSecKey", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var cbcKeyField = typeof(Account).GetField("_aesCbcSecKey", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var cbcCipherField = typeof(Account).GetField("_aesCbcCipher", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var uuidField = typeof(Account).GetField("_uuid", BindingFlags.NonPublic | BindingFlags.Instance);
+        var cuidField = typeof(Account).GetField("_cuid", BindingFlags.NonPublic | BindingFlags.Instance);
+        var ecbKeyField = typeof(Account).GetField("_aesEcbSecKey", BindingFlags.NonPublic | BindingFlags.Instance);
+        var cbcKeyField = typeof(Account).GetField("_aesCbcSecKey", BindingFlags.NonPublic | BindingFlags.Instance);
+        var cbcCipherField = typeof(Account).GetField("_aesCbcCipher", BindingFlags.NonPublic | BindingFlags.Instance);
         var seededEcbKey = new byte[31];
         var seededCbcKey = new byte[16];
         using var seededCipher = Aes.Create();
@@ -159,13 +159,14 @@ public sealed class AccountCoverageTests
     [TestMethod]
     public void TbCrypto_RejectsInvalidLengths_AndEncodesRemainderBits()
     {
-        var cryptoType = typeof(Account).Assembly.GetType("AioTieba4DotNet.Internal.TbCrypto", throwOnError: true)!;
+        var cryptoType = typeof(Account).Assembly.GetType("AioTieba4DotNet.Internal.TbCrypto", true)!;
         var cuidGalaxy2 = cryptoType.GetMethod("CuidGalaxy2", BindingFlags.Public | BindingFlags.Static)!;
         var c3Aid = cryptoType.GetMethod("C3Aid", BindingFlags.Public | BindingFlags.Static)!;
         var base32Encode = (Base32EncodeDelegate)cryptoType.GetMethod("Base32Encode",
             BindingFlags.NonPublic | BindingFlags.Static)!.CreateDelegate(typeof(Base32EncodeDelegate));
 
-        var invalidCuidGalaxy2 = Throws<TargetInvocationException>(() => cuidGalaxy2.Invoke(null, [new string('a', 15)]));
+        var invalidCuidGalaxy2 =
+            Throws<TargetInvocationException>(() => cuidGalaxy2.Invoke(null, [new string('a', 15)]));
         var invalidC3AidAndroid = Throws<TargetInvocationException>(() => c3Aid.Invoke(null,
             [new string('a', 15), new string('b', 36)]));
         var invalidC3AidUuid = Throws<TargetInvocationException>(() => c3Aid.Invoke(null,
@@ -194,12 +195,14 @@ public sealed class AccountCoverageTests
         var seededCbcKey = new byte[16];
         using var seededCipher = Aes.Create();
 
-        Assert.AreSame(seededAndroidId, ExerciseInnerCachedBranch(account, "_androidId", static value => value.AndroidId, seededAndroidId));
+        Assert.AreSame(seededAndroidId,
+            ExerciseInnerCachedBranch(account, "_androidId", static value => value.AndroidId, seededAndroidId));
         Assert.AreSame(seededUuid, ExerciseInnerCachedBranch(account, "_uuid", static value => value.Uuid, seededUuid));
         Assert.AreSame(seededCuid, ExerciseInnerCachedBranch(account, "_cuid", static value => value.Cuid, seededCuid));
         Assert.AreSame(seededCuidGalaxy2,
             ExerciseInnerCachedBranch(account, "_cuidGalaxy2", static value => value.CuidGalaxy2, seededCuidGalaxy2));
-        Assert.AreSame(seededC3Aid, ExerciseInnerCachedBranch(account, "_c3Aid", static value => value.C3Aid!, seededC3Aid));
+        Assert.AreSame(seededC3Aid,
+            ExerciseInnerCachedBranch(account, "_c3Aid", static value => value.C3Aid!, seededC3Aid));
         Assert.AreSame(seededEcbKey,
             ExerciseInnerCachedBranch(account, "_aesEcbSecKey", static value => value.AesEcbSecKey, seededEcbKey));
         Assert.AreSame(seededEcbCipher,
@@ -234,14 +237,16 @@ public sealed class AccountCoverageTests
             Assert.AreSame(values[0], values[index]);
     }
 
-    private static T ExerciseInnerCachedBranch<T>(Account account, string fieldName, Func<Account, T> getter, T seededValue)
+    private static T ExerciseInnerCachedBranch<T>(Account account, string fieldName, Func<Account, T> getter,
+        T seededValue)
         where T : class
     {
         var field = typeof(Account).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic)
                     ?? throw new InvalidOperationException($"Missing field '{fieldName}'.");
         var lockField = typeof(Account).GetField("_lock", BindingFlags.Instance | BindingFlags.NonPublic)
                         ?? throw new InvalidOperationException("Missing _lock field.");
-        var lockObject = lockField.GetValue(account) ?? throw new InvalidOperationException("Missing account lock object.");
+        var lockObject = lockField.GetValue(account) ??
+                         throw new InvalidOperationException("Missing account lock object.");
 
         field.SetValue(account, null);
 
@@ -266,7 +271,7 @@ public sealed class AccountCoverageTests
             thread.Start();
             Assert.IsTrue(started.Wait(TimeSpan.FromSeconds(1)), $"Timed out starting getter for {fieldName}.");
             Assert.IsTrue(SpinWait.SpinUntil(() => (thread.ThreadState & ThreadState.WaitSleepJoin) != 0,
-                TimeSpan.FromSeconds(1)), $"Timed out blocking getter for {fieldName} on the account lock.");
+                    TimeSpan.FromSeconds(1)), $"Timed out blocking getter for {fieldName} on the account lock.");
             field.SetValue(account, seededValue);
         }
 

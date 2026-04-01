@@ -8,9 +8,7 @@ internal static class WsMsgGroupInfoMapper
     {
         return new WsMsgGroupInfo
         {
-            GroupId = data.GroupId,
-            GroupType = data.GroupType,
-            LastMessageId = data.LastMsgId
+            GroupId = data.GroupId, GroupType = data.GroupType, LastMessageId = data.LastMsgId
         };
     }
 }

@@ -19,19 +19,14 @@ internal static class ForumImageMapper
         if (!TryGetSize(data, format, out var width, out var height) || width <= 0 || height <= 0)
             return new ForumImage();
 
-        return new ForumImage
-        {
-            Data = data,
-            Format = format,
-            Width = width,
-            Height = height
-        };
+        return new ForumImage { Data = data, Format = format, Width = width, Height = height };
     }
 
     private static ForumImageFormat ParseFormat(string? contentType)
     {
         var normalized = contentType?.Trim().ToLowerInvariant() ?? string.Empty;
-        if (normalized.EndsWith("jpeg", StringComparison.Ordinal) || normalized.EndsWith("jpg", StringComparison.Ordinal))
+        if (normalized.EndsWith("jpeg", StringComparison.Ordinal) ||
+            normalized.EndsWith("jpg", StringComparison.Ordinal))
             return ForumImageFormat.Jpeg;
 
         if (normalized.EndsWith("png", StringComparison.Ordinal))
@@ -106,7 +101,8 @@ internal static class ForumImageMapper
             if (length < 2 || index + length > data.Length)
                 return false;
 
-            if (marker is 0xC0 or 0xC1 or 0xC2 or 0xC3 or 0xC5 or 0xC6 or 0xC7 or 0xC9 or 0xCA or 0xCB or 0xCD or 0xCE or 0xCF)
+            if (marker is 0xC0 or 0xC1 or 0xC2 or 0xC3 or 0xC5 or 0xC6 or 0xC7 or 0xC9 or 0xCA or 0xCB or 0xCD or 0xCE
+                or 0xCF)
             {
                 if (index + 7 >= data.Length)
                     return false;
@@ -122,8 +118,10 @@ internal static class ForumImageMapper
         return false;
     }
 
-    private static int ReadInt32BigEndian(byte[] data, int offset) =>
-        (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3];
+    private static int ReadInt32BigEndian(byte[] data, int offset)
+    {
+        return (data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3];
+    }
 
     private static bool Fail(out int width, out int height)
     {

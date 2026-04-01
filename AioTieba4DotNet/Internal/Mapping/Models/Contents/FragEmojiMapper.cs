@@ -6,13 +6,11 @@ internal static class FragEmojiMapper
 {
     internal static FragEmoji FromTbData(PbContent dataProto)
 
-        {
+    {
+        var id = dataProto.Text;
 
-            var id = dataProto.Text;
+        var desc = dataProto.C;
 
-            var desc = dataProto.C;
-
-            return new FragEmoji { Id = id, Desc = desc };
-
-        }
+        return new FragEmoji { Id = id, Desc = desc };
+    }
 }

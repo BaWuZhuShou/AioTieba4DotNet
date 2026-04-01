@@ -32,7 +32,8 @@ public sealed class UserSocialReadTest : TestBase
         var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetFansAsync(self.UserId, 1));
 
         Assert.IsNotNull(result);
-        Console.WriteLine($"self userId={self.UserId}, fansCount={result.Count}, currentPage={result.Page.CurrentPage}");
+        Console.WriteLine(
+            $"self userId={self.UserId}, fansCount={result.Count}, currentPage={result.Page.CurrentPage}");
     }
 
     [TestMethod]
@@ -43,7 +44,8 @@ public sealed class UserSocialReadTest : TestBase
         var result = await RunUserSocialOrInconclusiveAsync(() => Client.Messages.GetAtsAsync(1));
 
         Assert.IsNotNull(result);
-        Console.WriteLine($"atsCount={result.Count}, currentPage={result.Page.CurrentPage}, hasMore={result.Page.HasMore}");
+        Console.WriteLine(
+            $"atsCount={result.Count}, currentPage={result.Page.CurrentPage}, hasMore={result.Page.HasMore}");
     }
 
     [TestMethod]
@@ -54,7 +56,8 @@ public sealed class UserSocialReadTest : TestBase
         var result = await RunUserSocialOrInconclusiveAsync(() => Client.Messages.GetRepliesAsync(1));
 
         Assert.IsNotNull(result);
-        Console.WriteLine($"replyCount={result.Count}, currentPage={result.Page.CurrentPage}, hasMore={result.Page.HasMore}");
+        Console.WriteLine(
+            $"replyCount={result.Count}, currentPage={result.Page.CurrentPage}, hasMore={result.Page.HasMore}");
     }
 
     [TestMethod]
@@ -124,10 +127,14 @@ public sealed class UserSocialReadTest : TestBase
     [TestMethod]
     public async Task GetUserForumInfoAsync_SafeFixtures_ReturnsForumScopedProfile()
     {
-        var forum = await RequireSafeForumFixtureAsync(nameof(GetUserForumInfoAsync_SafeFixtures_ReturnsForumScopedProfile));
-        var portrait = RequireSafeTargetPortraitFixture(nameof(GetUserForumInfoAsync_SafeFixtures_ReturnsForumScopedProfile));
+        var forum = await RequireSafeForumFixtureAsync(
+            nameof(GetUserForumInfoAsync_SafeFixtures_ReturnsForumScopedProfile));
+        var portrait =
+            RequireSafeTargetPortraitFixture(nameof(GetUserForumInfoAsync_SafeFixtures_ReturnsForumScopedProfile));
 
-        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetUserForumInfoAsync(forum.ResolvedName, portrait));
+        var result =
+            await RunUserSocialOrInconclusiveAsync(() =>
+                Client.Users.GetUserForumInfoAsync(forum.ResolvedName, portrait));
 
         Assert.IsNotNull(result);
         Console.WriteLine($"forum={result.Fname}, portrait={result.User.Portrait}, level={result.Level}");
@@ -138,10 +145,12 @@ public sealed class UserSocialReadTest : TestBase
     {
         var forum = await RequireSafeForumFixtureAsync(nameof(GetRankUsersAsync_SafeForum_ReturnsRankPage));
 
-        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetRankUsersAsync(forum.ResolvedName, 1));
+        var result =
+            await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetRankUsersAsync(forum.ResolvedName, 1));
 
         Assert.IsNotNull(result);
-        Console.WriteLine($"forum={forum.ResolvedName}, rankCount={result.Count}, currentPage={result.Page.CurrentPage}");
+        Console.WriteLine(
+            $"forum={forum.ResolvedName}, rankCount={result.Count}, currentPage={result.Page.CurrentPage}");
     }
 
     [TestMethod]
@@ -150,7 +159,8 @@ public sealed class UserSocialReadTest : TestBase
         EnsureAuthenticated();
 
         var self = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetSelfInfoAsync());
-        var result = await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetThreadsAsync((int)self.UserId, 1, true));
+        var result =
+            await RunUserSocialOrInconclusiveAsync(() => Client.Users.GetThreadsAsync((int)self.UserId, 1, true));
 
         Assert.IsNotNull(result);
         Console.WriteLine($"selfUserId={self.UserId}, threadCount={result.Count}");

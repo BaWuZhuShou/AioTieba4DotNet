@@ -34,6 +34,7 @@ public class PageT
     ///     是否有前驱页
     /// </summary>
     public bool HasPrevious { get; init; }
+
     /// <summary>
     ///     格式设置
     /// </summary>

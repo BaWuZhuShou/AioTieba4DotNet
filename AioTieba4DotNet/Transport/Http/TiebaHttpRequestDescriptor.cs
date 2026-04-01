@@ -24,16 +24,25 @@ internal sealed record TiebaHttpRequestDescriptor
 
     internal bool AllowRetry { get; }
 
-    internal static TiebaHttpRequestDescriptor AppForm(Uri uri, IReadOnlyList<KeyValuePair<string, string>> formData) =>
-        new(TiebaHttpRequestKind.AppForm, uri, formData.ToArray());
+    internal static TiebaHttpRequestDescriptor AppForm(Uri uri, IReadOnlyList<KeyValuePair<string, string>> formData)
+    {
+        return new TiebaHttpRequestDescriptor(TiebaHttpRequestKind.AppForm, uri, formData.ToArray());
+    }
 
-    internal static TiebaHttpRequestDescriptor AppProto(Uri uri, byte[] protoPayload) =>
-        new(TiebaHttpRequestKind.AppProto, uri, protoPayload: protoPayload.ToArray());
+    internal static TiebaHttpRequestDescriptor AppProto(Uri uri, byte[] protoPayload)
+    {
+        return new TiebaHttpRequestDescriptor(TiebaHttpRequestKind.AppProto, uri, protoPayload: protoPayload.ToArray());
+    }
 
     internal static TiebaHttpRequestDescriptor WebGet(Uri uri, IReadOnlyList<KeyValuePair<string, string>> formData,
-        bool allowRetry) =>
-        new(TiebaHttpRequestKind.WebGet, uri, formData.ToArray(), allowRetry: allowRetry);
+        bool allowRetry)
+    {
+        return new TiebaHttpRequestDescriptor(TiebaHttpRequestKind.WebGet, uri, formData.ToArray(),
+            allowRetry: allowRetry);
+    }
 
-    internal static TiebaHttpRequestDescriptor WebForm(Uri uri, IReadOnlyList<KeyValuePair<string, string>> formData) =>
-        new(TiebaHttpRequestKind.WebForm, uri, formData.ToArray());
+    internal static TiebaHttpRequestDescriptor WebForm(Uri uri, IReadOnlyList<KeyValuePair<string, string>> formData)
+    {
+        return new TiebaHttpRequestDescriptor(TiebaHttpRequestKind.WebForm, uri, formData.ToArray());
+    }
 }

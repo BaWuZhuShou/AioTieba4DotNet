@@ -38,10 +38,16 @@ public sealed class Block
     public string ShowName => !string.IsNullOrEmpty(NickNameOld) ? NickNameOld : UserName;
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is Block other && UserId == other.UserId;
+    public override bool Equals(object? obj)
+    {
+        return obj is Block other && UserId == other.UserId;
+    }
 
     /// <inheritdoc />
-    public override int GetHashCode() => UserId.GetHashCode();
+    public override int GetHashCode()
+    {
+        return UserId.GetHashCode();
+    }
 }
 
 /// <summary>

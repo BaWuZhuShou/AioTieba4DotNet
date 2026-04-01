@@ -10,11 +10,12 @@ public sealed class DelBawuSafetyTest : TestBase
     [TestMethod]
     [TestCategory(TestCategoryNames.Live)]
     [TestCategory(TestCategoryNames.ForumExtensions)]
-    [Ignore("Requires an approved bawu/admin fixture in lol欧服 before destructive moderation can run. Keep this in the nightly/manual lane until that fixture exists.")]
+    [Ignore(
+        "Requires an approved bawu/admin fixture in lol欧服 before destructive moderation can run. Keep this in the nightly/manual lane until that fixture exists.")]
     public async Task DelBawuAsync_RequiresApprovedSafeFixture()
     {
         EnsureAuthenticated();
         ITiebaClient tiebaClient = Client;
-        await tiebaClient.Admins.DelBawuAsync("lol欧服", "fixture-portrait", AioTieba4DotNet.Models.Admins.BawuType.Manager);
+        await tiebaClient.Admins.DelBawuAsync("lol欧服", "fixture-portrait", Models.Admins.BawuType.Manager);
     }
 }

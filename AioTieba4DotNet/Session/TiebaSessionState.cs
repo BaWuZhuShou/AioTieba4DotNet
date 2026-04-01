@@ -30,7 +30,7 @@ internal sealed record TiebaSessionState(
     internal static TiebaSessionState FromAccount(Account? account)
     {
         if (account == null || string.IsNullOrWhiteSpace(account.Bduss))
-            return new(
+            return new TiebaSessionState(
                 TiebaSessionKind.Guest,
                 TiebaSessionResourceState.Unavailable,
                 null,
@@ -41,7 +41,7 @@ internal sealed record TiebaSessionState(
                 null,
                 TiebaSessionResourceState.Pending);
 
-        return new(
+        return new TiebaSessionState(
             TiebaSessionKind.Authenticated,
             ToValueState(account.Tbs),
             account.Tbs,
@@ -53,13 +53,17 @@ internal sealed record TiebaSessionState(
             TiebaSessionResourceState.Pending);
     }
 
-    private static TiebaSessionResourceState ToValueState(string? value) =>
-        string.IsNullOrWhiteSpace(value)
+    private static TiebaSessionResourceState ToValueState(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
             ? TiebaSessionResourceState.Pending
             : TiebaSessionResourceState.Ready;
+    }
 
-    private static TiebaSessionResourceState ToClientState(string? clientId, string? sampleId) =>
-        string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(sampleId)
+    private static TiebaSessionResourceState ToClientState(string? clientId, string? sampleId)
+    {
+        return string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(sampleId)
             ? TiebaSessionResourceState.Pending
             : TiebaSessionResourceState.Ready;
+    }
 }

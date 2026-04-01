@@ -14,8 +14,7 @@ internal sealed class SignForums(ITiebaHttpCore httpCore) : JsonApiBase(httpCore
     {
         var data = new List<KeyValuePair<string, string>>
         {
-            new("_client_version", Const.MainVersion),
-            new("subapp_type", "hybrid")
+            new("_client_version", Const.MainVersion), new("subapp_type", "hybrid")
         };
 
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/c/c/forum/msign").Uri;

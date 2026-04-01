@@ -93,7 +93,7 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         ValidateOptionalUserId(userId);
 
         await dispatcher.EnsureCanExecuteAsync(nameof(GetRecoversAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await GetRecoversAsync(fid, pn, rn, userId, cancellationToken);
@@ -111,7 +111,7 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<Recovers>(
                 nameof(GetRecoversAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetRecovers(session.HttpCore).RequestAsync(fid, userId, pn, rn, ct)),
             cancellationToken);
     }
@@ -124,7 +124,7 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         ValidateRecoverInfoTarget(tid, pid);
 
         await dispatcher.EnsureCanExecuteAsync(nameof(GetRecoverInfoAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await GetRecoverInfoAsync(fid, tid, pid, cancellationToken);
@@ -140,7 +140,7 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<RecoverInfo>(
                 nameof(GetRecoverInfoAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetRecoverInfo(session.HttpCore).RequestAsync(fid, tid, pid, ct)),
             cancellationToken);
     }
@@ -153,7 +153,7 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<TabMap>(
                 nameof(GetTabMapAsync),
-                TiebaOperationCapabilities.WebSocketPreferred(requiresAuthentication: true),
+                TiebaOperationCapabilities.WebSocketPreferred(true),
                 (session, ct) => new GetTabMap(session.HttpCore, session.WsCore).RequestHttpAsync(fname, ct),
                 (session, ct) => new GetTabMap(session.HttpCore, session.WsCore).RequestWsAsync(fname, ct)),
             cancellationToken);
@@ -165,7 +165,7 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         ValidateForumId(fid);
 
         await dispatcher.EnsureCanExecuteAsync(nameof(GetTabMapAsync),
-            TiebaOperationCapabilities.WebSocketPreferred(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.WebSocketPreferred(true), cancellationToken);
 
         var fname = await forums.GetFnameAsync(fid, cancellationToken);
         return await GetTabMapAsync(fname, cancellationToken);
@@ -179,7 +179,7 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(AgreeAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new Api.Agree.Agree(session.HttpCore).RequestAsync(tid, pid, isComment, isDisagree,
                     isUndo, ct)),
             cancellationToken);
@@ -191,14 +191,14 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(AddPostAsync),
-            TiebaOperationCapabilities.WebSocketPreferred(requiresAuthentication: true, requiresTbs: true),
+            TiebaOperationCapabilities.WebSocketPreferred(true, true),
             cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(AddPostAsync),
-                TiebaOperationCapabilities.WebSocketPreferred(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.WebSocketPreferred(true, true),
                 (session, ct) => new AddPost(session.HttpCore, session.WsCore)
                     .RequestHttpAsync(fname, fid, tid, content, showName, ct),
                 (session, ct) => new AddPost(session.HttpCore, session.WsCore)
@@ -211,29 +211,30 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(DelThreadAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(DelThreadAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
-                (session, ct) => new DelThread(session.HttpCore).RequestAsync(fid, tid, isHide: false, ct)),
+                TiebaOperationCapabilities.HttpOnly(true, true),
+                (session, ct) => new DelThread(session.HttpCore).RequestAsync(fid, tid, false, ct)),
             cancellationToken);
     }
 
-    public async Task<bool> DelPostAsync(string fname, long tid, long pid, CancellationToken cancellationToken = default)
+    public async Task<bool> DelPostAsync(string fname, long tid, long pid,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(DelPostAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(DelPostAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new DelPost(session.HttpCore).RequestAsync(fid, tid, pid, ct)),
             cancellationToken);
     }
@@ -245,13 +246,13 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         ValidateBatchIds(nameof(tids), tids);
 
         await dispatcher.EnsureCanExecuteAsync(nameof(DelThreadsAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(DelThreadsAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new DelThreads(session.HttpCore).RequestAsync(fid, tids, block, ct)),
             cancellationToken);
     }
@@ -263,13 +264,13 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         ValidateBatchIds(nameof(pids), pids);
 
         await dispatcher.EnsureCanExecuteAsync(nameof(DelPostsAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(DelPostsAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new DelPosts(session.HttpCore).RequestAsync(fid, tid, pids, block, ct)),
             cancellationToken);
     }
@@ -280,7 +281,7 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(GoodAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         var categoryId = await forums.GetCidAsync(fname, cname, cancellationToken);
@@ -288,7 +289,7 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(GoodAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new Good(session.HttpCore).RequestAsync(fname, fid, tid, categoryId, ct)),
             cancellationToken);
     }
@@ -298,13 +299,13 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(UngoodAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(UngoodAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new Ungood(session.HttpCore).RequestAsync(fname, fid, tid, ct)),
             cancellationToken);
     }
@@ -314,14 +315,14 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(TopAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(TopAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
-                (session, ct) => new Top(session.HttpCore).RequestAsync(fname, fid, tid, isVip, isSet: true, ct)),
+                TiebaOperationCapabilities.HttpOnly(true, true),
+                (session, ct) => new Top(session.HttpCore).RequestAsync(fname, fid, tid, isVip, true, ct)),
             cancellationToken);
     }
 
@@ -331,14 +332,14 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(UntopAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(UntopAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
-                (session, ct) => new Top(session.HttpCore).RequestAsync(fname, fid, tid, isVip, isSet: false, ct)),
+                TiebaOperationCapabilities.HttpOnly(true, true),
+                (session, ct) => new Top(session.HttpCore).RequestAsync(fname, fid, tid, isVip, false, ct)),
             cancellationToken);
     }
 
@@ -351,13 +352,13 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
             throw new ArgumentOutOfRangeException(nameof(toTabId), toTabId, "Target tab id must be positive.");
 
         await dispatcher.EnsureCanExecuteAsync(nameof(MoveAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(MoveAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new Move(session.HttpCore).RequestAsync(fid, tid, toTabId, fromTabId, ct)),
             cancellationToken);
     }
@@ -367,13 +368,13 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(RecommendAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(RecommendAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new Recommend(session.HttpCore).RequestAsync(fid, tid, ct)),
             cancellationToken);
     }
@@ -385,13 +386,13 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
         ValidateRecoverTarget(tid, pid);
 
         await dispatcher.EnsureCanExecuteAsync(nameof(RecoverAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(RecoverAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new RecoverApi(session.HttpCore).RequestAsync(fid, tid, pid, isHide, ct)),
             cancellationToken);
     }
@@ -408,13 +409,13 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
             throw new ArgumentOutOfRangeException(nameof(pid), pid, "Post id must be positive.");
 
         await dispatcher.EnsureCanExecuteAsync(nameof(SetThreadPrivacyAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         var fid = await forums.GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(SetThreadPrivacyAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new SetThreadPrivacy(session.HttpCore).RequestAsync(fid, tid, pid, isPrivate, ct)),
             cancellationToken);
     }
@@ -430,10 +431,8 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
                 "Tieba batch moderation operations support at most 30 ids per request.");
 
         foreach (var id in ids)
-        {
             if (id <= 0)
                 throw new ArgumentOutOfRangeException(parameterName, id, "Target ids must be positive.");
-        }
     }
 
     private static void ValidateRecoverTarget(long tid, long pid)

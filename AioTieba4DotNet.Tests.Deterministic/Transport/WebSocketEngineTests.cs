@@ -153,7 +153,8 @@ public class WebSocketEngineTests
     [TestMethod]
     public void CombineFailures_ReturnsPrimarySecondaryOrAggregate()
     {
-        var method = typeof(TiebaWebSocketEngine).GetMethod("CombineFailures", BindingFlags.NonPublic | BindingFlags.Static)
+        var method =
+            typeof(TiebaWebSocketEngine).GetMethod("CombineFailures", BindingFlags.NonPublic | BindingFlags.Static)
             ?? throw new InvalidOperationException("CombineFailures not found.");
         var primary = new InvalidOperationException("primary");
         var secondary = new WebSocketException("secondary");
@@ -165,7 +166,8 @@ public class WebSocketEngineTests
         Assert.AreSame(secondary, whenPrimaryNull);
         Assert.AreSame(primary, whenSecondaryNull);
         Assert.IsInstanceOfType<AggregateException>(whenBothPresent);
-        CollectionAssert.AreEquivalent(new Exception[] { primary, secondary }, ((AggregateException)whenBothPresent!).InnerExceptions);
+        CollectionAssert.AreEquivalent(new Exception[] { primary, secondary },
+            ((AggregateException)whenBothPresent!).InnerExceptions);
     }
 
     [TestMethod]
@@ -185,8 +187,7 @@ public class WebSocketEngineTests
 
         var completed = router.TryCompletePending(new WSRes
         {
-            ReqId = 3,
-            Payload = new WSRes.Types.Payload { Data = ByteString.CopyFromUtf8("ok") }
+            ReqId = 3, Payload = new WSRes.Types.Payload { Data = ByteString.CopyFromUtf8("ok") }
         });
 
         Assert.IsTrue(completed);
@@ -273,7 +274,7 @@ public class WebSocketEngineTests
     private static byte[] Compress(byte[] payload)
     {
         using var output = new MemoryStream();
-        using (var gzip = new GZipStream(output, CompressionLevel.SmallestSize, leaveOpen: true))
+        using (var gzip = new GZipStream(output, CompressionLevel.SmallestSize, true))
         {
             gzip.Write(payload, 0, payload.Length);
         }
@@ -374,14 +375,25 @@ public class WebSocketEngineTests
             _sent.Writer.TryComplete();
         }
 
-        internal void EnqueueInbound(byte[] frame) => _inbound.Writer.TryWrite(new ReceiveFrame(frame));
+        internal void EnqueueInbound(byte[] frame)
+        {
+            _inbound.Writer.TryWrite(new ReceiveFrame(frame));
+        }
 
-        internal void EnqueueFailure(Exception exception) => _inbound.Writer.TryWrite(new ReceiveFailure(exception));
+        internal void EnqueueFailure(Exception exception)
+        {
+            _inbound.Writer.TryWrite(new ReceiveFailure(exception));
+        }
 
-        internal void EnqueueClose() => _inbound.Writer.TryWrite(new ReceiveClosed());
+        internal void EnqueueClose()
+        {
+            _inbound.Writer.TryWrite(new ReceiveClosed());
+        }
 
-        internal ValueTask<byte[]> ReadSentFrameAsync(CancellationToken cancellationToken = default) =>
-            _sent.Reader.ReadAsync(cancellationToken);
+        internal ValueTask<byte[]> ReadSentFrameAsync(CancellationToken cancellationToken = default)
+        {
+            return _sent.Reader.ReadAsync(cancellationToken);
+        }
 
         private abstract record ReceiveItem;
 

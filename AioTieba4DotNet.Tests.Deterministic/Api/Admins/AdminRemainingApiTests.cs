@@ -113,7 +113,7 @@ public sealed class AdminRemainingApiTests
         var httpCore = new RecordingHttpCore();
         var api = new HandleUnblockAppeals(httpCore);
 
-        var success = await api.RequestAsync(7356044, new long[] { 1001, 1002 }, refuse: true);
+        var success = await api.RequestAsync(7356044, new long[] { 1001, 1002 }, true);
 
         Assert.IsTrue(success);
         Assert.AreEqual("/mo/q/multiAppealhandle", httpCore.LastWebFormUri?.AbsolutePath);
@@ -146,13 +146,11 @@ public sealed class AdminRemainingApiTests
     private sealed class RecordingHttpCore : ITiebaHttpCore
     {
         public string WebFormResponse { get; init; } = """
-                                                     {"no":0,"error":""}
-                                                     """;
+                                                       {"no":0,"error":""}
+                                                       """;
 
-        public Account? Account { get; private set; } = new(new string('b', 192), new string('s', 64))
-        {
-            Tbs = "tbs-123"
-        };
+        public Account? Account { get; private set; } =
+            new(new string('b', 192), new string('s', 64)) { Tbs = "tbs-123" };
 
         public HttpClient HttpClient { get; } = new();
 
@@ -165,16 +163,27 @@ public sealed class AdminRemainingApiTests
         }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -184,7 +193,9 @@ public sealed class AdminRemainingApiTests
             return Task.FromResult(WebFormResponse);
         }
 
-        public string GetWebFormValue(string key) =>
-            LastWebFormData.Last(entry => entry.Key == key).Value;
+        public string GetWebFormValue(string key)
+        {
+            return LastWebFormData.Last(entry => entry.Key == key).Value;
+        }
     }
 }

@@ -44,6 +44,7 @@ public class TransportPublicSurfaceTests
         CollectionAssert.DoesNotContain(exportedTypeNames, "AioTieba4DotNet.Models.Forums.SelfFollowForumV1Item");
 
         var clientSource = RepositorySourceTextAssert.ReadRepositoryFiles("AioTieba4DotNet/Clients/ITiebaClient.cs");
-        RepositorySourceTextAssert.ContainsAll(clientSource, "IAdminModule Admins", "IMessagesModule Messages", "IClientModule Client");
+        RepositorySourceTextAssert.ContainsAll(clientSource, "IAdminModule Admins", "IMessagesModule Messages",
+            "IClientModule Client");
     }
 }

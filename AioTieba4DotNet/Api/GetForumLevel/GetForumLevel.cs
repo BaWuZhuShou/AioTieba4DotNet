@@ -38,10 +38,8 @@ internal sealed class GetForumLevel(ITiebaHttpCore httpCore)
     public async Task<ForumLevelInfo> RequestAsync(ulong fid, CancellationToken cancellationToken = default)
     {
         var data = PackProto(httpCore.Account!, fid);
-        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/forum/getLevelInfo")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var requestUri =
+            new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/forum/getLevelInfo") { Query = $"cmd={Cmd}" }.Uri;
 
         var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(result);

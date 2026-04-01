@@ -18,8 +18,7 @@ internal sealed class GetBawuInfo(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
         {
             Data = new GetBawuInfoReqIdl.Types.DataReq
             {
-                Common = new CommonReq { ClientVersion = Const.MainVersion },
-                Fid = fid
+                Common = new CommonReq { ClientVersion = Const.MainVersion }, Fid = fid
             }
         };
 
@@ -36,10 +35,8 @@ internal sealed class GetBawuInfo(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     public async Task<BawuInfo> RequestHttpAsync(ulong fid, CancellationToken cancellationToken = default)
     {
         var data = PackProto(fid);
-        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/forum/getBawuInfo")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var requestUri =
+            new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/forum/getBawuInfo") { Query = $"cmd={Cmd}" }.Uri;
 
         var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(result);

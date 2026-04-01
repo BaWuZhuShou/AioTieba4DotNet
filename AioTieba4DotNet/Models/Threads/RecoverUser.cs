@@ -48,12 +48,21 @@ public sealed class RecoverUser
             : string.Empty;
 
     /// <inheritdoc/>
-    public override string ToString() => !string.IsNullOrEmpty(UserName) ? UserName : Portrait;
+    public override string ToString()
+    {
+        return !string.IsNullOrEmpty(UserName) ? UserName : Portrait;
+    }
 
     /// <inheritdoc/>
-    public override bool Equals(object? obj) => obj is RecoverUser other &&
-        string.Equals(Portrait, other.Portrait, StringComparison.Ordinal);
+    public override bool Equals(object? obj)
+    {
+        return obj is RecoverUser other &&
+               string.Equals(Portrait, other.Portrait, StringComparison.Ordinal);
+    }
 
     /// <inheritdoc/>
-    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Portrait);
+    public override int GetHashCode()
+    {
+        return StringComparer.Ordinal.GetHashCode(Portrait);
+    }
 }

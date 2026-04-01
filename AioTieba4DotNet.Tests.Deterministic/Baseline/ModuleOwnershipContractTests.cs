@@ -24,32 +24,25 @@ public sealed class ModuleOwnershipContractTests
         CollectionAssert.IsSubsetOf(
             new[]
             {
-                nameof(IMessagesModule.GetAtsAsync),
-                nameof(IMessagesModule.GetRepliesAsync),
-                nameof(IMessagesModule.SendMessageAsync),
-                nameof(IMessagesModule.SendChatroomMessageAsync),
-                nameof(IMessagesModule.SetMessageReadAsync),
-                nameof(IMessagesModule.ParsePushNotifications)
+                nameof(IMessagesModule.GetAtsAsync), nameof(IMessagesModule.GetRepliesAsync),
+                nameof(IMessagesModule.SendMessageAsync), nameof(IMessagesModule.SendChatroomMessageAsync),
+                nameof(IMessagesModule.SetMessageReadAsync), nameof(IMessagesModule.ParsePushNotifications)
             },
             messagesMethodNames.ToArray());
 
         CollectionAssert.IsSubsetOf(
             new[]
             {
-                nameof(IAdminModule.GetBawuInfoAsync),
-                nameof(IAdminModule.DelBawuAsync),
-                nameof(IAdminModule.BlockAsync),
-                nameof(IAdminModule.UnblockAsync)
+                nameof(IAdminModule.GetBawuInfoAsync), nameof(IAdminModule.DelBawuAsync),
+                nameof(IAdminModule.BlockAsync), nameof(IAdminModule.UnblockAsync)
             },
             adminsMethodNames.ToArray());
 
         CollectionAssert.IsSubsetOf(
             new[]
             {
-                nameof(IForumModule.GetForumAsync),
-                nameof(IForumModule.GetFollowForumsAsync),
-                nameof(IForumModule.GetSelfFollowForumsAsync),
-                nameof(IForumModule.FollowAsync),
+                nameof(IForumModule.GetForumAsync), nameof(IForumModule.GetFollowForumsAsync),
+                nameof(IForumModule.GetSelfFollowForumsAsync), nameof(IForumModule.FollowAsync),
                 nameof(IForumModule.UnfollowAsync)
             },
             forumsMethodNames.ToArray());
@@ -57,14 +50,10 @@ public sealed class ModuleOwnershipContractTests
         CollectionAssert.IsSubsetOf(
             new[]
             {
-        nameof(IUserModule.GetUserInfoAppAsync),
-                nameof(IUserModule.GetProfileAsync),
-                nameof(IUserModule.GetHomepageAsync),
-                nameof(IUserModule.GetFollowsAsync),
-                nameof(IUserModule.GetFansAsync),
-        nameof(IUserModule.GetBlacklistAsync),
-        nameof(IUserModule.SetBlacklistAsync),
-                nameof(IUserModule.SetProfileAsync)
+                nameof(IUserModule.GetUserInfoAppAsync), nameof(IUserModule.GetProfileAsync),
+                nameof(IUserModule.GetHomepageAsync), nameof(IUserModule.GetFollowsAsync),
+                nameof(IUserModule.GetFansAsync), nameof(IUserModule.GetBlacklistAsync),
+                nameof(IUserModule.SetBlacklistAsync), nameof(IUserModule.SetProfileAsync)
             },
             usersMethodNames.ToArray());
     }
@@ -81,32 +70,41 @@ public sealed class ModuleOwnershipContractTests
         Assert.DoesNotContain(forumMethodNames, "DelBaWuAsync");
 
         Assert.IsFalse(
-            HasDeclaredMethod(typeof(IUserModule), nameof(IMessagesModule.GetAtsAsync), typeof(int), typeof(CancellationToken)),
+            HasDeclaredMethod(typeof(IUserModule), nameof(IMessagesModule.GetAtsAsync), typeof(int),
+                typeof(CancellationToken)),
             $"{nameof(IUserModule)} must not reintroduce {nameof(IMessagesModule.GetAtsAsync)} on the wrong module.");
         Assert.IsFalse(
-            HasDeclaredMethod(typeof(IUserModule), nameof(IMessagesModule.GetRepliesAsync), typeof(int), typeof(CancellationToken)),
+            HasDeclaredMethod(typeof(IUserModule), nameof(IMessagesModule.GetRepliesAsync), typeof(int),
+                typeof(CancellationToken)),
             $"{nameof(IUserModule)} must not reintroduce {nameof(IMessagesModule.GetRepliesAsync)} on the wrong module.");
         Assert.IsFalse(
-            HasDeclaredMethod(typeof(IUserModule), nameof(IAdminModule.BlockAsync), typeof(ulong), typeof(string), typeof(int), typeof(string), typeof(CancellationToken)),
+            HasDeclaredMethod(typeof(IUserModule), nameof(IAdminModule.BlockAsync), typeof(ulong), typeof(string),
+                typeof(int), typeof(string), typeof(CancellationToken)),
             $"{nameof(IUserModule)} must not expose the fid-based block bridge.");
         Assert.IsFalse(
-            HasDeclaredMethod(typeof(IUserModule), nameof(IAdminModule.BlockAsync), typeof(string), typeof(string), typeof(int), typeof(string), typeof(CancellationToken)),
+            HasDeclaredMethod(typeof(IUserModule), nameof(IAdminModule.BlockAsync), typeof(string), typeof(string),
+                typeof(int), typeof(string), typeof(CancellationToken)),
             $"{nameof(IUserModule)} must not expose the forum-name block bridge.");
         Assert.IsFalse(
-            HasDeclaredMethod(typeof(IForumModule), "DelBaWuAsync", typeof(string), typeof(string), typeof(string), typeof(CancellationToken)),
+            HasDeclaredMethod(typeof(IForumModule), "DelBaWuAsync", typeof(string), typeof(string), typeof(string),
+                typeof(CancellationToken)),
             $"{nameof(IForumModule)} must not expose the old bawu-removal bridge.");
 
         Assert.IsTrue(
-            HasDeclaredMethod(typeof(IMessagesModule), nameof(IMessagesModule.GetAtsAsync), typeof(int), typeof(CancellationToken)),
+            HasDeclaredMethod(typeof(IMessagesModule), nameof(IMessagesModule.GetAtsAsync), typeof(int),
+                typeof(CancellationToken)),
             $"{nameof(IMessagesModule)} must remain the canonical owner for {nameof(IMessagesModule.GetAtsAsync)}.");
         Assert.IsTrue(
-            HasDeclaredMethod(typeof(IMessagesModule), nameof(IMessagesModule.GetRepliesAsync), typeof(int), typeof(CancellationToken)),
+            HasDeclaredMethod(typeof(IMessagesModule), nameof(IMessagesModule.GetRepliesAsync), typeof(int),
+                typeof(CancellationToken)),
             $"{nameof(IMessagesModule)} must remain the canonical owner for {nameof(IMessagesModule.GetRepliesAsync)}.");
         Assert.IsTrue(
-            HasDeclaredMethod(typeof(IAdminModule), nameof(IAdminModule.BlockAsync), typeof(string), typeof(string), typeof(int), typeof(string), typeof(CancellationToken)),
+            HasDeclaredMethod(typeof(IAdminModule), nameof(IAdminModule.BlockAsync), typeof(string), typeof(string),
+                typeof(int), typeof(string), typeof(CancellationToken)),
             $"{nameof(IAdminModule)} must remain the canonical owner for block operations.");
         Assert.IsTrue(
-            HasDeclaredMethod(typeof(IAdminModule), nameof(IAdminModule.DelBawuAsync), typeof(string), typeof(string), typeof(BawuType), typeof(CancellationToken)),
+            HasDeclaredMethod(typeof(IAdminModule), nameof(IAdminModule.DelBawuAsync), typeof(string), typeof(string),
+                typeof(BawuType), typeof(CancellationToken)),
             $"{nameof(IAdminModule)} must remain the canonical owner for bawu-removal operations.");
     }
 
@@ -118,8 +116,7 @@ public sealed class ModuleOwnershipContractTests
         CollectionAssert.AreEquivalent(
             new[]
             {
-                nameof(IClientModule.InitWebSocketAsync),
-                nameof(IClientModule.InitZIdAsync),
+                nameof(IClientModule.InitWebSocketAsync), nameof(IClientModule.InitZIdAsync),
                 nameof(IClientModule.SyncAsync)
             },
             clientMethodNames.ToArray());
@@ -146,27 +143,33 @@ public sealed class ModuleOwnershipContractTests
         Assert.AreEqual(typeof(IUserModule), properties[nameof(ITiebaClient.Users)]);
     }
 
-    private static IReadOnlyList<string> GetDeclaredMethodNames(Type type) =>
-        type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+    private static IReadOnlyList<string> GetDeclaredMethodNames(Type type)
+    {
+        return type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
             .Select(method => method.Name)
             .Distinct(StringComparer.Ordinal)
             .OrderBy(name => name, StringComparer.Ordinal)
             .ToArray();
+    }
 
-    private static IReadOnlyList<string> GetDeclaredMethodSignatures(Type type, params string[] methodNames) =>
-        type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+    private static IReadOnlyList<string> GetDeclaredMethodSignatures(Type type, params string[] methodNames)
+    {
+        return type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
             .Where(method => methodNames.Contains(method.Name, StringComparer.Ordinal))
             .Select(FormatMethodSignature)
             .OrderBy(signature => signature, StringComparer.Ordinal)
             .ToArray();
+    }
 
-    private static bool HasDeclaredMethod(Type type, string methodName, params Type[] parameterTypes) =>
-        type.GetMethod(
+    private static bool HasDeclaredMethod(Type type, string methodName, params Type[] parameterTypes)
+    {
+        return type.GetMethod(
             methodName,
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly,
-            binder: null,
-            types: parameterTypes,
-            modifiers: null) is not null;
+            null,
+            parameterTypes,
+            null) is not null;
+    }
 
     private static string FormatMethodSignature(MethodInfo method)
     {

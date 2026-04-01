@@ -52,7 +52,8 @@ public sealed record TestCleanupExecutionReport(
         lines.AddRange(CompensationResults.Select(static result =>
         {
             var suffix = string.IsNullOrWhiteSpace(result.ErrorMessage) ? string.Empty : $" :: {result.ErrorMessage}";
-            return $"  compensation[{result.Status}]: stage={result.StageName}, description={result.Description}, outcome={result.CompensationOutcome}{suffix}";
+            return
+                $"  compensation[{result.Status}]: stage={result.StageName}, description={result.Description}, outcome={result.CompensationOutcome}{suffix}";
         }));
 
         return lines;
@@ -67,7 +68,9 @@ public sealed class TestCleanupOrchestrator : IAsyncDisposable
     private TestCleanupExecutionReport? _lastExecutionReport;
 
     public void Register(string description, Func<CancellationToken, ValueTask> cleanupAction)
-        => Register(TestCategoryNames.Cleanup, description, description, cleanupAction);
+    {
+        Register(TestCategoryNames.Cleanup, description, description, cleanupAction);
+    }
 
     public void Register(string stageName, string description, string compensationOutcome,
         Func<CancellationToken, ValueTask> cleanupAction)
@@ -81,15 +84,21 @@ public sealed class TestCleanupOrchestrator : IAsyncDisposable
     }
 
     public IReadOnlyList<string> DescribePendingActions()
-        => _cleanupActions
+    {
+        return _cleanupActions
             .Select(static action => $"{action.StageName}: {action.Description} => {action.CompensationOutcome}")
             .ToArray();
+    }
 
     public void RecordCreatedObject(string stageName, string objectType, long objectId, string description)
-        => RecordCreatedObject(stageName, objectType, objectId.ToString(CultureInfo.InvariantCulture), description);
+    {
+        RecordCreatedObject(stageName, objectType, objectId.ToString(CultureInfo.InvariantCulture), description);
+    }
 
     public void RecordCreatedObject(string stageName, string objectType, string objectId, string description)
-        => RecordObject(stageName, objectType, objectId, TestCleanupObjectRelation.Created, description);
+    {
+        RecordObject(stageName, objectType, objectId, TestCleanupObjectRelation.Created, description);
+    }
 
     public void RecordObject(string stageName, string objectType, string objectId, TestCleanupObjectRelation relation,
         string description)
@@ -103,7 +112,9 @@ public sealed class TestCleanupOrchestrator : IAsyncDisposable
     }
 
     public TestCleanupExecutionReport? GetLastExecutionReport()
-        => _lastExecutionReport;
+    {
+        return _lastExecutionReport;
+    }
 
     public async ValueTask ExecuteAsync(CancellationToken cancellationToken = default)
     {
@@ -147,11 +158,9 @@ public sealed class TestCleanupOrchestrator : IAsyncDisposable
             compensationResults.ToArray());
 
         if (failures.Count > 0)
-        {
             throw new AggregateException(
                 "One or more cleanup compensations failed after all registered cleanup work was attempted.",
                 failures);
-        }
     }
 
     public async ValueTask DisposeAsync()

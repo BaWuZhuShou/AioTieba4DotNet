@@ -34,7 +34,8 @@ public sealed class AdminProtocolTests
             "AioTieba4DotNet/Protocols/IAdminProtocol.cs",
             "AioTieba4DotNet/Protocols/AdminProtocol.cs");
 
-        RepositorySourceTextAssert.ContainsAll(adminSource, "AddBawuAsync", "DelBawuAsync", "BlockAsync", "UnblockAsync");
+        RepositorySourceTextAssert.ContainsAll(adminSource, "AddBawuAsync", "DelBawuAsync", "BlockAsync",
+            "UnblockAsync");
         RepositorySourceTextAssert.DoesNotContainAny(adminSource, "AddBaWuAsync", "RemoveBawuAsync", "DelBaWuAsync");
     }
 
@@ -42,10 +43,7 @@ public sealed class AdminProtocolTests
     public async Task GetBawuInfoAsync_WithCachedForumId_UsesWebSocketPreferredPath()
     {
         var httpCore = new RecordingHttpCore();
-        var wsCore = new RecordingWsCore
-        {
-            ResponsePayload = CreateResponseBytes()
-        };
+        var wsCore = new RecordingWsCore { ResponsePayload = CreateResponseBytes() };
         var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache());
         using var cts = new CancellationTokenSource();
 
@@ -64,14 +62,8 @@ public sealed class AdminProtocolTests
     [TestMethod]
     public async Task GetBawuInfoAsync_WhenWebSocketIsUnavailable_FallsBackToHttp()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateResponseBytes()
-        };
-        var wsCore = new RecordingWsCore
-        {
-            ConnectException = new WebSocketException("offline")
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateResponseBytes() };
+        var wsCore = new RecordingWsCore { ConnectException = new WebSocketException("offline") };
         var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache());
         using var cts = new CancellationTokenSource();
 
@@ -103,7 +95,7 @@ public sealed class AdminProtocolTests
     {
         var httpCore = new RecordingHttpCore();
         var wsCore = new RecordingWsCore();
-        var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache(), authenticated: false);
+        var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache(), false);
 
         await Assert.ThrowsAsync<TiebaAuthenticationException>(() =>
             protocol.GetBawuPermAsync(SafeForumName, "tb.1.target"));
@@ -117,7 +109,7 @@ public sealed class AdminProtocolTests
     {
         var httpCore = new RecordingHttpCore();
         var wsCore = new RecordingWsCore();
-        var protocol = CreateProtocol(httpCore, wsCore, new ForumInfoCache(), authenticated: false);
+        var protocol = CreateProtocol(httpCore, wsCore, new ForumInfoCache(), false);
 
         await Assert.ThrowsAsync<TiebaAuthenticationException>(() =>
             protocol.AddBawuAsync(SafeForumName, "target-user", BawuType.Manager));
@@ -166,7 +158,7 @@ public sealed class AdminProtocolTests
     {
         var httpCore = new RecordingHttpCore();
         var wsCore = new RecordingWsCore();
-        var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache(), authenticated: false);
+        var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache(), false);
 
         await Assert.ThrowsAsync<TiebaAuthenticationException>(() =>
             protocol.AddBawuBlacklistAsync(SafeForumName, 42));
@@ -273,25 +265,29 @@ public sealed class AdminProtocolTests
         var start = new DateTimeOffset(2026, 3, 1, 0, 0, 0, TimeSpan.Zero);
         var end = new DateTimeOffset(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
 
-        var postLogs = await postLogProtocol.GetBawuPostLogsAsync(SafeForumName, new BawuPostLogQueryOptions
-        {
-            PageNumber = 3,
-            SearchValue = "target-user",
-            SearchType = BawuSearchType.Operator,
-            StartTime = start,
-            EndTime = end,
-            OperationType = 7
-        });
-        var postLogParameters = postLogHttpCore.LastWebGetParameters.ToDictionary(entry => entry.Key, entry => entry.Value);
-        var userLogs = await userLogProtocol.GetBawuUserLogsAsync(SafeForumName, new BawuUserLogQueryOptions
-        {
-            PageNumber = 4,
-            SearchValue = "target-user",
-            SearchType = BawuSearchType.User,
-            StartTime = start,
-            OperationType = 8
-        });
-        var userLogParameters = userLogHttpCore.LastWebGetParameters.ToDictionary(entry => entry.Key, entry => entry.Value);
+        var postLogs = await postLogProtocol.GetBawuPostLogsAsync(SafeForumName,
+            new BawuPostLogQueryOptions
+            {
+                PageNumber = 3,
+                SearchValue = "target-user",
+                SearchType = BawuSearchType.Operator,
+                StartTime = start,
+                EndTime = end,
+                OperationType = 7
+            });
+        var postLogParameters =
+            postLogHttpCore.LastWebGetParameters.ToDictionary(entry => entry.Key, entry => entry.Value);
+        var userLogs = await userLogProtocol.GetBawuUserLogsAsync(SafeForumName,
+            new BawuUserLogQueryOptions
+            {
+                PageNumber = 4,
+                SearchValue = "target-user",
+                SearchType = BawuSearchType.User,
+                StartTime = start,
+                OperationType = 8
+            });
+        var userLogParameters =
+            userLogHttpCore.LastWebGetParameters.ToDictionary(entry => entry.Key, entry => entry.Value);
 
         Assert.AreEqual(1, postLogHttpCore.SendWebGetCalls);
         Assert.AreEqual(1, userLogHttpCore.SendWebGetCalls);
@@ -329,7 +325,8 @@ public sealed class AdminProtocolTests
             EndTime = new DateTimeOffset(2026, 3, 1, 0, 0, 0, TimeSpan.Zero)
         };
 
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetBawuPostLogsAsync(SafeForumName, options));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.GetBawuPostLogsAsync(SafeForumName, options));
 
         Assert.AreEqual(0, httpCore.SendWebGetCalls);
         Assert.AreEqual(0, httpCore.SendWebFormCalls);
@@ -342,7 +339,8 @@ public sealed class AdminProtocolTests
         var wsCore = new RecordingWsCore();
         var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache());
 
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetUnblockAppealsAsync(SafeForumName, 1, 0));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.GetUnblockAppealsAsync(SafeForumName, 1, 0));
 
         Assert.AreEqual(0, httpCore.SendWebGetCalls);
         Assert.AreEqual(0, httpCore.SendWebFormCalls);
@@ -381,7 +379,7 @@ public sealed class AdminProtocolTests
         var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache());
 
         await Assert.ThrowsAsync<ArgumentException>(() =>
-            protocol.HandleUnblockAppealsAsync(SafeForumName, Array.Empty<long>(), refuse: false));
+            protocol.HandleUnblockAppealsAsync(SafeForumName, Array.Empty<long>(), false));
 
         Assert.AreEqual(0, httpCore.SendWebFormCalls);
     }
@@ -393,7 +391,7 @@ public sealed class AdminProtocolTests
         var wsCore = new RecordingWsCore();
         var protocol = CreateProtocol(httpCore, wsCore, CreateSeededCache(), tbs: "tbs-handle");
 
-        var success = await protocol.HandleUnblockAppealsAsync(SafeForumName, new long[] { 1001, 1002 }, refuse: true);
+        var success = await protocol.HandleUnblockAppealsAsync(SafeForumName, new long[] { 1001, 1002 }, true);
 
         Assert.IsTrue(success);
         Assert.AreEqual(1, httpCore.SendWebFormCalls);
@@ -513,15 +511,19 @@ public sealed class AdminProtocolTests
 
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.BlockAsync(0, "tb.1.target", 1, "reason"));
         await Assert.ThrowsAsync<ArgumentException>(() => protocol.BlockAsync(SafeForumId, " ", 1, "reason"));
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.BlockAsync(SafeForumId, "tb.1.target", 0, "reason"));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.BlockAsync(SafeForumId, "tb.1.target", 0, "reason"));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetBawuBlacklistAsync(SafeForumName, 0));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetBawuPostLogsAsync(SafeForumName,
             new BawuPostLogQueryOptions { OperationType = -1 }));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetBawuUserLogsAsync(SafeForumName,
             new BawuUserLogQueryOptions { OperationType = -1 }));
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.HandleUnblockAppealsAsync(SafeForumName, new long[] { 0 }, false));
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.AddBawuAsync(SafeForumName, "target-user", (BawuType)999));
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.DelBawuAsync(SafeForumName, "tb.1.target", (BawuType)999));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.HandleUnblockAppealsAsync(SafeForumName, new long[] { 0 }, false));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.AddBawuAsync(SafeForumName, "target-user", (BawuType)999));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.DelBawuAsync(SafeForumName, "tb.1.target", (BawuType)999));
 
         Assert.AreEqual(0, httpCore.SendWebFormCalls);
         Assert.AreEqual(0, httpCore.SendWebGetCalls);
@@ -551,14 +553,13 @@ public sealed class AdminProtocolTests
     [TestMethod]
     public async Task AdminProtocol_ConstructorRejectsNullCache()
     {
-        var session = new TiebaClientSession(new TiebaOptions
-        {
-            TransportMode = TiebaTransportMode.Auto,
-            Bduss = ValidBduss,
-            Stoken = ValidStoken
-        }, new RecordingHttpCore(), new RecordingWsCore());
+        var session =
+            new TiebaClientSession(
+                new TiebaOptions { TransportMode = TiebaTransportMode.Auto, Bduss = ValidBduss, Stoken = ValidStoken },
+                new RecordingHttpCore(), new RecordingWsCore());
 
-        Assert.ThrowsExactly<ArgumentNullException>(() => new AdminProtocol(new TiebaOperationDispatcher(session), null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
+            new AdminProtocol(new TiebaOperationDispatcher(session), null!));
         await session.WsCore.CloseAsync();
     }
 
@@ -600,58 +601,64 @@ public sealed class AdminProtocolTests
         return cache;
     }
 
-    private static byte[] CreateResponseBytes() => new GetBawuInfoResIdl
+    private static byte[] CreateResponseBytes()
     {
-        Error = new Error { Errorno = 0, Errmsg = string.Empty },
-        Data = new GetBawuInfoResIdl.Types.DataRes
+        return new GetBawuInfoResIdl
         {
-            BawuTeamInfo = new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
+            Data = new GetBawuInfoResIdl.Types.DataRes
             {
-                TotalNum = 2,
-                BawuTeamList =
+                BawuTeamInfo = new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam
                 {
-                    new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes
+                    TotalNum = 2,
+                    BawuTeamList =
                     {
-                        RoleName = "吧主",
-                        RoleInfo =
+                        new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes
                         {
-                            new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes.Types.BawuRoleInfoPub
+                            RoleName = "吧主",
+                            RoleInfo =
                             {
-                                UserId = 1,
-                                Portrait = "tb.1.admin",
-                                UserName = "admin-user",
-                                NameShow = "Admin",
-                                UserLevel = 18
+                                new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.
+                                    BawuRoleDes.Types.
+                                    BawuRoleInfoPub
+                                    {
+                                        UserId = 1,
+                                        Portrait = "tb.1.admin",
+                                        UserName = "admin-user",
+                                        NameShow = "Admin",
+                                        UserLevel = 18
+                                    }
                             }
-                        }
-                    },
-                    new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes
-                    {
-                        RoleName = "小吧主",
-                        RoleInfo =
+                        },
+                        new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes
                         {
-                            new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes.Types.BawuRoleInfoPub
+                            RoleName = "小吧主",
+                            RoleInfo =
                             {
-                                UserId = 2,
-                                Portrait = "tb.1.manager",
-                                UserName = "manager-user",
-                                NameShow = "Manager",
-                                UserLevel = 12
+                                new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.
+                                    BawuRoleDes.Types.BawuRoleInfoPub
+                                    {
+                                        UserId = 2,
+                                        Portrait = "tb.1.manager",
+                                        UserName = "manager-user",
+                                        NameShow = "Manager",
+                                        UserLevel = 12
+                                    }
                             }
                         }
                     }
                 }
             }
-        }
-    }.ToByteArray();
+        }.ToByteArray();
+    }
 
     private sealed class RecordingHttpCore : ITiebaHttpCore
     {
         public byte[] AppProtoResponse { get; init; } = CreateResponseBytes();
 
         public string AppFormResponse { get; init; } = """
-                                                     {"error_code":0,"error_msg":""}
-                                                     """;
+                                                       {"error_code":0,"error_msg":""}
+                                                       """;
 
         public Account? Account { get; private set; } = new();
 
@@ -686,12 +693,12 @@ public sealed class AdminProtocolTests
         public CancellationToken LastWebFormCancellationToken { get; private set; }
 
         public string WebGetResponse { get; init; } = """
-                                                    {"no":0,"error":""}
-                                                    """;
+                                                      {"no":0,"error":""}
+                                                      """;
 
         public string WebFormResponse { get; init; } = """
-                                                     {"no":0,"error":""}
-                                                     """;
+                                                       {"no":0,"error":""}
+                                                       """;
 
         public void SetAccount(Account newAccount)
         {
@@ -699,7 +706,10 @@ public sealed class AdminProtocolTests
         }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -738,14 +748,20 @@ public sealed class AdminProtocolTests
             return Task.FromResult(WebFormResponse);
         }
 
-        public string GetWebGetValue(string key) =>
-            LastWebGetParameters.Single(entry => entry.Key == key).Value;
+        public string GetWebGetValue(string key)
+        {
+            return LastWebGetParameters.Single(entry => entry.Key == key).Value;
+        }
 
-        public string GetAppFormValue(string key) =>
-            LastAppFormData.Single(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData.Single(entry => entry.Key == key).Value;
+        }
 
-        public string GetWebFormValue(string key) =>
-            LastWebFormData.Single(entry => entry.Key == key).Value;
+        public string GetWebFormValue(string key)
+        {
+            return LastWebFormData.Single(entry => entry.Key == key).Value;
+        }
     }
 
     private sealed class RecordingWsCore : ITiebaWsCore
@@ -777,8 +793,10 @@ public sealed class AdminProtocolTests
             return Task.CompletedTask;
         }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) =>
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
             CancellationToken cancellationToken = default)
@@ -801,6 +819,9 @@ public sealed class AdminProtocolTests
             yield break;
         }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

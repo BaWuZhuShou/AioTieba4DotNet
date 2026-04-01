@@ -14,7 +14,8 @@ public sealed class TiebaTestEnvironment
         Bduss = configuration["BDUSS"] ?? configuration["TieBa:BDUSS"] ?? string.Empty;
         Stoken = configuration["STOKEN"] ?? configuration["TieBa:STOKEN"] ?? string.Empty;
         ConfiguredSafeForumQuery = configuration["SAFEFORUMQUERY"] ?? configuration["TieBa:SafeForumQuery"] ?? "lol欧服吧";
-        ConfiguredCanonicalSafeForumName = configuration["SAFEFORUMNAME"] ?? configuration["TieBa:SafeForumName"] ?? "lol欧服";
+        ConfiguredCanonicalSafeForumName =
+            configuration["SAFEFORUMNAME"] ?? configuration["TieBa:SafeForumName"] ?? "lol欧服";
         OwnedThreadId = ReadOptionalLong(configuration, "OWNEDTHREADID", "TieBa:OwnedThreadId");
         OwnedReplyId = ReadOptionalLong(configuration, "OWNEDREPLYID", "TieBa:OwnedReplyId");
         SafeTargetPortrait = ReadOptionalString(configuration, "SAFETARGETPORTRAIT", "TieBa:SafeTargetPortrait");
@@ -77,13 +78,15 @@ public sealed class TiebaTestEnvironment
         return long.TryParse(raw, out var value) && value > 0 ? value : null;
     }
 
-    private static string? ReadOptionalString(IConfiguration configuration, string environmentKey, string configurationKey)
+    private static string? ReadOptionalString(IConfiguration configuration, string environmentKey,
+        string configurationKey)
     {
         var raw = configuration[environmentKey] ?? configuration[configurationKey];
         return string.IsNullOrWhiteSpace(raw) ? null : raw;
     }
 
-    private static bool ReadOptionalBoolean(IConfiguration configuration, string environmentKey, string configurationKey)
+    private static bool ReadOptionalBoolean(IConfiguration configuration, string environmentKey,
+        string configurationKey)
     {
         var raw = configuration[environmentKey] ?? configuration[configurationKey];
         return bool.TryParse(raw, out var value) && value;

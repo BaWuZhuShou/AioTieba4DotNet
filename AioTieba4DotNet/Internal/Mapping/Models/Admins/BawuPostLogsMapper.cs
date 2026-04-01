@@ -17,14 +17,15 @@ internal static partial class BawuPostLogsMapper
             .ToList();
 
         var (currentPage, totalPage, totalCount, hasMore, hasPrevious) = AdminHtmlParsing.ParseCommonPage(html);
-        return new BawuPostLogs(logs, new BawuPostLogPage
-        {
-            CurrentPage = currentPage,
-            TotalPage = totalPage,
-            TotalCount = totalCount,
-            HasMore = hasMore,
-            HasPrevious = hasPrevious
-        });
+        return new BawuPostLogs(logs,
+            new BawuPostLogPage
+            {
+                CurrentPage = currentPage,
+                TotalPage = totalPage,
+                TotalCount = totalCount,
+                HasMore = hasMore,
+                HasPrevious = hasPrevious
+            });
     }
 
     private static BawuPostLog? MapRow(string rowHtml)
@@ -78,7 +79,9 @@ internal static partial class BawuPostLogsMapper
             Pid = pid,
             OperationType = AdminHtmlParsing.NormalizeText(cells[1]),
             PostPortrait = AdminHtmlParsing.ExtractPortraitFromHomeHref(postMetaMatch.Groups["portraitHref"].Value),
-            PostTime = AdminHtmlParsing.ParseYearlessDateTime(AdminHtmlParsing.NormalizeText(postMetaMatch.Groups["postTime"].Value)),
+            PostTime =
+                AdminHtmlParsing.ParseYearlessDateTime(
+                    AdminHtmlParsing.NormalizeText(postMetaMatch.Groups["postTime"].Value)),
             OperatorUserName = AdminHtmlParsing.NormalizeText(cells[2]),
             OperationTime = AdminHtmlParsing.ParseFullDateTime(AdminHtmlParsing.NormalizeText(cells[3]))
         };
@@ -108,12 +111,18 @@ internal static partial class BawuPostLogsMapper
         return long.TryParse(pidPart, out var pid) ? pid : 0;
     }
 
-    [GeneratedRegex("<div[^>]*class=(['\"])[^'\"]*post_meta[^'\"]*\\1[^>]*>.*?<a[^>]*href=(['\"])(?<portraitHref>.*?)\\2[^>]*>.*?</a>.*?<time[^>]*>(?<postTime>.*?)</time>.*?</div>", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    [GeneratedRegex(
+        "<div[^>]*class=(['\"])[^'\"]*post_meta[^'\"]*\\1[^>]*>.*?<a[^>]*href=(['\"])(?<portraitHref>.*?)\\2[^>]*>.*?</a>.*?<time[^>]*>(?<postTime>.*?)</time>.*?</div>",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex PostMetaRegex();
 
-    [GeneratedRegex("<h1[^>]*>\\s*<a[^>]*href=(['\"])(?<href>.*?)\\1(?:[^>]*title=(['\"])(?<titleAttr>.*?)\\3)?[^>]*>(?<titleInner>.*?)</a>\\s*</h1>\\s*<div[^>]*>(?<text>.*?)</div>(?<media>.*)$", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    [GeneratedRegex(
+        "<h1[^>]*>\\s*<a[^>]*href=(['\"])(?<href>.*?)\\1(?:[^>]*title=(['\"])(?<titleAttr>.*?)\\3)?[^>]*>(?<titleInner>.*?)</a>\\s*</h1>\\s*<div[^>]*>(?<text>.*?)</div>(?<media>.*)$",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex ContentBlockRegex();
 
-    [GeneratedRegex("<a[^>]*href=(?:['\"])(?<href>.*?)(?:['\"])[^>]*>.*?<img[^>]*original=(?:['\"])(?<src>.*?)(?:['\"])", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    [GeneratedRegex(
+        "<a[^>]*href=(?:['\"])(?<href>.*?)(?:['\"])[^>]*>.*?<img[^>]*original=(?:['\"])(?<src>.*?)(?:['\"])",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex MediaRegex();
 }

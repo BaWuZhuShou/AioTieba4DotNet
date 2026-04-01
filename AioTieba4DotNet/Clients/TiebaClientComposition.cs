@@ -22,10 +22,13 @@ internal sealed class TiebaClientComposition
     internal static TiebaClientComposition CreateForDependencyInjection(IHttpClientFactory httpClientFactory)
     {
         ArgumentNullException.ThrowIfNull(httpClientFactory);
-        return new(() => httpClientFactory.CreateClient(DependencyInjection.HttpClientName));
+        return new TiebaClientComposition(() => httpClientFactory.CreateClient(DependencyInjection.HttpClientName));
     }
 
-    internal TiebaClient CreateClient(TiebaOptions options) => new(CreateRuntime(options));
+    internal TiebaClient CreateClient(TiebaOptions options)
+    {
+        return new TiebaClient(CreateRuntime(options));
+    }
 
     internal TiebaClientRuntime CreateRuntime(TiebaOptions options)
     {

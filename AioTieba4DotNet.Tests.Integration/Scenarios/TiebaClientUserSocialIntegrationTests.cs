@@ -40,7 +40,7 @@ public sealed class TiebaClientUserSocialIntegrationTests : TestBase
     {
         try
         {
-        var userInfo = await Client.Users.GetUserInfoAppAsync(1);
+            var userInfo = await Client.Users.GetUserInfoAppAsync(1);
 
             Assert.IsNotNull(userInfo);
             Assert.IsGreaterThan(0L, userInfo.UserId);
@@ -56,7 +56,7 @@ public sealed class TiebaClientUserSocialIntegrationTests : TestBase
     {
         try
         {
-        var userInfo = await Client.Users.GetUserInfoWebAsync(1);
+            var userInfo = await Client.Users.GetUserInfoWebAsync(1);
 
             Assert.IsNotNull(userInfo);
             Assert.IsGreaterThan(0L, userInfo.UserId);
@@ -123,15 +123,18 @@ public sealed class TiebaClientUserSocialIntegrationTests : TestBase
         }
         catch (TiebaException exception)
         {
-            Assert.Inconclusive($"Skipping tieba-uid self lookup integration path in this environment: {exception.Message}");
+            Assert.Inconclusive(
+                $"Skipping tieba-uid self lookup integration path in this environment: {exception.Message}");
         }
     }
 
     [TestMethod]
     public async Task GetUserForumInfoAsync_SafeFixtures_ReturnsForumScopedProfile()
     {
-        var forum = await RequireSafeForumFixtureAsync(nameof(GetUserForumInfoAsync_SafeFixtures_ReturnsForumScopedProfile));
-        var portrait = RequireSafeTargetPortraitFixture(nameof(GetUserForumInfoAsync_SafeFixtures_ReturnsForumScopedProfile));
+        var forum = await RequireSafeForumFixtureAsync(
+            nameof(GetUserForumInfoAsync_SafeFixtures_ReturnsForumScopedProfile));
+        var portrait =
+            RequireSafeTargetPortraitFixture(nameof(GetUserForumInfoAsync_SafeFixtures_ReturnsForumScopedProfile));
 
         var info = await Client.Users.GetUserForumInfoAsync(forum.ResolvedName, portrait);
 

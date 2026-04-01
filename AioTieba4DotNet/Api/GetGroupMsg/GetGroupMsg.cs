@@ -18,7 +18,8 @@ internal sealed class GetGroupMsg(ITiebaWsCore wsCore)
         int getType, CancellationToken cancellationToken = default)
     {
         var account = wsCore.Account
-            ?? throw new InvalidOperationException("An authenticated account is required to read websocket groups.");
+                      ?? throw new InvalidOperationException(
+                          "An authenticated account is required to read websocket groups.");
 
         var data = PackProto(account, groupIds, lastMessageIds, getType);
         var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
@@ -31,20 +32,14 @@ internal sealed class GetGroupMsg(ITiebaWsCore wsCore)
         var request = new GetGroupMsgReqIdl
         {
             Cuid = $"{account.Cuid}|com.baidu.tieba_mini{Const.PostVersion}",
-            Data = new GetGroupMsgReqIdl.Types.DataReq
-            {
-                Gettype = getType.ToString()
-            }
+            Data = new GetGroupMsgReqIdl.Types.DataReq { Gettype = getType.ToString() }
         };
 
         for (var index = 0; index < groupIds.Count; index++)
-        {
             request.Data.GroupMids.Add(new GetGroupMsgReqIdl.Types.DataReq.Types.GroupLastId
             {
-                GroupId = groupIds[index],
-                LastMsgId = index < lastMessageIds.Count ? lastMessageIds[index] : 0
+                GroupId = groupIds[index], LastMsgId = index < lastMessageIds.Count ? lastMessageIds[index] : 0
             });
-        }
 
         return request.ToByteArray();
     }

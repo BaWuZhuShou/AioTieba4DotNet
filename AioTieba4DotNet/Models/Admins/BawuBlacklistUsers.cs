@@ -25,13 +25,20 @@ public sealed class BawuBlacklistUser
     /// <summary>
     ///     日志名称
     /// </summary>
-    public string LogName => !string.IsNullOrEmpty(UserName) ? UserName : !string.IsNullOrEmpty(Portrait) ? Portrait : UserId.ToString();
+    public string LogName => !string.IsNullOrEmpty(UserName) ? UserName :
+        !string.IsNullOrEmpty(Portrait) ? Portrait : UserId.ToString();
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is BawuBlacklistUser other && UserId == other.UserId;
+    public override bool Equals(object? obj)
+    {
+        return obj is BawuBlacklistUser other && UserId == other.UserId;
+    }
 
     /// <inheritdoc />
-    public override int GetHashCode() => UserId.GetHashCode();
+    public override int GetHashCode()
+    {
+        return UserId.GetHashCode();
+    }
 }
 
 /// <summary>

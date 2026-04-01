@@ -60,7 +60,14 @@ public sealed class ModelCoverageTests
     [TestMethod]
     public void UserInfo_UsesPreferredNamesAndComparerBranches()
     {
-        var preferred = new UserInfo { UserId = 1, UserName = "user", NickNameOld = "old", NickNameNew = "new", Portrait = "tb.1.safe" };
+        var preferred = new UserInfo
+        {
+            UserId = 1,
+            UserName = "user",
+            NickNameOld = "old",
+            NickNameNew = "new",
+            Portrait = "tb.1.safe"
+        };
         var fallbackOld = new UserInfo { UserId = 1, UserName = "user", NickNameOld = "old" };
         var fallbackUser = new UserInfo { UserId = 2, UserName = "user-2" };
         var fallbackPortrait = new UserInfo { UserId = 3, NickNameNew = "nick", Portrait = "tb.1.other" };
@@ -101,9 +108,7 @@ public sealed class ModelCoverageTests
         };
         var fragLinkInternal = new FragLink
         {
-            Text = "/p/1",
-            Title = "Thread",
-            RawUrl = new Uri("https://tieba.baidu.com/p/1")
+            Text = "/p/1", Title = "Thread", RawUrl = new Uri("https://tieba.baidu.com/p/1")
         };
         var fragTiebaPlus = new FragTiebaPlus { Text = "promo", Url = new Uri("https://example.com/promo") };
         var fragImage = new FragImage
@@ -117,7 +122,15 @@ public sealed class ModelCoverageTests
             Hash = "0123456789abcdef0123456789abcdef"
         };
         var fragVoice = new FragVoice { Md5 = "voice-md5", Duration = 3 };
-        var fragVideo = new FragVideo { Src = "https://example.com/video.mp4", CoverSrc = "https://example.com/cover.jpg", Width = 1280, Height = 720, Duration = 30, ViewNum = 9 };
+        var fragVideo = new FragVideo
+        {
+            Src = "https://example.com/video.mp4",
+            CoverSrc = "https://example.com/cover.jpg",
+            Width = 1280,
+            Height = 720,
+            Duration = 30,
+            ViewNum = 9
+        };
         var content = new Content
         {
             Texts = [fragText],
@@ -189,12 +202,7 @@ public sealed class ModelCoverageTests
             Text = "mystery",
             User = new UserInfo { UserId = 43, UserName = "other" }
         };
-        var knownGroup = new WsMsgGroup
-        {
-            GroupId = 5,
-            GroupType = (int)GroupType.Chatroom,
-            Messages = [knownMessage]
-        };
+        var knownGroup = new WsMsgGroup { GroupId = 5, GroupType = (int)GroupType.Chatroom, Messages = [knownMessage] };
         var unknownGroup = new WsMsgGroup { GroupId = 6, GroupType = 999 };
         var unknownDict = fragUnknown.ToDict();
 
@@ -216,24 +224,42 @@ public sealed class ModelCoverageTests
     [TestMethod]
     public void ModelContainersAndEqualityMembers_ExposeExpectedBehavior()
     {
-        var lastReplyerUser = new LastReplyerUser { UserId = 10, UserName = "user", NickNameOld = "nick", Portrait = "tb.1.safe" };
+        var lastReplyerUser =
+            new LastReplyerUser { UserId = 10, UserName = "user", NickNameOld = "nick", Portrait = "tb.1.safe" };
         var lastReplyer = new LastReplyer { UserId = 11, UserName = "reply-user", NickNameOld = "reply-nick" };
-        var lastReplyerThread = new LastReplyerThread { Title = "thread", Pid = 99, User = lastReplyerUser, LastReplyer = lastReplyer };
+        var lastReplyerThread = new LastReplyerThread
+        {
+            Title = "thread", Pid = 99, User = lastReplyerUser, LastReplyer = lastReplyer
+        };
         var lastReplyers = new LastReplyers([lastReplyerThread], new LastReplyersPage { HasMore = true }, new Forum());
         var appeal = new Appeal { UserName = "appeal-user", NickName = "Appeal Nick" };
         var appealFallback = new Appeal { UserName = "appeal-fallback" };
-        var appeals = new Appeals([appeal], hasMore: true);
-        var recoverUser = new RecoverUser { UserName = "recover-user", NickNameNew = "recover-nick", Portrait = "tb.1.recover" };
+        var appeals = new Appeals([appeal], true);
+        var recoverUser = new RecoverUser
+        {
+            UserName = "recover-user", NickNameNew = "recover-nick", Portrait = "tb.1.recover"
+        };
         var recoverPortraitOnly = new RecoverUser { Portrait = "tb.1.recover-only" };
         var block = new Block { UserId = 20, UserName = "blocked", NickNameOld = "blocked-nick", Day = 3 };
         var blocks = new Blocks([block], new BlocksPage { HasMore = true });
-        var bawuUser = new BawuUser { UserId = 30, UserName = "bawu", NickNameNew = "bawu-nick", Portrait = "tb.1.bawu" };
-        var bawuPortraitFallback = new BawuUser { UserId = 31, NickNameNew = "portrait-only", Portrait = "tb.1.portrait-only" };
+        var bawuUser = new BawuUser
+        {
+            UserId = 30, UserName = "bawu", NickNameNew = "bawu-nick", Portrait = "tb.1.bawu"
+        };
+        var bawuPortraitFallback =
+            new BawuUser { UserId = 31, NickNameNew = "portrait-only", Portrait = "tb.1.portrait-only" };
         var bawuIdFallback = new BawuUser { UserId = 32 };
         var squareForum = new SquareForum { Fid = 40, Fname = "square" };
         var squareForums = new SquareForums([squareForum], new SquareForumsPage { HasMore = false });
         var tabMap = new TabMap([new KeyValuePair<string, int>("全部", 1)]);
-        var thread = new Thread { Content = new Content { Frags = [new FragText { Text = "body" }] }, VirtualImage = new VirtualImagePf(), Title = "Title", Type = 71, User = new UserInfoT() };
+        var thread = new Thread
+        {
+            Content = new Content { Frags = [new FragText { Text = "body" }] },
+            VirtualImage = new VirtualImagePf(),
+            Title = "Title",
+            Type = 71,
+            User = new UserInfoT()
+        };
         var wsGroups = new WsMsgGroups([new WsMsgGroup { GroupId = 1 }]);
 
         Assert.AreEqual("nick", lastReplyerUser.NickName);
@@ -247,7 +273,8 @@ public sealed class ModelCoverageTests
         Assert.AreEqual("reply-fallback", new LastReplyer { UserName = "reply-fallback" }.ShowName);
         Assert.IsFalse(lastReplyer.Equals("not-a-replyer"));
         Assert.AreEqual("fallback-user", new LastReplyerUser { UserName = "fallback-user" }.ShowName);
-        Assert.AreEqual("nick/tb.1.fallback", new LastReplyerUser { NickNameOld = "nick", Portrait = "tb.1.fallback" }.LogName);
+        Assert.AreEqual("nick/tb.1.fallback",
+            new LastReplyerUser { NickNameOld = "nick", Portrait = "tb.1.fallback" }.LogName);
         Assert.AreEqual("21", new LastReplyer { UserId = 21 }.LogName);
         Assert.AreEqual("thread", lastReplyerThread.Text);
         Assert.AreEqual(10L, lastReplyerThread.AuthorId);
@@ -309,15 +336,30 @@ public sealed class ModelCoverageTests
         var emptyImageBytes = new ForumImageBytes();
         var forumImage = new ForumImage { Data = [1], Width = 10, Height = 20, Format = ForumImageFormat.Png };
         var emptyForumImage = new ForumImage();
-        var userPost = new UserPost { Contents = new Content { Frags = [new FragText { Text = "reply" }] }, Pid = 12, Fid = 34, Tid = 56 };
+        var userPost = new UserPost
+        {
+            Contents = new Content { Frags = [new FragText { Text = "reply" }] }, Pid = 12, Fid = 34, Tid = 56
+        };
         var userPosts = new UserPosts([userPost], 34, 56);
         var userPostsFromEnumerable = new UserPosts((IEnumerable<UserPost>?)new[] { userPost }, 34, 56);
         var userPostGroups = new UserPostGroups([userPosts]);
         var userPostGroupsFromEnumerable = new UserPostGroups((IEnumerable<UserPosts>?)new[] { userPosts });
-        var userThread = new UserThread { Contents = new Content { Frags = [new FragText { Text = "thread body" }] }, Title = "thread title", Type = 70 };
+        var userThread = new UserThread
+        {
+            Contents = new Content { Frags = [new FragText { Text = "thread body" }] },
+            Title = "thread title",
+            Type = 70
+        };
         var userThreads = new UserThreads([userThread]);
         var userThreadsFromEnumerable = new UserThreads((IEnumerable<UserThread>?)new[] { userThread });
-        var threadsEntry = new Thread { Content = new Content { Frags = [new FragText { Text = "body" }] }, VirtualImage = new VirtualImagePf(), Title = "Title", Type = 70, User = new UserInfoT() };
+        var threadsEntry = new Thread
+        {
+            Content = new Content { Frags = [new FragText { Text = "body" }] },
+            VirtualImage = new VirtualImagePf(),
+            Title = "Title",
+            Type = 70,
+            User = new UserInfoT()
+        };
         var threads = new Threads
         {
             Page = new PageT { HasMore = true },

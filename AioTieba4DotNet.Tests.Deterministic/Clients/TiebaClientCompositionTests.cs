@@ -68,8 +68,8 @@ public sealed class TiebaClientCompositionTests
         var factoryException = Throws<TiebaConfigurationException>(() => _ = factory.CreateClient(invalidOptions));
 
         using var scope = provider.CreateScope();
-        var diException = Throws<TiebaConfigurationException>(
-            () => _ = scope.ServiceProvider.GetRequiredService<ITiebaClient>());
+        var diException =
+            Throws<TiebaConfigurationException>(() => _ = scope.ServiceProvider.GetRequiredService<ITiebaClient>());
 
         Assert.AreEqual("Stoken cannot be supplied without Bduss.", directException.Message);
         Assert.AreEqual(directException.Message, factoryException.Message);
@@ -146,7 +146,8 @@ public sealed class TiebaClientCompositionTests
     [TestMethod]
     public void TiebaClient_AccountOverload_RejectsNullAccount()
     {
-        Assert.ThrowsExactly<ArgumentNullException>(() => _ = new TiebaClient((AioTieba4DotNet.Contracts.Account)null!));
+        Assert.ThrowsExactly<ArgumentNullException>(() =>
+            _ = new TiebaClient((AioTieba4DotNet.Contracts.Account)null!));
     }
 
     [TestMethod]
@@ -201,10 +202,10 @@ public sealed class TiebaClientCompositionTests
         Assert.IsNotNull(client.Client);
     }
 
-    private static TiebaOptions CreateGuestOptions() => new()
+    private static TiebaOptions CreateGuestOptions()
     {
-        TransportMode = TiebaTransportMode.Http
-    };
+        return new TiebaOptions { TransportMode = TiebaTransportMode.Http };
+    }
 
     private static void AssertEquivalentModules(ITiebaClient expected, ITiebaClient actual)
     {
@@ -216,7 +217,7 @@ public sealed class TiebaClientCompositionTests
         Assert.AreEqual(expected.Client.GetType(), actual.Client.GetType());
     }
 
-    private static TException Throws<TException>(System.Action action)
+    private static TException Throws<TException>(Action action)
         where TException : Exception
     {
         try
@@ -229,7 +230,7 @@ public sealed class TiebaClientCompositionTests
         }
 
         Assert.Fail($"Expected {typeof(TException).Name} was not thrown.");
-        throw new System.InvalidOperationException();
+        throw new InvalidOperationException();
     }
 
     private static async Task<TException> ThrowsAsync<TException>(Func<Task> action)
@@ -245,7 +246,7 @@ public sealed class TiebaClientCompositionTests
         }
 
         Assert.Fail($"Expected {typeof(TException).Name} was not thrown.");
-        throw new System.InvalidOperationException();
+        throw new InvalidOperationException();
     }
 
     private static void InvokeRawLogger(ILogger logger, LogLevel logLevel, string state)

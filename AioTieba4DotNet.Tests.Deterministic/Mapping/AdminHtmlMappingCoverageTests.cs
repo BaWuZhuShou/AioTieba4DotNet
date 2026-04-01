@@ -20,16 +20,17 @@ public sealed class AdminHtmlMappingCoverageTests
         var noPagination = AdminHtmlParsing.ParseCommonPage("<div class=\"breadcrumbs\"><em>0</em></div>");
         var countOnly = AdminHtmlParsing.ParseCommonPage("<div class=\"breadcrumbs\"><em>5</em></div>");
         var paginationWithoutActive = AdminHtmlParsing.ParseCommonPage("""
-            <div class="breadcrumbs"><em>7</em></div>
-            <div class="tbui_pagination"><li><a>1</a></li><li><a>2</a></li></div>
-            """);
+                                                                       <div class="breadcrumbs"><em>7</em></div>
+                                                                       <div class="tbui_pagination"><li><a>1</a></li><li><a>2</a></li></div>
+                                                                       """);
         var fullPagination = AdminHtmlParsing.ParseCommonPage("""
-            <div class="breadcrumbs"><em>42</em></div>
-            <div class="tbui_pagination"><li><a>1</a></li><li class="active"><a>2</a></li><li><a>3</a></li>(4)</div>
-            """);
+                                                              <div class="breadcrumbs"><em>42</em></div>
+                                                              <div class="tbui_pagination"><li><a>1</a></li><li class="active"><a>2</a></li><li><a>3</a></li>(4)</div>
+                                                              """);
         var yearless = AdminHtmlParsing.ParseYearlessDateTime("03-05 12:34");
         var fullDateTimeNoSpace = AdminHtmlParsing.ParseFullDateTime("2024-05-0607:08");
-        var imageHash = AdminHtmlParsing.ExtractImageHash("https://imgsrc.baidu.com/forum/pic/item/abcdef123456.jpg?foo=bar");
+        var imageHash =
+            AdminHtmlParsing.ExtractImageHash("https://imgsrc.baidu.com/forum/pic/item/abcdef123456.jpg?foo=bar");
         var missingHash = AdminHtmlParsing.ExtractImageHash("https://imgsrc.baidu.com/forum/pic/item/not-a-jpg.png");
 
         Assert.AreEqual("贴吧", attributeValue);
@@ -66,34 +67,34 @@ public sealed class AdminHtmlMappingCoverageTests
     public void BawuPostLogsMapper_FromTbData_MapsReplyAndThreadRows_AndSkipsInvalidRows()
     {
         var html = """
-            <div class="breadcrumbs"><em>2</em></div>
-            <div class="tbui_pagination"><li><a>1</a></li><li class="active"><a>2</a></li>(3)</div>
-            <table>
-              <tr><td>ignored</td></tr>
-              <tr><td>left</td><td>op</td><td>user</td><td>2024-05-06 07:08</td></tr>
-              <tr>
-                <td>
-                  <div class="post_meta"><a href="/home/main?id=tb.1.reply#/feed"></a><time>03-05 12:34</time></div>
-                  <h1><a href="/p/123456#7890">回复：原帖标题</a></h1>
-                  <div>123456789012reply body</div>
-                  <a href="https://img.example/origin.jpg"><img original="https://imgsrc.baidu.com/forum/pic/item/abcdef123456.jpg" /></a>
-                </td>
-                <td>删帖</td>
-                <td>operator-a</td>
-                <td>2024-05-06 07:08</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="post_meta"><a href="/home/main?id=tb.1.thread&amp;fr=home"></a><time>03-06 13:35</time></div>
-                  <h1><a href="/thread/not-a-tid#oops">普通标题</a></h1>
-                  <div></div>
-                </td>
-                <td>恢复</td>
-                <td>operator-b</td>
-                <td>2024-05-0708:09</td>
-              </tr>
-            </table>
-            """;
+                   <div class="breadcrumbs"><em>2</em></div>
+                   <div class="tbui_pagination"><li><a>1</a></li><li class="active"><a>2</a></li>(3)</div>
+                   <table>
+                     <tr><td>ignored</td></tr>
+                     <tr><td>left</td><td>op</td><td>user</td><td>2024-05-06 07:08</td></tr>
+                     <tr>
+                       <td>
+                         <div class="post_meta"><a href="/home/main?id=tb.1.reply#/feed"></a><time>03-05 12:34</time></div>
+                         <h1><a href="/p/123456#7890">回复：原帖标题</a></h1>
+                         <div>123456789012reply body</div>
+                         <a href="https://img.example/origin.jpg"><img original="https://imgsrc.baidu.com/forum/pic/item/abcdef123456.jpg" /></a>
+                       </td>
+                       <td>删帖</td>
+                       <td>operator-a</td>
+                       <td>2024-05-06 07:08</td>
+                     </tr>
+                     <tr>
+                       <td>
+                         <div class="post_meta"><a href="/home/main?id=tb.1.thread&amp;fr=home"></a><time>03-06 13:35</time></div>
+                         <h1><a href="/thread/not-a-tid#oops">普通标题</a></h1>
+                         <div></div>
+                       </td>
+                       <td>恢复</td>
+                       <td>operator-b</td>
+                       <td>2024-05-0708:09</td>
+                     </tr>
+                   </table>
+                   """;
 
         var mapped = BawuPostLogsMapper.FromTbData(html);
 
@@ -128,31 +129,31 @@ public sealed class AdminHtmlMappingCoverageTests
     public void BawuPostLogsMapper_HandlesMissingHashTitleFallbackAndHrefParsingFailures()
     {
         var html = """
-            <div class="breadcrumbs"><em>1</em></div>
-            <table>
-              <tr>
-                <td>
-                  <div class="post_meta"><a href="/home/main?id=tb.1.safe"></a><time>03-05 12:34</time></div>
-                  <h1><a href="/p/not-a-tid">内层标题</a></h1>
-                  <div>123456789012正文内容</div>
-                  <a href="https://img.example/origin.png"><img original="https://imgsrc.baidu.com/forum/pic/item/not-a-jpg.png" /></a>
-                </td>
-                <td>操作</td>
-                <td>operator</td>
-                <td>2024-05-06 07:08</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="post_meta"><a href="/home/main?id=tb.1.reply"></a><time>03-05 12:34</time></div>
-                  <h1><a href="/p/123#not-a-pid" title="回复：来自属性">内层标题</a></h1>
-                  <div>123456789012</div>
-                </td>
-                <td>操作2</td>
-                <td>operator2</td>
-                <td>2024-05-06 07:09</td>
-              </tr>
-            </table>
-            """;
+                   <div class="breadcrumbs"><em>1</em></div>
+                   <table>
+                     <tr>
+                       <td>
+                         <div class="post_meta"><a href="/home/main?id=tb.1.safe"></a><time>03-05 12:34</time></div>
+                         <h1><a href="/p/not-a-tid">内层标题</a></h1>
+                         <div>123456789012正文内容</div>
+                         <a href="https://img.example/origin.png"><img original="https://imgsrc.baidu.com/forum/pic/item/not-a-jpg.png" /></a>
+                       </td>
+                       <td>操作</td>
+                       <td>operator</td>
+                       <td>2024-05-06 07:08</td>
+                     </tr>
+                     <tr>
+                       <td>
+                         <div class="post_meta"><a href="/home/main?id=tb.1.reply"></a><time>03-05 12:34</time></div>
+                         <h1><a href="/p/123#not-a-pid" title="回复：来自属性">内层标题</a></h1>
+                         <div>123456789012</div>
+                       </td>
+                       <td>操作2</td>
+                       <td>operator2</td>
+                       <td>2024-05-06 07:09</td>
+                     </tr>
+                   </table>
+                   """;
 
         var mapped = BawuPostLogsMapper.FromTbData(html);
 
@@ -172,40 +173,40 @@ public sealed class AdminHtmlMappingCoverageTests
     public void BawuPostLogsMapper_HandlesPlainTitlesWithAndWithoutBodyText()
     {
         var html = """
-            <div class="breadcrumbs"><em>1</em></div>
-            <table>
-              <tr>
-                <td>
-                  <div class="post_meta"><a href="/home/main?id=tb.1.author"></a><time>03-05 12:34</time></div>
-                  <h1><a href="/p/222#333">普通标题</a></h1>
-                  <div>123456789012正文内容</div>
-                </td>
-                <td>操作</td>
-                <td>operator</td>
-                <td>2024-05-06 07:08</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="post_meta"><a href="/home/main?id=tb.1.author"></a><time>03-05 12:34</time></div>
-                  <h1><a href="/p/444#555">普通标题</a></h1>
-                  <div></div>
-                </td>
-                <td>操作2</td>
-                <td>operator2</td>
-                <td>2024-05-06 07:09</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="post_meta"><a href="/home/main?id=tb.1.author"></a><time>03-05 12:34</time></div>
-                  <h1><a href="/p/666#666">回复：同帖标题</a></h1>
-                  <div>123456789012reply body</div>
-                </td>
-                <td>操作3</td>
-                <td>operator3</td>
-                <td>2024-05-06 07:10</td>
-              </tr>
-            </table>
-            """;
+                   <div class="breadcrumbs"><em>1</em></div>
+                   <table>
+                     <tr>
+                       <td>
+                         <div class="post_meta"><a href="/home/main?id=tb.1.author"></a><time>03-05 12:34</time></div>
+                         <h1><a href="/p/222#333">普通标题</a></h1>
+                         <div>123456789012正文内容</div>
+                       </td>
+                       <td>操作</td>
+                       <td>operator</td>
+                       <td>2024-05-06 07:08</td>
+                     </tr>
+                     <tr>
+                       <td>
+                         <div class="post_meta"><a href="/home/main?id=tb.1.author"></a><time>03-05 12:34</time></div>
+                         <h1><a href="/p/444#555">普通标题</a></h1>
+                         <div></div>
+                       </td>
+                       <td>操作2</td>
+                       <td>operator2</td>
+                       <td>2024-05-06 07:09</td>
+                     </tr>
+                     <tr>
+                       <td>
+                         <div class="post_meta"><a href="/home/main?id=tb.1.author"></a><time>03-05 12:34</time></div>
+                         <h1><a href="/p/666#666">回复：同帖标题</a></h1>
+                         <div>123456789012reply body</div>
+                       </td>
+                       <td>操作3</td>
+                       <td>operator3</td>
+                       <td>2024-05-06 07:10</td>
+                     </tr>
+                   </table>
+                   """;
 
         var mapped = BawuPostLogsMapper.FromTbData(html);
 

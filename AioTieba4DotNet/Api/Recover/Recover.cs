@@ -11,7 +11,7 @@ internal class Recover(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseResult(string body)
     {
-        JsonApiBase.ParseBody(body, "no", "error");
+        ParseBody(body, "no", "error");
         return true;
     }
 

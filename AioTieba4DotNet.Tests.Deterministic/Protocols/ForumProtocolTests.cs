@@ -80,10 +80,7 @@ public class ForumProtocolTests
     [TestMethod]
     public async Task GetForumAsync_PrimesFidCacheForGetFidAsync()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppFormResponse = CreateForumResponseJson(SafeForumId, SafeForumName)
-        };
+        var httpCore = new RecordingHttpCore { AppFormResponse = CreateForumResponseJson(SafeForumId, SafeForumName) };
         var protocol = CreateProtocol(httpCore, new ForumInfoCache());
 
         var forum = await protocol.GetForumAsync(SafeForumName);
@@ -98,10 +95,7 @@ public class ForumProtocolTests
     [TestMethod]
     public async Task GetForumAsync_PropagatesCancellationToken_ToHttpTransport()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppFormResponse = CreateForumResponseJson(SafeForumId, SafeForumName)
-        };
+        var httpCore = new RecordingHttpCore { AppFormResponse = CreateForumResponseJson(SafeForumId, SafeForumName) };
         var protocol = CreateProtocol(httpCore, new ForumInfoCache());
         using var cts = new CancellationTokenSource();
 
@@ -252,7 +246,8 @@ public class ForumProtocolTests
         Assert.IsTrue(result);
         Assert.AreEqual(1, httpCore.SendWebGetCalls);
         Assert.AreEqual(1, httpCore.SendAppFormCalls);
-        CollectionAssert.Contains(httpCore.LastAppFormData, new KeyValuePair<string, string>("fid", SafeForumId.ToString()));
+        CollectionAssert.Contains(httpCore.LastAppFormData,
+            new KeyValuePair<string, string>("fid", SafeForumId.ToString()));
     }
 
     [TestMethod]
@@ -510,7 +505,8 @@ public class ForumProtocolTests
         Assert.AreEqual("命中标题", searches[0].Title);
         CollectionAssert.Contains(httpCore.LastAppFormData, new KeyValuePair<string, string>("kw", SafeForumName));
         CollectionAssert.Contains(httpCore.LastAppFormData, new KeyValuePair<string, string>("word", "关键字"));
-        CollectionAssert.Contains(httpCore.LastAppFormData, new KeyValuePair<string, string>("sm", ((int)ForumSearchType.Time).ToString()));
+        CollectionAssert.Contains(httpCore.LastAppFormData,
+            new KeyValuePair<string, string>("sm", ((int)ForumSearchType.Time).ToString()));
         CollectionAssert.Contains(httpCore.LastAppFormData, new KeyValuePair<string, string>("only_thread", "1"));
     }
 
@@ -661,10 +657,7 @@ public class ForumProtocolTests
     [TestMethod]
     public async Task GetDetailAsync_DoesNotCacheInvalidForumIdentity()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateForumDetailResponse(0, " ").ToByteArray()
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateForumDetailResponse(0, " ").ToByteArray() };
         var cache = new ForumInfoCache();
         var protocol = CreateProtocol(httpCore, cache);
 
@@ -686,7 +679,8 @@ public class ForumProtocolTests
         await Assert.ThrowsAsync<ArgumentException>(() => protocol.SearchExactAsync(" ", "关键字", 1, 30));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetFollowForumsAsync(0, 1, 30));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetFollowForumsAsync(1, 1, 0));
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetLastReplyersAsync(SafeForumName, 1, 101, ThreadSortType.Reply, false));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.GetLastReplyersAsync(SafeForumName, 1, 101, ThreadSortType.Reply, false));
         await Assert.ThrowsAsync<ArgumentException>(() => protocol.SearchExactAsync(SafeForumName, " ", 1, 30));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
             protocol.SearchExactAsync(SafeForumName, "关键字", 1, 30, (ForumSearchType)999));
@@ -751,12 +745,9 @@ public class ForumProtocolTests
     {
         var httpCore = new RecordingHttpCore
         {
-            AppProtoResponse = CreateDislikeForumsResponse(SafeForumId, SafeForumName, hasMore: true).ToByteArray()
+            AppProtoResponse = CreateDislikeForumsResponse(SafeForumId, SafeForumName, true).ToByteArray()
         };
-        var wsCore = new StubWsCore
-        {
-            ConnectException = new TiebaWebSocketUnavailableException("ws unavailable")
-        };
+        var wsCore = new StubWsCore { ConnectException = new TiebaWebSocketUnavailableException("ws unavailable") };
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"),
             TiebaTransportMode.Auto, wsCore);
         var protocol = new ForumProtocol(new TiebaOperationDispatcher(session), new ForumInfoCache());
@@ -775,7 +766,7 @@ public class ForumProtocolTests
     {
         var httpCore = new RecordingHttpCore
         {
-            AppProtoResponse = CreateDislikeForumsResponse(SafeForumId, SafeForumName, hasMore: false).ToByteArray()
+            AppProtoResponse = CreateDislikeForumsResponse(SafeForumId, SafeForumName, false).ToByteArray()
         };
         var wsCore = new StubWsCore();
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"),
@@ -819,7 +810,8 @@ public class ForumProtocolTests
 
     private static string CreateForumResponseJson(ulong fid, string fname)
     {
-        return $"{{\"error_code\":0,\"error_msg\":\"\",\"forum\":{{\"id\":{fid},\"name\":\"{fname}\",\"first_class\":\"游戏\",\"second_class\":\"英雄联盟\",\"avatar\":\"avatar\",\"slogan\":\"safe forum\",\"member_num\":1,\"post_num\":2,\"thread_num\":3,\"managers\":[]}}}}";
+        return
+            $"{{\"error_code\":0,\"error_msg\":\"\",\"forum\":{{\"id\":{fid},\"name\":\"{fname}\",\"first_class\":\"游戏\",\"second_class\":\"英雄联盟\",\"avatar\":\"avatar\",\"slogan\":\"safe forum\",\"member_num\":1,\"post_num\":2,\"thread_num\":3,\"managers\":[]}}}}";
     }
 
     private static GetForumDetailResIdl CreateForumDetailResponse(ulong fid, string fname)
@@ -859,7 +851,7 @@ public class ForumProtocolTests
                 CurPage = 1,
                 ForumList =
                 {
-                    new global::ForumList
+                    new ForumList
                     {
                         ForumId = (long)fid,
                         ForumName = fname,
@@ -921,7 +913,10 @@ public class ForumProtocolTests
             return Task.FromResult(AppFormResponse);
         }
 
-        public string GetAppFormValue(string key) => LastAppFormData.Last(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData.Last(entry => entry.Key == key).Value;
+        }
 
         public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
         {
@@ -969,8 +964,10 @@ public class ForumProtocolTests
             return Task.CompletedTask;
         }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) =>
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
             CancellationToken cancellationToken = default)
@@ -978,16 +975,18 @@ public class ForumProtocolTests
             SendCalls++;
             return Task.FromResult(new WSRes
             {
-                Payload = new WSRes.Types.Payload
-                {
-                    Data = ByteString.CopyFrom(SendResponsePayload)
-                }
+                Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(SendResponsePayload) }
             });
         }
 
-        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) =>
+        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

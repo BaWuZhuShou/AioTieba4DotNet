@@ -24,10 +24,7 @@ public sealed class AdminReadConfigApiTests
     [TestMethod]
     public async Task GetBawuBlacklist_RequestAsync_PacksQueryAndParsesUsers()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            WebGetResponse = CreateBlacklistHtml()
-        };
+        var httpCore = new RecordingHttpCore { WebGetResponse = CreateBlacklistHtml() };
         var api = new GetBawuBlacklist(httpCore);
 
         var result = await api.RequestAsync("lol欧服", 2);
@@ -90,10 +87,7 @@ public sealed class AdminReadConfigApiTests
     [TestMethod]
     public async Task GetBawuPostlogs_RequestAsync_PacksFiltersAndParsesReplyLog()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            WebGetResponse = CreatePostLogsHtml()
-        };
+        var httpCore = new RecordingHttpCore { WebGetResponse = CreatePostLogsHtml() };
         var api = new GetBawuPostlogs(httpCore);
         var start = new DateTimeOffset(2026, 3, 1, 0, 0, 0, TimeSpan.Zero);
         var end = new DateTimeOffset(2026, 3, 2, 0, 0, 0, TimeSpan.Zero);
@@ -123,10 +117,7 @@ public sealed class AdminReadConfigApiTests
     [TestMethod]
     public async Task GetBawuUserlogs_RequestAsync_PacksUserSearchAndParsesDuration()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            WebGetResponse = CreateUserLogsHtml()
-        };
+        var httpCore = new RecordingHttpCore { WebGetResponse = CreateUserLogsHtml() };
         var api = new GetBawuUserlogs(httpCore);
 
         var result = await api.RequestAsync("lol欧服", 1, "target-user", BawuSearchType.User, null, null, 0);
@@ -171,60 +162,70 @@ public sealed class AdminReadConfigApiTests
         Assert.IsTrue(result.Page.HasPrevious);
     }
 
-    private static string CreateBlacklistHtml() => """
-                                                   <div class="breadcrumbs"><em>3</em></div>
-                                                   <div class="tbui_pagination"><ul><li class="active">2</li><li>(5)</li></ul></div>
-                                                   <table><tbody>
-                                                   <tr>
-                                                     <input data-user-name="target-user" data-user-id="42" />
-                                                     <td class="left_cell"><a href="/home/main?id=tb.1.target#/"></a></td>
-                                                   </tr>
-                                                   </tbody></table>
-                                                   """;
+    private static string CreateBlacklistHtml()
+    {
+        return """
+               <div class="breadcrumbs"><em>3</em></div>
+               <div class="tbui_pagination"><ul><li class="active">2</li><li>(5)</li></ul></div>
+               <table><tbody>
+               <tr>
+                 <input data-user-name="target-user" data-user-id="42" />
+                 <td class="left_cell"><a href="/home/main?id=tb.1.target#/"></a></td>
+               </tr>
+               </tbody></table>
+               """;
+    }
 
-    private static string CreatePostLogsHtml() => """
-                                                  <div class="breadcrumbs"><em>8</em></div>
-                                                  <div class="tbui_pagination"><ul><li class="active">1</li><li>(4)</li></ul></div>
-                                                  <table><tbody>
-                                                  <tr>
-                                                    <td>
-                                                      <div class="post_meta">
-                                                        <div><a href="/home/main?id=tb.1.poster#/">poster</a></div>
-                                                        <time>03-04 05:06</time>
-                                                      </div>
-                                                      <div class="post_content">
-                                                        <h1><a href="/p/123?see_lz=1#456" title="回复：原帖标题">回复：原帖标题</a></h1>
-                                                        <div>abcdefghijkl正文</div>
-                                                        <div><a href="https://img-origin"><img original="https://img-src/hash.jpg" /></a></div>
-                                                      </div>
-                                                    </td>
-                                                    <td>删帖</td>
-                                                    <td>operator-user</td>
-                                                    <td>2026-03-30 11:22</td>
-                                                  </tr>
-                                                  </tbody></table>
-                                                  """;
+    private static string CreatePostLogsHtml()
+    {
+        return """
+               <div class="breadcrumbs"><em>8</em></div>
+               <div class="tbui_pagination"><ul><li class="active">1</li><li>(4)</li></ul></div>
+               <table><tbody>
+               <tr>
+                 <td>
+                   <div class="post_meta">
+                     <div><a href="/home/main?id=tb.1.poster#/">poster</a></div>
+                     <time>03-04 05:06</time>
+                   </div>
+                   <div class="post_content">
+                     <h1><a href="/p/123?see_lz=1#456" title="回复：原帖标题">回复：原帖标题</a></h1>
+                     <div>abcdefghijkl正文</div>
+                     <div><a href="https://img-origin"><img original="https://img-src/hash.jpg" /></a></div>
+                   </div>
+                 </td>
+                 <td>删帖</td>
+                 <td>operator-user</td>
+                 <td>2026-03-30 11:22</td>
+               </tr>
+               </tbody></table>
+               """;
+    }
 
-    private static string CreateUserLogsHtml() => """
-                                                  <div class="breadcrumbs"><em>2</em></div>
-                                                  <div class="tbui_pagination"><ul><li class="active">1</li><li>(1)</li></ul></div>
-                                                  <table><tbody>
-                                                  <tr>
-                                                    <td><a href="/home/main?id=tb.1.target#/">target</a></td>
-                                                    <td>封禁</td>
-                                                    <td>7 天</td>
-                                                    <td>operator-user</td>
-                                                    <td>2026-03-30 11:22</td>
-                                                  </tr>
-                                                  </tbody></table>
-                                                  """;
+    private static string CreateUserLogsHtml()
+    {
+        return """
+               <div class="breadcrumbs"><em>2</em></div>
+               <div class="tbui_pagination"><ul><li class="active">1</li><li>(1)</li></ul></div>
+               <table><tbody>
+               <tr>
+                 <td><a href="/home/main?id=tb.1.target#/">target</a></td>
+                 <td>封禁</td>
+                 <td>7 天</td>
+                 <td>operator-user</td>
+                 <td>2026-03-30 11:22</td>
+               </tr>
+               </tbody></table>
+               """;
+    }
 
     private sealed class RecordingHttpCore : ITiebaHttpCore
     {
         public string WebGetResponse { get; init; } = string.Empty;
+
         public string WebFormResponse { get; init; } = """
-                                                     {"no":0,"error":""}
-                                                     """;
+                                                       {"no":0,"error":""}
+                                                       """;
 
         public Account? Account { get; private set; } = new();
 
@@ -241,13 +242,21 @@ public sealed class AdminReadConfigApiTests
         }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
             CancellationToken cancellationToken = default)
@@ -265,13 +274,19 @@ public sealed class AdminReadConfigApiTests
             return Task.FromResult(WebFormResponse);
         }
 
-        public string GetWebGetValue(string key) =>
-            LastWebGetParameters.Last(entry => entry.Key == key).Value;
+        public string GetWebGetValue(string key)
+        {
+            return LastWebGetParameters.Last(entry => entry.Key == key).Value;
+        }
 
-        public string? GetOptionalWebGetValue(string key) =>
-            LastWebGetParameters.LastOrDefault(entry => entry.Key == key).Value;
+        public string? GetOptionalWebGetValue(string key)
+        {
+            return LastWebGetParameters.LastOrDefault(entry => entry.Key == key).Value;
+        }
 
-        public string GetWebFormValue(string key) =>
-            LastWebFormData.Last(entry => entry.Key == key).Value;
+        public string GetWebFormValue(string key)
+        {
+            return LastWebFormData.Last(entry => entry.Key == key).Value;
+        }
     }
 }

@@ -162,8 +162,8 @@ public sealed class CompatibilityWrapperApiTests
         var httpCore = new RecordingHttpCore
         {
             AppFormResponse = """
-                               {"error_code":0,"error_msg":"","error":{"errno":325}}
-                               """
+                              {"error_code":0,"error_msg":"","error":{"errno":325}}
+                              """
         };
         httpCore.SetAccount(new Account(new string('b', 192), new string('s', 64)) { Tbs = "tbs-789" });
         var api = new LikeForum(httpCore);
@@ -215,8 +215,8 @@ public sealed class CompatibilityWrapperApiTests
         public HttpClient HttpClient { get; } = new();
 
         public string AppFormResponse { get; init; } = """
-                                                 {"error_code":0,"error_msg":""}
-                                                 """;
+                                                       {"error_code":0,"error_msg":""}
+                                                       """;
 
         public Dictionary<string, Queue<string>> WebGetResponses { get; } = new(StringComparer.OrdinalIgnoreCase);
 
@@ -228,10 +228,16 @@ public sealed class CompatibilityWrapperApiTests
 
         public List<KeyValuePair<string, string>> LastWebGetParameters { get; private set; } = [];
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -241,8 +247,10 @@ public sealed class CompatibilityWrapperApiTests
             return Task.FromResult(AppFormResponse);
         }
 
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
             CancellationToken cancellationToken = default)
@@ -256,11 +264,20 @@ public sealed class CompatibilityWrapperApiTests
         }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
-        public string GetAppFormValue(string key) => LastAppFormData.Last(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData.Last(entry => entry.Key == key).Value;
+        }
 
-        public string GetWebGetValue(string key) => LastWebGetParameters.Last(entry => entry.Key == key).Value;
+        public string GetWebGetValue(string key)
+        {
+            return LastWebGetParameters.Last(entry => entry.Key == key).Value;
+        }
     }
 
     private static async Task<TException> ThrowsAsync<TException>(Func<Task> action)

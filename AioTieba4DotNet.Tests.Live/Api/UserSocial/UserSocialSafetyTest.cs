@@ -12,7 +12,9 @@ public sealed class UserSocialSafetyTest : TestBase
     [TestMethod]
     public void SafeTargetPortraitFixture_IsExplicitlyRequired_ForLiveFollowMutations()
     {
-        var portrait = RequireSafeTargetPortraitFixture(nameof(SafeTargetPortraitFixture_IsExplicitlyRequired_ForLiveFollowMutations));
+        var portrait =
+            RequireSafeTargetPortraitFixture(
+                nameof(SafeTargetPortraitFixture_IsExplicitlyRequired_ForLiveFollowMutations));
 
         Console.WriteLine($"safeTargetPortrait={portrait}");
     }
@@ -20,7 +22,9 @@ public sealed class UserSocialSafetyTest : TestBase
     [TestMethod]
     public void SafeTargetUserIdFixture_IsExplicitlyRequired_ForLiveBlacklistAndFanMutations()
     {
-        var userId = RequireSafeTargetUserIdFixture(nameof(SafeTargetUserIdFixture_IsExplicitlyRequired_ForLiveBlacklistAndFanMutations));
+        var userId =
+            RequireSafeTargetUserIdFixture(
+                nameof(SafeTargetUserIdFixture_IsExplicitlyRequired_ForLiveBlacklistAndFanMutations));
 
         Console.WriteLine($"safeTargetUserId={userId}");
     }

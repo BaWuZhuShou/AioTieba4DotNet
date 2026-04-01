@@ -70,7 +70,8 @@ public sealed class SignTest : TestBase
         }
     }
 
-    private async Task<SelfFollowForum?> GetSelfFollowForumAsync(ulong fid, CancellationToken cancellationToken = default)
+    private async Task<SelfFollowForum?> GetSelfFollowForumAsync(ulong fid,
+        CancellationToken cancellationToken = default)
     {
         for (var page = 1;; page++)
         {
@@ -84,7 +85,8 @@ public sealed class SignTest : TestBase
         }
     }
 
-    private async Task<SelfFollowForum?> GetFirstUnsignedFollowedForumAsync(CancellationToken cancellationToken = default)
+    private async Task<SelfFollowForum?> GetFirstUnsignedFollowedForumAsync(
+        CancellationToken cancellationToken = default)
     {
         for (var page = 1;; page++)
         {

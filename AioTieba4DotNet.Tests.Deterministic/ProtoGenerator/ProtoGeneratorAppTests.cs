@@ -17,7 +17,8 @@ public sealed class ProtoGeneratorAppTests
     public void Find_project_root_returns_nearest_solution_ancestor()
     {
         using var tempDirectory = TemporaryDirectory.Create();
-        var nestedDirectory = Directory.CreateDirectory(Path.Combine(tempDirectory.Path, "artifacts", "bin", "Debug", "net10.0"));
+        var nestedDirectory =
+            Directory.CreateDirectory(Path.Combine(tempDirectory.Path, "artifacts", "bin", "Debug", "net10.0"));
         File.WriteAllText(Path.Combine(tempDirectory.Path, "AioTieba4DotNet.sln"), string.Empty);
 
         var projectRoot = ProtoGenerationPlanner.FindProjectRoot(nestedDirectory.FullName);
@@ -40,8 +41,7 @@ public sealed class ProtoGeneratorAppTests
         CollectionAssert.AreEqual(
             new[]
             {
-                "AioTieba4DotNet/Api/Alpha/a-first.proto",
-                "AioTieba4DotNet/Api/Alpha/b-middle.proto",
+                "AioTieba4DotNet/Api/Alpha/a-first.proto", "AioTieba4DotNet/Api/Alpha/b-middle.proto",
                 "AioTieba4DotNet/Api/z-last.proto"
             },
             targets.Select(target => target.ProjectRelativePath).ToArray());
@@ -61,11 +61,8 @@ public sealed class ProtoGeneratorAppTests
         CollectionAssert.AreEqual(
             new[]
             {
-                "--csharp_opt=serializable,internal_access",
-                $"--csharp_out={target.OutputDirectory}",
-                $"--proto_path={target.ProtoDirectory}",
-                $"--proto_path={sharedDirectory}",
-                target.ProtoFilePath
+                "--csharp_opt=serializable,internal_access", $"--csharp_out={target.OutputDirectory}",
+                $"--proto_path={target.ProtoDirectory}", $"--proto_path={sharedDirectory}", target.ProtoFilePath
             },
             startInfo.ArgumentList.ToArray());
     }
@@ -113,13 +110,15 @@ public sealed class ProtoGeneratorAppTests
         var projectRoot = ProtoGenerationPlanner.FindProjectRoot(AppContext.BaseDirectory);
         Assert.IsNotNull(projectRoot);
 
-        var protocPath = Path.Combine(projectRoot!, "ProtoGenerator", "bin", "Release", "net10.0", GetBundledProtocFileName());
+        var protocPath = Path.Combine(projectRoot!, "ProtoGenerator", "bin", "Release", "net10.0",
+            GetBundledProtocFileName());
         Assert.IsTrue(File.Exists(protocPath), $"Bundled protoc not found: {protocPath}");
 
         var target = new ProtoGenerationTarget("SimpleMessage.proto", protoFilePath, protoDirectory.FullName);
         var executor = new ProtocExecutor();
 
-        var result = await executor.GenerateAsync(protocPath, protoDirectory.FullName, target, TestContext.CancellationToken);
+        var result =
+            await executor.GenerateAsync(protocPath, protoDirectory.FullName, target, TestContext.CancellationToken);
 
         Assert.IsTrue(result.Succeeded, result.FailureReason ?? result.StandardError);
         var generatedFilePath = Path.Combine(protoDirectory.FullName, "SimpleMessage.cs");
@@ -134,7 +133,8 @@ public sealed class ProtoGeneratorAppTests
         var output = new StringBuilder();
         using var writer = new StringWriter(output);
 
-        var exitCode = await ProtoGeneratorApp.RunAsync(tempDirectory.Path, writer, new FakeProtocExecutor(), TestContext.CancellationToken);
+        var exitCode = await ProtoGeneratorApp.RunAsync(tempDirectory.Path, writer, new FakeProtocExecutor(),
+            TestContext.CancellationToken);
 
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output.ToString(), "无法找到项目根目录");
@@ -162,7 +162,8 @@ public sealed class ProtoGeneratorAppTests
         var output = new StringBuilder();
         using var writer = new StringWriter(output);
 
-        var exitCode = await ProtoGeneratorApp.RunAsync(tempDirectory.Path, writer, new FakeProtocExecutor(), TestContext.CancellationToken);
+        var exitCode = await ProtoGeneratorApp.RunAsync(tempDirectory.Path, writer, new FakeProtocExecutor(),
+            TestContext.CancellationToken);
 
         Assert.AreEqual(1, exitCode);
         StringAssert.Contains(output.ToString(), "找不到 API 目录");
@@ -177,12 +178,14 @@ public sealed class ProtoGeneratorAppTests
         var apiDirectory = Directory.CreateDirectory(Path.Combine(tempDirectory.Path, "AioTieba4DotNet", "Api"));
         CreateProtoFile(apiDirectory.FullName, "sample.proto");
 
-        var baseDirectory = Directory.CreateDirectory(Path.Combine(tempDirectory.Path, "ProtoGenerator", "bin", "Release", "net10.0"));
+        var baseDirectory =
+            Directory.CreateDirectory(Path.Combine(tempDirectory.Path, "ProtoGenerator", "bin", "Release", "net10.0"));
         var executor = new FakeProtocExecutor();
         var output = new StringBuilder();
         using var writer = new StringWriter(output);
 
-        var exitCode = await ProtoGeneratorApp.RunAsync(baseDirectory.FullName, writer, executor, TestContext.CancellationToken);
+        var exitCode =
+            await ProtoGeneratorApp.RunAsync(baseDirectory.FullName, writer, executor, TestContext.CancellationToken);
 
         Assert.AreEqual(0, exitCode);
         Assert.AreEqual("protoc", executor.ReceivedProtocPath);
@@ -200,7 +203,8 @@ public sealed class ProtoGeneratorAppTests
         CreateProtoFile(apiDirectory.FullName, Path.Combine("Alpha", "a-first.proto"));
         CreateProtoFile(apiDirectory.FullName, Path.Combine("Alpha", "b-middle.proto"));
 
-        var baseDirectory = Directory.CreateDirectory(Path.Combine(tempDirectory.Path, "ProtoGenerator", "bin", "Release", "net10.0"));
+        var baseDirectory =
+            Directory.CreateDirectory(Path.Combine(tempDirectory.Path, "ProtoGenerator", "bin", "Release", "net10.0"));
         File.WriteAllText(Path.Combine(baseDirectory.FullName, GetBundledProtocFileName()), string.Empty);
 
         var executor = new FakeProtocExecutor
@@ -213,14 +217,14 @@ public sealed class ProtoGeneratorAppTests
         var output = new StringBuilder();
         using var writer = new StringWriter(output);
 
-        var exitCode = await ProtoGeneratorApp.RunAsync(baseDirectory.FullName, writer, executor, TestContext.CancellationToken);
+        var exitCode =
+            await ProtoGeneratorApp.RunAsync(baseDirectory.FullName, writer, executor, TestContext.CancellationToken);
 
         Assert.AreEqual(1, exitCode);
         CollectionAssert.AreEqual(
             new[]
             {
-                "AioTieba4DotNet/Api/Alpha/a-first.proto",
-                "AioTieba4DotNet/Api/Alpha/b-middle.proto",
+                "AioTieba4DotNet/Api/Alpha/a-first.proto", "AioTieba4DotNet/Api/Alpha/b-middle.proto",
                 "AioTieba4DotNet/Api/z-last.proto"
             },
             executor.ProcessedTargets.ToArray());
@@ -238,7 +242,8 @@ public sealed class ProtoGeneratorAppTests
         var output = new StringBuilder();
         using var writer = new StringWriter(output);
 
-        var exitCode = await ProtoGeneratorApp.RunAsync(tempDirectory.Path, writer, new FakeProtocExecutor(), TestContext.CancellationToken);
+        var exitCode = await ProtoGeneratorApp.RunAsync(tempDirectory.Path, writer, new FakeProtocExecutor(),
+            TestContext.CancellationToken);
 
         Assert.AreEqual(0, exitCode);
         StringAssert.Contains(output.ToString(), "未找到任何 .proto 文件");
@@ -296,10 +301,7 @@ public sealed class ProtoGeneratorAppTests
 
         public void Dispose()
         {
-            if (Directory.Exists(Path))
-            {
-                Directory.Delete(Path, recursive: true);
-            }
+            if (Directory.Exists(Path)) Directory.Delete(Path, true);
         }
     }
 }

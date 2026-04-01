@@ -108,19 +108,20 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
         ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         if (resProto.Data?.Info?.NeedVcode == "1")
-            throw new global::AioTieba4DotNet.TiebaException("Need verify code");
+            throw new TiebaException("Need verify code");
         return true;
     }
+
     /// <summary>
     ///     通过 HTTP 发送发布回复请求
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="fid">吧 ID</param>
     /// <param name="tid">主题帖 ID</param>
-/// <param name="content">回复内容</param>
-/// <param name="showName">显示名称（可选）</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>是否成功</returns>
+    /// <param name="content">回复内容</param>
+    /// <param name="showName">显示名称（可选）</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>是否成功</returns>
     public async Task<bool> RequestHttpAsync(string fname, ulong fid, long tid, string content,
         string? showName = null, CancellationToken cancellationToken = default)
     {
@@ -140,10 +141,10 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     /// <param name="fname">吧名</param>
     /// <param name="fid">吧 ID</param>
     /// <param name="tid">主题帖 ID</param>
-/// <param name="content">回复内容</param>
-/// <param name="showName">显示名称（可选）</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>是否成功</returns>
+    /// <param name="content">回复内容</param>
+    /// <param name="showName">显示名称（可选）</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>是否成功</returns>
     public async Task<bool> RequestWsAsync(string fname, ulong fid, long tid, string content,
         string? showName = null, CancellationToken cancellationToken = default)
     {

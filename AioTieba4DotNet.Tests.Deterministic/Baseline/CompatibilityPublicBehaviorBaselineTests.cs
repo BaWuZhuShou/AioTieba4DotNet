@@ -42,12 +42,8 @@ public sealed class CompatibilityPublicBehaviorBaselineTests
         CollectionAssert.AreEqual(
             new[]
             {
-                "Admins:IAdminModule",
-                "Client:IClientModule",
-                "Forums:IForumModule",
-                "Messages:IMessagesModule",
-                "Threads:IThreadModule",
-                "Users:IUserModule"
+                "Admins:IAdminModule", "Client:IClientModule", "Forums:IForumModule", "Messages:IMessagesModule",
+                "Threads:IThreadModule", "Users:IUserModule"
             },
             moduleProperties);
     }
@@ -57,10 +53,7 @@ public sealed class CompatibilityPublicBehaviorBaselineTests
     {
         var expected = new Threads
         {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "dotnet" },
-            Objs = [],
-            TabDictionary = []
+            Page = new PageT(), Forum = new ForumT { Fname = "dotnet" }, Objs = [], TabDictionary = []
         };
         var protocol = new RecordingThreadProtocol(expected);
         var module = new ThreadModule(protocol);
@@ -89,73 +82,133 @@ public sealed class CompatibilityPublicBehaviorBaselineTests
         }
 
         public Task<Threads> GetThreadsAsync(ulong fid, int pn, int rn, ThreadSortType sort, bool isGood,
-            CancellationToken cancellationToken = default) => Task.FromResult(result);
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(result);
+        }
 
         public Task<Posts> GetPostsAsync(long tid, int pn, int rn, PostSortType sort, bool onlyThreadAuthor,
             bool withComments, int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<Comments> GetCommentsAsync(long tid, long pid, int pn, bool isComment,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<Recovers> GetRecoversAsync(string fname, int pn, int rn, long? userId,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<Recovers> GetRecoversAsync(ulong fid, int pn, int rn, long? userId,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<RecoverInfo> GetRecoverInfoAsync(string fname, long tid, long pid,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<RecoverInfo> GetRecoverInfoAsync(ulong fid, long tid, long pid,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<TabMap> GetTabMapAsync(string fname, CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<TabMap> GetTabMapAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<TabMap> GetTabMapAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task<TabMap> GetTabMapAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> AgreeAsync(long tid, long pid, bool isComment, bool isDisagree, bool isUndo,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> AddPostAsync(string fname, long tid, string content, string? showName,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> DelThreadAsync(string fname, long tid, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> DelPostAsync(string fname, long tid, long pid, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> DelThreadsAsync(string fname, IReadOnlyList<long> tids, bool block,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> DelPostsAsync(string fname, long tid, IReadOnlyList<long> pids, bool block,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> GoodAsync(string fname, long tid, string cname,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> UngoodAsync(string fname, long tid, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> TopAsync(string fname, long tid, bool isVip, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> UntopAsync(string fname, long tid, bool isVip, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> MoveAsync(string fname, long tid, int toTabId, int fromTabId,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> RecommendAsync(string fname, long tid, CancellationToken cancellationToken = default)
-            => throw new NotImplementedException();
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> RecoverAsync(string fname, long tid, long pid, bool isHide,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> SetThreadPrivacyAsync(string fname, long tid, long pid, bool isPrivate,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

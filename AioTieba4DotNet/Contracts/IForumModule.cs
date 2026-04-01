@@ -396,5 +396,4 @@ public interface IForumModule
     /// <returns>首页推荐屏蔽贴吧列表 <see cref="DislikeForums"/></returns>
     Task<DislikeForums> GetDislikeForumsAsync(int pn = 1, int rn = 20,
         CancellationToken cancellationToken = default);
-
 }

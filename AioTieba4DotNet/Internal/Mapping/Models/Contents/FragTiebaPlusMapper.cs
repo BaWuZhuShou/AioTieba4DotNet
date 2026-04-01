@@ -6,13 +6,11 @@ internal static class FragTiebaPlusMapper
 {
     internal static FragTiebaPlus FromTbData(PbContent dataProto)
 
-        {
+    {
+        var text = dataProto.TiebaplusInfo.Desc;
 
-            var text = dataProto.TiebaplusInfo.Desc;
+        var url = new Uri(dataProto.TiebaplusInfo.JumpUrl);
 
-            var url = new Uri(dataProto.TiebaplusInfo.JumpUrl);
-
-            return new FragTiebaPlus { Text = text, Url = url };
-
-        }
+        return new FragTiebaPlus { Text = text, Url = url };
+    }
 }

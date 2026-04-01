@@ -25,7 +25,10 @@ public sealed class TiebaClientFactory : ITiebaClientFactory
     }
 
     /// <inheritdoc/>
-    public ITiebaClient CreateClient(TiebaOptions options) => _composition.CreateClient(options);
+    public ITiebaClient CreateClient(TiebaOptions options)
+    {
+        return _composition.CreateClient(options);
+    }
 
     /// <inheritdoc/>
     public ITiebaClient CreateClient(string bduss, string? stoken = null)

@@ -214,17 +214,17 @@ public sealed class ClientProtocolTests
         Assert.IsNull(session.CurrentState.SampleId);
     }
 
-    private static ClientProtocol CreateProtocol(TiebaClientSession session) =>
-        new(new TiebaOperationDispatcher(session));
+    private static ClientProtocol CreateProtocol(TiebaClientSession session)
+    {
+        return new ClientProtocol(new TiebaOperationDispatcher(session));
+    }
 
     private static TiebaClientSession CreateAuthenticatedSession(RecordingHttpCore httpCore, RecordingWsCore wsCore)
     {
         return new TiebaClientSession(
             new TiebaOptions
             {
-                Bduss = new string('b', 192),
-                Stoken = new string('s', 64),
-                TransportMode = TiebaTransportMode.Http
+                Bduss = new string('b', 192), Stoken = new string('s', 64), TransportMode = TiebaTransportMode.Http
             },
             httpCore,
             wsCore,
@@ -303,14 +303,22 @@ public sealed class ClientProtocolTests
             return AppFormResponse;
         }
 
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         private static string CreateInitZIdResponse(Account account, string token)
         {
@@ -333,7 +341,8 @@ public sealed class ClientProtocolTests
             var rc4 = new Rc4(Encoding.UTF8.GetBytes(xyusMd5Str));
             var encryptedSkey = rc4.Crypt(responseSecKey);
 
-            return $"{{\"skey\":\"{Convert.ToBase64String(encryptedSkey)}\",\"data\":\"{Convert.ToBase64String(encryptedPayload)}\"}}";
+            return
+                $"{{\"skey\":\"{Convert.ToBase64String(encryptedSkey)}\",\"data\":\"{Convert.ToBase64String(encryptedPayload)}\"}}";
         }
     }
 
@@ -362,15 +371,25 @@ public sealed class ClientProtocolTests
             if (ConnectException is not null) throw ConnectException;
         }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) =>
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

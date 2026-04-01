@@ -23,23 +23,21 @@ public class ThreadModuleBehaviorTests
     {
         var expected = new Posts
         {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Objs = []
+            Page = new PageT(), Forum = new ForumT { Fname = "lol欧服" }, Thread = CreateThread(), Objs = []
         };
-        var protocol = new RecordingThreadProtocol(expected, new Comments
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Post = CreatePost(),
-            Objs = []
-        });
+        var protocol = new RecordingThreadProtocol(expected,
+            new Comments
+            {
+                Page = new PageT(),
+                Forum = new ForumT { Fname = "lol欧服" },
+                Thread = CreateThread(),
+                Post = CreatePost(),
+                Objs = []
+            });
         var module = new ThreadModule(protocol);
 
-        var actual = await module.GetPostsAsync(1001, pn: 2, rn: 15, sort: PostSortType.Hot, onlyThreadAuthor: true,
-            withComments: true, commentRn: 2, commentSortByAgree: true);
+        var actual = await module.GetPostsAsync(1001, 2, 15, PostSortType.Hot, true,
+            true, 2, true);
 
         Assert.AreSame(expected, actual);
         Assert.AreEqual(1001, protocol.LastPostsTid);
@@ -63,16 +61,14 @@ public class ThreadModuleBehaviorTests
             Post = CreatePost(),
             Objs = []
         };
-        var protocol = new RecordingThreadProtocol(new Posts
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Objs = []
-        }, expected);
+        var protocol = new RecordingThreadProtocol(
+            new Posts
+            {
+                Page = new PageT(), Forum = new ForumT { Fname = "lol欧服" }, Thread = CreateThread(), Objs = []
+            }, expected);
         var module = new ThreadModule(protocol);
 
-        var actual = await module.GetCommentsAsync(1001, 2002, pn: 3, isComment: true);
+        var actual = await module.GetCommentsAsync(1001, 2002, 3, true);
 
         Assert.AreSame(expected, actual);
         Assert.AreEqual(1001, protocol.LastCommentsTid);
@@ -85,32 +81,24 @@ public class ThreadModuleBehaviorTests
     public async Task GetRecoversAsync_DelegatesToInternalProtocol()
     {
         var expected = new Recovers(
-            [new Recover
-            {
-                Text = "recover",
-                User = new RecoverUser { UserName = "thread-author" }
-            }],
+            [new Recover { Text = "recover", User = new RecoverUser { UserName = "thread-author" } }],
             new RecoverPage { CurrentPage = 2, PageSize = 10, HasMore = true });
-        var protocol = new RecordingThreadProtocol(new Posts
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Objs = []
-        }, new Comments
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Post = CreatePost(),
-            Objs = []
-        })
-        {
-            RecoversResult = expected
-        };
+        var protocol = new RecordingThreadProtocol(
+            new Posts
+            {
+                Page = new PageT(), Forum = new ForumT { Fname = "lol欧服" }, Thread = CreateThread(), Objs = []
+            },
+            new Comments
+            {
+                Page = new PageT(),
+                Forum = new ForumT { Fname = "lol欧服" },
+                Thread = CreateThread(),
+                Post = CreatePost(),
+                Objs = []
+            }) { RecoversResult = expected };
         var module = new ThreadModule(protocol);
 
-        var actual = await module.GetRecoversAsync("lol欧服", pn: 2, rn: 10, userId: 99);
+        var actual = await module.GetRecoversAsync("lol欧服", 2, 10, 99);
 
         Assert.AreSame(expected, actual);
         Assert.AreEqual("lol欧服", protocol.LastRecoversFname);
@@ -130,23 +118,19 @@ public class ThreadModuleBehaviorTests
             Pid = 2002,
             User = new RecoverUser { UserName = "thread-author" }
         };
-        var protocol = new RecordingThreadProtocol(new Posts
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Objs = []
-        }, new Comments
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Post = CreatePost(),
-            Objs = []
-        })
-        {
-            RecoverInfoResult = expected
-        };
+        var protocol = new RecordingThreadProtocol(
+            new Posts
+            {
+                Page = new PageT(), Forum = new ForumT { Fname = "lol欧服" }, Thread = CreateThread(), Objs = []
+            },
+            new Comments
+            {
+                Page = new PageT(),
+                Forum = new ForumT { Fname = "lol欧服" },
+                Thread = CreateThread(),
+                Post = CreatePost(),
+                Objs = []
+            }) { RecoverInfoResult = expected };
         var module = new ThreadModule(protocol);
 
         var actual = await module.GetRecoverInfoAsync("lol欧服", 1001, 2002);
@@ -161,23 +145,19 @@ public class ThreadModuleBehaviorTests
     public async Task GetTabMapAsync_DelegatesToInternalProtocol()
     {
         var expected = new TabMap([new KeyValuePair<string, int>("全部", 1)]);
-        var protocol = new RecordingThreadProtocol(new Posts
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Objs = []
-        }, new Comments
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Post = CreatePost(),
-            Objs = []
-        })
-        {
-            TabMapResult = expected
-        };
+        var protocol = new RecordingThreadProtocol(
+            new Posts
+            {
+                Page = new PageT(), Forum = new ForumT { Fname = "lol欧服" }, Thread = CreateThread(), Objs = []
+            },
+            new Comments
+            {
+                Page = new PageT(),
+                Forum = new ForumT { Fname = "lol欧服" },
+                Thread = CreateThread(),
+                Post = CreatePost(),
+                Objs = []
+            }) { TabMapResult = expected };
         var module = new ThreadModule(protocol);
 
         var actual = await module.GetTabMapAsync("lol欧服");
@@ -189,51 +169,50 @@ public class ThreadModuleBehaviorTests
     [TestMethod]
     public async Task DelPostsAsync_DelegatesToInternalProtocol()
     {
-        var protocol = new RecordingThreadProtocol(new Posts
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Objs = []
-        }, new Comments
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Post = CreatePost(),
-            Objs = []
-        });
+        var protocol = new RecordingThreadProtocol(
+            new Posts
+            {
+                Page = new PageT(), Forum = new ForumT { Fname = "lol欧服" }, Thread = CreateThread(), Objs = []
+            },
+            new Comments
+            {
+                Page = new PageT(),
+                Forum = new ForumT { Fname = "lol欧服" },
+                Thread = CreateThread(),
+                Post = CreatePost(),
+                Objs = []
+            });
         var module = new ThreadModule(protocol);
         IReadOnlyList<long> pids = [2001, 2002];
 
-        await module.DelPostsAsync("lol欧服", 1001, pids, block: true);
+        await module.DelPostsAsync("lol欧服", 1001, pids, true);
 
         Assert.AreEqual("lol欧服", protocol.LastDelPostsFname);
         Assert.AreEqual(1001, protocol.LastDelPostsTid);
-        CollectionAssert.AreEqual((System.Collections.ICollection)pids, (System.Collections.ICollection)protocol.LastDelPostsPids!);
+        CollectionAssert.AreEqual((System.Collections.ICollection)pids,
+            (System.Collections.ICollection)protocol.LastDelPostsPids!);
         Assert.IsTrue(protocol.LastDelPostsBlock);
     }
 
     [TestMethod]
     public async Task SetThreadPrivacyAsync_DelegatesToInternalProtocol()
     {
-        var protocol = new RecordingThreadProtocol(new Posts
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Objs = []
-        }, new Comments
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Post = CreatePost(),
-            Objs = []
-        });
+        var protocol = new RecordingThreadProtocol(
+            new Posts
+            {
+                Page = new PageT(), Forum = new ForumT { Fname = "lol欧服" }, Thread = CreateThread(), Objs = []
+            },
+            new Comments
+            {
+                Page = new PageT(),
+                Forum = new ForumT { Fname = "lol欧服" },
+                Thread = CreateThread(),
+                Post = CreatePost(),
+                Objs = []
+            });
         var module = new ThreadModule(protocol);
 
-        await module.SetThreadPrivacyAsync("lol欧服", 1001, 2002, isPrivate: false);
+        await module.SetThreadPrivacyAsync("lol欧服", 1001, 2002, false);
 
         Assert.AreEqual("lol欧服", protocol.LastPrivacyFname);
         Assert.AreEqual(1001, protocol.LastPrivacyTid);
@@ -251,33 +230,32 @@ public class ThreadModuleBehaviorTests
             TabDictionary = new Dictionary<string, int>(),
             Objs = []
         };
-        var protocol = new RecordingThreadProtocol(new Posts
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Objs = []
-        }, new Comments
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Post = CreatePost(),
-            Objs = []
-        })
-        {
-            ThreadsResult = expectedThreads,
-            TabMapResult = new TabMap([new KeyValuePair<string, int>("全部", 1)])
-        };
+        var protocol =
+            new RecordingThreadProtocol(
+                new Posts
+                {
+                    Page = new PageT(), Forum = new ForumT { Fname = "lol欧服" }, Thread = CreateThread(), Objs = []
+                },
+                new Comments
+                {
+                    Page = new PageT(),
+                    Forum = new ForumT { Fname = "lol欧服" },
+                    Thread = CreateThread(),
+                    Post = CreatePost(),
+                    Objs = []
+                })
+            {
+                ThreadsResult = expectedThreads, TabMapResult = new TabMap([new KeyValuePair<string, int>("全部", 1)])
+            };
         var module = new ThreadModule(protocol);
 
-        var byName = await module.GetThreadsAsync("lol欧服", 2, 20, ThreadSortType.Create, isGood: true);
+        var byName = await module.GetThreadsAsync("lol欧服", 2, 20, ThreadSortType.Create, true);
         Assert.AreSame(expectedThreads, byName);
         Assert.AreEqual("lol欧服", protocol.LastThreadsFname);
         Assert.AreEqual(ThreadSortType.Create, protocol.LastThreadSort);
         Assert.IsTrue(protocol.LastThreadIsGood);
 
-        var byFid = await module.GetThreadsAsync(7356044, 3, 10, ThreadSortType.Reply, isGood: false);
+        var byFid = await module.GetThreadsAsync(7356044, 3, 10, ThreadSortType.Reply, false);
         var recoversByFid = await module.GetRecoversAsync(7356044, 2, 10, 99);
         var recoverInfoByFid = await module.GetRecoverInfoAsync(7356044, 1001, 2002);
         var tabMapByFid = await module.GetTabMapAsync(7356044);
@@ -297,37 +275,36 @@ public class ThreadModuleBehaviorTests
     [TestMethod]
     public async Task ThreadModule_DelegatesVoteAndModerationOperations()
     {
-        var protocol = new RecordingThreadProtocol(new Posts
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Objs = []
-        }, new Comments
-        {
-            Page = new PageT(),
-            Forum = new ForumT { Fname = "lol欧服" },
-            Thread = CreateThread(),
-            Post = CreatePost(),
-            Objs = []
-        });
+        var protocol = new RecordingThreadProtocol(
+            new Posts
+            {
+                Page = new PageT(), Forum = new ForumT { Fname = "lol欧服" }, Thread = CreateThread(), Objs = []
+            },
+            new Comments
+            {
+                Page = new PageT(),
+                Forum = new ForumT { Fname = "lol欧服" },
+                Thread = CreateThread(),
+                Post = CreatePost(),
+                Objs = []
+            });
         var module = new ThreadModule(protocol);
 
-        await module.AgreeAsync(1, 2, isComment: true, isDisagree: false, isUndo: false);
-        await module.DisagreeAsync(3, 4, isComment: true, isUndo: false);
-        await module.UnagreeAsync(5, 6, isComment: false);
-        await module.UndisagreeAsync(7, 8, isComment: true);
+        await module.AgreeAsync(1, 2, true, false, false);
+        await module.DisagreeAsync(3, 4, true, false);
+        await module.UnagreeAsync(5, 6, false);
+        await module.UndisagreeAsync(7, 8, true);
         await module.AddPostAsync("lol欧服", 1001, "hello", "show-name");
         await module.DelThreadAsync("lol欧服", 1001);
         await module.DelPostAsync("lol欧服", 1001, 2002);
-        await module.DelThreadsAsync("lol欧服", [11, 22], block: true);
+        await module.DelThreadsAsync("lol欧服", [11, 22], true);
         await module.GoodAsync("lol欧服", 1001, "活动");
         await module.UngoodAsync("lol欧服", 1001);
-        await module.TopAsync("lol欧服", 1001, isVip: true);
-        await module.UntopAsync("lol欧服", 1001, isVip: true);
+        await module.TopAsync("lol欧服", 1001, true);
+        await module.UntopAsync("lol欧服", 1001, true);
         await module.MoveAsync("lol欧服", 1001, 202, 101);
         await module.RecommendAsync("lol欧服", 1001);
-        await module.RecoverAsync("lol欧服", 1001, 2002, isHide: true);
+        await module.RecoverAsync("lol欧服", 1001, 2002, true);
 
         Assert.AreEqual(7, protocol.LastAgreeTid);
         Assert.AreEqual(8, protocol.LastAgreePid);
@@ -337,7 +314,8 @@ public class ThreadModuleBehaviorTests
         Assert.AreEqual("show-name", protocol.LastAddPostShowName);
         Assert.AreEqual("lol欧服", protocol.LastDelThreadFname);
         Assert.AreEqual(2002, protocol.LastDelPostPid);
-        CollectionAssert.AreEqual((System.Collections.ICollection)new long[] { 11, 22 }, (System.Collections.ICollection)protocol.LastDelThreadsTids!);
+        CollectionAssert.AreEqual((System.Collections.ICollection)new long[] { 11, 22 },
+            (System.Collections.ICollection)protocol.LastDelThreadsTids!);
         Assert.IsTrue(protocol.LastDelThreadsBlock);
         Assert.AreEqual("活动", protocol.LastGoodCname);
         Assert.AreEqual("lol欧服", protocol.LastUngoodFname);
@@ -349,32 +327,30 @@ public class ThreadModuleBehaviorTests
         Assert.IsTrue(protocol.LastRecoverIsHide);
     }
 
-    private static ThreadModel CreateThread() => new()
+    private static ThreadModel CreateThread()
     {
-        Content = new ContentModel(),
-        VirtualImage = new VirtualImagePfModel()
-    };
+        return new ThreadModel { Content = new ContentModel(), VirtualImage = new VirtualImagePfModel() };
+    }
 
-    private static PostModel CreatePost() => new()
+    private static PostModel CreatePost()
     {
-        Content = new ContentModel()
-    };
+        return new PostModel { Content = new ContentModel() };
+    }
 
     private sealed class RecordingThreadProtocol(Posts postsResult, Comments commentsResult) : IThreadProtocol
     {
         public Threads ThreadsResult { get; init; } = new()
         {
-            Page = new PageT(),
-            Forum = new ForumT(),
-            TabDictionary = new Dictionary<string, int>(),
-            Objs = []
+            Page = new PageT(), Forum = new ForumT(), TabDictionary = new Dictionary<string, int>(), Objs = []
         };
+
         public Recovers RecoversResult { get; init; } = new([], new RecoverPage());
+
         public RecoverInfo RecoverInfoResult { get; init; } = new()
         {
-            Content = new ContentModel(),
-            User = new RecoverUser()
+            Content = new ContentModel(), User = new RecoverUser()
         };
+
         public TabMap TabMapResult { get; init; } = new();
         public long LastPostsTid { get; private set; }
         public int LastPostsPn { get; private set; }
@@ -569,8 +545,10 @@ public class ThreadModuleBehaviorTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> DelThreadAsync(string fname, long tid, CancellationToken cancellationToken = default) =>
-            Task.FromResult((LastDelThreadFname = fname) == fname && (LastDelThreadTid = tid) == tid);
+        public Task<bool> DelThreadAsync(string fname, long tid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult((LastDelThreadFname = fname) == fname && (LastDelThreadTid = tid) == tid);
+        }
 
         public Task<bool> DelPostAsync(string fname, long tid, long pid,
             CancellationToken cancellationToken = default)
@@ -609,8 +587,10 @@ public class ThreadModuleBehaviorTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> UngoodAsync(string fname, long tid, CancellationToken cancellationToken = default) =>
-            Task.FromResult((LastUngoodFname = fname) == fname && (LastUngoodTid = tid) == tid);
+        public Task<bool> UngoodAsync(string fname, long tid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult((LastUngoodFname = fname) == fname && (LastUngoodTid = tid) == tid);
+        }
 
         public Task<bool> TopAsync(string fname, long tid, bool isVip, CancellationToken cancellationToken = default)
         {
@@ -639,8 +619,10 @@ public class ThreadModuleBehaviorTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> RecommendAsync(string fname, long tid, CancellationToken cancellationToken = default) =>
-            Task.FromResult((LastRecommendFname = fname) == fname && (LastRecommendTid = tid) == tid);
+        public Task<bool> RecommendAsync(string fname, long tid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult((LastRecommendFname = fname) == fname && (LastRecommendTid = tid) == tid);
+        }
 
         public Task<bool> RecoverAsync(string fname, long tid, long pid, bool isHide,
             CancellationToken cancellationToken = default)

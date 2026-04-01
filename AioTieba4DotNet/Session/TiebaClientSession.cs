@@ -59,14 +59,20 @@ internal sealed class TiebaClientSession : IDisposable
 
     internal ITiebaWsCore WsCore { get; }
 
-    internal Task<string> GetTbsAsync(CancellationToken cancellationToken = default) =>
-        GetTbsAsync(nameof(GetTbsAsync), cancellationToken);
+    internal Task<string> GetTbsAsync(CancellationToken cancellationToken = default)
+    {
+        return GetTbsAsync(nameof(GetTbsAsync), cancellationToken);
+    }
 
-    internal Task<string> GetTbsAsync(string operationName, CancellationToken cancellationToken = default) =>
-        _tbsService.GetAsync(operationName, cancellationToken);
+    internal Task<string> GetTbsAsync(string operationName, CancellationToken cancellationToken = default)
+    {
+        return _tbsService.GetAsync(operationName, cancellationToken);
+    }
 
-    internal Task<string> RefreshTbsAsync(string operationName, CancellationToken cancellationToken = default) =>
-        _tbsService.RefreshAsync(operationName, cancellationToken);
+    internal Task<string> RefreshTbsAsync(string operationName, CancellationToken cancellationToken = default)
+    {
+        return _tbsService.RefreshAsync(operationName, cancellationToken);
+    }
 
     internal async Task<string> EnsureTbsAsync(string operationName, CancellationToken cancellationToken = default)
     {
@@ -148,10 +154,12 @@ internal sealed class TiebaClientSession : IDisposable
         {
             var result = await executor(cancellationToken);
             if (string.IsNullOrWhiteSpace(result.ClientId))
-                throw TiebaSessionAuthPolicy.CreateMissingSessionStateException(operationName, nameof(Account.ClientId));
+                throw TiebaSessionAuthPolicy.CreateMissingSessionStateException(operationName,
+                    nameof(Account.ClientId));
 
             if (string.IsNullOrWhiteSpace(result.SampleId))
-                throw TiebaSessionAuthPolicy.CreateMissingSessionStateException(operationName, nameof(Account.SampleId));
+                throw TiebaSessionAuthPolicy.CreateMissingSessionStateException(operationName,
+                    nameof(Account.SampleId));
 
             return result;
         }

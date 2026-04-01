@@ -21,8 +21,7 @@ internal class GetBlacklist(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     {
         var data = new List<KeyValuePair<string, string>>
         {
-            new("BDUSS", HttpCore.Account?.Bduss ?? string.Empty),
-            new("_client_version", Const.MainVersion)
+            new("BDUSS", HttpCore.Account?.Bduss ?? string.Empty), new("_client_version", Const.MainVersion)
         };
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/userBlackPage").Uri;

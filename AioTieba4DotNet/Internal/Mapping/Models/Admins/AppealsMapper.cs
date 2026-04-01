@@ -40,9 +40,13 @@ internal static class AppealsMapper
             NickName = user.GetValue("name_show")?.Value<string>() ?? string.Empty,
             AppealId = long.TryParse(data.GetValue("appeal_id")?.Value<string>(), out var appealId) ? appealId : 0,
             AppealReason = data.GetValue("appeal_reason")?.Value<string>() ?? string.Empty,
-            AppealTime = long.TryParse(data.GetValue("appeal_time")?.Value<string>(), out var appealTime) ? appealTime : 0,
+            AppealTime =
+                long.TryParse(data.GetValue("appeal_time")?.Value<string>(), out var appealTime) ? appealTime : 0,
             PunishReason = data.GetValue("punish_reason")?.Value<string>() ?? string.Empty,
-            PunishTime = long.TryParse(data.GetValue("punish_start_time")?.Value<string>(), out var punishTime) ? punishTime : 0,
+            PunishTime =
+                long.TryParse(data.GetValue("punish_start_time")?.Value<string>(), out var punishTime)
+                    ? punishTime
+                    : 0,
             PunishDay = data.GetValue("punish_day_num")?.Value<int>() ?? 0,
             OperatorName = data.GetValue("operate_man")?.Value<string>() ?? string.Empty
         };

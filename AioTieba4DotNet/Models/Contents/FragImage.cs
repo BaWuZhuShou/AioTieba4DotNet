@@ -71,7 +71,8 @@ public partial class FragImage : IFrag
 
     [GeneratedRegex("/([a-z0-9]{32,})\\.")]
     private static partial Regex MyRegex();
-   /// <summary>
+
+    /// <summary>
     ///     格式设置成员
     /// </summary>
     /// <returns>string</returns>

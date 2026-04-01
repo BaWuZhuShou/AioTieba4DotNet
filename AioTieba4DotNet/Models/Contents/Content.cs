@@ -54,7 +54,8 @@ public class Content
     ///     所有原始碎片
     /// </summary>
     public List<IFrag> Frags { get; init; } = [];
-/// <summary>
+
+    /// <summary>
     ///     格式设置
     /// </summary>
     /// <returns>string</returns>
@@ -63,14 +64,20 @@ public class Content
         var sb = new System.Text.StringBuilder();
         sb.Append(nameof(Text)).Append(": ").Append(Text);
 
-        if (Emojis.Count > 0) sb.Append(", ").Append(nameof(Emojis)).Append(": [").Append(string.Join(", ", Emojis)).Append(']');
-        if (Images.Count > 0) sb.Append(", ").Append(nameof(Images)).Append(": [").Append(string.Join(", ", Images)).Append(']');
+        if (Emojis.Count > 0)
+            sb.Append(", ").Append(nameof(Emojis)).Append(": [").Append(string.Join(", ", Emojis)).Append(']');
+        if (Images.Count > 0)
+            sb.Append(", ").Append(nameof(Images)).Append(": [").Append(string.Join(", ", Images)).Append(']');
         if (Ats.Count > 0) sb.Append(", ").Append(nameof(Ats)).Append(": [").Append(string.Join(", ", Ats)).Append(']');
-        if (Links.Count > 0) sb.Append(", ").Append(nameof(Links)).Append(": [").Append(string.Join(", ", Links)).Append(']');
-        if (TiebaPluses.Count > 0) sb.Append(", ").Append(nameof(TiebaPluses)).Append(": [").Append(string.Join(", ", TiebaPluses)).Append(']');
+        if (Links.Count > 0)
+            sb.Append(", ").Append(nameof(Links)).Append(": [").Append(string.Join(", ", Links)).Append(']');
+        if (TiebaPluses.Count > 0)
+            sb.Append(", ").Append(nameof(TiebaPluses)).Append(": [").Append(string.Join(", ", TiebaPluses))
+                .Append(']');
         if (Video != null) sb.Append(", ").Append(nameof(Video)).Append(": ").Append(Video);
         if (Voice != null) sb.Append(", ").Append(nameof(Voice)).Append(": ").Append(Voice);
-        if (Frags.Count > 0) sb.Append(", ").Append(nameof(Frags)).Append(": [").Append(string.Join(", ", Frags)).Append(']');
+        if (Frags.Count > 0)
+            sb.Append(", ").Append(nameof(Frags)).Append(": [").Append(string.Join(", ", Frags)).Append(']');
 
         return sb.ToString();
     }

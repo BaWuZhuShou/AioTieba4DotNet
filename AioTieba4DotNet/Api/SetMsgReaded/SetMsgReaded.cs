@@ -26,10 +26,7 @@ internal sealed class SetMsgReaded(ITiebaWsCore wsCore)
         {
             Data = new CommitReceivedPmsgReqIdl.Types.DataReq
             {
-                GroupId = groupId,
-                ToUid = userId,
-                MsgType = ReadMessageType,
-                MsgId = messageId
+                GroupId = groupId, ToUid = userId, MsgType = ReadMessageType, MsgId = messageId
             }
         };
 

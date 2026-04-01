@@ -21,11 +21,8 @@ public sealed class TestLaneOrchestratorTests
         CollectionAssert.AreEqual(
             new[]
             {
-                TestCategoryNames.ForumFoundation,
-                TestCategoryNames.ForumExtensions,
-                TestCategoryNames.ThreadRead,
-                TestCategoryNames.UserSocial,
-                TestCategoryNames.MessagingClient
+                TestCategoryNames.ForumFoundation, TestCategoryNames.ForumExtensions, TestCategoryNames.ThreadRead,
+                TestCategoryNames.UserSocial, TestCategoryNames.MessagingClient
             },
             plan.Stages.Select(static stage => stage.Name).ToArray());
     }
@@ -37,20 +34,10 @@ public sealed class TestLaneOrchestratorTests
 
         var plan = orchestrator.CreateExecutionPlan(
             TestLaneOrchestrator.LiveLane,
-            new[]
-            {
-                TestCategoryNames.Cleanup,
-                TestCategoryNames.MessagingClient,
-                TestCategoryNames.ForumExtensions
-            });
+            new[] { TestCategoryNames.Cleanup, TestCategoryNames.MessagingClient, TestCategoryNames.ForumExtensions });
 
         CollectionAssert.AreEqual(
-            new[]
-            {
-                TestCategoryNames.ForumExtensions,
-                TestCategoryNames.MessagingClient,
-                TestCategoryNames.Cleanup
-            },
+            new[] { TestCategoryNames.ForumExtensions, TestCategoryNames.MessagingClient, TestCategoryNames.Cleanup },
             plan.Stages.Select(static stage => stage.Name).ToArray());
         Assert.IsFalse(plan.Stages[0].IsCleanupWave);
         Assert.IsTrue(plan.Stages[^1].IsCleanupWave);
@@ -64,7 +51,8 @@ public sealed class TestLaneOrchestratorTests
         var cleanup = new TestCleanupOrchestrator();
         var cleanupExecuted = false;
 
-        cleanup.RecordCreatedObject(TestCategoryNames.ThreadWriteModeration, "thread", 123456, "synthetic created thread");
+        cleanup.RecordCreatedObject(TestCategoryNames.ThreadWriteModeration, "thread", 123456,
+            "synthetic created thread");
         cleanup.Register(
             TestCategoryNames.ThreadWriteModeration,
             "delete synthetic thread",
@@ -84,22 +72,12 @@ public sealed class TestLaneOrchestratorTests
                     throw new InvalidOperationException("controlled mid-wave failure");
             },
             cleanup,
-            new[]
-            {
-                TestCategoryNames.ForumExtensions,
-                TestCategoryNames.ThreadRead,
-                TestCategoryNames.Cleanup
-            });
+            new[] { TestCategoryNames.ForumExtensions, TestCategoryNames.ThreadRead, TestCategoryNames.Cleanup });
 
         Assert.IsFalse(result.Succeeded);
         Assert.IsTrue(cleanupExecuted);
         CollectionAssert.AreEqual(
-            new[]
-            {
-                TestCategoryNames.ForumExtensions,
-                TestCategoryNames.ThreadRead,
-                TestCategoryNames.Cleanup
-            },
+            new[] { TestCategoryNames.ForumExtensions, TestCategoryNames.ThreadRead, TestCategoryNames.Cleanup },
             result.StageResults.Select(static result => result.StageName).ToArray());
         Assert.AreEqual(TestLaneStageStatus.Succeeded, result.StageResults[0].Status);
         Assert.AreEqual(TestLaneStageStatus.Failed, result.StageResults[1].Status);

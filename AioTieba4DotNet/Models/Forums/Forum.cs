@@ -54,6 +54,7 @@ public class Forum
     ///     是否有吧务
     /// </summary>
     public bool HasBaWu { get; set; }
+
     /// <summary>
     ///     转换为字符串
     /// </summary>

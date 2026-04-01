@@ -23,9 +23,7 @@ internal class Recommend(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     {
         var data = new List<KeyValuePair<string, string>>
         {
-            new("BDUSS", HttpCore.Account!.Bduss),
-            new("forum_id", fid.ToString()),
-            new("thread_id", tid.ToString())
+            new("BDUSS", HttpCore.Account!.Bduss), new("forum_id", fid.ToString()), new("thread_id", tid.ToString())
         };
 
         var requestUri = new UriBuilder(Const.AppInsecureScheme, Const.AppBaseHost, 80,

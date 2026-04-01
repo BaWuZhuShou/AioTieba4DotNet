@@ -22,7 +22,10 @@ internal interface ITiebaWebSocketConnectionFactory
 
 internal sealed class ClientWebSocketConnectionFactory(TiebaWebSocketOptions options) : ITiebaWebSocketConnectionFactory
 {
-    public ITiebaWebSocketConnection CreateConnection() => new ClientWebSocketConnection(options);
+    public ITiebaWebSocketConnection CreateConnection()
+    {
+        return new ClientWebSocketConnection(options);
+    }
 }
 
 internal sealed class ClientWebSocketConnection(TiebaWebSocketOptions options) : ITiebaWebSocketConnection

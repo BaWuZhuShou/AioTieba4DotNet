@@ -28,34 +28,34 @@ public sealed class MessagesAndUserContentApiTests
     {
         var account = CreateAccount();
         var wsCore = new RecordingWsCore { Account = account };
-        wsCore.Response = CreateWsResponse(new global::GetGroupMsgResIdl
+        wsCore.Response = CreateWsResponse(new GetGroupMsgResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::GetGroupMsgResIdl.Types.DataRes
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
+            Data = new GetGroupMsgResIdl.Types.DataRes
             {
                 GroupInfo =
                 {
-                    new global::GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg
+                    new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg
                     {
-                        GroupInfo = new global::GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.GroupInfo
-                        {
-                            GroupId = 88,
-                            GroupType = 6
-                        },
+                        GroupInfo =
+                            new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.GroupInfo
+                            {
+                                GroupId = 88, GroupType = 6
+                            },
                         MsgList =
                         {
-                            new global::GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo
+                            new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo
                             {
                                 MsgId = 1234,
                                 MsgType = 1,
                                 Content = "hello",
                                 CreateTime = 1712345678,
-                                UserInfo = new global::GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo
-                                {
-                                    UserId = 42,
-                                    UserName = "sender",
-                                    Portrait = "tb.1.sender?012345678901"
-                                }
+                                UserInfo =
+                                    new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.
+                                        MsgInfo.Types.UserInfo
+                                        {
+                                            UserId = 42, UserName = "sender", Portrait = "tb.1.sender?012345678901"
+                                        }
                             }
                         }
                     }
@@ -67,7 +67,7 @@ public sealed class MessagesAndUserContentApiTests
 
         var result = await api.RequestAsync([88, 99], [77], 2, cts.Token);
 
-        var request = global::GetGroupMsgReqIdl.Parser.ParseFrom(wsCore.LastRequestData);
+        var request = GetGroupMsgReqIdl.Parser.ParseFrom(wsCore.LastRequestData);
 
         Assert.AreEqual(202003, wsCore.LastCmd);
         Assert.AreEqual(cts.Token, wsCore.LastCancellationToken);
@@ -100,16 +100,16 @@ public sealed class MessagesAndUserContentApiTests
     public async Task SendMsg_RequestAsync_PacksPayloadAndReturnsMessageId()
     {
         var wsCore = new RecordingWsCore { Account = CreateAccount() };
-        wsCore.Response = CreateWsResponse(new global::CommitPersonalMsgResIdl
+        wsCore.Response = CreateWsResponse(new CommitPersonalMsgResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::CommitPersonalMsgResIdl.Types.DataRes { MsgId = 998877 }
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
+            Data = new CommitPersonalMsgResIdl.Types.DataRes { MsgId = 998877 }
         }.ToByteArray());
         var api = new SendMsg(wsCore);
 
         var messageId = await api.RequestAsync(12345, "private hi", 56789);
 
-        var request = global::CommitPersonalMsgReqIdl.Parser.ParseFrom(wsCore.LastRequestData);
+        var request = CommitPersonalMsgReqIdl.Parser.ParseFrom(wsCore.LastRequestData);
 
         Assert.AreEqual(205001, wsCore.LastCmd);
         Assert.AreEqual(12345L, request.Data.ToUid);
@@ -123,15 +123,14 @@ public sealed class MessagesAndUserContentApiTests
     public async Task SendMsg_RequestAsync_ThrowsWhenBlockInfoReportsFailure()
     {
         var wsCore = new RecordingWsCore { Account = CreateAccount() };
-        wsCore.Response = CreateWsResponse(new global::CommitPersonalMsgResIdl
+        wsCore.Response = CreateWsResponse(new CommitPersonalMsgResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::CommitPersonalMsgResIdl.Types.DataRes
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
+            Data = new CommitPersonalMsgResIdl.Types.DataRes
             {
-                BlockInfo = new global::CommitPersonalMsgResIdl.Types.DataRes.Types.BlockInfo
+                BlockInfo = new CommitPersonalMsgResIdl.Types.DataRes.Types.BlockInfo
                 {
-                    BlockErrno = 12,
-                    BlockErrmsg = "blocked"
+                    BlockErrno = 12, BlockErrmsg = "blocked"
                 }
             }
         }.ToByteArray());
@@ -287,17 +286,16 @@ public sealed class MessagesAndUserContentApiTests
     public async Task GetUserThreads_RequestHttpAsync_PacksProtoAndParsesEmptyResult()
     {
         var httpCore = new RecordingHttpCore { Account = CreateAccount() };
-        httpCore.AppProtoResponse = new global::UserPostResIdl
+        httpCore.AppProtoResponse = new UserPostResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::UserPostResIdl.Types.DataRes()
+            Error = new Error { Errorno = 0, Errmsg = string.Empty }, Data = new UserPostResIdl.Types.DataRes()
         }.ToByteArray();
         var api = new GetUserThreads(httpCore, new RecordingWsCore());
         using var cts = new CancellationTokenSource();
 
-        var result = await api.RequestHttpAsync(42, 3, publicOnly: true, cts.Token);
+        var result = await api.RequestHttpAsync(42, 3, true, cts.Token);
 
-        var request = global::UserPostReqIdl.Parser.ParseFrom(httpCore.LastAppProtoRequestData);
+        var request = UserPostReqIdl.Parser.ParseFrom(httpCore.LastAppProtoRequestData);
 
         Assert.AreEqual("/c/u/feed/userpost", httpCore.LastAppProtoUri?.AbsolutePath);
         Assert.AreEqual("cmd=303002", httpCore.LastAppProtoUri?.Query.TrimStart('?'));
@@ -314,23 +312,23 @@ public sealed class MessagesAndUserContentApiTests
     public async Task GetUserThreads_RequestWsAsync_PacksProtoAndParsesResponse()
     {
         var wsCore = new RecordingWsCore { Account = CreateAccount() };
-        wsCore.Response = CreateWsResponse(new global::UserPostResIdl
+        wsCore.Response = CreateWsResponse(new UserPostResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::UserPostResIdl.Types.DataRes
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
+            Data = new UserPostResIdl.Types.DataRes
             {
                 PostList =
                 {
-                    CreateUserPostList(title: "Thread title", forumId: 8, forumName: "forum", threadId: 9, postId: 10,
-                        userId: 42, userName: "author", portrait: "tb.1.author?012345678901", contentText: "body")
+                    CreateUserPostList("Thread title", 8, "forum", 9, 10,
+                        42, "author", "tb.1.author?012345678901", "body")
                 }
             }
         }.ToByteArray());
         var api = new GetUserThreads(new RecordingHttpCore(), wsCore);
 
-        var result = await api.RequestWsAsync(42, 1, publicOnly: false);
+        var result = await api.RequestWsAsync(42, 1, false);
 
-        var request = global::UserPostReqIdl.Parser.ParseFrom(wsCore.LastRequestData);
+        var request = UserPostReqIdl.Parser.ParseFrom(wsCore.LastRequestData);
 
         Assert.AreEqual(303002, wsCore.LastCmd);
         Assert.AreEqual(42, request.Data.UserId);
@@ -345,19 +343,18 @@ public sealed class MessagesAndUserContentApiTests
     public async Task GetPosts_RequestHttpAsync_PacksProtoAndParsesNestedPosts()
     {
         var httpCore = new RecordingHttpCore { Account = CreateAccount() };
-        var response = new global::UserPostResIdl
+        var response = new UserPostResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::UserPostResIdl.Types.DataRes()
+            Error = new Error { Errorno = 0, Errmsg = string.Empty }, Data = new UserPostResIdl.Types.DataRes()
         };
-        var postList = CreateUserPostList(title: "ignored", forumId: 8, forumName: "forum", threadId: 9, postId: 10,
-            userId: 42, userName: "author", portrait: "tb.1.author?012345678901", contentText: "body");
-        postList.Content.Add(new global::PostInfoList.Types.PostInfoContent
+        var postList = CreateUserPostList("ignored", 8, "forum", 9, 10,
+            42, "author", "tb.1.author?012345678901", "body");
+        postList.Content.Add(new PostInfoList.Types.PostInfoContent
         {
             PostId = 10,
             PostType = 1,
             CreateTime = 1711111111,
-            PostContent = { new global::PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 0, Text = "reply" } }
+            PostContent = { new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 0, Text = "reply" } }
         });
         response.Data.PostList.Add(postList);
         httpCore.AppProtoResponse = response.ToByteArray();
@@ -366,7 +363,7 @@ public sealed class MessagesAndUserContentApiTests
 
         var result = await api.RequestHttpAsync(42, 3, 20, "9.9.9", cts.Token);
 
-        var request = global::UserPostReqIdl.Parser.ParseFrom(httpCore.LastAppProtoRequestData);
+        var request = UserPostReqIdl.Parser.ParseFrom(httpCore.LastAppProtoRequestData);
 
         Assert.AreEqual("/c/u/feed/userpost", httpCore.LastAppProtoUri?.AbsolutePath);
         Assert.AreEqual("cmd=303002", httpCore.LastAppProtoUri?.Query.TrimStart('?'));
@@ -391,17 +388,16 @@ public sealed class MessagesAndUserContentApiTests
     public async Task GetPosts_RequestWsAsync_PacksProtoAndParsesEmptyResult()
     {
         var wsCore = new RecordingWsCore { Account = CreateAccount() };
-        wsCore.Response = CreateWsResponse(new global::UserPostResIdl
+        wsCore.Response = CreateWsResponse(new UserPostResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::UserPostResIdl.Types.DataRes()
+            Error = new Error { Errorno = 0, Errmsg = string.Empty }, Data = new UserPostResIdl.Types.DataRes()
         }.ToByteArray());
         var api = new GetPosts(new RecordingHttpCore(), wsCore);
         using var cts = new CancellationTokenSource();
 
         var result = await api.RequestWsAsync(84, 5, 40, "10.0.0", cts.Token);
 
-        var request = global::UserPostReqIdl.Parser.ParseFrom(wsCore.LastRequestData);
+        var request = UserPostReqIdl.Parser.ParseFrom(wsCore.LastRequestData);
 
         Assert.AreEqual(303002, wsCore.LastCmd);
         Assert.AreEqual(cts.Token, wsCore.LastCancellationToken);
@@ -412,12 +408,15 @@ public sealed class MessagesAndUserContentApiTests
         Assert.AreEqual(0, result.Count);
     }
 
-    private static Account CreateAccount() => new(new string('b', 192), new string('s', 64));
+    private static Account CreateAccount()
+    {
+        return new Account(new string('b', 192), new string('s', 64));
+    }
 
-    private static global::PostInfoList CreateUserPostList(string title, ulong forumId, string forumName, ulong threadId,
+    private static PostInfoList CreateUserPostList(string title, ulong forumId, string forumName, ulong threadId,
         ulong postId, long userId, string userName, string portrait, string contentText)
     {
-        return new global::PostInfoList
+        return new PostInfoList
         {
             Title = title,
             ForumId = forumId,
@@ -428,12 +427,14 @@ public sealed class MessagesAndUserContentApiTests
             UserName = userName,
             UserPortrait = portrait,
             NameShow = userName,
-            FirstPostContent = { new global::PbContent { Type = 0, Text = contentText } }
+            FirstPostContent = { new PbContent { Type = 0, Text = contentText } }
         };
     }
 
-    private static WSRes CreateWsResponse(byte[] payload) =>
-        new() { Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(payload) } };
+    private static WSRes CreateWsResponse(byte[] payload)
+    {
+        return new WSRes { Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(payload) } };
+    }
 
     private sealed class RecordingHttpCore : ITiebaHttpCore
     {
@@ -451,10 +452,16 @@ public sealed class MessagesAndUserContentApiTests
         public byte[] LastAppProtoRequestData { get; private set; } = [];
         public CancellationToken LastAppProtoCancellationToken { get; private set; }
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -474,12 +481,21 @@ public sealed class MessagesAndUserContentApiTests
         }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
-        public string GetAppFormValue(string key) => LastAppFormData.Last(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData.Last(entry => entry.Key == key).Value;
+        }
     }
 
     private sealed class RecordingWsCore : ITiebaWsCore
@@ -490,11 +506,20 @@ public sealed class MessagesAndUserContentApiTests
         public CancellationToken LastCancellationToken { get; private set; }
         public Account? Account { get; set; }
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
-        public Task ConnectAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task ConnectAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
             CancellationToken cancellationToken = default)
@@ -505,10 +530,15 @@ public sealed class MessagesAndUserContentApiTests
             return Task.FromResult(Response);
         }
 
-        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) =>
+        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private static async Task<TException> ThrowsAsync<TException>(Func<Task> action)

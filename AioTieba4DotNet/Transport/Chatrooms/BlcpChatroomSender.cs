@@ -28,7 +28,8 @@ internal sealed class BlcpChatroomSender
     private const string Pkcs7Iv = "2011121211143000";
     private static readonly Encoding Utf8 = new UTF8Encoding(false);
 
-    public async Task<bool> SendMessageAsync(Account account, UserInfo selfInfo, ForumLevelInfo forumLevel, long chatroomId,
+    public async Task<bool> SendMessageAsync(Account account, UserInfo selfInfo, ForumLevelInfo forumLevel,
+        long chatroomId,
         ulong forumId, string text, IReadOnlyList<long>? atUserIds, int robotCode, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(account);
@@ -36,21 +37,23 @@ internal sealed class BlcpChatroomSender
         ArgumentNullException.ThrowIfNull(forumLevel);
 
         if (string.IsNullOrWhiteSpace(account.SampleId))
-            throw TiebaSessionAuthPolicy.CreateMissingSessionStateException(nameof(SendMessageAsync), nameof(Account.SampleId));
+            throw TiebaSessionAuthPolicy.CreateMissingSessionStateException(nameof(SendMessageAsync),
+                nameof(Account.SampleId));
 
         using var tcpClient = new TcpClient(AddressFamily.InterNetwork);
         await tcpClient.ConnectAsync(BlcpHost, BlcpPort, cancellationToken);
-        using var sslStream = new SslStream(tcpClient.GetStream(), leaveInnerStreamOpen: false,
+        using var sslStream = new SslStream(tcpClient.GetStream(), false,
             static (_, _, _, _) => true);
         await sslStream.AuthenticateAsClientAsync(BlcpHost, null,
             System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13,
-            checkCertificateRevocation: false);
+            false);
 
         var token = await GenerateLcmTokenAsync(account.CuidGalaxy2, cancellationToken);
         await PerformHandshakeAsync(sslStream, account, token, cancellationToken);
         var loginPayload = await PerformLoginAsync(sslStream, account, selfInfo, cancellationToken);
         var atData = atUserIds is { Count: > 0 } ? BuildAtData(atUserIds) : null;
-        return await SendChatroomPayloadAsync(sslStream, account, selfInfo, forumLevel, loginPayload, chatroomId, forumId,
+        return await SendChatroomPayloadAsync(sslStream, account, selfInfo, forumLevel, loginPayload, chatroomId,
+            forumId,
             text, atData, robotCode, cancellationToken);
     }
 
@@ -93,7 +96,7 @@ internal sealed class BlcpChatroomSender
         CancellationToken cancellationToken)
     {
         var correlationId = CreateCorrelationId();
-        var rpcBody = BuildRpcBody(1, 1, correlationId, needCommon: 1);
+        var rpcBody = BuildRpcBody(1, 1, correlationId, 1);
         var rpcData = new RpcData
         {
             LcmRequest = new LcmRequest
@@ -144,14 +147,10 @@ internal sealed class BlcpChatroomSender
                 c3_aid = account.C3Aid ?? string.Empty,
                 type_id = "0"
             },
-            filter = new
-            {
-                aps = new { cpu_abi = "armeabi-v7a" },
-                command = new { step = "0" }
-            }
+            filter = new { aps = new { cpu_abi = "armeabi-v7a" }, command = new { step = "0" } }
         };
 
-        await SendJsonRpcAsync(stream, 4, 1, firstLogin, cancellationToken, expectLcmErrorField: "errno");
+        await SendJsonRpcAsync(stream, 4, 1, firstLogin, cancellationToken, "errno");
 
         var clientIdentifier = JsonConvert.SerializeObject(new { zid = string.Empty, version_code = string.Empty });
         var secondLogin = new JObject
@@ -184,7 +183,7 @@ internal sealed class BlcpChatroomSender
         };
 
         var secondResponse = await SendJsonRpcAsync(stream, 2, 50, secondLogin, cancellationToken,
-            expectLcmErrorField: "err_code");
+            "err_code");
 
         var triggerToken = secondResponse["trigger_id"] as JArray;
         return new LoginPayload(
@@ -205,7 +204,8 @@ internal sealed class BlcpChatroomSender
 
         var contentExt = new JObject
         {
-            ["main_data"] = BuildMainData(forumLevel.UserLevel, selfInfo.IsVip, selfInfo.GLevel, forumId, selfInfo.Portrait,
+            ["main_data"] = BuildMainData(forumLevel.UserLevel, selfInfo.IsVip, selfInfo.GLevel, forumId,
+                selfInfo.Portrait,
                 name),
             ["is_sys_msg"] = 0,
             ["version"] = string.Empty,
@@ -243,10 +243,7 @@ internal sealed class BlcpChatroomSender
         if (atData is not null)
             textPayload["at_data"] = atData;
 
-        var content = new JObject
-        {
-            ["text"] = JsonConvert.SerializeObject(textPayload, Formatting.None)
-        };
+        var content = new JObject { ["text"] = JsonConvert.SerializeObject(textPayload, Formatting.None) };
 
         var requestData = new JObject
         {
@@ -258,7 +255,9 @@ internal sealed class BlcpChatroomSender
             ["uk"] = loginPayload.Uk == 0 ? selfInfo.Uk : loginPayload.Uk,
             ["origin_id"] = loginPayload.TriggerId,
             ["type"] = 81,
-            ["app_safe_ext"] = JsonConvert.SerializeObject(new { haotianjing = new { zid = account.ZId ?? string.Empty } }, Formatting.None),
+            ["app_safe_ext"] =
+                JsonConvert.SerializeObject(new { haotianjing = new { zid = account.ZId ?? string.Empty } },
+                    Formatting.None),
             ["content"] = JsonConvert.SerializeObject(content, Formatting.None),
             ["msg_key"] = GetMsgKey(bduk),
             ["account_type"] = 1,
@@ -271,7 +270,7 @@ internal sealed class BlcpChatroomSender
             })
         };
 
-        var response = await SendJsonRpcAsync(stream, 3, 185, requestData, cancellationToken, expectLcmErrorField: "err_code");
+        var response = await SendJsonRpcAsync(stream, 3, 185, requestData, cancellationToken, "err_code");
         return response["err_code"]?.Value<int>() == 0;
     }
 
@@ -279,7 +278,7 @@ internal sealed class BlcpChatroomSender
         CancellationToken cancellationToken, string expectLcmErrorField)
     {
         var correlationId = CreateCorrelationId();
-        var rpcBody = BuildRpcBody(serviceId, methodId, correlationId, needCommon: 1);
+        var rpcBody = BuildRpcBody(serviceId, methodId, correlationId, 1);
         var json = payload is JObject jsonObject ? jsonObject : JObject.FromObject(payload);
         json["client_logid"] ??= correlationId;
         json["rpc"] ??= "{\"rpc_retry_time\":0}";
@@ -293,7 +292,8 @@ internal sealed class BlcpChatroomSender
         var response = JObject.Parse(Utf8.GetString(lcmBody));
         var errorToken = response[expectLcmErrorField];
         if (errorToken is not null && errorToken.Type != JTokenType.Null && errorToken.Value<int>() != 0)
-            throw new TiebaProtocolException($"BLCP payload {serviceId}/{methodId} failed with {expectLcmErrorField}={errorToken.Value<int>()}.");
+            throw new TiebaProtocolException(
+                $"BLCP payload {serviceId}/{methodId} failed with {expectLcmErrorField}={errorToken.Value<int>()}.");
 
         return response;
     }
@@ -357,23 +357,16 @@ internal sealed class BlcpChatroomSender
     {
         var requestMeta = new RpcRequestMeta
         {
-            ServiceId = serviceId,
-            MethodId = methodId,
-            LogId = correlationId,
-            NeedCommon = needCommon
+            ServiceId = serviceId, MethodId = methodId, LogId = correlationId, NeedCommon = needCommon
         };
         requestMeta.EventList.Add(new EventTimestamp
         {
-            Event = "CLCPReqBegin",
-            TimestampMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+            Event = "CLCPReqBegin", TimestampMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
         });
 
         var rpcMeta = new RpcMeta
         {
-            Request = requestMeta,
-            CorrelationId = correlationId,
-            CompressType = 0,
-            AcceptCompressType = 1
+            Request = requestMeta, CorrelationId = correlationId, CompressType = 0, AcceptCompressType = 1
         };
 
         return rpcMeta.ToByteArray();
@@ -382,10 +375,7 @@ internal sealed class BlcpChatroomSender
     private static JArray BuildAtData(IReadOnlyList<long> atUserIds)
     {
         var array = new JArray();
-        foreach (var userId in atUserIds)
-        {
-            array.Add(JObject.FromObject(new { uid = userId.ToString() }));
-        }
+        foreach (var userId in atUserIds) array.Add(JObject.FromObject(new { uid = userId.ToString() }));
 
         return array;
     }
@@ -394,21 +384,20 @@ internal sealed class BlcpChatroomSender
     {
         var mainData = new JArray();
         if (vip)
-        {
             mainData.Add(JObject.FromObject(new
             {
                 icon = new
                 {
                     height = 75,
                     priority = 2,
-                    schema = "https://tieba.baidu.com/mo/q/hybrid-business-vip/tbvip?customfullscreen=1&nonavigationbar=1",
+                    schema =
+                        "https://tieba.baidu.com/mo/q/hybrid-business-vip/tbvip?customfullscreen=1&nonavigationbar=1",
                     type = "1",
                     url = "https://tieba-ares.cdn.bcebos.com/mis/2023-7/1689061482682/13afea50121d.png",
                     width = 75
                 },
                 type = 2
             }));
-        }
 
         var nameData = new JObject
         {
@@ -428,12 +417,7 @@ internal sealed class BlcpChatroomSender
         if (vip)
         {
             var textToken = (JObject)nameData["text"]!;
-            textToken["text_color"] = JObject.FromObject(new
-            {
-                day = "CAM_X0301",
-                night = "CAM_X0301",
-                type = 2
-            });
+            textToken["text_color"] = JObject.FromObject(new { day = "CAM_X0301", night = "CAM_X0301", type = 2 });
         }
 
         mainData.Add(nameData);
@@ -443,7 +427,8 @@ internal sealed class BlcpChatroomSender
             {
                 height = 15,
                 priority = 5,
-                schema = "https://tieba.baidu.com/mo/q/hybrid-main-user/taskCenter?customfullscreen=1&nonavigationbar=1",
+                schema =
+                    "https://tieba.baidu.com/mo/q/hybrid-main-user/taskCenter?customfullscreen=1&nonavigationbar=1",
                 type = "3",
                 url = $"local://icon/icon_mask_level_usergrouth_{gLevel}?type=webp",
                 width = 24
@@ -456,7 +441,8 @@ internal sealed class BlcpChatroomSender
             {
                 height = 12,
                 priority = 2,
-                schema = $"https://tieba.baidu.com/mo/q/wise-bawu-core/forum-level?customfullscreen=1&forum_id={forumId}&nonavigationbar=1&obj_locate=5&portrait={portrait}?t={DateTimeOffset.UtcNow.ToUnixTimeSeconds()}",
+                schema =
+                    $"https://tieba.baidu.com/mo/q/wise-bawu-core/forum-level?customfullscreen=1&forum_id={forumId}&nonavigationbar=1&obj_locate=5&portrait={portrait}?t={DateTimeOffset.UtcNow.ToUnixTimeSeconds()}",
                 type = "4",
                 url = $"local://icon/icon_level_{level:00}?type=webp",
                 width = 16
@@ -487,7 +473,10 @@ internal sealed class BlcpChatroomSender
         return $"{bduk}{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000}{random}";
     }
 
-    private static long CreateCorrelationId() => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000;
+    private static long CreateCorrelationId()
+    {
+        return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000;
+    }
 
     private static string ComputeMd5Hex(string text)
     {
@@ -510,13 +499,15 @@ internal sealed class BlcpChatroomSender
 internal static class EnuidCodec
 {
     private static readonly Encoding Utf8 = new UTF8Encoding(false);
-    private static readonly byte[] Alphabet = Utf8.GetBytes("qogjOuCRNkfil5p4SQ3LAmxGKZTdesvB6z_YPahMI9t80rJyHW1DEwFbc7nUVX2-");
+
+    private static readonly byte[] Alphabet =
+        Utf8.GetBytes("qogjOuCRNkfil5p4SQ3LAmxGKZTdesvB6z_YPahMI9t80rJyHW1DEwFbc7nUVX2-");
 
     internal static string Encode(string cuidGalaxy2)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(cuidGalaxy2);
         var source = Utf8.GetBytes(cuidGalaxy2);
-        var working = new byte[((source.Length + 2) / 3) * 4 + 2];
+        var working = new byte[(source.Length + 2) / 3 * 4 + 2];
         Buffer.BlockCopy(source, 0, working, 0, source.Length);
         var encodedLength = EncodeInPlace(working, source.Length, 0);
         return Utf8.GetString(working, 0, encodedLength - 1);

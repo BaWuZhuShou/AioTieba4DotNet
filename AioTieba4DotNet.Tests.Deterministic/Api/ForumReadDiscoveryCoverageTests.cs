@@ -27,9 +27,9 @@ public sealed class ForumReadDiscoveryCoverageTests
     [TestMethod]
     public void ForumDiscoveryMappers_CoverFallbackAndHappyShapes()
     {
-        var forumDetailOn = ForumDetailMapper.FromTbData(new global::GetForumDetailResIdl.Types.DataRes
+        var forumDetailOn = ForumDetailMapper.FromTbData(new GetForumDetailResIdl.Types.DataRes
         {
-            ForumInfo = new global::GetForumDetailResIdl.Types.DataRes.Types.RecommendForumInfo
+            ForumInfo = new GetForumDetailResIdl.Types.DataRes.Types.RecommendForumInfo
             {
                 ForumId = 7356044,
                 ForumName = "csharp",
@@ -40,14 +40,14 @@ public sealed class ForumReadDiscoveryCoverageTests
                 MemberCount = 11,
                 ThreadCount = 22
             },
-            ElectionTab = new global::GetForumDetailResIdl.Types.DataRes.Types.ManagerElectionTab
+            ElectionTab = new GetForumDetailResIdl.Types.DataRes.Types.ManagerElectionTab
             {
                 NewStrategyText = "已有吧主"
             }
         });
-        var forumDetailOff = ForumDetailMapper.FromTbData(new global::GetForumDetailResIdl.Types.DataRes
+        var forumDetailOff = ForumDetailMapper.FromTbData(new GetForumDetailResIdl.Types.DataRes
         {
-            ForumInfo = new global::GetForumDetailResIdl.Types.DataRes.Types.RecommendForumInfo
+            ForumInfo = new GetForumDetailResIdl.Types.DataRes.Types.RecommendForumInfo
             {
                 ForumId = 1,
                 ForumName = "plain",
@@ -58,7 +58,7 @@ public sealed class ForumReadDiscoveryCoverageTests
                 MemberCount = 1,
                 ThreadCount = 2
             },
-            ElectionTab = new global::GetForumDetailResIdl.Types.DataRes.Types.ManagerElectionTab
+            ElectionTab = new GetForumDetailResIdl.Types.DataRes.Types.ManagerElectionTab
             {
                 NewStrategyText = "暂无吧主"
             }
@@ -69,26 +69,15 @@ public sealed class ForumReadDiscoveryCoverageTests
         {
             ["forum_list"] = new JObject
             {
-                ["non-gconforum"] = new JArray
-                {
-                    new JObject
+                ["non-gconforum"] =
+                    new JArray
                     {
-                        ["id"] = 7,
-                        ["name"] = "forum-a",
-                        ["level_id"] = 3,
-                        ["cur_score"] = 4
+                        new JObject { ["id"] = 7, ["name"] = "forum-a", ["level_id"] = 3, ["cur_score"] = 4 },
+                        new JValue("skip")
                     },
-                    new JValue("skip")
-                },
                 ["gconforum"] = new JArray
                 {
-                    new JObject
-                    {
-                        ["id"] = 8,
-                        ["name"] = "forum-b",
-                        ["level_id"] = 5,
-                        ["cur_score"] = 6
-                    }
+                    new JObject { ["id"] = 8, ["name"] = "forum-b", ["level_id"] = 5, ["cur_score"] = 6 }
                 }
             },
             ["has_more"] = 1
@@ -99,19 +88,9 @@ public sealed class ForumReadDiscoveryCoverageTests
         {
             ["list"] = new JArray
             {
-                new JObject
-                {
-                    ["forum_id"] = 11,
-                    ["forum_name"] = "forum-c",
-                    ["level_id"] = 2
-                },
-                new JObject()
+                new JObject { ["forum_id"] = 11, ["forum_name"] = "forum-c", ["level_id"] = 2 }, new JObject()
             },
-            ["page"] = new JObject
-            {
-                ["cur_page"] = 2,
-                ["total_page"] = 4
-            }
+            ["page"] = new JObject { ["cur_page"] = 2, ["total_page"] = 4 }
         });
 
         Assert.IsTrue(forumDetailOn.HasBaWu);
@@ -140,11 +119,11 @@ public sealed class ForumReadDiscoveryCoverageTests
     {
         var lastReplyersHttp = new RecordingHttpCore
         {
-            AppProtoResponse = CreateLastReplyersResponse(currentPage: 0, hasMore: true).ToByteArray()
+            AppProtoResponse = CreateLastReplyersResponse(0, true).ToByteArray()
         };
         var lastReplyersWs = new RecordingWsCore
         {
-            ResponsePayload = CreateLastReplyersResponse(currentPage: 2, hasMore: false).ToByteArray()
+            ResponsePayload = CreateLastReplyersResponse(2, false).ToByteArray()
         };
         var lastReplyersApi = new GetLastReplyers(lastReplyersHttp, lastReplyersWs);
 
@@ -153,14 +132,8 @@ public sealed class ForumReadDiscoveryCoverageTests
         var wsReplyers = await lastReplyersApi.RequestWsAsync("csharp", 2, 30, ThreadSortType.Reply, false);
         var wsRequest = FrsPageReqIdl4lp.Parser.ParseFrom(lastReplyersWs.LastData);
 
-        var threadPostsHttp = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateThreadPostsResponse().ToByteArray()
-        };
-        var threadPostsWs = new RecordingWsCore
-        {
-            ResponsePayload = CreateThreadPostsResponse().ToByteArray()
-        };
+        var threadPostsHttp = new RecordingHttpCore { AppProtoResponse = CreateThreadPostsResponse().ToByteArray() };
+        var threadPostsWs = new RecordingWsCore { ResponsePayload = CreateThreadPostsResponse().ToByteArray() };
         threadPostsHttp.SetAccount(new Account(new string('b', 192), new string('s', 64)));
         threadPostsWs.SetAccount(new Account(new string('b', 192), new string('s', 64)));
         var threadPostsApi = new GetThreadPosts(threadPostsHttp, threadPostsWs);
@@ -244,7 +217,8 @@ public sealed class ForumReadDiscoveryCoverageTests
         };
         recommendFailHttp.SetAccount(new Account(new string('b', 192), new string('s', 64)));
         var recommendFailApi = new Recommend(recommendFailHttp);
-        var recommendFailException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => recommendFailApi.RequestAsync(12, 34));
+        var recommendFailException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => recommendFailApi.RequestAsync(12, 34));
 
         Assert.IsTrue(recommendOk);
         Assert.AreEqual("http", recommendOkHttp.LastAppFormUri?.Scheme);
@@ -262,11 +236,7 @@ public sealed class ForumReadDiscoveryCoverageTests
             Error = new Error { Errorno = 0 },
             Data = new FrsPageResIdl4lp.Types.DataRes
             {
-                Forum = new FrsPageResIdl4lp.Types.DataRes.Types.ForumInfo
-                {
-                    Id = 7356044,
-                    Name = "csharp"
-                },
+                Forum = new FrsPageResIdl4lp.Types.DataRes.Types.ForumInfo { Id = 7356044, Name = "csharp" },
                 Page = new Page
                 {
                     CurrentPage = currentPage,
@@ -301,15 +271,16 @@ public sealed class ForumReadDiscoveryCoverageTests
             Error = new Error { Errorno = 0 },
             Data = new PbPageResIdl.Types.DataRes
             {
-                Forum = new SimpleForum
-                {
-                    Id = 7356044,
-                    Name = "csharp",
-                    FirstClass = "programming",
-                    SecondClass = "dotnet",
-                    MemberNum = 10,
-                    PostNum = 20
-                },
+                Forum =
+                    new SimpleForum
+                    {
+                        Id = 7356044,
+                        Name = "csharp",
+                        FirstClass = "programming",
+                        SecondClass = "dotnet",
+                        MemberNum = 10,
+                        PostNum = 20
+                    },
                 Page = new Page
                 {
                     CurrentPage = 2,
@@ -324,7 +295,9 @@ public sealed class ForumReadDiscoveryCoverageTests
                     Title = "Safe thread title",
                     FirstPostId = 88,
                     AuthorId = 111,
-                    Author = CreateUser(111, "thread-author", "thread-author", "tb.1.thread-author?abc123456789"),
+                    Author =
+                        CreateUser(111, "thread-author", "thread-author",
+                            "tb.1.thread-author?abc123456789"),
                     FirstPostContent = { CreateTextContent("thread body") }
                 },
                 PostList =
@@ -339,10 +312,7 @@ public sealed class ForumReadDiscoveryCoverageTests
                         Content = { CreateTextContent("post body") }
                     }
                 },
-                UserList =
-                {
-                    CreateUser(111, "thread-author", "thread-author", "tb.1.thread-author?abc123456789")
-                }
+                UserList = { CreateUser(111, "thread-author", "thread-author", "tb.1.thread-author?abc123456789") }
             }
         };
     }
@@ -361,11 +331,7 @@ public sealed class ForumReadDiscoveryCoverageTests
 
     private static PbContent CreateTextContent(string text)
     {
-        return new PbContent
-        {
-            Type = 0,
-            Text = text
-        };
+        return new PbContent { Type = 0, Text = text };
     }
 
     private sealed class RecordingHttpCore : ITiebaHttpCore
@@ -387,10 +353,16 @@ public sealed class ForumReadDiscoveryCoverageTests
         public Uri? LastAppProtoUri { get; private set; }
         public byte[] LastAppProtoData { get; private set; } = [];
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -416,11 +388,20 @@ public sealed class ForumReadDiscoveryCoverageTests
         }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
-        public string GetAppFormValue(string key) => LastAppFormData.Last(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData.Last(entry => entry.Key == key).Value;
+        }
 
-        public string GetWebGetValue(string key) => LastWebGetParameters.Last(entry => entry.Key == key).Value;
+        public string GetWebGetValue(string key)
+        {
+            return LastWebGetParameters.Last(entry => entry.Key == key).Value;
+        }
     }
 
     private sealed class RecordingWsCore : ITiebaWsCore
@@ -433,11 +414,20 @@ public sealed class ForumReadDiscoveryCoverageTests
         public byte[] LastData { get; private set; } = [];
         public CancellationToken LastCancellationToken { get; private set; }
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
-        public Task ConnectAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task ConnectAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
             CancellationToken cancellationToken = default)
@@ -447,19 +437,21 @@ public sealed class ForumReadDiscoveryCoverageTests
             LastCancellationToken = cancellationToken;
             return Task.FromResult(new WSRes
             {
-                Payload = new WSRes.Types.Payload
-                {
-                    Data = ByteString.CopyFrom(ResponsePayload)
-                }
+                Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(ResponsePayload) }
             });
         }
 
-        public async IAsyncEnumerable<WSRes> ListenAsync([System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<WSRes> ListenAsync(
+            [System.Runtime.CompilerServices.EnumeratorCancellation]
+            CancellationToken cancellationToken = default)
         {
             await Task.CompletedTask;
             yield break;
         }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

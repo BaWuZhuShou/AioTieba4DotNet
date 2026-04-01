@@ -40,11 +40,15 @@ internal sealed class MessageCursorStore
         _initialized = true;
     }
 
-    internal IReadOnlyList<long> GetKnownGroupIds() =>
-        _pairs.Keys.Where(static groupId => groupId > 0).OrderBy(static groupId => groupId).ToList();
+    internal IReadOnlyList<long> GetKnownGroupIds()
+    {
+        return _pairs.Keys.Where(static groupId => groupId > 0).OrderBy(static groupId => groupId).ToList();
+    }
 
-    internal long GetLastMessageId(long groupId) =>
-        _pairs.TryGetValue(groupId, out var pair) ? pair.LastMessageId : 0;
+    internal long GetLastMessageId(long groupId)
+    {
+        return _pairs.TryGetValue(groupId, out var pair) ? pair.LastMessageId : 0;
+    }
 
     internal long GetRecordId()
     {

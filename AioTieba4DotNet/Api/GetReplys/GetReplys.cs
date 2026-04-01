@@ -40,7 +40,8 @@ internal class GetReplys(ITiebaHttpCore httpCore)
     public async Task<ReplyMessages> RequestAsync(int pn, CancellationToken cancellationToken = default)
     {
         var data = PackProto(_httpCore.Account!, pn);
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/replyme") { Query = $"cmd={Cmd}" }.Uri;
+        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/replyme") { Query = $"cmd={Cmd}" }
+            .Uri;
         var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }

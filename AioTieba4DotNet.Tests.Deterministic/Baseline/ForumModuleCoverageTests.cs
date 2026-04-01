@@ -75,18 +75,27 @@ public sealed class ForumModuleCoverageTests
 
         await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetCidAsync("csharp", "目录"));
         await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetCidAsync(123, "目录"));
-        await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetImageBytesAsync("https://example.com/image.png"));
-        await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetImageAsync("https://example.com/image.png"));
-        await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetImageByHashAsync("abcdef", ForumImageSize.Large));
-        await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetPortraitAsync("tb.1.safe", ForumImageSize.Large));
-        await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.SearchExactAsync("csharp", "query", 1, 2));
+        await Assert.ThrowsExactlyAsync<NotSupportedException>(() =>
+            protocol.GetImageBytesAsync("https://example.com/image.png"));
+        await Assert.ThrowsExactlyAsync<NotSupportedException>(() =>
+            protocol.GetImageAsync("https://example.com/image.png"));
+        await Assert.ThrowsExactlyAsync<NotSupportedException>(() =>
+            protocol.GetImageByHashAsync("abcdef", ForumImageSize.Large));
+        await Assert.ThrowsExactlyAsync<NotSupportedException>(() =>
+            protocol.GetPortraitAsync("tb.1.safe", ForumImageSize.Large));
+        await Assert.ThrowsExactlyAsync<NotSupportedException>(() =>
+            protocol.SearchExactAsync("csharp", "query", 1, 2));
         await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.SearchExactAsync(123, "query", 1, 2));
-        await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetLastReplyersAsync("csharp", 1, 2, ThreadSortType.Reply, false));
-        await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetLastReplyersAsync(123, 1, 2, ThreadSortType.Reply, false));
+        await Assert.ThrowsExactlyAsync<NotSupportedException>(() =>
+            protocol.GetLastReplyersAsync("csharp", 1, 2, ThreadSortType.Reply, false));
+        await Assert.ThrowsExactlyAsync<NotSupportedException>(() =>
+            protocol.GetLastReplyersAsync(123, 1, 2, ThreadSortType.Reply, false));
         await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetMemberUsersAsync("csharp", 1));
         await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetMemberUsersAsync(123, 1));
-        await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetRankForumsAsync("csharp", 1, ForumRankType.Weekly));
-        await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetRankForumsAsync(123, 1, ForumRankType.Weekly));
+        await Assert.ThrowsExactlyAsync<NotSupportedException>(() =>
+            protocol.GetRankForumsAsync("csharp", 1, ForumRankType.Weekly));
+        await Assert.ThrowsExactlyAsync<NotSupportedException>(() =>
+            protocol.GetRankForumsAsync(123, 1, ForumRankType.Weekly));
         await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetRoomListByFidAsync(123));
         await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetRecomStatusAsync("csharp"));
         await Assert.ThrowsExactlyAsync<NotSupportedException>(() => protocol.GetRecomStatusAsync(123));
@@ -116,6 +125,7 @@ public sealed class ForumModuleCoverageTests
         public bool LastIsGood { get; private set; }
         public int LastRankPageNumber { get; private set; }
         public ForumRankType LastRankType { get; private set; }
+
         public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default)
         {
             LastFname = fname;
@@ -170,9 +180,15 @@ public sealed class ForumModuleCoverageTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
 
-        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
 
         public Task<Forum> GetForumAsync(string fname, CancellationToken cancellationToken = default)
         {
@@ -197,12 +213,12 @@ public sealed class ForumModuleCoverageTests
             return Task.FromResult<SelfFollowForums>(null!);
         }
 
-    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
             CancellationToken cancellationToken = default)
         {
             LastPageNumber = pn;
             LastPageSize = rn;
-        return Task.FromResult<SelfFollowForumsV1>(null!);
+            return Task.FromResult<SelfFollowForumsV1>(null!);
         }
 
         public Task<int> GetCidAsync(string fname, string cname = "", CancellationToken cancellationToken = default)
@@ -295,7 +311,8 @@ public sealed class ForumModuleCoverageTests
             return Task.FromResult<LastReplyers>(null!);
         }
 
-        public Task<MemberUsers> GetMemberUsersAsync(string fname, int pn, CancellationToken cancellationToken = default)
+        public Task<MemberUsers> GetMemberUsersAsync(string fname, int pn,
+            CancellationToken cancellationToken = default)
         {
             LastFname = fname;
             LastPageNumber = pn;
@@ -402,33 +419,127 @@ public sealed class ForumModuleCoverageTests
             LastPageSize = rn;
             return Task.FromResult<DislikeForums>(null!);
         }
-
     }
 
     private sealed class DefaultForumProtocolProbe : IForumProtocol
     {
-        public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult(0UL);
-        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default) => Task.FromResult(string.Empty);
-        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default) => Task.FromResult<ForumDetail>(null!);
-        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult<ForumDetail>(null!);
-        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<Forum> GetForumAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult<Forum>(null!);
-        public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<FollowForums>(null!);
-        public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<SelfFollowForums>(null!);
-    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<SelfFollowForumsV1>(null!);
-        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult(false);
-        public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<DislikeForums>(null!);
-        public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType, CancellationToken cancellationToken = default) => Task.FromResult(false);
+        public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(0UL);
+        }
+
+        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(string.Empty);
+        }
+
+        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<ForumDetail>(null!);
+        }
+
+        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<ForumDetail>(null!);
+        }
+
+        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<Forum> GetForumAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<Forum>(null!);
+        }
+
+        public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<FollowForums>(null!);
+        }
+
+        public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<SelfFollowForums>(null!);
+        }
+
+        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<SelfFollowForumsV1>(null!);
+        }
+
+        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<DislikeForums>(null!);
+        }
+
+        public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(false);
+        }
     }
 }

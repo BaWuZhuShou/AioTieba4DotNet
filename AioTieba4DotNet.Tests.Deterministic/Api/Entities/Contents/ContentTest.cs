@@ -15,11 +15,11 @@ public class ContentTest
         {
             new() { Type = 0, Text = "text1" }, // FragText
             new() { Type = 11, Text = "emoji1" }, // FragEmoji
-            new() { Type = 3, Src = "img1" }     // FragImage
+            new() { Type = 3, Src = "img1" } // FragImage
         };
 
         // 执行解析
-        var content = AioTieba4DotNet.Internal.Mapping.ContentMapper.FromTbData(pbContents);
+        var content = Internal.Mapping.ContentMapper.FromTbData(pbContents);
 
         // 验证索引
         Assert.HasCount(3, content.Frags);
@@ -42,7 +42,7 @@ public class ContentTest
             new() { Type = 0, Text = " world" }
         };
 
-        var content = AioTieba4DotNet.Internal.Mapping.ContentMapper.FromTbData(pbContents);
+        var content = Internal.Mapping.ContentMapper.FromTbData(pbContents);
         var str = content.ToString();
 
         System.Console.WriteLine($"[DEBUG_LOG] ToString result: {str}");

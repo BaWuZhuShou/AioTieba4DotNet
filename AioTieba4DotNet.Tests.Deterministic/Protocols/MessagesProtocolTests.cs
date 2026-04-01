@@ -96,10 +96,8 @@ public sealed class MessagesProtocolTests
             AppFormResponse = """
                               {"error_code":0,"error_msg":"","at_list":[{"content":"reply body","fname":"csharp","thread_id":11,"post_id":22,"replyer":{"id":42,"portrait":"tb.1.replyer?012345678901","name":"replyer","name_show":"Replyer"},"is_floor":1,"is_first_post":1,"time":1711111111}],"page":{"page_size":20,"current_page":2,"total_page":3,"total_count":44,"has_more":1,"has_prev":0}}
                               """,
-            AppProtoResponse = new global::ReplyMeResIdl
-            {
-                Error = new global::Error { Errorno = 0, Errmsg = string.Empty }
-            }.ToByteArray()
+            AppProtoResponse =
+                new ReplyMeResIdl { Error = new Error { Errorno = 0, Errmsg = string.Empty } }.ToByteArray()
         };
         var protocol = CreateProtocol(CreateSession(httpCore, new RecordingWsCore()), new RecordingUserProtocol());
 
@@ -121,12 +119,12 @@ public sealed class MessagesProtocolTests
             AppFormResponse = """
                               {"error_code":0,"error_msg":"","at_list":[],"page":{"page_size":20,"current_page":1,"total_page":1,"total_count":0,"has_more":0,"has_prev":0}}
                               """,
-            AppProtoResponse = new global::ReplyMeResIdl
+            AppProtoResponse = new ReplyMeResIdl
             {
-                Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-                Data = new global::ReplyMeResIdl.Types.DataRes
+                Error = new Error { Errorno = 0, Errmsg = string.Empty },
+                Data = new ReplyMeResIdl.Types.DataRes
                 {
-                    Page = new global::Page
+                    Page = new Page
                     {
                         PageSize = 20,
                         CurrentPage = 3,
@@ -137,16 +135,37 @@ public sealed class MessagesProtocolTests
                     },
                     ReplyList =
                     {
-                        new global::ReplyMeResIdl.Types.DataRes.Types.ReplyList
+                        new ReplyMeResIdl.Types.DataRes.Types.ReplyList
                         {
                             Content = "reply content",
                             Fname = "csharp",
                             ThreadId = 11,
                             QuotePid = 21,
                             PostId = 22,
-                            Replyer = new global::User { Id = 42, Portrait = "tb.1.replyer?012345678901", Name = "replyer", NameShow = "Replyer" },
-                            QuoteUser = new global::User { Id = 43, Portrait = "tb.1.quote?012345678901", Name = "quote-user", NameShow = "Quote User" },
-                            ThreadAuthorUser = new global::User { Id = 44, Portrait = "tb.1.thread-author?012345678901", Name = "thread-author", NameShow = "Thread Author" },
+                            Replyer =
+                                new User
+                                {
+                                    Id = 42,
+                                    Portrait = "tb.1.replyer?012345678901",
+                                    Name = "replyer",
+                                    NameShow = "Replyer"
+                                },
+                            QuoteUser =
+                                new User
+                                {
+                                    Id = 43,
+                                    Portrait = "tb.1.quote?012345678901",
+                                    Name = "quote-user",
+                                    NameShow = "Quote User"
+                                },
+                            ThreadAuthorUser =
+                                new User
+                                {
+                                    Id = 44,
+                                    Portrait = "tb.1.thread-author?012345678901",
+                                    Name = "thread-author",
+                                    NameShow = "Thread Author"
+                                },
                             IsFloor = 1,
                             Time = 1711111112
                         }
@@ -183,15 +202,15 @@ public sealed class MessagesProtocolTests
     {
         var wsCore = new RecordingWsCore();
         wsCore.Responses.Enqueue(CreateWsResponse(CreateInitResponse([
-            new global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 },
-            new global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 99, GroupType = 1, LastMsgId = 7 }
+            new UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 },
+            new UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 99, GroupType = 1, LastMsgId = 7 }
         ]).ToByteArray()));
         wsCore.Responses.Enqueue(CreateWsResponse(CreateGroupMessageResponse(88, 6, 1234, "hello").ToByteArray()));
         var protocol = CreateProtocol(wsCore, new RecordingUserProtocol());
 
         var result = await protocol.GetGroupMessagesAsync(2);
 
-        var request = global::GetGroupMsgReqIdl.Parser.ParseFrom(wsCore.Requests[1]);
+        var request = GetGroupMsgReqIdl.Parser.ParseFrom(wsCore.Requests[1]);
 
         Assert.AreEqual(2, wsCore.Commands.Count);
         Assert.AreEqual(202003, wsCore.Commands[1]);
@@ -211,15 +230,15 @@ public sealed class MessagesProtocolTests
     {
         var wsCore = new RecordingWsCore();
         wsCore.Responses.Enqueue(CreateWsResponse(CreateInitResponse([
-            new global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 },
-            new global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 99, GroupType = 1, LastMsgId = 7 }
+            new UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 },
+            new UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 99, GroupType = 1, LastMsgId = 7 }
         ]).ToByteArray()));
         wsCore.Responses.Enqueue(CreateWsResponse(CreateGroupMessageResponse(88, 6, 1234, "hello").ToByteArray()));
         var protocol = CreateProtocol(wsCore, new RecordingUserProtocol());
 
         var result = await protocol.GetGroupMessagesAsync([88, 99], 2);
 
-        var request = global::GetGroupMsgReqIdl.Parser.ParseFrom(wsCore.Requests[1]);
+        var request = GetGroupMsgReqIdl.Parser.ParseFrom(wsCore.Requests[1]);
 
         Assert.AreEqual(2, wsCore.Commands.Count);
         Assert.AreEqual(2, request.Data.GroupMids.Count);
@@ -233,18 +252,18 @@ public sealed class MessagesProtocolTests
     {
         var wsCore = new RecordingWsCore();
         wsCore.Responses.Enqueue(CreateWsResponse(CreateInitResponse([
-            new global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 }
+            new UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 }
         ]).ToByteArray()));
-        wsCore.Responses.Enqueue(CreateWsResponse(new global::CommitPersonalMsgResIdl
+        wsCore.Responses.Enqueue(CreateWsResponse(new CommitPersonalMsgResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::CommitPersonalMsgResIdl.Types.DataRes { MsgId = 1234 }
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
+            Data = new CommitPersonalMsgResIdl.Types.DataRes { MsgId = 1234 }
         }.ToByteArray()));
         var protocol = CreateProtocol(wsCore, new RecordingUserProtocol());
 
         var messageId = await protocol.SendMessageAsync(42, "hello");
 
-        var request = global::CommitPersonalMsgReqIdl.Parser.ParseFrom(wsCore.Requests[1]);
+        var request = CommitPersonalMsgReqIdl.Parser.ParseFrom(wsCore.Requests[1]);
 
         Assert.AreEqual(1234L, messageId);
         Assert.AreEqual(205001, wsCore.Commands[1]);
@@ -258,12 +277,12 @@ public sealed class MessagesProtocolTests
     {
         var wsCore = new RecordingWsCore();
         wsCore.Responses.Enqueue(CreateWsResponse(CreateInitResponse([
-            new global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 }
+            new UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 }
         ]).ToByteArray()));
-        wsCore.Responses.Enqueue(CreateWsResponse(new global::CommitPersonalMsgResIdl
+        wsCore.Responses.Enqueue(CreateWsResponse(new CommitPersonalMsgResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::CommitPersonalMsgResIdl.Types.DataRes { MsgId = 6789 }
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
+            Data = new CommitPersonalMsgResIdl.Types.DataRes { MsgId = 6789 }
         }.ToByteArray()));
         var users = new RecordingUserProtocol
         {
@@ -281,15 +300,15 @@ public sealed class MessagesProtocolTests
     public async Task MessagesProtocol_SendChatroomMessageAsync_UsesExistingIdentifiers_AndForwardsArgumentsToSender()
     {
         var wsCore = new RecordingWsCore();
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateForumLevelResponse(userLevel: 9).ToByteArray()
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateForumLevelResponse(9).ToByteArray() };
         var session = CreateSession(httpCore, wsCore);
         session.UpdateClientIdentifiers("client-existing", "sample-existing");
         var users = new RecordingUserProtocol
         {
-            SelfInfo = new UserInfo { UserId = 42, UserName = "sender", NickNameNew = "Sender", Portrait = "tb.1.sender" }
+            SelfInfo = new UserInfo
+            {
+                UserId = 42, UserName = "sender", NickNameNew = "Sender", Portrait = "tb.1.sender"
+            }
         };
 
         Account? capturedAccount = null;
@@ -340,7 +359,7 @@ public sealed class MessagesProtocolTests
             AppFormResponse = """
                               {"error_code":0,"error_msg":"","client":{"client_id":"client-synced"},"wl_config":{"sample_id":"sample-synced"}}
                               """,
-            AppProtoResponse = CreateForumLevelResponse(userLevel: 12).ToByteArray()
+            AppProtoResponse = CreateForumLevelResponse(12).ToByteArray()
         };
         var session = CreateSession(httpCore, wsCore);
         var users = new RecordingUserProtocol
@@ -379,15 +398,17 @@ public sealed class MessagesProtocolTests
     [TestMethod]
     public async Task MessagesProtocol_DefaultChatroomSender_UsesBlcpSenderAndValidatesBeforeNetwork()
     {
-        var method = typeof(MessagesProtocol).GetMethod("DefaultSendChatroomMessageAsync", BindingFlags.NonPublic | BindingFlags.Static)
-            ?? throw new InvalidOperationException("DefaultSendChatroomMessageAsync not found.");
+        var method = typeof(MessagesProtocol).GetMethod("DefaultSendChatroomMessageAsync",
+                         BindingFlags.NonPublic | BindingFlags.Static)
+                     ?? throw new InvalidOperationException("DefaultSendChatroomMessageAsync not found.");
 
         var account = new Account(new string('b', 192), new string('s', 64));
         var selfInfo = new UserInfo { UserId = 42, UserName = "sender", Portrait = "tb.1.sender" };
         var forumLevel = new ForumLevelInfo { UserLevel = 9 };
 
         var exception = await ThrowsAsync<TiebaConfigurationException>(() =>
-            (Task<bool>)method.Invoke(null, [account, selfInfo, forumLevel, 12345L, 7356044UL, "hello", null, 7, CancellationToken.None])!);
+            (Task<bool>)method.Invoke(null,
+                [account, selfInfo, forumLevel, 12345L, 7356044UL, "hello", null, 7, CancellationToken.None])!);
 
         StringAssert.Contains(exception.Message, nameof(Account.SampleId));
     }
@@ -395,9 +416,11 @@ public sealed class MessagesProtocolTests
     [TestMethod]
     public async Task MessagesProtocol_DefaultChatroomSender_IsSelectedWhenNoDelegateIsProvided()
     {
-        var protocol = CreateProtocol(CreateSession(new RecordingHttpCore(), new RecordingWsCore()), new RecordingUserProtocol());
-        var field = typeof(MessagesProtocol).GetField("_sendChatroomMessageAsync", BindingFlags.NonPublic | BindingFlags.Instance)
-            ?? throw new InvalidOperationException("_sendChatroomMessageAsync not found.");
+        var protocol = CreateProtocol(CreateSession(new RecordingHttpCore(), new RecordingWsCore()),
+            new RecordingUserProtocol());
+        var field = typeof(MessagesProtocol).GetField("_sendChatroomMessageAsync",
+                        BindingFlags.NonPublic | BindingFlags.Instance)
+                    ?? throw new InvalidOperationException("_sendChatroomMessageAsync not found.");
         var handler = (SendChatroomMessageHandler)field.GetValue(protocol)!;
 
         var account = new Account(new string('b', 192), new string('s', 64));
@@ -415,17 +438,17 @@ public sealed class MessagesProtocolTests
     {
         var wsCore = new RecordingWsCore();
         wsCore.Responses.Enqueue(CreateWsResponse(CreateInitResponse([
-            new global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 }
+            new UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 }
         ]).ToByteArray()));
-        wsCore.Responses.Enqueue(CreateWsResponse(new global::CommitReceivedPmsgResIdl
+        wsCore.Responses.Enqueue(CreateWsResponse(new CommitReceivedPmsgResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty }
+            Error = new Error { Errorno = 0, Errmsg = string.Empty }
         }.ToByteArray()));
         var protocol = CreateProtocol(wsCore, new RecordingUserProtocol());
 
-        var success = await protocol.SetMessageReadAsync(CreateMessage(groupId: 77, msgId: 1234, userId: 42));
+        var success = await protocol.SetMessageReadAsync(CreateMessage(77, 1234, 42));
 
-        var request = global::CommitReceivedPmsgReqIdl.Parser.ParseFrom(wsCore.Requests[1]);
+        var request = CommitReceivedPmsgReqIdl.Parser.ParseFrom(wsCore.Requests[1]);
 
         Assert.IsTrue(success);
         Assert.AreEqual(205006, wsCore.Commands[1]);
@@ -439,10 +462,10 @@ public sealed class MessagesProtocolTests
     public void MessagesProtocol_ParsePushNotifications_UsesPushNotifyParser()
     {
         var protocol = CreateProtocol(new RecordingWsCore(), new RecordingUserProtocol());
-        var payload = new global::PushNotifyResIdl();
-        payload.MultiMsg.Add(new global::PushNotifyResIdl.Types.PusherMsg
+        var payload = new PushNotifyResIdl();
+        payload.MultiMsg.Add(new PushNotifyResIdl.Types.PusherMsg
         {
-            Data = new global::PushNotifyResIdl.Types.PusherMsg.Types.PusherMsgInfo
+            Data = new PushNotifyResIdl.Types.PusherMsg.Types.PusherMsgInfo
             {
                 GroupId = 12345,
                 MsgId = 998877,
@@ -477,7 +500,7 @@ public sealed class MessagesProtocolTests
         await ThrowsAsync<ArgumentException>(() => protocol.SendMessageAsync(" ", "hello"));
         await ThrowsAsync<TiebaProtocolException>(() => protocol.SendMessageAsync("missing-user", "hello"));
         await ThrowsAsync<ArgumentNullException>(() => protocol.SetMessageReadAsync(null!));
-        await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.SetMessageReadAsync(CreateMessage(groupId: 1, msgId: 0)));
+        await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.SetMessageReadAsync(CreateMessage(1, 0)));
         await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.SendChatroomMessageAsync(0, 1, "hi"));
         await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.SendChatroomMessageAsync(1, 0, "hi"));
         await ThrowsAsync<ArgumentException>(() => protocol.SendChatroomMessageAsync(1, 1, " "));
@@ -491,12 +514,12 @@ public sealed class MessagesProtocolTests
     {
         var wsCore = new RecordingWsCore();
         wsCore.Responses.Enqueue(CreateWsResponse(CreateInitResponse([
-            new global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 99, GroupType = 1, LastMsgId = 5 }
+            new UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 99, GroupType = 1, LastMsgId = 5 }
         ]).ToByteArray()));
         var protocol = CreateProtocol(wsCore, new RecordingUserProtocol());
 
         var exception = await ThrowsAsync<TiebaProtocolException>(() =>
-            protocol.SetMessageReadAsync(CreateMessage(groupId: 0, msgId: 1234, userId: 42)));
+            protocol.SetMessageReadAsync(CreateMessage(0, 1234, 42)));
 
         StringAssert.Contains(exception.Message, "private-message group id");
     }
@@ -506,18 +529,18 @@ public sealed class MessagesProtocolTests
     {
         var wsCore = new RecordingWsCore();
         wsCore.Responses.Enqueue(CreateWsResponse(CreateInitResponse([
-            new global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 },
-            new global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 99, GroupType = 1, LastMsgId = 7 }
+            new UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 88, GroupType = 6, LastMsgId = 5 },
+            new UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo { GroupId = 99, GroupType = 1, LastMsgId = 7 }
         ]).ToByteArray()));
-        wsCore.Responses.Enqueue(CreateWsResponse(new global::CommitReceivedPmsgResIdl
+        wsCore.Responses.Enqueue(CreateWsResponse(new CommitReceivedPmsgResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty }
+            Error = new Error { Errorno = 0, Errmsg = string.Empty }
         }.ToByteArray()));
         var protocol = CreateProtocol(wsCore, new RecordingUserProtocol());
 
-        var success = await protocol.SetMessageReadAsync(CreateMessage(groupId: 0, msgId: 1234, userId: 42));
+        var success = await protocol.SetMessageReadAsync(CreateMessage(0, 1234, 42));
 
-        var request = global::CommitReceivedPmsgReqIdl.Parser.ParseFrom(wsCore.Requests[1]);
+        var request = CommitReceivedPmsgReqIdl.Parser.ParseFrom(wsCore.Requests[1]);
 
         Assert.IsTrue(success);
         Assert.AreEqual(205006, wsCore.Commands[1]);
@@ -534,94 +557,93 @@ public sealed class MessagesProtocolTests
 
     private static MessagesProtocol CreateProtocol(TiebaClientSession session, RecordingUserProtocol users,
         SendChatroomMessageHandler? sendChatroomMessageAsync = null)
-        => new(new TiebaOperationDispatcher(session), users, sendChatroomMessageAsync);
+    {
+        return new MessagesProtocol(new TiebaOperationDispatcher(session), users, sendChatroomMessageAsync);
+    }
 
     private static TiebaClientSession CreateSession(RecordingHttpCore httpCore, RecordingWsCore wsCore)
     {
         return new TiebaClientSession(
             new TiebaOptions
             {
-                Bduss = new string('b', 192),
-                Stoken = new string('s', 64),
-                TransportMode = TiebaTransportMode.Auto
+                Bduss = new string('b', 192), Stoken = new string('s', 64), TransportMode = TiebaTransportMode.Auto
             },
             httpCore,
             wsCore);
     }
 
-    private static global::UpdateClientInfoResIdl CreateInitResponse(
-        IEnumerable<global::UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo> groups)
+    private static UpdateClientInfoResIdl CreateInitResponse(
+        IEnumerable<UpdateClientInfoResIdl.Types.DataRes.Types.GroupInfo> groups)
     {
-        var response = new global::UpdateClientInfoResIdl
+        var response = new UpdateClientInfoResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::UpdateClientInfoResIdl.Types.DataRes()
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
+            Data = new UpdateClientInfoResIdl.Types.DataRes()
         };
         response.Data.GroupInfo.AddRange(groups);
         return response;
     }
 
-    private static global::GetLevelInfoResIdl CreateForumLevelResponse(int userLevel)
+    private static GetLevelInfoResIdl CreateForumLevelResponse(int userLevel)
     {
-        return new global::GetLevelInfoResIdl
+        return new GetLevelInfoResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::GetLevelInfoResIdl.Types.DataRes
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
+            Data = new GetLevelInfoResIdl.Types.DataRes
             {
-                LevelName = $"Lv{userLevel}",
-                UserLevel = userLevel,
-                IsLike = 1
+                LevelName = $"Lv{userLevel}", UserLevel = userLevel, IsLike = 1
             }
         };
     }
 
-    private static global::GetGroupMsgResIdl CreateGroupMessageResponse(long groupId, int groupType, long msgId,
+    private static GetGroupMsgResIdl CreateGroupMessageResponse(long groupId, int groupType, long msgId,
         string text)
     {
-        var response = new global::GetGroupMsgResIdl
+        var response = new GetGroupMsgResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
-            Data = new global::GetGroupMsgResIdl.Types.DataRes()
+            Error = new Error { Errorno = 0, Errmsg = string.Empty }, Data = new GetGroupMsgResIdl.Types.DataRes()
         };
-        response.Data.GroupInfo.Add(new global::GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg
+        response.Data.GroupInfo.Add(new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg
         {
-            GroupInfo = new global::GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.GroupInfo
-            {
-                GroupId = groupId,
-                GroupType = groupType
-            },
+            GroupInfo =
+                new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.GroupInfo
+                {
+                    GroupId = groupId, GroupType = groupType
+                },
             MsgList =
             {
-                new global::GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo
+                new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo
                 {
                     MsgId = msgId,
                     MsgType = 1,
                     Content = text,
                     CreateTime = 1711111111,
-                    UserInfo = new global::GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo
-                    {
-                        UserId = 42,
-                        UserName = "sender",
-                        Portrait = "tb.1.sender?012345678901"
-                    }
+                    UserInfo =
+                        new global::GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.
+                            UserInfo { UserId = 42, UserName = "sender", Portrait = "tb.1.sender?012345678901" }
                 }
             }
         });
         return response;
     }
 
-    private static WsMessage CreateMessage(long groupId, long msgId, long userId = 42) => new()
+    private static WsMessage CreateMessage(long groupId, long msgId, long userId = 42)
     {
-        GroupId = groupId,
-        GroupType = 6,
-        MsgId = msgId,
-        MsgType = 1,
-        Text = "text",
-        User = new UserInfo { UserId = userId, UserName = "sender" }
-    };
+        return new WsMessage
+        {
+            GroupId = groupId,
+            GroupType = 6,
+            MsgId = msgId,
+            MsgType = 1,
+            Text = "text",
+            User = new UserInfo { UserId = userId, UserName = "sender" }
+        };
+    }
 
-    private static WSRes CreateWsResponse(byte[] payload) =>
-        new() { Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(payload) } };
+    private static WSRes CreateWsResponse(byte[] payload)
+    {
+        return new WSRes { Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(payload) } };
+    }
 
     private sealed class RecordingHttpCore : ITiebaHttpCore
     {
@@ -636,10 +658,16 @@ public sealed class MessagesProtocolTests
         public string AppFormResponse { get; set; } = string.Empty;
         public byte[] AppProtoResponse { get; set; } = [];
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -659,10 +687,16 @@ public sealed class MessagesProtocolTests
         }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private sealed class RecordingWsCore : ITiebaWsCore
@@ -672,11 +706,20 @@ public sealed class MessagesProtocolTests
         public List<byte[]> Requests { get; } = [];
         public Account? Account { get; set; }
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
-        public Task ConnectAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task ConnectAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
             CancellationToken cancellationToken = default)
@@ -686,10 +729,15 @@ public sealed class MessagesProtocolTests
             return Task.FromResult(Responses.Dequeue());
         }
 
-        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) =>
+        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class RecordingUserProtocol : IUserProtocol
@@ -699,47 +747,166 @@ public sealed class MessagesProtocolTests
         public UserInfoPanel PanelInfo { get; init; } = new() { UserId = 42, UserName = "resolved-user" };
         public UserInfo SelfInfo { get; init; } = new() { UserId = 42, UserName = "sender", Portrait = "tb.1.sender" };
 
-        public Task<string> GetTbsAsync(CancellationToken cancellationToken = default) => throw new NotImplementedException();
-    public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserInfoPf> GetProfileAsync(int userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserInfoPf> GetProfileAsync(string portraitOrUserName, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> FollowAsync(string portrait, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> UnfollowAsync(string portrait, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserList> GetFollowsAsync(long userId, int pn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserList> GetFansAsync(long userId, int pn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait, CancellationToken cancellationToken = default)
+        public Task<string> GetTbsAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserInfoPf> GetProfileAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserInfoPf> GetProfileAsync(string portraitOrUserName,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> FollowAsync(string portrait, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UnfollowAsync(string portrait, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserList> GetFollowsAsync(long userId, int pn, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserList> GetFansAsync(long userId, int pn, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait,
+            CancellationToken cancellationToken = default)
         {
             LastPanelInfoLookup = nameOrPortrait;
             return Task.FromResult(PanelInfo);
         }
-        public Task<UserInfoJson> GetUserInfoJsonAsync(string username, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
+        public Task<UserInfoJson> GetUserInfoJsonAsync(string username, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<UserInfo> GetSelfInfoAsync(CancellationToken cancellationToken = default)
         {
             GetSelfInfoCalls++;
             return Task.FromResult(SelfInfo);
         }
-        public Task<UserInfo> GetSelfInfoInitNicknameAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(SelfInfo);
-        public Task<UserInfo> GetSelfInfoMoIndexAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(SelfInfo);
-        public Task<LoginResult> LoginAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(new LoginResult { User = SelfInfo });
-        public Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<BlacklistOldUsers> GetBlacklistOldAsync(int pn, int rn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> SetBlacklistAsync(long userId, BlacklistType type, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> AddBlacklistOldAsync(long userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> RemoveBlacklistOldAsync(long userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> RemoveFanAsync(long userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserForumInfo> GetUserForumInfoAsync(string fname, string portrait, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<RankUsers> GetRankUsersAsync(string fname, int pn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<Homepage> GetHomepageAsync(int userId, int pn, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> SetNicknameAsync(string nickName, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<bool> SetProfileAsync(string nickName, string sign, Gender gender, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserPostGroups> GetPostsAsync(int userId, uint pn, uint rn, string version, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-        public Task<UserThreads> GetThreadsAsync(int userId, uint pn, bool publicOnly, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+
+        public Task<UserInfo> GetSelfInfoInitNicknameAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(SelfInfo);
+        }
+
+        public Task<UserInfo> GetSelfInfoMoIndexAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(SelfInfo);
+        }
+
+        public Task<LoginResult> LoginAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new LoginResult { User = SelfInfo });
+        }
+
+        public Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<BlacklistOldUsers> GetBlacklistOldAsync(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> SetBlacklistAsync(long userId, BlacklistType type,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> AddBlacklistOldAsync(long userId, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RemoveBlacklistOldAsync(long userId, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RemoveFanAsync(long userId, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserForumInfo> GetUserForumInfoAsync(string fname, string portrait,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RankUsers> GetRankUsersAsync(string fname, int pn, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Homepage> GetHomepageAsync(int userId, int pn, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> SetNicknameAsync(string nickName, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> SetProfileAsync(string nickName, string sign, Gender gender,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserPostGroups> GetPostsAsync(int userId, uint pn, uint rn, string version,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserThreads> GetThreadsAsync(int userId, uint pn, bool publicOnly,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private static async Task<TException> ThrowsAsync<TException>(Func<Task> action)

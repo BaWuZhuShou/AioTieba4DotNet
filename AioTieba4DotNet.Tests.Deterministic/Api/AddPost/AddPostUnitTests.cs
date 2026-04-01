@@ -93,7 +93,10 @@ public class AddPostUnitTests
         account.C3Aid = null;
         account.ZId = null;
 
-        var fakeHttp = new FakeHttpCore { Account = account, ProtoResponse = new AddPostResIdl { Error = new Error { Errorno = 0 } }.ToByteArray() };
+        var fakeHttp = new FakeHttpCore
+        {
+            Account = account, ProtoResponse = new AddPostResIdl { Error = new Error { Errorno = 0 } }.ToByteArray()
+        };
         var fakeWs = new FakeWsCore { Account = account };
         var api = new AioTieba4DotNet.Api.AddPost.AddPost(fakeHttp, fakeWs);
 
@@ -118,7 +121,10 @@ public class AddPostUnitTests
             C3Aid = "c3aid-101",
             ZId = "zid-202"
         };
-        var fakeHttp = new FakeHttpCore { Account = account, ProtoResponse = new AddPostResIdl { Error = new Error { Errorno = 0 } }.ToByteArray() };
+        var fakeHttp = new FakeHttpCore
+        {
+            Account = account, ProtoResponse = new AddPostResIdl { Error = new Error { Errorno = 0 } }.ToByteArray()
+        };
         var fakeWs = new FakeWsCore { Account = account };
         var api = new AioTieba4DotNet.Api.AddPost.AddPost(fakeHttp, fakeWs);
 
@@ -140,8 +146,14 @@ public class AddPostUnitTests
     {
         var account = new Account(new string('a', 192), new string('b', 64));
 
-        var fakeHttp = new FakeHttpCore { Account = account, ProtoResponse = new AddPostResIdl { Error = new Error { Errorno = 0 } }.ToByteArray() };
-        var fakeWs = new FakeWsCore { Account = account, Response = new AddPostResIdl { Error = new Error { Errorno = 0 } }.ToByteArray() };
+        var fakeHttp = new FakeHttpCore
+        {
+            Account = account, ProtoResponse = new AddPostResIdl { Error = new Error { Errorno = 0 } }.ToByteArray()
+        };
+        var fakeWs = new FakeWsCore
+        {
+            Account = account, Response = new AddPostResIdl { Error = new Error { Errorno = 0 } }.ToByteArray()
+        };
         var api = new AioTieba4DotNet.Api.AddPost.AddPost(fakeHttp, fakeWs);
 
         var httpSuccess = await api.RequestHttpAsync("test_forum", 1, 2, "hello", "Shown Name");
@@ -168,17 +180,23 @@ public class AddPostUnitTests
 
         using var startGate = new ManualResetEventSlim();
 
-        Task<bool> RunHttpAsync() => Task.Run(async () =>
+        Task<bool> RunHttpAsync()
         {
-            startGate.Wait();
-            return await api.RequestHttpAsync("test_forum", 1, 2, "hello", "Shown Name");
-        });
+            return Task.Run(async () =>
+            {
+                startGate.Wait();
+                return await api.RequestHttpAsync("test_forum", 1, 2, "hello", "Shown Name");
+            });
+        }
 
-        Task<bool> RunWsAsync() => Task.Run(async () =>
+        Task<bool> RunWsAsync()
         {
-            startGate.Wait();
-            return await api.RequestWsAsync("test_forum", 1, 2, "hello", "Shown Name");
-        });
+            return Task.Run(async () =>
+            {
+                startGate.Wait();
+                return await api.RequestWsAsync("test_forum", 1, 2, "hello", "Shown Name");
+            });
+        }
 
         var tasks = new[] { RunHttpAsync(), RunWsAsync(), RunHttpAsync(), RunWsAsync() };
         startGate.Set();

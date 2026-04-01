@@ -53,7 +53,8 @@ public sealed class TiebaClientForumExtensionsIntegrationTests : TestBase
         }
         catch (TiebaException exception)
         {
-            Assert.Inconclusive($"Skipping legacy self-follow forum integration path in this environment: {exception.Message}");
+            Assert.Inconclusive(
+                $"Skipping legacy self-follow forum integration path in this environment: {exception.Message}");
             return;
         }
 
@@ -175,7 +176,8 @@ public sealed class TiebaClientForumExtensionsIntegrationTests : TestBase
     public async Task GetRecomStatusAsync_SafeForum_ReturnsQuotaShape_WhenPrivilegeAllows()
     {
         EnsureAuthenticated();
-        var forum = await RequireSafeForumFixtureAsync(nameof(GetRecomStatusAsync_SafeForum_ReturnsQuotaShape_WhenPrivilegeAllows));
+        var forum = await RequireSafeForumFixtureAsync(
+            nameof(GetRecomStatusAsync_SafeForum_ReturnsQuotaShape_WhenPrivilegeAllows));
 
         try
         {
@@ -195,7 +197,8 @@ public sealed class TiebaClientForumExtensionsIntegrationTests : TestBase
     public async Task GetStatisticsAsync_SafeForum_ReturnsOrderedSeries_WhenPrivilegeAllows()
     {
         EnsureAuthenticated();
-        var forum = await RequireSafeForumFixtureAsync(nameof(GetStatisticsAsync_SafeForum_ReturnsOrderedSeries_WhenPrivilegeAllows));
+        var forum = await RequireSafeForumFixtureAsync(
+            nameof(GetStatisticsAsync_SafeForum_ReturnsOrderedSeries_WhenPrivilegeAllows));
 
         try
         {

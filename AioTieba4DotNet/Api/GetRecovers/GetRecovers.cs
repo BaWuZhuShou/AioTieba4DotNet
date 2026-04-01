@@ -29,7 +29,7 @@ internal sealed class GetRecovers(ITiebaHttpCore httpCore) : JsonApiBase(httpCor
         };
 
         if (userId is > 0)
-            parameters.Add(new("uid", userId.Value.ToString()));
+            parameters.Add(new KeyValuePair<string, string>("uid", userId.Value.ToString()));
 
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/mo/q/manage/getRecoverList").Uri;
         var result = await HttpCore.SendWebGetAsync(requestUri, parameters, cancellationToken);

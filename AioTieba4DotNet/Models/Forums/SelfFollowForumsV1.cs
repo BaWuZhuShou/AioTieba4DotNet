@@ -8,7 +8,7 @@ namespace AioTieba4DotNet.Models.Forums;
 public class SelfFollowForumsV1 : Containers<SelfFollowForumV1>
 {
     /// <summary>
-///     构造函数
+    ///     构造函数
     /// </summary>
     /// <param name="objs">V1 关注贴吧列表</param>
     /// <param name="page">分页信息</param>

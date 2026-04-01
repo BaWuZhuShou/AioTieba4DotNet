@@ -15,10 +15,8 @@ internal sealed class TiebaUid2UserInfo(ITiebaHttpCore httpCore, ITiebaWsCore ws
     public async Task<UserInfoTUid> RequestHttpAsync(long tiebaUid, CancellationToken cancellationToken = default)
     {
         var data = PackProto(tiebaUid);
-        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getUserByTiebaUid")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var requestUri =
+            new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getUserByTiebaUid") { Query = $"cmd={Cmd}" }.Uri;
 
         var response = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(response);
@@ -37,8 +35,7 @@ internal sealed class TiebaUid2UserInfo(ITiebaHttpCore httpCore, ITiebaWsCore ws
         {
             Data = new GetUserByTiebaUidReqIdl.Types.DataReq
             {
-                Common = new CommonReq { ClientVersion = Const.MainVersion },
-                TiebaUid = tiebaUid.ToString()
+                Common = new CommonReq { ClientVersion = Const.MainVersion }, TiebaUid = tiebaUid.ToString()
             }
         };
 

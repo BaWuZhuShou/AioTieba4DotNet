@@ -23,11 +23,11 @@ internal class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     ///     发送封禁用户请求
     /// </summary>
     /// <param name="fid">吧 ID</param>
-/// <param name="portrait">用户头像 ID (Portrait)</param>
-/// <param name="day">封禁天数 (通常为 1, 3, 10)</param>
-/// <param name="reason">封禁原因</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>操作是否成功</returns>
+    /// <param name="portrait">用户头像 ID (Portrait)</param>
+    /// <param name="day">封禁天数 (通常为 1, 3, 10)</param>
+    /// <param name="reason">封禁原因</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(ulong fid, string portrait, int day, string reason,
         CancellationToken cancellationToken = default)
     {

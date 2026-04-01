@@ -29,6 +29,7 @@ public class VoteInfo
     ///     总投票人数
     /// </summary>
     public long TotalUsers { get; init; }
+
     /// <summary>
     ///     格式设置
     /// </summary>

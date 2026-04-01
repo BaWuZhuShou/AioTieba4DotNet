@@ -14,8 +14,7 @@ internal sealed class AddBlacklistOld(ITiebaHttpCore httpCore) : JsonApiBase(htt
     {
         var data = new List<KeyValuePair<string, string>>
         {
-            new("BDUSS", HttpCore.Account?.Bduss ?? string.Empty),
-            new("mute_user", userId.ToString())
+            new("BDUSS", HttpCore.Account?.Bduss ?? string.Empty), new("mute_user", userId.ToString())
         };
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/c/user/userMuteAdd").Uri;

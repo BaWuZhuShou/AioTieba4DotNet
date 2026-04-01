@@ -12,7 +12,8 @@ internal static class WsMsgGroupMapper
         {
             GroupId = groupId,
             GroupType = groupType,
-            Messages = data.MsgList.Select(message => WsMessageMapper.FromTbData(groupId, groupType, message)).ToList()
+            Messages = data.MsgList.Select(message => WsMessageMapper.FromTbData(groupId, groupType, message))
+                .ToList()
         };
     }
 }

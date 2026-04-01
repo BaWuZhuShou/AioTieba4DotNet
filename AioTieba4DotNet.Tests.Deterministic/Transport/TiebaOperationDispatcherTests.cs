@@ -111,10 +111,7 @@ public class TiebaOperationDispatcherTests
     [TestMethod]
     public async Task ExecuteAsync_CentralizedWsUnavailableSignal_FallsBackToHttp()
     {
-        var wsCore = new RecordingWsCore
-        {
-            ConnectException = new TiebaWebSocketUnavailableException("offline")
-        };
+        var wsCore = new RecordingWsCore { ConnectException = new TiebaWebSocketUnavailableException("offline") };
         var dispatcher = CreateDispatcher(new RecordingHttpCore(), wsCore, TiebaTransportMode.Auto);
         var httpCalls = 0;
 
@@ -224,10 +221,7 @@ public class TiebaOperationDispatcherTests
     [TestMethod]
     public async Task ThreadProtocol_PropagatesCancellationToken_ToHttpTransportExecution()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            ProtoResponse = CreateThreadsResponse().ToByteArray()
-        };
+        var httpCore = new RecordingHttpCore { ProtoResponse = CreateThreadsResponse().ToByteArray() };
         var wsCore = new RecordingWsCore();
         using var session = new TiebaClientSession(
             new TiebaOptions { TransportMode = TiebaTransportMode.Http },
@@ -276,11 +270,7 @@ public class TiebaOperationDispatcherTests
             Error = new Error { Errorno = 0 },
             Data = new FrsPageResIdl.Types.DataRes
             {
-                Forum = new FrsPageResIdl.Types.DataRes.Types.ForumInfo
-                {
-                    Id = 1,
-                    Name = "dotnet"
-                },
+                Forum = new FrsPageResIdl.Types.DataRes.Types.ForumInfo { Id = 1, Name = "dotnet" },
                 Page = new Page(),
                 NavTabInfo = new FrsPageResIdl.Types.DataRes.Types.NavTabInfo(),
                 ForumRule = new FrsPageResIdl.Types.DataRes.Types.ForumRuleStatus()
@@ -304,10 +294,16 @@ public class TiebaOperationDispatcherTests
         }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
         {
@@ -316,10 +312,16 @@ public class TiebaOperationDispatcherTests
         }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private sealed class RecordingWsCore : ITiebaWsCore
@@ -344,86 +346,148 @@ public class TiebaOperationDispatcherTests
             return Task.CompletedTask;
         }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class StubForumProtocol : IForumProtocol
     {
-        public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default) =>
-            Task.FromResult(1UL);
+        public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(1UL);
+        }
 
-        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default) =>
-            Task.FromResult("dotnet");
+        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult("dotnet");
+        }
 
-        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<Forum> GetForumAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<Forum> GetForumAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

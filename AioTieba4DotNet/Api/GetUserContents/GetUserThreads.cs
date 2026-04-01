@@ -49,17 +49,17 @@ internal class GetUserThreads(
         var resProto = UserPostResIdl.Parser.ParseFrom(body);
         ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
-        return AioTieba4DotNet.Internal.Mapping.UserThreadsMapper.FromTbData(resProto.Data);
+        return Internal.Mapping.UserThreadsMapper.FromTbData(resProto.Data);
     }
 
-/// <summary>
-///     通过 HTTP 获取用户发布主题帖列表
-/// </summary>
-/// <param name="userId">用户 ID (uid)</param>
-/// <param name="pn">页码</param>
-/// <param name="publicOnly">是否只看公开帖子</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>用户发布主题帖列表实体</returns>
+    /// <summary>
+    ///     通过 HTTP 获取用户发布主题帖列表
+    /// </summary>
+    /// <param name="userId">用户 ID (uid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="publicOnly">是否只看公开帖子</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>用户发布主题帖列表实体</returns>
     public async Task<UserThreads> RequestHttpAsync(int userId, uint pn, bool publicOnly,
         CancellationToken cancellationToken = default)
     {
@@ -71,14 +71,14 @@ internal class GetUserThreads(
         return ParseBody(result);
     }
 
-/// <summary>
-///     通过 Websocket 获取用户发布主题帖列表
-/// </summary>
-/// <param name="userId">用户 ID (uid)</param>
-/// <param name="pn">页码</param>
-/// <param name="publicOnly">是否只看公开帖子</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>用户发布主题帖列表实体</returns>
+    /// <summary>
+    ///     通过 Websocket 获取用户发布主题帖列表
+    /// </summary>
+    /// <param name="userId">用户 ID (uid)</param>
+    /// <param name="pn">页码</param>
+    /// <param name="publicOnly">是否只看公开帖子</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>用户发布主题帖列表实体</returns>
     public async Task<UserThreads> RequestWsAsync(int userId, uint pn, bool publicOnly,
         CancellationToken cancellationToken = default)
     {

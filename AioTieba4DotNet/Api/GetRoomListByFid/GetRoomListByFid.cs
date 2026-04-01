@@ -41,7 +41,8 @@ internal sealed class GetRoomListByFid(ITiebaHttpCore httpCore) : JsonApiBase(ht
             new("fid", fid.ToString())
         };
 
-        var requestUri = new UriBuilder(Const.AppInsecureScheme, Const.AppBaseHost, 80, "/c/f/chat/getRoomListByFid").Uri;
+        var requestUri = new UriBuilder(Const.AppInsecureScheme, Const.AppBaseHost, 80, "/c/f/chat/getRoomListByFid")
+            .Uri;
         var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseRoomList(result);
     }

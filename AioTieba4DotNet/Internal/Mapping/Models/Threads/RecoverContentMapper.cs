@@ -16,7 +16,6 @@ internal static partial class RecoverContentMapper
         var frags = new List<IFrag>();
 
         if (data.GetValue("content_detail") is JArray contentDetail)
-        {
             foreach (var item in contentDetail.OfType<JObject>())
             {
                 if (item.GetValue("type")?.Value<int>() != 1)
@@ -26,10 +25,8 @@ internal static partial class RecoverContentMapper
                 texts.Add(text);
                 frags.Add(text);
             }
-        }
 
         if (data.GetValue("all_pics") is JArray pictureArray)
-        {
             foreach (var picture in pictureArray.OfType<JObject>())
             {
                 var src = picture.GetValue("url")?.Value<string>() ?? string.Empty;
@@ -43,17 +40,11 @@ internal static partial class RecoverContentMapper
                 images.Add(image);
                 frags.Add(image);
             }
-        }
 
         for (var index = 0; index < frags.Count; index++)
             frags[index].Index = index;
 
-        return new Content
-        {
-            Texts = texts,
-            Images = images,
-            Frags = frags
-        };
+        return new Content { Texts = texts, Images = images, Frags = frags };
     }
 
     private static string ExtractHash(string src)

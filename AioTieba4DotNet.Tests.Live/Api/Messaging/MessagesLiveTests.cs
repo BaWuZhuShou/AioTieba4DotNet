@@ -13,7 +13,9 @@ public sealed class MessagesLiveTests : TestBase
     [TestMethod]
     public async Task SendMessageAsync_SafeRecipientFixture_ReturnsServerMessageIdOrExplicitSkip()
     {
-        var recipient = RequireSafeMessageRecipientFixture(nameof(SendMessageAsync_SafeRecipientFixture_ReturnsServerMessageIdOrExplicitSkip));
+        var recipient =
+            RequireSafeMessageRecipientFixture(
+                nameof(SendMessageAsync_SafeRecipientFixture_ReturnsServerMessageIdOrExplicitSkip));
 
         try
         {
@@ -24,15 +26,18 @@ public sealed class MessagesLiveTests : TestBase
         }
         catch (TiebaException exception)
         {
-            Assert.Inconclusive($"Skipping safe live private-message verification in this environment: {exception.Message}");
+            Assert.Inconclusive(
+                $"Skipping safe live private-message verification in this environment: {exception.Message}");
         }
     }
 
     [TestMethod]
     public async Task SendChatroomMessageAsync_SafeFixtures_ReturnsAcceptedOrExplicitSkip()
     {
-        var chatroomId = RequireSafeChatroomIdFixture(nameof(SendChatroomMessageAsync_SafeFixtures_ReturnsAcceptedOrExplicitSkip));
-        var forum = await RequireSafeForumFixtureAsync(nameof(SendChatroomMessageAsync_SafeFixtures_ReturnsAcceptedOrExplicitSkip));
+        var chatroomId =
+            RequireSafeChatroomIdFixture(nameof(SendChatroomMessageAsync_SafeFixtures_ReturnsAcceptedOrExplicitSkip));
+        var forum = await RequireSafeForumFixtureAsync(
+            nameof(SendChatroomMessageAsync_SafeFixtures_ReturnsAcceptedOrExplicitSkip));
 
         try
         {

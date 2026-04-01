@@ -14,7 +14,8 @@ public class VirtualImagePf
     ///     状态
     /// </summary>
     public string State = "";
-   /// <summary>
+
+    /// <summary>
     ///     转换为字符串
     /// </summary>
     /// <returns>摘要</returns>

@@ -63,16 +63,13 @@ public sealed class ModelBoundaryMappingTests
         var fromJsonFallback = UserInfoMapper.FromTbData(new JObject());
         var fromUser = UserInfoMapper.FromTbData(new User
         {
-            Id = 7,
-            Portrait = "plain-portrait",
-            Name = "proto-name",
-            NameShow = "Proto Show"
+            Id = 7, Portrait = "plain-portrait", Name = "proto-name", NameShow = "Proto Show"
         });
-        var fromGroupMessage = UserInfoMapper.FromTbData(new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo
-        {
-            UserId = 8,
-            UserName = "group-user"
-        });
+        var fromGroupMessage = UserInfoMapper.FromTbData(
+            new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo
+            {
+                UserId = 8, UserName = "group-user"
+            });
 
         Assert.AreEqual(0L, fromJsonFallback.UserId);
         Assert.AreEqual(string.Empty, fromJsonFallback.Portrait);
@@ -88,10 +85,7 @@ public sealed class ModelBoundaryMappingTests
 
         var jsonMapped = UserInfoJsonMapper.FromTbData(new JObject
         {
-            ["id"] = 9,
-            ["portrait"] = "tb.1.json?012345678901",
-            ["name"] = "json-name",
-            ["name_show"] = "Json Show"
+            ["id"] = 9, ["portrait"] = "tb.1.json?012345678901", ["name"] = "json-name", ["name_show"] = "Json Show"
         });
         var jsonFallback = UserInfoJsonMapper.FromTbData(new JObject());
 
@@ -149,11 +143,7 @@ public sealed class ModelBoundaryMappingTests
             UserGrowth = new User.Types.UserGrowth { LevelId = 7 },
             NewGodData = new User.Types.NewGodInfo { Status = 1 },
             PrivSets = new User.Types.PrivSets { Like = 1, Reply = 2 },
-            Iconinfo =
-            {
-                new User.Types.Icon { Name = "icon-a" },
-                new User.Types.Icon { Name = string.Empty }
-            },
+            Iconinfo = { new User.Types.Icon { Name = "icon-a" }, new User.Types.Icon { Name = string.Empty } },
             NewTshowIcon = { new User.Types.TshowInfo { Name = "vip" } }
         });
 
@@ -204,15 +194,18 @@ public sealed class ModelBoundaryMappingTests
 
         foreach (var type in publicSurfaceTypes)
         {
-            Assert.IsFalse(typeof(IMessage).IsAssignableFrom(type), $"{type.FullName} should not be a protobuf message type.");
+            Assert.IsFalse(typeof(IMessage).IsAssignableFrom(type),
+                $"{type.FullName} should not be a protobuf message type.");
 
             var mappingMethods = type
-                .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static |
+                            BindingFlags.DeclaredOnly)
                 .Where(method => method.Name is "FromTbData" or "FromProto" or "ToProto")
                 .Select(method => method.Name)
                 .ToList();
 
-            Assert.IsFalse(mappingMethods.Any(), $"{type.FullName} exposes mapping helpers: {string.Join(", ", mappingMethods)}");
+            Assert.IsFalse(mappingMethods.Any(),
+                $"{type.FullName} exposes mapping helpers: {string.Join(", ", mappingMethods)}");
 
             var leakedSignatureTypes = GetPublicSignatureTypes(type)
                 .SelectMany(ExpandSignatureTypes)
@@ -221,69 +214,48 @@ public sealed class ModelBoundaryMappingTests
                 .Select(candidate => candidate.FullName ?? candidate.Name)
                 .ToList();
 
-            Assert.IsFalse(leakedSignatureTypes.Any(), $"{type.FullName} exposes transport types: {string.Join(", ", leakedSignatureTypes)}");
+            Assert.IsFalse(leakedSignatureTypes.Any(),
+                $"{type.FullName} exposes transport types: {string.Join(", ", leakedSignatureTypes)}");
         }
     }
 
     private static IEnumerable<Type> GetPublicSignatureTypes(Type type)
     {
         foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
-        {
             yield return property.PropertyType;
-        }
 
         foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
-        {
             yield return field.FieldType;
-        }
 
-        foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
+        foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static |
+                                               BindingFlags.DeclaredOnly))
         {
-            if (method.IsSpecialName)
-            {
-                continue;
-            }
+            if (method.IsSpecialName) continue;
 
             yield return method.ReturnType;
 
-            foreach (var parameter in method.GetParameters())
-            {
-                yield return parameter.ParameterType;
-            }
+            foreach (var parameter in method.GetParameters()) yield return parameter.ParameterType;
         }
     }
 
     private static IEnumerable<Type> ExpandSignatureTypes(Type type)
     {
-        if (type.IsByRef)
-        {
-            type = type.GetElementType()!;
-        }
+        if (type.IsByRef) type = type.GetElementType()!;
 
         yield return type;
 
         if (type.IsArray)
         {
-            foreach (var nestedType in ExpandSignatureTypes(type.GetElementType()!))
-            {
-                yield return nestedType;
-            }
+            foreach (var nestedType in ExpandSignatureTypes(type.GetElementType()!)) yield return nestedType;
 
             yield break;
         }
 
-        if (!type.IsGenericType)
-        {
-            yield break;
-        }
+        if (!type.IsGenericType) yield break;
 
         foreach (var argument in type.GetGenericArguments())
-        {
-            foreach (var nestedType in ExpandSignatureTypes(argument))
-            {
-                yield return nestedType;
-            }
-        }
+        foreach (var nestedType in ExpandSignatureTypes(argument))
+            yield return nestedType;
     }
 
     private static bool IsTransportLeak(Type type)

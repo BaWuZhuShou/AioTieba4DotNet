@@ -9,12 +9,8 @@ internal static class ProtoGenerationPlanner
         ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
 
         for (var directory = new DirectoryInfo(baseDirectory); directory is not null; directory = directory.Parent)
-        {
             if (File.Exists(Path.Combine(directory.FullName, SolutionFileName)))
-            {
                 return directory.FullName;
-            }
-        }
 
         return null;
     }
@@ -24,10 +20,7 @@ internal static class ProtoGenerationPlanner
         ArgumentException.ThrowIfNullOrEmpty(projectRoot);
         ArgumentException.ThrowIfNullOrEmpty(apiDirectory);
 
-        if (!Directory.Exists(apiDirectory))
-        {
-            throw new DirectoryNotFoundException($"找不到 API 目录 {apiDirectory}");
-        }
+        if (!Directory.Exists(apiDirectory)) throw new DirectoryNotFoundException($"找不到 API 目录 {apiDirectory}");
 
         return Directory
             .EnumerateFiles(apiDirectory, "*.proto", SearchOption.AllDirectories)

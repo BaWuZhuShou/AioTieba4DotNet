@@ -20,26 +20,15 @@ public sealed class NextWaveMapperCoverageTests
         {
             ["forum_list"] = new JObject
             {
-                ["non-gconforum"] = new JArray
-                {
-                    new JObject
+                ["non-gconforum"] =
+                    new JArray
                     {
-                        ["id"] = 7,
-                        ["name"] = "forum-a",
-                        ["level_id"] = 3,
-                        ["cur_score"] = 4
+                        new JObject { ["id"] = 7, ["name"] = "forum-a", ["level_id"] = 3, ["cur_score"] = 4 },
+                        new JValue("skip")
                     },
-                    new JValue("skip")
-                },
                 ["gconforum"] = new JArray
                 {
-                    new JObject
-                    {
-                        ["id"] = 8,
-                        ["name"] = "forum-b",
-                        ["level_id"] = 5,
-                        ["cur_score"] = 6
-                    }
+                    new JObject { ["id"] = 8, ["name"] = "forum-b", ["level_id"] = 5, ["cur_score"] = 6 }
                 }
             },
             ["has_more"] = 1
@@ -50,45 +39,30 @@ public sealed class NextWaveMapperCoverageTests
         {
             ["list"] = new JArray
             {
-                new JObject
-                {
-                    ["forum_id"] = 11,
-                    ["forum_name"] = "forum-c",
-                    ["level_id"] = 2
-                },
-                new JObject()
+                new JObject { ["forum_id"] = 11, ["forum_name"] = "forum-c", ["level_id"] = 2 }, new JObject()
             },
-            ["page"] = new JObject
-            {
-                ["cur_page"] = 2,
-                ["total_page"] = 1
-            }
+            ["page"] = new JObject { ["cur_page"] = 2, ["total_page"] = 1 }
         });
         var selfFollowFallback = SelfFollowForumsV1Mapper.FromTbData(new JObject());
 
         var memberUsersWithoutPagination = MemberUsersMapper.FromHtml("""
-            <div class="name_wrap"><a title="Alice &amp; Bob" href="/home/main?id=tb.1.alice&amp;fr=home"><span class="level_7"></span></a></div>
-            """);
+                                                                      <div class="name_wrap"><a title="Alice &amp; Bob" href="/home/main?id=tb.1.alice&amp;fr=home"><span class="level_7"></span></a></div>
+                                                                      """);
         var memberUsersWithPagination = MemberUsersMapper.FromHtml("""
-            <div class="tbui_pagination"><li class="active">2</li>(4)</div>
-            <div class="name_wrap"><a title="Charlie" href="/home/main?id=tb.1.charlie"><span class="level_0"></span></a></div>
-            """);
+                                                                   <div class="tbui_pagination"><li class="active">2</li>(4)</div>
+                                                                   <div class="name_wrap"><a title="Charlie" href="/home/main?id=tb.1.charlie"><span class="level_0"></span></a></div>
+                                                                   """);
 
         var userInfoWebTrimmed = UserInfoGuInfoWebMapper.FromTbData(new JObject
         {
-            ["uid"] = 42,
-            ["uname"] = "42",
-            ["portrait"] = "tb.1.web?from=pc",
-            ["show_nickname"] = "Web Nick"
+            ["uid"] = 42, ["uname"] = "42", ["portrait"] = "tb.1.web?from=pc", ["show_nickname"] = "Web Nick"
         });
         var userInfoWebRaw = UserInfoGuInfoWebMapper.FromTbData(new JObject
         {
-            ["uid"] = 43,
-            ["uname"] = "safe-user",
-            ["portrait"] = "tb.1.raw"
+            ["uid"] = 43, ["uname"] = "safe-user", ["portrait"] = "tb.1.raw"
         });
 
-        var userInfoTUidParsed = UserInfoTUidMapper.FromTbData(new global::User
+        var userInfoTUidParsed = UserInfoTUidMapper.FromTbData(new User
         {
             Id = 44,
             Portrait = "tb.1.uid?012345678901",
@@ -97,9 +71,9 @@ public sealed class NextWaveMapperCoverageTests
             TiebaUid = "123456",
             TbAge = "2.5",
             Intro = "hello",
-            NewGodData = new global::User.Types.NewGodInfo { Status = 1 }
+            NewGodData = new User.Types.NewGodInfo { Status = 1 }
         });
-        var userInfoTUidFallback = UserInfoTUidMapper.FromTbData(new global::User
+        var userInfoTUidFallback = UserInfoTUidMapper.FromTbData(new User
         {
             Id = 45,
             Portrait = "tb.1.raw",
@@ -108,7 +82,7 @@ public sealed class NextWaveMapperCoverageTests
             TiebaUid = string.Empty,
             TbAge = string.Empty,
             Intro = string.Empty,
-            NewGodData = new global::User.Types.NewGodInfo()
+            NewGodData = new User.Types.NewGodInfo()
         });
 
         var blacklistWithPerms = MapBlacklistUser(new JObject
@@ -117,45 +91,32 @@ public sealed class NextWaveMapperCoverageTests
             ["portrait"] = "tb.1.black?012345678901",
             ["name"] = "blocked-user",
             ["name_show"] = "Blocked User",
-            ["perm_list"] = new JObject
-            {
-                ["follow"] = 1,
-                ["interact"] = 0,
-                ["chat"] = 1
-            }
+            ["perm_list"] = new JObject { ["follow"] = 1, ["interact"] = 0, ["chat"] = 1 }
         });
         var blacklistFallback = MapBlacklistUser(new JObject
         {
-            ["id"] = 47,
-            ["portrait"] = "tb.1.raw",
-            ["name"] = "raw-user",
-            ["name_show"] = "Raw User"
+            ["id"] = 47, ["portrait"] = "tb.1.raw", ["name"] = "raw-user", ["name_show"] = "Raw User"
         });
 
         var recoverPageNull = RecoverPageMapper.FromTbData(null);
-        var recoverPageValues = RecoverPageMapper.FromTbData(new JObject
-        {
-            ["pn"] = 2,
-            ["rn"] = 20,
-            ["has_more"] = 1
-        });
+        var recoverPageValues = RecoverPageMapper.FromTbData(new JObject { ["pn"] = 2, ["rn"] = 20, ["has_more"] = 1 });
 
-        var virtualImageFromThreadEnabled = VirtualImagePfMapper.FromTbData(new global::ThreadInfo
+        var virtualImageFromThreadEnabled = VirtualImagePfMapper.FromTbData(new ThreadInfo
         {
-            CustomFigure = new global::ThreadInfo.Types.CustomFigure { BackgroundValue = "bg" },
-            CustomState = new global::ThreadInfo.Types.CustomState { Content = "state" }
+            CustomFigure = new ThreadInfo.Types.CustomFigure { BackgroundValue = "bg" },
+            CustomState = new ThreadInfo.Types.CustomState { Content = "state" }
         });
-        var virtualImageFromThreadDisabled = VirtualImagePfMapper.FromTbData(new global::ThreadInfo
+        var virtualImageFromThreadDisabled = VirtualImagePfMapper.FromTbData(new ThreadInfo
         {
-            CustomFigure = new global::ThreadInfo.Types.CustomFigure { BackgroundValue = string.Empty },
-            CustomState = new global::ThreadInfo.Types.CustomState { Content = string.Empty }
+            CustomFigure = new ThreadInfo.Types.CustomFigure { BackgroundValue = string.Empty },
+            CustomState = new ThreadInfo.Types.CustomState { Content = string.Empty }
         });
-        var virtualImageFromUserEnabled = VirtualImagePfMapper.FromTbData(new global::User.Types.VirtualImageInfo
+        var virtualImageFromUserEnabled = VirtualImagePfMapper.FromTbData(new User.Types.VirtualImageInfo
         {
             IssetVirtualImage = 1,
-            PersonalState = new global::User.Types.VirtualImageInfo.Types.PersonalState { Text = "on" }
+            PersonalState = new User.Types.VirtualImageInfo.Types.PersonalState { Text = "on" }
         });
-        var virtualImageFromUserDisabled = VirtualImagePfMapper.FromTbData(new global::User.Types.VirtualImageInfo());
+        var virtualImageFromUserDisabled = VirtualImagePfMapper.FromTbData(new User.Types.VirtualImageInfo());
 
         Assert.AreEqual(2, followForums.Count);
         Assert.AreEqual(7UL, followForums[0].Fid);
@@ -237,23 +198,23 @@ public sealed class NextWaveMapperCoverageTests
     public void ThreadAndTabMappers_CoverFallbackCollectionsAndMatchedAuthors()
     {
         var tabsNull = TabMapMapper.FromTbData(null);
-        var tabsMapped = TabMapMapper.FromTbData(new global::SearchPostForumResIdl.Types.DataRes
+        var tabsMapped = TabMapMapper.FromTbData(new SearchPostForumResIdl.Types.DataRes
         {
-            ExactMatch = new global::SearchPostForumResIdl.Types.DataRes.Types.SearchForum
+            ExactMatch = new SearchPostForumResIdl.Types.DataRes.Types.SearchForum
             {
                 ForumId = 7356044,
                 ForumName = "csharp",
                 TabInfo =
                 {
-                    new global::FrsTabInfo { TabId = 1, TabName = "全部" },
-                    new global::FrsTabInfo { TabId = 2, TabName = "精华" }
+                    new FrsTabInfo { TabId = 1, TabName = "全部" },
+                    new FrsTabInfo { TabId = 2, TabName = "精华" }
                 }
             }
         });
 
-        var threadsData = new global::FrsPageResIdl.Types.DataRes
+        var threadsData = new FrsPageResIdl.Types.DataRes
         {
-            Forum = new global::FrsPageResIdl.Types.DataRes.Types.ForumInfo
+            Forum = new FrsPageResIdl.Types.DataRes.Types.ForumInfo
             {
                 Id = 7356044,
                 Name = "csharp",
@@ -263,33 +224,25 @@ public sealed class NextWaveMapperCoverageTests
                 PostNum = 20,
                 ThreadNum = 30
             },
-            Page = new global::Page
-            {
-                CurrentPage = 2,
-                TotalPage = 5,
-                HasMore = 1,
-                HasPrev = 1
-            },
-            NavTabInfo = new global::FrsPageResIdl.Types.DataRes.Types.NavTabInfo(),
-            ForumRule = new global::FrsPageResIdl.Types.DataRes.Types.ForumRuleStatus { HasForumRule = 1 }
+            Page = new Page { CurrentPage = 2, TotalPage = 5, HasMore = 1, HasPrev = 1 },
+            NavTabInfo = new FrsPageResIdl.Types.DataRes.Types.NavTabInfo(),
+            ForumRule = new FrsPageResIdl.Types.DataRes.Types.ForumRuleStatus { HasForumRule = 1 }
         };
-        threadsData.Forum.Managers.Add(new global::FrsPageResIdl.Types.DataRes.Types.ForumInfo.Types.Manager());
-        threadsData.NavTabInfo.Tab.Add(new global::FrsTabInfo { TabId = 1, TabName = "全部" });
-        threadsData.NavTabInfo.Tab.Add(new global::FrsTabInfo { TabId = 2, TabName = "精华" });
-        threadsData.UserList.Add(new global::User
+        threadsData.Forum.Managers.Add(new FrsPageResIdl.Types.DataRes.Types.ForumInfo.Types.Manager());
+        threadsData.NavTabInfo.Tab.Add(new FrsTabInfo { TabId = 1, TabName = "全部" });
+        threadsData.NavTabInfo.Tab.Add(new FrsTabInfo { TabId = 2, TabName = "精华" });
+        threadsData.UserList.Add(new User
         {
-            Id = 42,
-            Name = "author-a",
-            NameShow = "Author A",
-            Portrait = "tb.1.author-a?012345678901"
+            Id = 42, Name = "author-a", NameShow = "Author A", Portrait = "tb.1.author-a?012345678901"
         });
-        threadsData.ThreadList.Add(new global::ThreadInfo
+        threadsData.ThreadList.Add(new ThreadInfo
         {
             Id = 1001,
             FirstPostId = 2001,
             Title = "thread-a",
             AuthorId = 42,
-            Author = new global::User { Id = 42, Name = "author-a", NameShow = "Author A", Portrait = "tb.1.author-a?012345678901" },
+            Author =
+                new User { Id = 42, Name = "author-a", NameShow = "Author A", Portrait = "tb.1.author-a?012345678901" },
             ThreadType = 71,
             TabId = 1,
             IsGood = 1,
@@ -300,27 +253,27 @@ public sealed class NextWaveMapperCoverageTests
             ViewNum = 100,
             ReplyNum = 5,
             ShareNum = 6,
-            Agree = new global::Agree { AgreeNum = 7, DisagreeNum = 8 },
+            Agree = new Agree { AgreeNum = 7, DisagreeNum = 8 },
             CreateTime = 9,
             LastTimeInt = 10,
-            OriginThreadInfo = new global::ThreadInfo.Types.OriginThreadInfo
+            OriginThreadInfo = new ThreadInfo.Types.OriginThreadInfo
             {
                 Title = "origin-title",
                 Fname = "origin-forum",
                 Tid = "9001",
                 Pid = 77,
-                Content = { new global::PbContent { Type = 0, Text = "shared body", Uid = 42 } }
+                Content = { new PbContent { Type = 0, Text = "shared body", Uid = 42 } }
             },
-            CustomFigure = new global::ThreadInfo.Types.CustomFigure { BackgroundValue = "bg" },
-            CustomState = new global::ThreadInfo.Types.CustomState { Content = "state" }
+            CustomFigure = new ThreadInfo.Types.CustomFigure { BackgroundValue = "bg" },
+            CustomState = new ThreadInfo.Types.CustomState { Content = "state" }
         });
-        threadsData.ThreadList.Add(new global::ThreadInfo
+        threadsData.ThreadList.Add(new ThreadInfo
         {
             Id = 1002,
             FirstPostId = 2002,
             Title = "thread-b",
             AuthorId = 99,
-            Author = new global::User { Id = 99, Name = "author-b", NameShow = "Author B", Portrait = "tb.1.author-b" },
+            Author = new User { Id = 99, Name = "author-b", NameShow = "Author B", Portrait = "tb.1.author-b" },
             ThreadType = 70,
             TabId = 2,
             IsGood = 0,
@@ -333,8 +286,8 @@ public sealed class NextWaveMapperCoverageTests
             ShareNum = 13,
             CreateTime = 14,
             LastTimeInt = 15,
-            CustomFigure = new global::ThreadInfo.Types.CustomFigure { BackgroundValue = string.Empty },
-            CustomState = new global::ThreadInfo.Types.CustomState { Content = string.Empty }
+            CustomFigure = new ThreadInfo.Types.CustomFigure { BackgroundValue = string.Empty },
+            CustomState = new ThreadInfo.Types.CustomState { Content = string.Empty }
         });
 
         var threadsMapped = ThreadsMapper.FromTbData(threadsData);
@@ -368,13 +321,17 @@ public sealed class NextWaveMapperCoverageTests
         Assert.AreEqual(string.Empty, threadsMapped.Objs[1].VirtualImage.State);
     }
 
-    private static BlacklistUser MapBlacklistUser(JObject data) =>
-        (BlacklistUser)typeof(BlacklistUserMapper)
+    private static BlacklistUser MapBlacklistUser(JObject data)
+    {
+        return (BlacklistUser)typeof(BlacklistUserMapper)
             .GetMethod("FromTbData", BindingFlags.NonPublic | BindingFlags.Static)!
             .Invoke(null, [data])!;
+    }
 
-    private static bool GetBlacklistUserFlag(BlacklistUser user, string propertyName) =>
-        (bool)typeof(BlacklistUser)
+    private static bool GetBlacklistUserFlag(BlacklistUser user, string propertyName)
+    {
+        return (bool)typeof(BlacklistUser)
             .GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)!
             .GetValue(user)!;
+    }
 }

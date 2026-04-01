@@ -49,7 +49,8 @@ public class ForumT
     ///     是否有吧规
     /// </summary>
     public bool HasRule { get; init; }
-   /// <summary>
+
+    /// <summary>
     ///     格式设置
     /// </summary>
     /// <returns>string</returns>

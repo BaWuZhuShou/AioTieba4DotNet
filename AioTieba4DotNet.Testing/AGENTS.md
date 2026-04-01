@@ -1,9 +1,12 @@
 # Shared Testing Guide
 
 ## OVERVIEW
-This directory holds shared testing infrastructure for the split v3 test layout. Put cross-lane helpers here, not new product behavior tests.
+
+This directory holds shared testing infrastructure for the split v3 test layout. Put cross-lane helpers here, not new
+product behavior tests.
 
 ## RESPONSIBILITIES
+
 - `TestBase` and environment bootstrap
 - fixture gates and safe-fixture enforcement
 - cleanup orchestration and recorded-object rollback helpers
@@ -11,6 +14,7 @@ This directory holds shared testing infrastructure for the split v3 test layout.
 - sequencing truth in `test-sequencing.manifest.json`
 
 ## RULES
+
 - Keep this project non-product and support-only. Feature assertions belong in the lane projects.
 - `test-sequencing.manifest.json` is the only truth source for integration and live stage order.
 - Treat `Cleanup` as a synthetic compensation wave. Do not model it as a runnable MSTest category.

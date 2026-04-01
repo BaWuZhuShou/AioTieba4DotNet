@@ -39,9 +39,10 @@ public sealed class Task18ResidualBranchCoverageTests
         httpCore.EnqueueAppFormResponse("/c/c/user/userMuteDel", "{\"errorno\":0,\"errmsg\":\"\"}");
         httpCore.EnqueueAppFormResponse("/c/c/forum/like", "{\"error_code\":0,\"error_msg\":\"\"}");
         httpCore.EnqueueAppFormResponse("/c/c/forum/unlike", "{\"error_code\":0,\"error_msg\":\"\"}");
-        httpCore.EnqueueCustomResponse("{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":0}}" );
+        httpCore.EnqueueCustomResponse("{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":0}}");
         httpCore.EnqueueAppFormResponse("/c/c/bawu/pushRecomToPersonalized", "{\"error_code\":0,\"error_msg\":\"\"}");
-        httpCore.EnqueueAppFormResponse("/c/f/forum/getUserForumLevelInfo", "{\"error_code\":15,\"error_msg\":\"direct-msg\"}");
+        httpCore.EnqueueAppFormResponse("/c/f/forum/getUserForumLevelInfo",
+            "{\"error_code\":15,\"error_msg\":\"direct-msg\"}");
         httpCore.EnqueueWebGetResponse("/mg/o/getForumHome", "{\"errno\":0,\"errmsg\":\"\"}");
         httpCore.EnqueueWebGetResponse("/bawu2/platform/listPostLog", string.Empty);
         httpCore.EnqueueWebGetResponse("/bawu2/platform/listUserLog", string.Empty);
@@ -52,10 +53,16 @@ public sealed class Task18ResidualBranchCoverageTests
         Assert.IsTrue(await new UnlikeForum(httpCore).RequestAsync(4));
         Assert.IsTrue(await new SignForums(httpCore).RequestAsync());
 
-        var recommendException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new Recommend(httpCore).RequestAsync(5, 6));
-        var userForumException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new GetUserForumInfo(httpCore).RequestAsync(7, "tb.1.user"));
-        var selfFollowException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new GetSelfFollowForumsV1(httpCore).RequestAsync(8, 9));
-        var postLogs = await new GetBawuPostlogs(httpCore).RequestAsync("forum", 2, string.Empty, BawuSearchType.Operator,
+        var recommendException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new Recommend(httpCore).RequestAsync(5, 6));
+        var userForumException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() =>
+                new GetUserForumInfo(httpCore).RequestAsync(7, "tb.1.user"));
+        var selfFollowException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() =>
+                new GetSelfFollowForumsV1(httpCore).RequestAsync(8, 9));
+        var postLogs = await new GetBawuPostlogs(httpCore).RequestAsync("forum", 2, string.Empty,
+            BawuSearchType.Operator,
             DateTimeOffset.UnixEpoch, null, 0);
         var userLogs = await new GetBawuUserlogs(httpCore).RequestAsync("forum", 3, "operator", BawuSearchType.Operator,
             DateTimeOffset.UnixEpoch, DateTimeOffset.UnixEpoch.AddDays(1), 0);
@@ -66,7 +73,7 @@ public sealed class Task18ResidualBranchCoverageTests
         Assert.AreEqual("0", httpCore.GetWebGetValueForPath("/bawu2/platform/listPostLog", "begin"));
         Assert.IsTrue(long.Parse(httpCore.GetWebGetValueForPath("/bawu2/platform/listPostLog", "end")) > 0);
         Assert.AreEqual("op_uname", httpCore.GetWebGetValueForPath("/bawu2/platform/listUserLog", "stype"));
-        Assert.AreEqual((DateTimeOffset.UnixEpoch.AddDays(1).ToUnixTimeSeconds()).ToString(),
+        Assert.AreEqual(DateTimeOffset.UnixEpoch.AddDays(1).ToUnixTimeSeconds().ToString(),
             httpCore.GetWebGetValueForPath("/bawu2/platform/listUserLog", "end"));
         Assert.AreEqual(0, postLogs.Count);
         Assert.AreEqual(0, userLogs.Count);
@@ -162,37 +169,34 @@ public sealed class Task18ResidualBranchCoverageTests
             Iconinfo = { new User.Types.Icon { Name = "icon" } },
             IpAddress = "10.0.0.1"
         });
-        var uidUser = UserInfoTUidMapper.FromTbData(new User { Id = 3, Portrait = "tb.1.uid", TiebaUid = string.Empty, TbAge = string.Empty });
-        var sharedUser = UserInfoMapper.FromTbData(new User { Id = 4, Portrait = "tb.1.shared", Name = "user", NameShow = "User" });
-        var groupUser = UserInfoMapper.FromTbData(new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo
+        var uidUser = UserInfoTUidMapper.FromTbData(new User
         {
-            UserId = 5,
-            Portrait = "tb.1.group",
-            UserName = "group-user"
+            Id = 3, Portrait = "tb.1.uid", TiebaUid = string.Empty, TbAge = string.Empty
         });
+        var sharedUser =
+            UserInfoMapper.FromTbData(new User { Id = 4, Portrait = "tb.1.shared", Name = "user", NameShow = "User" });
+        var groupUser = UserInfoMapper.FromTbData(
+            new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo
+            {
+                UserId = 5, Portrait = "tb.1.group", UserName = "group-user"
+            });
         var blacklistFallback = BlacklistUserMapper.FromTbData(new JObject());
-        var blacklistSparsePerms = BlacklistUserMapper.FromTbData(new JObject
-        {
-            ["perm_list"] = new JObject()
-        });
+        var blacklistSparsePerms = BlacklistUserMapper.FromTbData(new JObject { ["perm_list"] = new JObject() });
         var recoverInfo = RecoverInfoMapper.FromTbData(new JObject { ["thread_info"] = new JObject() });
         var recoverContent = RecoverContentMapper.FromTbData(new JObject
         {
             ["content_detail"] = new JArray(new JObject { ["type"] = 2, ["value"] = "skip" }),
             ["all_pics"] = new JArray(new JObject())
         });
-        var forumStats = ForumStatisticsMapper.FromTbData(new JArray { new JObject { ["group"] = new JArray(new JObject()) } });
+        var forumStats =
+            ForumStatisticsMapper.FromTbData(new JArray { new JObject { ["group"] = new JArray(new JObject()) } });
         var thread = ThreadMapper.FromTbData(new ThreadInfo
         {
-            IsShareThread = 1,
-            OriginThreadInfo = new ThreadInfo.Types.OriginThreadInfo { Pid = 0 }
+            IsShareThread = 1, OriginThreadInfo = new ThreadInfo.Types.OriginThreadInfo { Pid = 0 }
         });
         var shareOriginNullTid = new ThreadInfo.Types.OriginThreadInfo
         {
-            Title = "shared-null-tid",
-            Fid = 77,
-            Fname = "share-forum",
-            Pid = 88
+            Title = "shared-null-tid", Fid = 77, Fname = "share-forum", Pid = 88
         };
         SetPrivateField(shareOriginNullTid, "tid_", null);
         var shareNullTid = ShareThreadMapper.FromTbData(shareOriginNullTid);
@@ -214,8 +218,12 @@ public sealed class Task18ResidualBranchCoverageTests
         });
         var virtualImageUserNull = VirtualImagePfMapper.FromTbData((User.Types.VirtualImageInfo)null!);
         var bawuUser = new BawuUser { UserId = 6 };
-        var bawuUserRich = new BawuUser { UserId = 7, UserName = "user7", NickNameNew = "nick7", Portrait = "portrait7" };
-        var bawuUserPortraitOnly = new BawuUser { UserId = 8, UserName = string.Empty, NickNameNew = "nick8", Portrait = "portrait8" };
+        var bawuUserRich =
+            new BawuUser { UserId = 7, UserName = "user7", NickNameNew = "nick7", Portrait = "portrait7" };
+        var bawuUserPortraitOnly = new BawuUser
+        {
+            UserId = 8, UserName = string.Empty, NickNameNew = "nick8", Portrait = "portrait8"
+        };
 
         Assert.AreEqual(string.Empty, profile.Portrait);
         Assert.IsFalse(profile.IsGod);
@@ -302,24 +310,35 @@ public sealed class Task18ResidualBranchCoverageTests
     public async Task ResidualApiFallbackBranches_CloseNullErrorMessages_AndSparsePayloadShapes()
     {
         var httpCore = new RoutingHttpCore();
-        httpCore.EnqueueAppFormResponse("/c/c/forum/like", "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":325}}");
-        httpCore.EnqueueAppFormResponse("/c/c/forum/unlike", "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":326}}");
+        httpCore.EnqueueAppFormResponse("/c/c/forum/like",
+            "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":325}}");
+        httpCore.EnqueueAppFormResponse("/c/c/forum/unlike",
+            "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":326}}");
         httpCore.EnqueueCustomResponse("{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":327}}");
         httpCore.EnqueueAppFormResponse("/c/c/bawu/pushRecomToPersonalized", "{\"error_code\":0,\"error_msg\":\"\"}");
-        httpCore.EnqueueAppFormResponse("/c/c/bawu/pushRecomToPersonalized", "{\"error_code\":0,\"error_msg\":\"\",\"data\":{}}");
+        httpCore.EnqueueAppFormResponse("/c/c/bawu/pushRecomToPersonalized",
+            "{\"error_code\":0,\"error_msg\":\"\",\"data\":{}}");
         httpCore.EnqueueAppFormResponse("/c/f/forum/getUserForumLevelInfo",
             "{\"data\":{\"user_info\":{\"id\":8},\"forum_info\":{\"forum_name\":\"forum\"},\"user_forum_info\":{\"is_follow\":1}}}");
         httpCore.EnqueueAppFormResponse("/c/f/forum/getUserForumLevelInfo", "{\"error_code\":15}");
         httpCore.EnqueueWebGetResponse("/bawu2/platform/listPostLog", string.Empty);
 
-        var likeException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new LikeForum(httpCore).RequestAsync(1));
-        var unlikeException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new UnlikeForum(httpCore).RequestAsync(2));
-        var signException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new SignForums(httpCore).RequestAsync());
-        var recommendException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new Recommend(httpCore).RequestAsync(3, 4));
-        var recommendMissingFlagException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new Recommend(httpCore).RequestAsync(4, 5));
+        var likeException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new LikeForum(httpCore).RequestAsync(1));
+        var unlikeException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new UnlikeForum(httpCore).RequestAsync(2));
+        var signException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new SignForums(httpCore).RequestAsync());
+        var recommendException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new Recommend(httpCore).RequestAsync(3, 4));
+        var recommendMissingFlagException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new Recommend(httpCore).RequestAsync(4, 5));
         var sparseUserForum = await new GetUserForumInfo(httpCore).RequestAsync(5, "tb.1.user");
-        var sparseUserForumException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new GetUserForumInfo(httpCore).RequestAsync(6, "tb.1.user"));
-        var postLogsByUser = await new GetBawuPostlogs(httpCore).RequestAsync("forum", 7, "target-user", BawuSearchType.User,
+        var sparseUserForumException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() =>
+                new GetUserForumInfo(httpCore).RequestAsync(6, "tb.1.user"));
+        var postLogsByUser = await new GetBawuPostlogs(httpCore).RequestAsync("forum", 7, "target-user",
+            BawuSearchType.User,
             null, null, 0);
 
         Assert.AreEqual(325, likeException.Code);
@@ -341,17 +360,14 @@ public sealed class Task18ResidualBranchCoverageTests
     public void ResidualMapperBranches_CloseSparseEdgeShapes()
     {
         var zeroCountMissingActive = AdminHtmlParsing.ParseCommonPage("""
-            <div class="breadcrumbs"><em>0</em></div>
-            <div class="tbui_pagination"><li><a>1</a></li></div>
-            """);
+                                                                      <div class="breadcrumbs"><em>0</em></div>
+                                                                      <div class="tbui_pagination"><li><a>1</a></li></div>
+                                                                      """);
         var disabledObjectSwitchPermissions = BawuPermMapper.FromTbData(new JObject
         {
             ["perm_setting"] = new JObject
             {
-                ["category_user"] = new JArray
-                {
-                    new JObject { ["switch"] = new JObject(), ["perm"] = 2 }
-                }
+                ["category_user"] = new JArray { new JObject { ["switch"] = new JObject(), ["perm"] = 2 } }
             }
         });
         var isEnabled = typeof(BawuPermMapper).GetMethod("IsEnabled", BindingFlags.NonPublic | BindingFlags.Static)
@@ -368,31 +384,31 @@ public sealed class Task18ResidualBranchCoverageTests
             "<tr><td><div class=\"post_meta\"><a href=\"/home/main?id=tb.1.author\"></a><time>03-05 12:34</time></div><h1><a href=\"/p/789#1011\" title=\"   \">回复：Title From Inner</a></h1><div>123456789012正文</div></td><td>恢复</td><td>operator-b</td><td>2024-05-07 08:09</td></tr>"
         ]);
         var titleAttributeLogs = BawuPostLogsMapper.FromTbData("""
-            <div class="breadcrumbs"><em>1</em></div>
-            <div class="tbui_pagination"><li class="active"><a>1</a></li>(1)</div>
-            <table>
-              <tr>
-                <td>
-                  <div class="post_meta"><a href="/home/main?id=tb.1.author"></a><time>03-05 12:34</time></div>
-                  <h1><a href="/p/123#456" title="回复：Title From Attribute">reply</a></h1>
-                  <div>123456789012正文</div>
-                </td>
-                <td>删帖</td>
-                <td>operator-a</td>
-                <td>2024-05-06 07:08</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="post_meta"><a href="/home/main?id=tb.1.author"></a><time>03-05 12:34</time></div>
-                  <h1><a href="/p/789#1011" title="   ">回复：Title From Inner</a></h1>
-                  <div>123456789012正文</div>
-                </td>
-                <td>恢复</td>
-                <td>operator-b</td>
-                <td>2024-05-07 08:09</td>
-              </tr>
-            </table>
-            """);
+                                                               <div class="breadcrumbs"><em>1</em></div>
+                                                               <div class="tbui_pagination"><li class="active"><a>1</a></li>(1)</div>
+                                                               <table>
+                                                                 <tr>
+                                                                   <td>
+                                                                     <div class="post_meta"><a href="/home/main?id=tb.1.author"></a><time>03-05 12:34</time></div>
+                                                                     <h1><a href="/p/123#456" title="回复：Title From Attribute">reply</a></h1>
+                                                                     <div>123456789012正文</div>
+                                                                   </td>
+                                                                   <td>删帖</td>
+                                                                   <td>operator-a</td>
+                                                                   <td>2024-05-06 07:08</td>
+                                                                 </tr>
+                                                                 <tr>
+                                                                   <td>
+                                                                     <div class="post_meta"><a href="/home/main?id=tb.1.author"></a><time>03-05 12:34</time></div>
+                                                                     <h1><a href="/p/789#1011" title="   ">回复：Title From Inner</a></h1>
+                                                                     <div>123456789012正文</div>
+                                                                   </td>
+                                                                   <td>恢复</td>
+                                                                   <td>operator-b</td>
+                                                                   <td>2024-05-07 08:09</td>
+                                                                 </tr>
+                                                               </table>
+                                                               """);
         var sparseStats = ForumStatisticsMapper.FromTbData(new JArray(new JObject
         {
             ["group"] = new JArray(new JObject(), new JObject())
@@ -429,7 +445,11 @@ public sealed class Task18ResidualBranchCoverageTests
         var sharedUserProto = new User { Id = 23, Name = "shared-user", NameShow = "Shared User" };
         SetPrivateField(sharedUserProto, "portrait_", null);
         var sharedUser = UserInfoMapper.FromTbData(sharedUserProto);
-        var groupUserProto = new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo { UserId = 24, UserName = "group-user" };
+        var groupUserProto =
+            new GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo
+            {
+                UserId = 24, UserName = "group-user"
+            };
         SetPrivateField(groupUserProto, "portrait_", null);
         var groupUser = UserInfoMapper.FromTbData(groupUserProto);
         var replyWithTextTarget = CommentMapper.FromTbData(new SubPostList
@@ -443,21 +463,20 @@ public sealed class Task18ResidualBranchCoverageTests
                 new PbContent { Type = 0, Text = " :tail" }
             }
         });
-        var postWithSignature = PostMapper.FromTbData(new global::Post
+        var postWithSignature = PostMapper.FromTbData(new Post
         {
-            Signature = new global::Post.Types.SignatureData
+            Signature = new Post.Types.SignatureData
             {
                 Content =
                 {
-                    new global::Post.Types.SignatureData.Types.SignatureContent { Type = 0, Text = "sig" },
-                    new global::Post.Types.SignatureData.Types.SignatureContent { Type = 2, Text = "ignored" }
+                    new Post.Types.SignatureData.Types.SignatureContent { Type = 0, Text = "sig" },
+                    new Post.Types.SignatureData.Types.SignatureContent { Type = 2, Text = "ignored" }
                 }
             }
         });
         var recoverContent = RecoverContentMapper.FromTbData(new JObject
         {
-            ["content_detail"] = new JArray(new JObject()),
-            ["all_pics"] = new JArray()
+            ["content_detail"] = new JArray(new JObject()), ["all_pics"] = new JArray()
         });
         var shareWithoutOrigin = ThreadMapper.FromTbData(new ThreadInfo { IsShareThread = 1 });
         var panelWithoutStatus = UserInfoPanelMapper.FromTbData(new JObject { ["vipInfo"] = new JObject() });
@@ -505,6 +524,7 @@ public sealed class Task18ResidualBranchCoverageTests
         private readonly Dictionary<string, Queue<string>> _appFormResponses = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, Queue<string>> _webGetResponses = new(StringComparer.OrdinalIgnoreCase);
         private readonly Queue<string> _customResponses = [];
+
         private readonly Dictionary<string, List<KeyValuePair<string, string>>> _webGetParameters =
             new(StringComparer.OrdinalIgnoreCase);
 
@@ -517,13 +537,25 @@ public sealed class Task18ResidualBranchCoverageTests
 
         public HttpClient HttpClient { get; } = new();
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
-        public void EnqueueAppFormResponse(string path, string response) => Enqueue(_appFormResponses, path, response);
+        public void EnqueueAppFormResponse(string path, string response)
+        {
+            Enqueue(_appFormResponses, path, response);
+        }
 
-        public void EnqueueWebGetResponse(string path, string response) => Enqueue(_webGetResponses, path, response);
+        public void EnqueueWebGetResponse(string path, string response)
+        {
+            Enqueue(_webGetResponses, path, response);
+        }
 
-        public void EnqueueCustomResponse(string response) => _customResponses.Enqueue(response);
+        public void EnqueueCustomResponse(string response)
+        {
+            _customResponses.Enqueue(response);
+        }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
             CancellationToken cancellationToken = default)
@@ -533,10 +565,15 @@ public sealed class Task18ResidualBranchCoverageTests
         }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => Task.FromResult(Dequeue(_appFormResponses, uri.AbsolutePath));
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(Dequeue(_appFormResponses, uri.AbsolutePath));
+        }
 
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
             CancellationToken cancellationToken = default)
@@ -546,10 +583,15 @@ public sealed class Task18ResidualBranchCoverageTests
         }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
-        public string GetWebGetValueForPath(string path, string key) =>
-            _webGetParameters[path].Last(entry => entry.Key == key).Value;
+        public string GetWebGetValueForPath(string path, string key)
+        {
+            return _webGetParameters[path].Last(entry => entry.Key == key).Value;
+        }
 
         private static void Enqueue(Dictionary<string, Queue<string>> responses, string path, string response)
         {

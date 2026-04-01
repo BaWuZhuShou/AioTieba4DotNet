@@ -15,10 +15,8 @@ internal sealed class GetHomepage(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     public async Task<Homepage> RequestHttpAsync(int userId, int pn, CancellationToken cancellationToken = default)
     {
         var data = PackProto(userId, pn);
-        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/profile")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/profile") { Query = $"cmd={Cmd}" }
+            .Uri;
 
         var response = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(response);

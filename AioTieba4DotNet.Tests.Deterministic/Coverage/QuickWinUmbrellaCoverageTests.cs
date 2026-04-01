@@ -35,16 +35,20 @@ public sealed class QuickWinUmbrellaCoverageTests
     [TestMethod]
     public void TiebaHttpErrorNormalizer_CoversCancellationTiebaTimeoutAndTransportPaths()
     {
-        using var cts = new System.Threading.CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
         cts.Cancel();
         var canceled = new OperationCanceledException(cts.Token);
         var tieba = new TiebaAuthenticationException("auth");
         var uri = new Uri("https://example.com/api");
 
-        var normalizedCanceled = TiebaHttpErrorNormalizer.Normalize(canceled, TiebaHttpRequestKind.AppForm, uri, false, cts.Token);
-        var normalizedTieba = TiebaHttpErrorNormalizer.Normalize(tieba, TiebaHttpRequestKind.WebGet, uri, false, default);
-        var normalizedTimeout = TiebaHttpErrorNormalizer.Normalize(new OperationCanceledException(), TiebaHttpRequestKind.WebForm, uri, false, default);
-        var normalizedTransport = TiebaHttpErrorNormalizer.Normalize(new InvalidOperationException("boom"), TiebaHttpRequestKind.AppProto, null, false, default);
+        var normalizedCanceled =
+            TiebaHttpErrorNormalizer.Normalize(canceled, TiebaHttpRequestKind.AppForm, uri, false, cts.Token);
+        var normalizedTieba =
+            TiebaHttpErrorNormalizer.Normalize(tieba, TiebaHttpRequestKind.WebGet, uri, false, default);
+        var normalizedTimeout = TiebaHttpErrorNormalizer.Normalize(new OperationCanceledException(),
+            TiebaHttpRequestKind.WebForm, uri, false, default);
+        var normalizedTransport = TiebaHttpErrorNormalizer.Normalize(new InvalidOperationException("boom"),
+            TiebaHttpRequestKind.AppProto, null, false, default);
 
         Assert.AreSame(canceled, normalizedCanceled);
         Assert.AreSame(tieba, normalizedTieba);
@@ -105,12 +109,12 @@ public sealed class QuickWinUmbrellaCoverageTests
     public void MemberUsersMapper_HandlesPaginationFallbackAndHtmlDecoding()
     {
         var withoutPagination = MemberUsersMapper.FromHtml("""
-            <div class="name_wrap"><a title="Alice &amp; Bob" href="/home/main?id=tb.1.user&amp;fr=home"><span class="level_7"></span></a></div>
-            """);
+                                                           <div class="name_wrap"><a title="Alice &amp; Bob" href="/home/main?id=tb.1.user&amp;fr=home"><span class="level_7"></span></a></div>
+                                                           """);
         var withPagination = MemberUsersMapper.FromHtml("""
-            <div class="tbui_pagination"><li class="active">2</li>(4)</div>
-            <div class="name_wrap"><a title="Charlie" href="/home/main?id=tb.1.charlie"><span class="level_not_a_number"></span></a></div>
-            """);
+                                                        <div class="tbui_pagination"><li class="active">2</li>(4)</div>
+                                                        <div class="name_wrap"><a title="Charlie" href="/home/main?id=tb.1.charlie"><span class="level_not_a_number"></span></a></div>
+                                                        """);
 
         Assert.AreEqual(1, withoutPagination.Page.CurrentPage);
         Assert.AreEqual(1, withoutPagination.Page.TotalPage);
@@ -129,7 +133,11 @@ public sealed class QuickWinUmbrellaCoverageTests
     {
         var sparseForumStatistics = ForumStatisticsMapper.FromTbData(new JArray
         {
-            new JObject { ["group"] = new JArray(new JObject(), new JObject { ["values"] = new JArray(new JObject { ["value"] = 5 }, new JObject()) }) },
+            new JObject
+            {
+                ["group"] = new JArray(new JObject(),
+                    new JObject { ["values"] = new JArray(new JObject { ["value"] = 5 }, new JObject()) })
+            },
             new JObject { ["group"] = new JArray(new JObject(), new JObject()) },
             new JObject { ["group"] = new JArray(new JObject(), JValue.CreateNull()) },
             JValue.CreateNull(),
@@ -145,8 +153,7 @@ public sealed class QuickWinUmbrellaCoverageTests
         {
             ["list"] = new JArray
             {
-                new JObject { ["forum_id"] = 12, ["forum_name"] = "forum-a", ["level_id"] = 3 },
-                new JObject()
+                new JObject { ["forum_id"] = 12, ["forum_name"] = "forum-a", ["level_id"] = 3 }, new JObject()
             },
             ["page"] = new JObject { ["cur_page"] = 1, ["total_page"] = 2 }
         });
@@ -209,7 +216,7 @@ public sealed class QuickWinUmbrellaCoverageTests
     {
         var follows = typeof(global::AioTieba4DotNet.Api.GetFollows.GetFollows);
         var parseBody = follows.GetMethod("ParseBody", BindingFlags.NonPublic | BindingFlags.Static);
-        var parsed = (AioTieba4DotNet.Models.Shared.UserList)parseBody!.Invoke(null, ["{" + "\"error_code\":0,\"error_msg\":\"\"}" ])!;
+        var parsed = (Models.Shared.UserList)parseBody!.Invoke(null, ["{" + "\"error_code\":0,\"error_msg\":\"\"}"])!;
 
         var forum = ForumMapper.FromTbData(new Dictionary<string, object>
         {
@@ -223,7 +230,7 @@ public sealed class QuickWinUmbrellaCoverageTests
             ["post_num"] = 8,
             ["thread_num"] = 9
         });
-        var protoPage = PageTMapper.FromTbData((global::Page?)null);
+        var protoPage = PageTMapper.FromTbData((Page?)null);
         var jsonPage = PageTMapper.FromTbData(new JObject());
 
         Assert.AreEqual(0, parsed.Count);
@@ -247,12 +254,7 @@ public sealed class QuickWinUmbrellaCoverageTests
     {
         var userInfoPfFallback = UserInfoPfMapper.FromTbData(new ProfileResIdl.Types.DataRes
         {
-            User = new User
-            {
-                Id = 123,
-                Portrait = "tb.1.user?012345678901",
-                Gender = 1
-            }
+            User = new User { Id = 123, Portrait = "tb.1.user?012345678901", Gender = 1 }
         });
         var userInfoGuInfoWeb = UserInfoGuInfoWebMapper.FromTbData(new JObject
         {
@@ -269,11 +271,7 @@ public sealed class QuickWinUmbrellaCoverageTests
                 new JObject(),
                 new JValue("skip")
             },
-            ["page"] = new JObject
-            {
-                ["cur_page"] = 2,
-                ["total_page"] = 1
-            }
+            ["page"] = new JObject { ["cur_page"] = 2, ["total_page"] = 1 }
         });
         var selfFollowFallback = SelfFollowForumsV1Mapper.FromTbData(new JObject());
         var bawuPerm = BawuPermMapper.FromTbData(new JObject
@@ -317,7 +315,8 @@ public sealed class QuickWinUmbrellaCoverageTests
         Assert.IsTrue(selfFollowForums.Page.HasPrevious);
         Assert.IsFalse(selfFollowForums.Page.HasMore);
         Assert.AreEqual(0, selfFollowFallback.Count);
-        Assert.AreEqual(BawuPermType.RecoverAppeal | BawuPermType.Unblock | BawuPermType.UnblockAppeal | BawuPermType.Recover,
+        Assert.AreEqual(
+            BawuPermType.RecoverAppeal | BawuPermType.Unblock | BawuPermType.UnblockAppeal | BawuPermType.Recover,
             bawuPerm.Permissions);
         Assert.IsTrue(recommendResult);
         var recommendUri = recommendOkCore.LastAppFormUri;
@@ -339,10 +338,7 @@ public sealed class QuickWinUmbrellaCoverageTests
         var emptyUser = UserInfoGuInfoWebMapper.FromTbData(new JObject());
         var retainedUser = UserInfoGuInfoWebMapper.FromTbData(new JObject
         {
-            ["uid"] = 789,
-            ["uname"] = "user-name",
-            ["portrait"] = "tb.1.raw",
-            ["show_nickname"] = "Nick"
+            ["uid"] = 789, ["uname"] = "user-name", ["portrait"] = "tb.1.raw", ["show_nickname"] = "Nick"
         });
         var emptyPanel = UserInfoPanelMapper.FromTbData(new JObject());
         var panel = UserInfoPanelMapper.FromTbData(new JObject
@@ -364,18 +360,10 @@ public sealed class QuickWinUmbrellaCoverageTests
             ["portrait"] = "tb.1.black",
             ["name"] = "blocked-user",
             ["name_show"] = "Blocked User",
-            ["perm_list"] = new JObject
-            {
-                ["follow"] = 1,
-                ["interact"] = 1,
-                ["chat"] = 1
-            }
+            ["perm_list"] = new JObject { ["follow"] = 1, ["interact"] = 1, ["chat"] = 1 }
         });
         var atMessage = AtMessageMapper.FromTbData(new JObject());
-        var followSparse = FollowForumsMapper.FromTbData(new JObject
-        {
-            ["forum_list"] = new JObject()
-        });
+        var followSparse = FollowForumsMapper.FromTbData(new JObject { ["forum_list"] = new JObject() });
         var exactSearches = ExactSearchesMapper.FromTbData(new JObject
         {
             ["post_list"] = new JArray
@@ -409,55 +397,37 @@ public sealed class QuickWinUmbrellaCoverageTests
                 }
             }
         });
-        var recoverInfoMissingThread = RecoverInfoMapper.FromTbData(new JObject
-        {
-            ["user_info"] = new JObject()
-        });
+        var recoverInfoMissingThread = RecoverInfoMapper.FromTbData(new JObject { ["user_info"] = new JObject() });
         var recoverContentImageOnly = RecoverContentMapper.FromTbData(new JObject
         {
-            ["content_detail"] = new JArray
-            {
-                new JObject { ["type"] = 2, ["value"] = "skip" }
-            },
+            ["content_detail"] = new JArray { new JObject { ["type"] = 2, ["value"] = "skip" } },
             ["all_pics"] = new JArray
             {
-                new JObject
-                {
-                    ["url"] = "https://example.com/plain.png",
-                    ["width"] = 1,
-                    ["height"] = 2
-                }
+                new JObject { ["url"] = "https://example.com/plain.png", ["width"] = 1, ["height"] = 2 }
             }
         });
         var memberUsersFallbackLevel = MemberUsersMapper.FromHtml("""
-            <div class="tbui_pagination"><li class="active">oops</li>(2)</div>
-            <div class="name_wrap"><a title="Delta" href="/home/main?id=tb.1.delta&amp;fr=home"><span class="level_0oops"></span></a></div>
-            """);
+                                                                  <div class="tbui_pagination"><li class="active">oops</li>(2)</div>
+                                                                  <div class="name_wrap"><a title="Delta" href="/home/main?id=tb.1.delta&amp;fr=home"><span class="level_0oops"></span></a></div>
+                                                                  """);
         var rankUsers = RankUsersMapper.FromHtml("""
-            <tr class="drl_list_item"><td>1</td><td>Alice</td><td><span class="level_missing"></span></td><td>5</td></tr>
-            <ul class="p_rank_pager" data-field='{"unused":1}'></ul>
-            """);
+                                                 <tr class="drl_list_item"><td>1</td><td>Alice</td><td><span class="level_missing"></span></td><td>5</td></tr>
+                                                 <ul class="p_rank_pager" data-field='{"unused":1}'></ul>
+                                                 """);
         var paginationNoPages = AdminHtmlParsing.ParseCommonPage("<div class='breadcrumbs'><em>4</em></div>");
         var paginationMissingActive = AdminHtmlParsing.ParseCommonPage("""
-            <div class='breadcrumbs'><em>3</em></div>
-            <div class='tbui_pagination'><li>1</li></div>
-            """);
+                                                                       <div class='breadcrumbs'><em>3</em></div>
+                                                                       <div class='tbui_pagination'><li>1</li></div>
+                                                                       """);
         var paginationMissingTotal = AdminHtmlParsing.ParseCommonPage("""
-            <div class='breadcrumbs'><em>2</em></div>
-            <div class='tbui_pagination'><li class='active'>2</li></div>
-            """);
+                                                                      <div class='breadcrumbs'><em>2</em></div>
+                                                                      <div class='tbui_pagination'><li class='active'>2</li></div>
+                                                                      """);
         var defaultDisabledPermissions = BawuPermMapper.FromTbData(new JObject
         {
             ["perm_setting"] = new JObject
             {
-                ["category_user"] = new JArray
-                {
-                    new JObject
-                    {
-                        ["switch"] = new JObject(),
-                        ["perm"] = 2
-                    }
-                }
+                ["category_user"] = new JArray { new JObject { ["switch"] = new JObject(), ["perm"] = 2 } }
             }
         });
         var sparseStats = ForumStatisticsMapper.FromTbData(new JArray
@@ -521,34 +491,54 @@ public sealed class QuickWinUmbrellaCoverageTests
     public async Task LegacyApiWrapperBranches_CloseResidualQuickBranches()
     {
         var httpCore = new RoutingHttpCore();
-        httpCore.EnqueueAppFormResponse("/c/c/user/userMuteAdd", "{\"error_code\":0,\"error_msg\":\"\",\"errorno\":0,\"errmsg\":\"\"}");
+        httpCore.EnqueueAppFormResponse("/c/c/user/userMuteAdd",
+            "{\"error_code\":0,\"error_msg\":\"\",\"errorno\":0,\"errmsg\":\"\"}");
         httpCore.EnqueueAppFormResponse("/c/c/user/userMuteAdd", "{\"error_code\":11,\"error_msg\":\"add-failed\"}");
-        httpCore.EnqueueAppFormResponse("/c/c/user/userMuteDel", "{\"error_code\":0,\"error_msg\":\"\",\"errorno\":12,\"errmsg\":\"del-failed\"}");
-        httpCore.EnqueueAppFormResponse("/c/c/forum/like", "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":0,\"errmsg\":\"\"}}");
-        httpCore.EnqueueAppFormResponse("/c/c/forum/unlike", "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":0,\"errmsg\":\"\"}}");
-        httpCore.EnqueueAppFormResponse("/c/c/forum/like", "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":5,\"errmsg\":\"like-failed\"}}");
-        httpCore.EnqueueAppFormResponse("/c/c/forum/unlike", "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":6,\"errmsg\":\"unlike-failed\"}}");
-        httpCore.EnqueueCustomResponse("{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":9,\"errmsg\":\"nested-error\"}}");
-        httpCore.EnqueueAppFormResponse("/c/c/bawu/pushRecomToPersonalized", "{\"error_code\":0,\"error_msg\":\"\",\"data\":{\"is_push_success\":0}}");
-        httpCore.EnqueueAppFormResponse("/c/f/forum/getUserForumLevelInfo", "{\"error_code\":13,\"error\":\"fallback-error\"}");
-        httpCore.EnqueueAppFormResponse("/c/f/forum/getUserForumLevelInfo", "{\"error_code\":14,\"errmsg\":\"errmsg-fallback\"}");
+        httpCore.EnqueueAppFormResponse("/c/c/user/userMuteDel",
+            "{\"error_code\":0,\"error_msg\":\"\",\"errorno\":12,\"errmsg\":\"del-failed\"}");
+        httpCore.EnqueueAppFormResponse("/c/c/forum/like",
+            "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":0,\"errmsg\":\"\"}}");
+        httpCore.EnqueueAppFormResponse("/c/c/forum/unlike",
+            "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":0,\"errmsg\":\"\"}}");
+        httpCore.EnqueueAppFormResponse("/c/c/forum/like",
+            "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":5,\"errmsg\":\"like-failed\"}}");
+        httpCore.EnqueueAppFormResponse("/c/c/forum/unlike",
+            "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":6,\"errmsg\":\"unlike-failed\"}}");
+        httpCore.EnqueueCustomResponse(
+            "{\"error_code\":0,\"error_msg\":\"\",\"error\":{\"errno\":9,\"errmsg\":\"nested-error\"}}");
+        httpCore.EnqueueAppFormResponse("/c/c/bawu/pushRecomToPersonalized",
+            "{\"error_code\":0,\"error_msg\":\"\",\"data\":{\"is_push_success\":0}}");
+        httpCore.EnqueueAppFormResponse("/c/f/forum/getUserForumLevelInfo",
+            "{\"error_code\":13,\"error\":\"fallback-error\"}");
+        httpCore.EnqueueAppFormResponse("/c/f/forum/getUserForumLevelInfo",
+            "{\"error_code\":14,\"errmsg\":\"errmsg-fallback\"}");
         httpCore.EnqueueWebGetResponse("/mg/o/getForumHome", """
-            {"errno":0,"errmsg":"","data":{"like_forum":{"list":[{"forum_id":12,"forum_name":"forum-a","level_id":3}],"page":{"cur_page":1,"total_page":1}}}}
-            """);
+                                                             {"errno":0,"errmsg":"","data":{"like_forum":{"list":[{"forum_id":12,"forum_name":"forum-a","level_id":3}],"page":{"cur_page":1,"total_page":1}}}}
+                                                             """);
         httpCore.EnqueueWebGetResponse("/bawu2/platform/listPostLog", string.Empty);
         httpCore.EnqueueWebGetResponse("/bawu2/platform/listUserLog", string.Empty);
 
         Assert.IsTrue(await new AddBlacklistOld(httpCore).RequestAsync(42));
-        var addException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new AddBlacklistOld(httpCore).RequestAsync(43));
-        var delException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new DelBlacklistOld(httpCore).RequestAsync(44));
+        var addException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new AddBlacklistOld(httpCore).RequestAsync(43));
+        var delException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new DelBlacklistOld(httpCore).RequestAsync(44));
         Assert.IsTrue(await new LikeForum(httpCore).RequestAsync(10));
         Assert.IsTrue(await new UnlikeForum(httpCore).RequestAsync(10));
-        var likeException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new LikeForum(httpCore).RequestAsync(11));
-        var unlikeException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new UnlikeForum(httpCore).RequestAsync(11));
-        var nestedException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new SignForums(httpCore).RequestAsync());
-        var recommendException = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new Recommend(httpCore).RequestAsync(12, 34));
-        var userForumError = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new GetUserForumInfo(httpCore).RequestAsync(1, "tb.1.user"));
-        var userForumErrmsg = await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new GetUserForumInfo(httpCore).RequestAsync(1, "tb.1.user"));
+        var likeException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new LikeForum(httpCore).RequestAsync(11));
+        var unlikeException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new UnlikeForum(httpCore).RequestAsync(11));
+        var nestedException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new SignForums(httpCore).RequestAsync());
+        var recommendException =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() => new Recommend(httpCore).RequestAsync(12, 34));
+        var userForumError =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() =>
+                new GetUserForumInfo(httpCore).RequestAsync(1, "tb.1.user"));
+        var userForumErrmsg =
+            await Assert.ThrowsExactlyAsync<TieBaServerException>(() =>
+                new GetUserForumInfo(httpCore).RequestAsync(1, "tb.1.user"));
         var selfFollowForums = await new GetSelfFollowForumsV1(httpCore).RequestAsync(2, 30);
         var postLogs = await new GetBawuPostlogs(httpCore).RequestAsync("forum", 2, "operator", BawuSearchType.Operator,
             DateTimeOffset.UnixEpoch, null, 7);
@@ -583,7 +573,7 @@ public sealed class QuickWinUmbrellaCoverageTests
     {
         public string Response { get; set; } = response;
 
-        public Account? Account { get; private set; } = new Account(new string('b', 192));
+        public Account? Account { get; private set; } = new(new string('b', 192));
 
         public HttpClient HttpClient { get; } = new();
 
@@ -596,7 +586,10 @@ public sealed class QuickWinUmbrellaCoverageTests
         }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -606,16 +599,27 @@ public sealed class QuickWinUmbrellaCoverageTests
             return Task.FromResult(Response);
         }
 
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
-        public string GetAppFormValue(string key) => LastAppFormData.FindLast(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData.FindLast(entry => entry.Key == key).Value;
+        }
     }
 
     private sealed class RoutingHttpCore : ITiebaHttpCore
@@ -623,6 +627,7 @@ public sealed class QuickWinUmbrellaCoverageTests
         private readonly Dictionary<string, Queue<string>> _appFormResponses = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, Queue<string>> _webGetResponses = new(StringComparer.OrdinalIgnoreCase);
         private readonly Queue<string> _customResponses = [];
+
         private readonly Dictionary<string, List<KeyValuePair<string, string>>> _webGetParameters =
             new(StringComparer.OrdinalIgnoreCase);
 
@@ -635,13 +640,25 @@ public sealed class QuickWinUmbrellaCoverageTests
 
         public HttpClient HttpClient { get; } = new();
 
-        public void SetAccount(Account account) => Account = account;
+        public void SetAccount(Account account)
+        {
+            Account = account;
+        }
 
-        public void EnqueueAppFormResponse(string path, string response) => Enqueue(_appFormResponses, path, response);
+        public void EnqueueAppFormResponse(string path, string response)
+        {
+            Enqueue(_appFormResponses, path, response);
+        }
 
-        public void EnqueueWebGetResponse(string path, string response) => Enqueue(_webGetResponses, path, response);
+        public void EnqueueWebGetResponse(string path, string response)
+        {
+            Enqueue(_webGetResponses, path, response);
+        }
 
-        public void EnqueueCustomResponse(string response) => _customResponses.Enqueue(response);
+        public void EnqueueCustomResponse(string response)
+        {
+            _customResponses.Enqueue(response);
+        }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
             CancellationToken cancellationToken = default)
@@ -658,8 +675,10 @@ public sealed class QuickWinUmbrellaCoverageTests
             return Task.FromResult(Dequeue(_appFormResponses, uri.AbsolutePath));
         }
 
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
             CancellationToken cancellationToken = default)
@@ -670,7 +689,10 @@ public sealed class QuickWinUmbrellaCoverageTests
         }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Uri? LastAppFormUri { get; private set; }
 
@@ -680,8 +702,10 @@ public sealed class QuickWinUmbrellaCoverageTests
 
         public HttpRequestMessage? LastCustomRequest { get; private set; }
 
-        public string GetWebGetValueForPath(string path, string key) =>
-            _webGetParameters[path].Last(entry => entry.Key == key).Value;
+        public string GetWebGetValueForPath(string path, string key)
+        {
+            return _webGetParameters[path].Last(entry => entry.Key == key).Value;
+        }
 
         private static void Enqueue(Dictionary<string, Queue<string>> responses, string path, string response)
         {
@@ -703,13 +727,17 @@ public sealed class QuickWinUmbrellaCoverageTests
         }
     }
 
-    private static BlacklistUser MapBlacklistUser(JObject data) =>
-        (BlacklistUser)typeof(BlacklistUserMapper)
+    private static BlacklistUser MapBlacklistUser(JObject data)
+    {
+        return (BlacklistUser)typeof(BlacklistUserMapper)
             .GetMethod("FromTbData", BindingFlags.NonPublic | BindingFlags.Static)!
             .Invoke(null, [data])!;
+    }
 
-    private static bool GetBlacklistUserFlag(BlacklistUser user, string propertyName) =>
-        (bool)typeof(BlacklistUser)
+    private static bool GetBlacklistUserFlag(BlacklistUser user, string propertyName)
+    {
+        return (bool)typeof(BlacklistUser)
             .GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)!
             .GetValue(user)!;
+    }
 }

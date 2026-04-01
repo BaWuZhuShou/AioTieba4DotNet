@@ -21,8 +21,7 @@ internal sealed class GetBawuPerm(ITiebaHttpCore httpCore) : JsonApiBase(httpCor
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
-            new("forum_id", fid.ToString()),
-            new("portrait", portrait)
+            new("forum_id", fid.ToString()), new("portrait", portrait)
         };
 
         var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/mo/q/getAuthToolPerm").Uri;

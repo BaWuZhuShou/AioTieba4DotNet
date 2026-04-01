@@ -22,24 +22,30 @@ internal static partial class BlocksMapper
 
         var pageMap = payload.GetValue("page") as JObject ?? new JObject();
         var currentPage = pageMap.GetValue("pn")?.Value<int>() ?? 0;
-        return new Blocks(blocks, new BlocksPage
-        {
-            PageSize = pageMap.GetValue("size")?.Value<int>() ?? 0,
-            CurrentPage = currentPage,
-            TotalPage = pageMap.GetValue("total_page")?.Value<int>() ?? 0,
-            TotalCount = pageMap.GetValue("total_count")?.Value<int>() ?? 0,
-            HasMore = ToBoolean(pageMap.GetValue("have_next")),
-            HasPrevious = currentPage > 1
-        });
+        return new Blocks(blocks,
+            new BlocksPage
+            {
+                PageSize = pageMap.GetValue("size")?.Value<int>() ?? 0,
+                CurrentPage = currentPage,
+                TotalPage = pageMap.GetValue("total_page")?.Value<int>() ?? 0,
+                TotalCount = pageMap.GetValue("total_count")?.Value<int>() ?? 0,
+                HasMore = ToBoolean(pageMap.GetValue("have_next")),
+                HasPrevious = currentPage > 1
+            });
     }
 
-    private static bool ToBoolean(JToken? token) => token?.Type switch
+    private static bool ToBoolean(JToken? token)
     {
-        JTokenType.Boolean => token.Value<bool>(),
-        JTokenType.Integer => token.Value<int>() != 0,
-        _ => false
-    };
+        return token?.Type switch
+        {
+            JTokenType.Boolean => token.Value<bool>(),
+            JTokenType.Integer => token.Value<int>() != 0,
+            _ => false
+        };
+    }
 
-    [GeneratedRegex("<li[^>]*>.*?<a[^>]*attr-uid=(['\"])(?<userId>\\d+)\\1[^>]*attr-un=(['\"])(?<userName>.*?)\\2[^>]*attr-nn=(['\"])(?<nickName>.*?)\\3[^>]*attr-blockday=(['\"])(?<day>\\d+)\\4", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    [GeneratedRegex(
+        "<li[^>]*>.*?<a[^>]*attr-uid=(['\"])(?<userId>\\d+)\\1[^>]*attr-un=(['\"])(?<userName>.*?)\\2[^>]*attr-nn=(['\"])(?<nickName>.*?)\\3[^>]*attr-blockday=(['\"])(?<day>\\d+)\\4",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex BlockRegex();
 }

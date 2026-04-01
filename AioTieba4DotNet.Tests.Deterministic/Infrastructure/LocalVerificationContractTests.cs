@@ -48,7 +48,8 @@ public sealed class LocalVerificationContractTests
 
     private static readonly EvidenceContract[] RequiredEvidence =
     [
-        new("deterministic-tests-and-coverage", "local-verification", "18", ".sisyphus/evidence/local-deterministic-verification.md",
+        new("deterministic-tests-and-coverage", "local-verification", "18",
+            ".sisyphus/evidence/local-deterministic-verification.md",
             "Record deterministic lane execution and coverage evidence outside GitHub Actions."),
         new("integration-lane", "local-verification", "19", ".sisyphus/evidence/local-integration-verification.md",
             "Record integration lane execution evidence outside GitHub Actions."),
@@ -62,8 +63,7 @@ public sealed class LocalVerificationContractTests
         var repositoryRoot = RepositoryPaths.FindRepositoryRoot();
         foreach (var relativePath in new[]
                  {
-                     ".sisyphus/evidence/task-11-deterministic-lane.md",
-                     ".sisyphus/evidence/task-11-test-search.md"
+                     ".sisyphus/evidence/task-11-deterministic-lane.md", ".sisyphus/evidence/task-11-test-search.md"
                  })
         {
             var fullPath = Path.Combine(repositoryRoot, relativePath.Replace('/', Path.DirectorySeparatorChar));
@@ -90,7 +90,8 @@ public sealed class LocalVerificationContractTests
         {
             var fullPath = Path.Combine(repositoryRoot, relativePath.Replace('/', Path.DirectorySeparatorChar));
             Assert.IsTrue(File.Exists(fullPath), $"Expected governance contract file: {relativePath}");
-            Assert.IsTrue(new FileInfo(fullPath).Length > 0, $"Governance contract file must not be empty: {relativePath}");
+            Assert.IsTrue(new FileInfo(fullPath).Length > 0,
+                $"Governance contract file must not be empty: {relativePath}");
         }
     }
 
@@ -101,8 +102,10 @@ public sealed class LocalVerificationContractTests
 
         AssertCredentialFieldBlank(repositoryRoot, "AioTieba4DotNet.Testing/appsettings.test.json", "TieBa", "BDUSS");
         AssertCredentialFieldBlank(repositoryRoot, "AioTieba4DotNet.Testing/appsettings.test.json", "TieBa", "STOKEN");
-        AssertCredentialFieldBlank(repositoryRoot, "AioTieba4DotNet.Testing/appsettings.fixtures.example.json", "TieBa", "BDUSS");
-        AssertCredentialFieldBlank(repositoryRoot, "AioTieba4DotNet.Testing/appsettings.fixtures.example.json", "TieBa", "STOKEN");
+        AssertCredentialFieldBlank(repositoryRoot, "AioTieba4DotNet.Testing/appsettings.fixtures.example.json", "TieBa",
+            "BDUSS");
+        AssertCredentialFieldBlank(repositoryRoot, "AioTieba4DotNet.Testing/appsettings.fixtures.example.json", "TieBa",
+            "STOKEN");
     }
 
     [TestMethod]
@@ -115,11 +118,8 @@ public sealed class LocalVerificationContractTests
             ".sisyphus/evidence/local-deterministic-verification.md",
             new[]
             {
-                "Command:",
-                "pwsh -File \".\\scripts\\test-lane.ps1\" deterministic",
-                "Coverage collected:",
-                "Lane result: passed",
-                "Result:"
+                "Command:", "pwsh -File \".\\scripts\\test-lane.ps1\" deterministic", "Coverage collected:",
+                "Lane result: passed", "Result:"
             },
             new[] { "sequence-dry-run" });
         AssertEvidenceRecord(
@@ -127,12 +127,8 @@ public sealed class LocalVerificationContractTests
             ".sisyphus/evidence/local-integration-verification.md",
             new[]
             {
-                "Command:",
-                "pwsh -File \".\\scripts\\test-lane.ps1\" integration",
-                "Observed output:",
-                "[integration]",
-                "returned exit 0 in this environment",
-                "real staged integration-lane execution",
+                "Command:", "pwsh -File \".\\scripts\\test-lane.ps1\" integration", "Observed output:",
+                "[integration]", "returned exit 0 in this environment", "real staged integration-lane execution",
                 "Result:"
             },
             new[] { "sequence-dry-run" });
@@ -141,12 +137,9 @@ public sealed class LocalVerificationContractTests
             ".sisyphus/evidence/local-live-verification.md",
             new[]
             {
-                "Command:",
-                "pwsh -File \".\\scripts\\test-lane.ps1\" sequence-dry-run -Stages ThreadRead,Cleanup",
-                "Observed output:",
-                "cleanup compensations / recorded object ledger",
-                "does not claim that the credentialed live lane itself was executed here",
-                "Result:"
+                "Command:", "pwsh -File \".\\scripts\\test-lane.ps1\" sequence-dry-run -Stages ThreadRead,Cleanup",
+                "Observed output:", "cleanup compensations / recorded object ledger",
+                "does not claim that the credentialed live lane itself was executed here", "Result:"
             },
             Array.Empty<string>());
     }
@@ -155,7 +148,8 @@ public sealed class LocalVerificationContractTests
     public void CodeQlWorkflow_UsesNet10Only_Governance_Surface()
     {
         var repositoryRoot = RepositoryPaths.FindRepositoryRoot();
-        var workflowText = File.ReadAllText(Path.Combine(repositoryRoot, ".github", "workflows", "codeql-analysis.yml"));
+        var workflowText =
+            File.ReadAllText(Path.Combine(repositoryRoot, ".github", "workflows", "codeql-analysis.yml"));
 
         Assert.Contains("branches: [ \"main\", \"master\" ]", workflowText);
         Assert.Contains("dotnet-version: 10.x", workflowText);
@@ -237,16 +231,17 @@ public sealed class LocalVerificationContractTests
         File.WriteAllText(
             Path.Combine(fixture.RepositoryRoot, "AioTieba4DotNet.Testing", "appsettings.test.json"),
             "{" + Environment.NewLine
-            + "  \"TieBa\": {" + Environment.NewLine
-            + "    \"BDUSS\": \"unsafe\"," + Environment.NewLine
-            + "    \"STOKEN\": \"unsafe\"" + Environment.NewLine
-            + "  }" + Environment.NewLine
-            + "}" + Environment.NewLine);
+                + "  \"TieBa\": {" + Environment.NewLine
+                + "    \"BDUSS\": \"unsafe\"," + Environment.NewLine
+                + "    \"STOKEN\": \"unsafe\"" + Environment.NewLine
+                + "  }" + Environment.NewLine
+                + "}" + Environment.NewLine);
 
         var result = RunVerifyLocalValidateOnly(fixture.RepositoryRoot);
 
         Assert.AreNotEqual(0, result.ExitCode);
-        StringAssert.Contains(result.Output, "Tracked credential template AioTieba4DotNet.Testing/appsettings.test.json must keep TieBa:BDUSS blank.");
+        StringAssert.Contains(result.Output,
+            "Tracked credential template AioTieba4DotNet.Testing/appsettings.test.json must keep TieBa:BDUSS blank.");
     }
 
     [TestMethod]
@@ -261,8 +256,10 @@ public sealed class LocalVerificationContractTests
         var result = RunVerifyLocalValidateOnly(fixture.RepositoryRoot);
 
         Assert.AreNotEqual(0, result.ExitCode);
-        StringAssert.Contains(result.Output, "Evidence record .sisyphus/evidence/local-live-verification.md must contain phrase: Command:");
-        StringAssert.Contains(result.Output, "Evidence record .sisyphus/evidence/local-live-verification.md must not contain placeholder phrase: Update this file");
+        StringAssert.Contains(result.Output,
+            "Evidence record .sisyphus/evidence/local-live-verification.md must contain phrase: Command:");
+        StringAssert.Contains(result.Output,
+            "Evidence record .sisyphus/evidence/local-live-verification.md must not contain placeholder phrase: Update this file");
     }
 
     [TestMethod]
@@ -289,8 +286,10 @@ public sealed class LocalVerificationContractTests
         var result = RunVerifyLocalValidateOnly(fixture.RepositoryRoot);
 
         Assert.AreNotEqual(0, result.ExitCode);
-        StringAssert.Contains(result.Output, "Evidence record .sisyphus/evidence/local-integration-verification.md must contain phrase: pwsh -File \".\\scripts\\test-lane.ps1\" integration");
-        StringAssert.Contains(result.Output, "Evidence record .sisyphus/evidence/local-integration-verification.md must not contain placeholder phrase: sequence-dry-run");
+        StringAssert.Contains(result.Output,
+            "Evidence record .sisyphus/evidence/local-integration-verification.md must contain phrase: pwsh -File \".\\scripts\\test-lane.ps1\" integration");
+        StringAssert.Contains(result.Output,
+            "Evidence record .sisyphus/evidence/local-integration-verification.md must not contain placeholder phrase: sequence-dry-run");
     }
 
     [TestMethod]
@@ -316,9 +315,12 @@ public sealed class LocalVerificationContractTests
         var result = RunVerifyLocalValidateOnly(fixture.RepositoryRoot);
 
         Assert.AreNotEqual(0, result.ExitCode);
-        StringAssert.Contains(result.Output, "Workflow governance file .github/workflows/codeql-analysis.yml must contain phrase: branches: [ \"main\", \"master\" ]");
-        StringAssert.Contains(result.Output, "Workflow governance file .github/workflows/codeql-analysis.yml must not contain phrase: \"v2\"");
-        StringAssert.Contains(result.Output, "Workflow governance file .github/workflows/codeql-analysis.yml must not contain phrase: 8.x");
+        StringAssert.Contains(result.Output,
+            "Workflow governance file .github/workflows/codeql-analysis.yml must contain phrase: branches: [ \"main\", \"master\" ]");
+        StringAssert.Contains(result.Output,
+            "Workflow governance file .github/workflows/codeql-analysis.yml must not contain phrase: \"v2\"");
+        StringAssert.Contains(result.Output,
+            "Workflow governance file .github/workflows/codeql-analysis.yml must not contain phrase: 8.x");
     }
 
     [TestMethod]
@@ -328,21 +330,24 @@ public sealed class LocalVerificationContractTests
         File.WriteAllText(
             Path.Combine(fixture.RepositoryRoot, "AioTieba4DotNet", "AGENTS.md"),
             File.ReadAllText(Path.Combine(fixture.RepositoryRoot, "AioTieba4DotNet", "AGENTS.md"))
-                + Environment.NewLine
-                + "Legacy request base reference: Api/ProtoApiBase.cs" + Environment.NewLine);
+            + Environment.NewLine
+            + "Legacy request base reference: Api/ProtoApiBase.cs" + Environment.NewLine);
 
         var result = RunVerifyLocalValidateOnly(fixture.RepositoryRoot);
 
         Assert.AreNotEqual(0, result.ExitCode);
-        StringAssert.Contains(result.Output, "Forbidden legacy spine reference 'ProtoApiBase' found in AioTieba4DotNet/AGENTS.md");
+        StringAssert.Contains(result.Output,
+            "Forbidden legacy spine reference 'ProtoApiBase' found in AioTieba4DotNet/AGENTS.md");
     }
 
-    private static void AssertCredentialFieldBlank(string repositoryRoot, string relativePath, string section, string key)
+    private static void AssertCredentialFieldBlank(string repositoryRoot, string relativePath, string section,
+        string key)
     {
         var filePath = Path.Combine(repositoryRoot, relativePath.Replace('/', Path.DirectorySeparatorChar));
         using var document = JsonDocument.Parse(File.ReadAllText(filePath));
         var value = document.RootElement.GetProperty(section).GetProperty(key).GetString();
-        Assert.IsTrue(string.IsNullOrWhiteSpace(value), $"Tracked template {relativePath} must keep {section}:{key} blank.");
+        Assert.IsTrue(string.IsNullOrWhiteSpace(value),
+            $"Tracked template {relativePath} must keep {section}:{key} blank.");
     }
 
     private static void AssertEvidenceRecord(string repositoryRoot, string relativePath, string[] requiredPhrases,
@@ -352,15 +357,9 @@ public sealed class LocalVerificationContractTests
         var text = File.ReadAllText(filePath);
 
         Assert.DoesNotContain("Update this file", text);
-        foreach (var phrase in requiredPhrases)
-        {
-            Assert.Contains(phrase, text);
-        }
+        foreach (var phrase in requiredPhrases) Assert.Contains(phrase, text);
 
-        foreach (var phrase in forbiddenPhrases)
-        {
-            Assert.DoesNotContain(phrase, text);
-        }
+        foreach (var phrase in forbiddenPhrases) Assert.DoesNotContain(phrase, text);
     }
 
     private static VerifyLocalFixture CreateVerifyLocalFixture()
@@ -370,12 +369,15 @@ public sealed class LocalVerificationContractTests
         Directory.CreateDirectory(tempRoot);
 
         CopyDirectory(Path.Combine(repositoryRoot, "scripts"), Path.Combine(tempRoot, "scripts"));
-        CopyDirectory(Path.Combine(repositoryRoot, ".sisyphus", "evidence"), Path.Combine(tempRoot, ".sisyphus", "evidence"));
+        CopyDirectory(Path.Combine(repositoryRoot, ".sisyphus", "evidence"),
+            Path.Combine(tempRoot, ".sisyphus", "evidence"));
         CopyDirectory(Path.Combine(repositoryRoot, ".junie"), Path.Combine(tempRoot, ".junie"));
-        CopyDirectory(Path.Combine(repositoryRoot, ".github", "workflows"), Path.Combine(tempRoot, ".github", "workflows"));
+        CopyDirectory(Path.Combine(repositoryRoot, ".github", "workflows"),
+            Path.Combine(tempRoot, ".github", "workflows"));
         CopyDirectory(Path.Combine(repositoryRoot, "docs"), Path.Combine(tempRoot, "docs"));
         CopyDirectory(Path.Combine(repositoryRoot, "AioTieba4DotNet"), Path.Combine(tempRoot, "AioTieba4DotNet"));
-        CopyDirectory(Path.Combine(repositoryRoot, "AioTieba4DotNet.Testing"), Path.Combine(tempRoot, "AioTieba4DotNet.Testing"));
+        CopyDirectory(Path.Combine(repositoryRoot, "AioTieba4DotNet.Testing"),
+            Path.Combine(tempRoot, "AioTieba4DotNet.Testing"));
         File.Copy(Path.Combine(repositoryRoot, "README.md"), Path.Combine(tempRoot, "README.md"), true);
         File.Copy(Path.Combine(repositoryRoot, "AGENTS.md"), Path.Combine(tempRoot, "AGENTS.md"), true);
 
@@ -389,7 +391,8 @@ public sealed class LocalVerificationContractTests
             StartInfo = new ProcessStartInfo
             {
                 FileName = "pwsh",
-                Arguments = $"-NoProfile -File \"{Path.Combine(repositoryRoot, "scripts", "verify-local.ps1")}\" -ValidateOnly",
+                Arguments =
+                    $"-NoProfile -File \"{Path.Combine(repositoryRoot, "scripts", "verify-local.ps1")}\" -ValidateOnly",
                 WorkingDirectory = repositoryRoot,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -413,9 +416,7 @@ public sealed class LocalVerificationContractTests
             var relativePath = Path.GetRelativePath(sourceDirectory, sourceFile);
             if (relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                 .Any(static segment => segment is "bin" or "obj" or "TestResults"))
-            {
                 continue;
-            }
 
             var destinationFile = Path.Combine(destinationDirectory, relativePath);
             Directory.CreateDirectory(Path.GetDirectoryName(destinationFile)!);
@@ -424,10 +425,13 @@ public sealed class LocalVerificationContractTests
     }
 
     private static string[] ReadStringArray(JsonElement arrayElement)
-        => arrayElement.EnumerateArray().Select(static item => item.GetString() ?? string.Empty).ToArray();
+    {
+        return arrayElement.EnumerateArray().Select(static item => item.GetString() ?? string.Empty).ToArray();
+    }
 
     private static EvidenceContract[] ReadEvidenceContracts(JsonElement arrayElement)
-        => arrayElement.EnumerateArray()
+    {
+        return arrayElement.EnumerateArray()
             .Select(static item => new EvidenceContract(
                 item.GetProperty("id").GetString() ?? string.Empty,
                 item.GetProperty("kind").GetString() ?? string.Empty,
@@ -435,8 +439,10 @@ public sealed class LocalVerificationContractTests
                 item.GetProperty("path").GetString() ?? string.Empty,
                 item.GetProperty("description").GetString() ?? string.Empty))
             .ToArray();
+    }
 
     private sealed record VerifyLocalResult(int ExitCode, string Output);
+
     private sealed class VerifyLocalFixture(string repositoryRoot) : IDisposable
     {
         public string RepositoryRoot { get; } = repositoryRoot;

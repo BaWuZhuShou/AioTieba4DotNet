@@ -44,11 +44,7 @@ internal sealed class TiebaSessionStateStore(Account? account)
     {
         lock (_syncRoot)
         {
-            _currentState = _currentState with
-            {
-                Tbs = tbs,
-                TbsState = TiebaSessionResourceState.Ready
-            };
+            _currentState = _currentState with { Tbs = tbs, TbsState = TiebaSessionResourceState.Ready };
         }
     }
 
@@ -80,11 +76,7 @@ internal sealed class TiebaSessionStateStore(Account? account)
     {
         lock (_syncRoot)
         {
-            _currentState = _currentState with
-            {
-                ZId = zId,
-                ZIdState = TiebaSessionResourceState.Ready
-            };
+            _currentState = _currentState with { ZId = zId, ZIdState = TiebaSessionResourceState.Ready };
         }
     }
 
@@ -108,12 +100,7 @@ internal sealed class TiebaSessionStateStore(Account? account)
     {
         lock (_syncRoot)
         {
-            _currentState = _currentState with
-            {
-                ClientState = state,
-                ClientId = clientId,
-                SampleId = sampleId
-            };
+            _currentState = _currentState with { ClientState = state, ClientId = clientId, SampleId = sampleId };
         }
     }
 
@@ -123,9 +110,7 @@ internal sealed class TiebaSessionStateStore(Account? account)
         {
             _currentState = _currentState with
             {
-                ClientState = TiebaSessionResourceState.Ready,
-                ClientId = clientId,
-                SampleId = sampleId
+                ClientState = TiebaSessionResourceState.Ready, ClientId = clientId, SampleId = sampleId
             };
         }
     }

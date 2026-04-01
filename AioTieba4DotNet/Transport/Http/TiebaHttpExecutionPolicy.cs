@@ -9,13 +9,18 @@ internal sealed class TiebaHttpExecutionPolicy(TimeSpan requestTimeout, int maxR
 
     internal bool HasReadRetries => maxReadRetryAttempts > 0;
 
-    internal static TiebaHttpExecutionPolicy FromOptions(TiebaOptions options) =>
-        new(options.RequestTimeout, options.MaxReadRetryAttempts);
+    internal static TiebaHttpExecutionPolicy FromOptions(TiebaOptions options)
+    {
+        return new TiebaHttpExecutionPolicy(options.RequestTimeout, options.MaxReadRetryAttempts);
+    }
 
     internal async Task<HttpResponseMessage> SendAsync(HttpClient httpClient, TiebaHttpRequestDescriptor descriptor,
-        CancellationToken cancellationToken = default) =>
-        await SendAsync(httpClient, ct => TiebaHttpRequestFactory.CreateMessageAsync(descriptor, ct), descriptor.AllowRetry,
+        CancellationToken cancellationToken = default)
+    {
+        return await SendAsync(httpClient, ct => TiebaHttpRequestFactory.CreateMessageAsync(descriptor, ct),
+            descriptor.AllowRetry,
             descriptor.Kind, cancellationToken);
+    }
 
     internal async Task<HttpResponseMessage> SendAsync(HttpClient httpClient,
         Func<CancellationToken, Task<HttpRequestMessage>> requestFactory,

@@ -5,13 +5,21 @@ internal readonly record struct TiebaOperationCapabilities(
     bool RequiresAuthentication = false,
     bool RequiresTbs = false)
 {
-    internal static TiebaOperationCapabilities HttpOnly(bool requiresAuthentication = false, bool requiresTbs = false) =>
-        new(TiebaOperationTransportKind.HttpOnly, requiresAuthentication, requiresTbs);
+    internal static TiebaOperationCapabilities HttpOnly(bool requiresAuthentication = false, bool requiresTbs = false)
+    {
+        return new TiebaOperationCapabilities(TiebaOperationTransportKind.HttpOnly, requiresAuthentication,
+            requiresTbs);
+    }
 
     internal static TiebaOperationCapabilities WebSocketPreferred(bool requiresAuthentication = false,
-        bool requiresTbs = false) =>
-        new(TiebaOperationTransportKind.WebSocketPreferred, requiresAuthentication, requiresTbs);
+        bool requiresTbs = false)
+    {
+        return new TiebaOperationCapabilities(TiebaOperationTransportKind.WebSocketPreferred, requiresAuthentication,
+            requiresTbs);
+    }
 
-    internal static TiebaOperationCapabilities WebSocketOnly(bool requiresAuthentication = false) =>
-        new(TiebaOperationTransportKind.WebSocketOnly, requiresAuthentication, false);
+    internal static TiebaOperationCapabilities WebSocketOnly(bool requiresAuthentication = false)
+    {
+        return new TiebaOperationCapabilities(TiebaOperationTransportKind.WebSocketOnly, requiresAuthentication, false);
+    }
 }

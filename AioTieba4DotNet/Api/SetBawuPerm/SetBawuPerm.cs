@@ -30,8 +30,7 @@ internal sealed class SetBawuPerm(ITiebaHttpCore httpCore) : JsonApiBase(httpCor
         var permissionSettings = new JArray(
             PermissionOrder.Select(entry => new JObject
             {
-                ["switch"] = (permissions & entry.Permission) != 0 ? 1 : 0,
-                ["perm"] = entry.Id
+                ["switch"] = (permissions & entry.Permission) != 0 ? 1 : 0, ["perm"] = entry.Id
             }));
 
         return permissionSettings.ToString(Formatting.None);

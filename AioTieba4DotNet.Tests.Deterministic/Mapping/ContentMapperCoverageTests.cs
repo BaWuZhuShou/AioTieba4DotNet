@@ -22,14 +22,54 @@ public sealed class ContentMapperCoverageTests
             new() { Type = 44, Text = "text-44" },
             new() { Type = 2, Text = "@user", Uid = 42 },
             new() { Type = 11, Text = "1", C = "emoji" },
-            new() { Type = 3, CdnSrc = "https://imgsrc.baidu.com/forum/pic/item/1234567890abcdef1234567890abcdef.jpg", BigCdnSrc = "big", OriginSrc = "origin", OriginSize = 55, Bsize = "120,80" },
-            new() { Type = 20, CdnSrc = "https://imgsrc.baidu.com/forum/pic/item/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.jpg", BigCdnSrc = "big2", OriginSrc = "origin2", OriginSize = 56, Bsize = "121,81" },
-            new() { Type = 35, TiebaplusInfo = new PbContent.Types.TiebaPlusInfo { Desc = "plus", JumpUrl = "https://example.com/plus" } },
-            new() { Type = 36, TiebaplusInfo = new PbContent.Types.TiebaPlusInfo { Desc = "plus-36", JumpUrl = "https://example.com/plus36" } },
-            new() { Type = 37, TiebaplusInfo = new PbContent.Types.TiebaPlusInfo { Desc = "plus-37", JumpUrl = "https://example.com/plus37" } },
+            new()
+            {
+                Type = 3,
+                CdnSrc = "https://imgsrc.baidu.com/forum/pic/item/1234567890abcdef1234567890abcdef.jpg",
+                BigCdnSrc = "big",
+                OriginSrc = "origin",
+                OriginSize = 55,
+                Bsize = "120,80"
+            },
+            new()
+            {
+                Type = 20,
+                CdnSrc = "https://imgsrc.baidu.com/forum/pic/item/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.jpg",
+                BigCdnSrc = "big2",
+                OriginSrc = "origin2",
+                OriginSize = 56,
+                Bsize = "121,81"
+            },
+            new()
+            {
+                Type = 35,
+                TiebaplusInfo =
+                    new PbContent.Types.TiebaPlusInfo { Desc = "plus", JumpUrl = "https://example.com/plus" }
+            },
+            new()
+            {
+                Type = 36,
+                TiebaplusInfo =
+                    new PbContent.Types.TiebaPlusInfo { Desc = "plus-36", JumpUrl = "https://example.com/plus36" }
+            },
+            new()
+            {
+                Type = 37,
+                TiebaplusInfo =
+                    new PbContent.Types.TiebaPlusInfo { Desc = "plus-37", JumpUrl = "https://example.com/plus37" }
+            },
             new() { Type = 1, Text = "link title", Link = "https://example.com/link" },
             new() { Type = 10, VoiceMd5 = "voice-md5", DuringTime = 2300 },
-            new() { Type = 5, Link = "https://example.com/video.mp4", Src = "https://example.com/cover.jpg", DuringTime = 6, Width = 480, Height = 320, Count = 9 }
+            new()
+            {
+                Type = 5,
+                Link = "https://example.com/video.mp4",
+                Src = "https://example.com/cover.jpg",
+                DuringTime = 6,
+                Width = 480,
+                Height = 320,
+                Count = 9
+            }
         });
         var empty = ContentMapper.FromTbData((IEnumerable<PbContent>?)null);
 
@@ -54,11 +94,21 @@ public sealed class ContentMapperCoverageTests
     public void ContentMapper_FromPostInfoContent_MapsTextLinkEmojiAndVoiceBranches()
     {
         var postInfoContent = new PostInfoList.Types.PostInfoContent();
-        postInfoContent.PostContent.Add(new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 0, Text = "text" });
-        postInfoContent.PostContent.Add(new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 1, Text = "link title", Link = "https://example.com/link" });
-        postInfoContent.PostContent.Add(new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 2, Text = "emoji-id" });
-        postInfoContent.PostContent.Add(new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 10, VoiceMd5 = "voice-md5", DuringTime = "2500" });
-        postInfoContent.PostContent.Add(new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 99, Text = "unknown" });
+        postInfoContent.PostContent.Add(
+            new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 0, Text = "text" });
+        postInfoContent.PostContent.Add(new PostInfoList.Types.PostInfoContent.Types.Abstract
+        {
+            Type = 1, Text = "link title", Link = "https://example.com/link"
+        });
+        postInfoContent.PostContent.Add(
+            new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 2, Text = "emoji-id" });
+        postInfoContent.PostContent.Add(
+            new PostInfoList.Types.PostInfoContent.Types.Abstract
+            {
+                Type = 10, VoiceMd5 = "voice-md5", DuringTime = "2500"
+            });
+        postInfoContent.PostContent.Add(
+            new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 99, Text = "unknown" });
 
         var mapped = ContentMapper.FromTbData(postInfoContent);
 
@@ -76,19 +126,39 @@ public sealed class ContentMapperCoverageTests
     {
         var postInfoList = new PostInfoList
         {
-            FirstPostContent =
-            {
-                new PbContent { Type = 0, Text = "first" }
-            },
-            VideoInfo = new VideoInfo { VideoUrl = "https://example.com/video.mp4", ThumbnailUrl = "https://example.com/cover.jpg", VideoDuration = 6, VideoWidth = 320, VideoHeight = 180, PlayCount = 11 },
-            VoiceInfo =
-            {
-                new Voice { VoiceMd5 = "voice-md5", DuringTime = 3400 }
-            },
+            FirstPostContent = { new PbContent { Type = 0, Text = "first" } },
+            VideoInfo =
+                new VideoInfo
+                {
+                    VideoUrl = "https://example.com/video.mp4",
+                    ThumbnailUrl = "https://example.com/cover.jpg",
+                    VideoDuration = 6,
+                    VideoWidth = 320,
+                    VideoHeight = 180,
+                    PlayCount = 11
+                },
+            VoiceInfo = { new Voice { VoiceMd5 = "voice-md5", DuringTime = 3400 } },
             Media =
             {
-                new Media { Type = 1, SmallPic = "https://imgsrc.baidu.com/forum/pic/item/abcdefabcdefabcdefabcdefabcdefab.jpg", BigPic = "big", OriginPic = "origin", OriginSize = 77, Width = 20, Height = 10 },
-                new Media { Type = 5, SmallPic = "https://imgsrc.baidu.com/forum/pic/item/ffffffffffffffffffffffffffffffff.jpg", Width = 99, Height = 99 }
+                new Media
+                {
+                    Type = 1,
+                    SmallPic =
+                        "https://imgsrc.baidu.com/forum/pic/item/abcdefabcdefabcdefabcdefabcdefab.jpg",
+                    BigPic = "big",
+                    OriginPic = "origin",
+                    OriginSize = 77,
+                    Width = 20,
+                    Height = 10
+                },
+                new Media
+                {
+                    Type = 5,
+                    SmallPic =
+                        "https://imgsrc.baidu.com/forum/pic/item/ffffffffffffffffffffffffffffffff.jpg",
+                    Width = 99,
+                    Height = 99
+                }
             }
         };
 
@@ -108,7 +178,15 @@ public sealed class ContentMapperCoverageTests
     {
         var origin = new ThreadInfo.Types.OriginThreadInfo
         {
-            VideoInfo = new VideoInfo { VideoUrl = "https://example.com/video.mp4", ThumbnailUrl = "https://example.com/cover.jpg", VideoDuration = 6, VideoWidth = 320, VideoHeight = 180, PlayCount = 11 },
+            VideoInfo = new VideoInfo
+            {
+                VideoUrl = "https://example.com/video.mp4",
+                ThumbnailUrl = "https://example.com/cover.jpg",
+                VideoDuration = 6,
+                VideoWidth = 320,
+                VideoHeight = 180,
+                PlayCount = 11
+            },
             VoiceInfo = { new Voice { VoiceMd5 = "voice-md5", DuringTime = 2500 } }
         };
         origin.Content.Add(new PbContent { Type = 0, Text = "origin-text" });
@@ -116,8 +194,21 @@ public sealed class ContentMapperCoverageTests
         origin.Content.Add(new PbContent { Type = 1, Text = "link title", Link = "https://example.com/link" });
         origin.Content.Add(new PbContent { Type = 2, Text = "@user", Uid = 42 });
         origin.Content.Add(new PbContent { Type = 11, Text = "1", C = "emoji" });
-        origin.Content.Add(new PbContent { Type = 3, CdnSrc = "https://imgsrc.baidu.com/forum/pic/item/1234567890abcdef1234567890abcdef.jpg", BigCdnSrc = "big", OriginSrc = "origin", OriginSize = 55, Bsize = "120,80" });
-        origin.Content.Add(new PbContent { Type = 35, TiebaplusInfo = new PbContent.Types.TiebaPlusInfo { Desc = "plus", JumpUrl = "https://example.com/plus" } });
+        origin.Content.Add(new PbContent
+        {
+            Type = 3,
+            CdnSrc = "https://imgsrc.baidu.com/forum/pic/item/1234567890abcdef1234567890abcdef.jpg",
+            BigCdnSrc = "big",
+            OriginSrc = "origin",
+            OriginSize = 55,
+            Bsize = "120,80"
+        });
+        origin.Content.Add(new PbContent
+        {
+            Type = 35,
+            TiebaplusInfo =
+                new PbContent.Types.TiebaPlusInfo { Desc = "plus", JumpUrl = "https://example.com/plus" }
+        });
         origin.Content.Add(new PbContent { Type = 10, Text = "ignored-video-sentinel" });
         origin.Content.Add(new PbContent { Type = 5, Text = "ignored-old-plus" });
         origin.Content.Add(new PbContent { Type = 34, Text = "ignored" });
@@ -125,7 +216,16 @@ public sealed class ContentMapperCoverageTests
 
         var thread = new ThreadInfo
         {
-            VideoInfo = new VideoInfo { VideoUrl = "https://example.com/video.mp4", ThumbnailUrl = "https://example.com/cover.jpg", VideoDuration = 6, VideoWidth = 320, VideoHeight = 180, PlayCount = 11 },
+            VideoInfo =
+                new VideoInfo
+                {
+                    VideoUrl = "https://example.com/video.mp4",
+                    ThumbnailUrl = "https://example.com/cover.jpg",
+                    VideoDuration = 6,
+                    VideoWidth = 320,
+                    VideoHeight = 180,
+                    PlayCount = 11
+                },
             VoiceInfo = { new Voice { VoiceMd5 = "voice-md5", DuringTime = 2500 } },
             FirstPostContent =
             {
@@ -134,8 +234,21 @@ public sealed class ContentMapperCoverageTests
                 new PbContent { Type = 1, Text = "link title", Link = "https://example.com/link" },
                 new PbContent { Type = 2, Text = "@user", Uid = 42 },
                 new PbContent { Type = 11, Text = "1", C = "emoji" },
-                new PbContent { Type = 3, CdnSrc = "https://imgsrc.baidu.com/forum/pic/item/1234567890abcdef1234567890abcdef.jpg", BigCdnSrc = "big", OriginSrc = "origin", OriginSize = 55, Bsize = "120,80" },
-                new PbContent { Type = 35, TiebaplusInfo = new PbContent.Types.TiebaPlusInfo { Desc = "plus", JumpUrl = "https://example.com/plus" } },
+                new PbContent
+                {
+                    Type = 3,
+                    CdnSrc = "https://imgsrc.baidu.com/forum/pic/item/1234567890abcdef1234567890abcdef.jpg",
+                    BigCdnSrc = "big",
+                    OriginSrc = "origin",
+                    OriginSize = 55,
+                    Bsize = "120,80"
+                },
+                new PbContent
+                {
+                    Type = 35,
+                    TiebaplusInfo =
+                        new PbContent.Types.TiebaPlusInfo { Desc = "plus", JumpUrl = "https://example.com/plus" }
+                },
                 new PbContent { Type = 34, Text = "ignored" },
                 new PbContent { Type = 99, Text = "unknown" }
             }
@@ -179,5 +292,4 @@ public sealed class ContentMapperCoverageTests
         Assert.AreEqual(0, mapped.Links.Count);
         Assert.AreEqual(0, mapped.TiebaPluses.Count);
     }
-
 }

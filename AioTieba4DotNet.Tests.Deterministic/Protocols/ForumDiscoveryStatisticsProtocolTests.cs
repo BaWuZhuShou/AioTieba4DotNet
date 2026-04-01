@@ -33,10 +33,7 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
         var png = CreatePng(2, 3);
         var handler = new RecordingHandler(_ =>
         {
-            var response = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new ByteArrayContent(png)
-            };
+            var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(png) };
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
             return response;
         });
@@ -57,10 +54,7 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
         var bytes = new byte[] { 0x42, 0x4D, 0x01, 0x02, 0x03 };
         var handler = new RecordingHandler(_ =>
         {
-            var response = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new ByteArrayContent(bytes)
-            };
+            var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) };
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("image/bmp");
             return response;
         });
@@ -127,10 +121,7 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
     [TestMethod]
     public async Task GetLastReplyersAsync_FallsBackToHttp_AndNormalizesCurrentPage()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateLastReplyersResponse(currentPage: 0, hasMore: true).ToByteArray()
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateLastReplyersResponse(0, true).ToByteArray() };
         var wsCore = new StubWsCore { ConnectException = new TiebaWebSocketUnavailableException("offline") };
         var protocol = CreateAuthenticatedProtocol(httpCore, wsCore, TiebaTransportMode.Auto);
 
@@ -149,7 +140,8 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
     public async Task GetMemberUsersAsync_WithoutStoken_FailsBeforeTransport()
     {
         var httpCore = new RecordingHttpCore();
-        var protocol = CreateAuthenticatedProtocol(httpCore, transportMode: TiebaTransportMode.Http, stoken: string.Empty);
+        var protocol =
+            CreateAuthenticatedProtocol(httpCore, transportMode: TiebaTransportMode.Http, stoken: string.Empty);
 
         await Assert.ThrowsAsync<TiebaAuthenticationException>(() => protocol.GetMemberUsersAsync(SafeForumName, 1));
         Assert.AreEqual(0, httpCore.SendWebGetCalls);
@@ -229,10 +221,7 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
     [TestMethod]
     public async Task GetSquareForumsAsync_FallsBackToHttp_AndMapsIsLikeToIsFollowed()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateSquareForumsResponse(hasMore: true).ToByteArray()
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateSquareForumsResponse(true).ToByteArray() };
         var wsCore = new StubWsCore { ConnectException = new TiebaWebSocketUnavailableException("offline") };
         var protocol = CreateAuthenticatedProtocol(httpCore, wsCore, TiebaTransportMode.Auto);
 
@@ -287,7 +276,7 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
             WebGetResponseFactory = (uri, _) => uri.AbsolutePath switch
             {
                 "/f/commit/share/fnameShareApi" => $"{{\"no\":0,\"error\":\"\",\"data\":{{\"fid\":{SafeForumId}}}}}",
-                "/mo/q/newmoindex" => "{" + "\"no\":0,\"error\":\"\",\"data\":{\"user\":{\"id\":1}}}" ,
+                "/mo/q/newmoindex" => "{" + "\"no\":0,\"error\":\"\",\"data\":{\"user\":{\"id\":1}}}",
                 _ => "{}"
             },
             AppFormResponseFactory = (uri, _) => uri.AbsolutePath switch
@@ -326,21 +315,32 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
     {
         var options = new TiebaOptions
         {
-            Bduss = ValidBduss,
-            Stoken = stoken ?? ValidStoken,
-            TransportMode = transportMode
+            Bduss = ValidBduss, Stoken = stoken ?? ValidStoken, TransportMode = transportMode
         };
-        var session = new TiebaClientSession(options, httpCore, wsCore ?? new StubWsCore(), _ => Task.FromResult("tbs-123"));
+        var session = new TiebaClientSession(options, httpCore, wsCore ?? new StubWsCore(),
+            _ => Task.FromResult("tbs-123"));
         return new ForumProtocol(new TiebaOperationDispatcher(session), new ForumInfoCache());
     }
 
     private static byte[] CreatePng(int width, int height)
     {
         var bytes = new byte[24];
-        bytes[0] = 0x89; bytes[1] = 0x50; bytes[2] = 0x4E; bytes[3] = 0x47;
-        bytes[4] = 0x0D; bytes[5] = 0x0A; bytes[6] = 0x1A; bytes[7] = 0x0A;
-        bytes[8] = 0x00; bytes[9] = 0x00; bytes[10] = 0x00; bytes[11] = 0x0D;
-        bytes[12] = 0x49; bytes[13] = 0x48; bytes[14] = 0x44; bytes[15] = 0x52;
+        bytes[0] = 0x89;
+        bytes[1] = 0x50;
+        bytes[2] = 0x4E;
+        bytes[3] = 0x47;
+        bytes[4] = 0x0D;
+        bytes[5] = 0x0A;
+        bytes[6] = 0x1A;
+        bytes[7] = 0x0A;
+        bytes[8] = 0x00;
+        bytes[9] = 0x00;
+        bytes[10] = 0x00;
+        bytes[11] = 0x0D;
+        bytes[12] = 0x49;
+        bytes[13] = 0x48;
+        bytes[14] = 0x44;
+        bytes[15] = 0x52;
         WriteInt32BigEndian(bytes, 16, width);
         WriteInt32BigEndian(bytes, 20, height);
         return bytes;
@@ -361,8 +361,16 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
             Error = new Error { Errorno = 0 },
             Data = new FrsPageResIdl4lp.Types.DataRes
             {
-                Forum = new FrsPageResIdl4lp.Types.DataRes.Types.ForumInfo { Id = (long)SafeForumId, Name = SafeForumName },
-                Page = new Page { CurrentPage = currentPage, PageSize = 30, TotalPage = 9, TotalCount = 270, HasMore = hasMore ? 1 : 0 },
+                Forum =
+                    new FrsPageResIdl4lp.Types.DataRes.Types.ForumInfo { Id = (long)SafeForumId, Name = SafeForumName },
+                Page = new Page
+                {
+                    CurrentPage = currentPage,
+                    PageSize = 30,
+                    TotalPage = 9,
+                    TotalCount = 270,
+                    HasMore = hasMore ? 1 : 0
+                },
                 ThreadList =
                 {
                     new ThreadInfo
@@ -374,7 +382,13 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
                         LastTimeInt = 1700000100,
                         IsGood = 1,
                         IsTop = 0,
-                        Author = new User { Id = 111, Name = "author", NameShow = "author-show", Portrait = "tb.1.author?abc123456789" },
+                        Author = new User
+                        {
+                            Id = 111,
+                            Name = "author",
+                            NameShow = "author-show",
+                            Portrait = "tb.1.author?abc123456789"
+                        },
                         LastReplyer = new User { Id = 222, Name = "last", NameShow = "last-show" }
                     }
                 }
@@ -389,7 +403,14 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
             Error = new Error { Errorno = 0 },
             Data = new GetForumSquareResIdl.Types.DataRes
             {
-                Page = new Page { CurrentPage = 1, PageSize = 20, TotalPage = 5, TotalCount = 100, HasMore = hasMore ? 1 : 0 },
+                Page = new Page
+                {
+                    CurrentPage = 1,
+                    PageSize = 20,
+                    TotalPage = 5,
+                    TotalCount = 100,
+                    HasMore = hasMore ? 1 : 0
+                },
                 ForumInfo =
                 {
                     new GetForumSquareResIdl.Types.DataRes.Types.RecommendForumInfo
@@ -410,12 +431,7 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
         return new GetLevelInfoResIdl
         {
             Error = new Error { Errorno = 0 },
-            Data = new GetLevelInfoResIdl.Types.DataRes
-            {
-                LevelName = "铁杆吧友",
-                UserLevel = 9,
-                IsLike = 1
-            }
+            Data = new GetLevelInfoResIdl.Types.DataRes { LevelName = "铁杆吧友", UserLevel = 9, IsLike = 1 }
         };
     }
 
@@ -448,10 +464,16 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
 
         public HttpClient HttpClient => _httpClient;
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -479,7 +501,10 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
         }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private sealed class StubWsCore : ITiebaWsCore
@@ -491,7 +516,10 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
 
         public Account? Account { get; private set; }
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
         public Task ConnectAsync(CancellationToken cancellationToken = default)
         {
@@ -502,8 +530,10 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
             return Task.CompletedTask;
         }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) =>
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
             CancellationToken cancellationToken = default)
@@ -511,17 +541,19 @@ public sealed class ForumDiscoveryStatisticsProtocolTests
             SendCalls++;
             return Task.FromResult(new WSRes
             {
-                Payload = new WSRes.Types.Payload
-                {
-                    Data = ByteString.CopyFrom(SendResponsePayload)
-                }
+                Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(SendResponsePayload) }
             });
         }
 
-        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) =>
+        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class RecordingHandler : HttpMessageHandler

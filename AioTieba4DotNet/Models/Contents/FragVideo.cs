@@ -52,7 +52,8 @@ public class FragVideo : IFrag
     {
         return new Dictionary<string, object> { { "type", "5" }, { "link", Src }, { "src", CoverSrc } };
     }
-   /// <summary>
+
+    /// <summary>
     ///     视频是否可用
     /// </summary>
     /// <returns>如果视频宽度大于0则返回true</returns>

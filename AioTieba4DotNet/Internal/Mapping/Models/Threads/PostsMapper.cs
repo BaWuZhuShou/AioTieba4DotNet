@@ -6,67 +6,57 @@ internal static class PostsMapper
 {
     internal static Posts FromTbData(PbPageResIdl.Types.DataRes dataRes)
 
+    {
+        var forum = ForumTMapper.FromTbData(dataRes.Forum);
+
+        var thread = ThreadMapper.FromTbData(dataRes.Thread);
+
+        thread.Fname = forum.Fname;
+
+        thread.Fid = forum.Fid;
+
+
+        var users = dataRes.UserList.ToDictionary(u => u.Id, UserInfoTMapper.FromTbData);
+
+        if (users.TryGetValue(thread.AuthorId, out var threadAuthor)) thread.User = threadAuthor;
+
+
+        var posts = dataRes.PostList.Select(PostMapper.FromTbData).ToList();
+
+        foreach (var post in posts)
+
         {
+            post.Fname = forum.Fname;
 
-            var forum = AioTieba4DotNet.Internal.Mapping.ForumTMapper.FromTbData(dataRes.Forum);
+            post.Fid = forum.Fid;
 
-            var thread = AioTieba4DotNet.Internal.Mapping.ThreadMapper.FromTbData(dataRes.Thread);
+            post.Tid = thread.Tid;
 
-            thread.Fname = forum.Fname;
+            post.IsThreadAuthor = post.AuthorId == thread.AuthorId;
 
-            thread.Fid = forum.Fid;
-
-
-
-            var users = dataRes.UserList.ToDictionary(u => u.Id, AioTieba4DotNet.Internal.Mapping.UserInfoTMapper.FromTbData);
-
-            if (users.TryGetValue(thread.AuthorId, out var threadAuthor)) thread.User = threadAuthor;
+            if (users.TryGetValue(post.AuthorId, out var postAuthor)) post.User = postAuthor;
 
 
-
-            var posts = dataRes.PostList.Select(AioTieba4DotNet.Internal.Mapping.PostMapper.FromTbData).ToList();
-
-            foreach (var post in posts)
+            foreach (var comment in post.Comments)
 
             {
+                comment.Fname = forum.Fname;
 
-                post.Fname = forum.Fname;
+                comment.Fid = forum.Fid;
 
-                post.Fid = forum.Fid;
+                comment.Tid = thread.Tid;
 
-                post.Tid = thread.Tid;
+                comment.Ppid = post.Pid;
 
-                post.IsThreadAuthor = post.AuthorId == thread.AuthorId;
+                comment.Floor = post.Floor;
 
-                if (users.TryGetValue(post.AuthorId, out var postAuthor)) post.User = postAuthor;
+                comment.IsThreadAuthor = comment.AuthorId == thread.AuthorId;
 
-
-
-                foreach (var comment in post.Comments)
-
-                {
-
-                    comment.Fname = forum.Fname;
-
-                    comment.Fid = forum.Fid;
-
-                    comment.Tid = thread.Tid;
-
-                    comment.Ppid = post.Pid;
-
-                    comment.Floor = post.Floor;
-
-                    comment.IsThreadAuthor = comment.AuthorId == thread.AuthorId;
-
-                    if (users.TryGetValue(comment.AuthorId, out var commentAuthor)) comment.User = commentAuthor;
-
-                }
-
+                if (users.TryGetValue(comment.AuthorId, out var commentAuthor)) comment.User = commentAuthor;
             }
-
-
-
-            return new Posts { Page = AioTieba4DotNet.Internal.Mapping.PageTMapper.FromTbData(dataRes.Page), Forum = forum, Thread = thread, Objs = posts };
-
         }
+
+
+        return new Posts { Page = PageTMapper.FromTbData(dataRes.Page), Forum = forum, Thread = thread, Objs = posts };
+    }
 }

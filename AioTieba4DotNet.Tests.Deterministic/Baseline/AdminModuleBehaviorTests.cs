@@ -72,19 +72,34 @@ public sealed class AdminModuleBehaviorTests
         public BawuPerm BawuPermResult { get; init; } = new();
 
         public Task<bool> AddBawuAsync(string fname, string userName, BawuType bawuType,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> DelBawuAsync(string fname, string portrait, BawuType bawuType,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> AddBawuBlacklistAsync(string fname, long userId,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> DelBawuBlacklistAsync(string fname, long userId,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<BawuBlacklistUsers> GetBawuBlacklistAsync(string fname, int pn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<BawuInfo> GetBawuInfoAsync(string fname, CancellationToken cancellationToken = default)
         {
@@ -110,30 +125,55 @@ public sealed class AdminModuleBehaviorTests
         }
 
         public Task<BawuPostLogs> GetBawuPostLogsAsync(string fname, BawuPostLogQueryOptions? options = null,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<BawuUserLogs> GetBawuUserLogsAsync(string fname, BawuUserLogQueryOptions? options = null,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<Appeals> GetUnblockAppealsAsync(string fname, int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> HandleUnblockAppealsAsync(string fname, IReadOnlyList<long> appealIds, bool refuse,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<Blocks> GetBlocksAsync(string fname, string userName, int pn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> BlockAsync(ulong fid, string portrait, int day, string reason,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> BlockAsync(string fname, string portrait, int day, string reason,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<bool> UnblockAsync(ulong fid, long userId, CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnblockAsync(string fname, long userId, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnblockAsync(ulong fid, long userId, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task<bool> UnblockAsync(string fname, long userId, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

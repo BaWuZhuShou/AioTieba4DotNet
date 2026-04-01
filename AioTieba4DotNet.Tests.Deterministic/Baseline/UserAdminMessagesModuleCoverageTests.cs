@@ -161,8 +161,12 @@ public sealed class UserAdminMessagesModuleCoverageTests
         public string? LastLookupText { get; private set; }
         public int LastPageNumber { get; private set; }
 
-        public Task<string> GetTbsAsync(CancellationToken cancellationToken = default) => Task.FromResult("tbs-123");
-    public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
+        public Task<string> GetTbsAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult("tbs-123");
+        }
+
+        public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
         {
             LastUserId = userId;
             return Task.FromResult<UserInfoGuInfoApp>(null!);
@@ -174,13 +178,15 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult<UserInfoPf>(null!);
         }
 
-        public Task<UserInfoPf> GetProfileAsync(string portraitOrUserName, CancellationToken cancellationToken = default)
+        public Task<UserInfoPf> GetProfileAsync(string portraitOrUserName,
+            CancellationToken cancellationToken = default)
         {
             LastLookupText = portraitOrUserName;
             return Task.FromResult<UserInfoPf>(null!);
         }
 
-        public Task<bool> BlockAsync(string fname, string portrait, int day, string reason, CancellationToken cancellationToken = default)
+        public Task<bool> BlockAsync(string fname, string portrait, int day, string reason,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             LastPortrait = portrait;
@@ -189,7 +195,11 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> FollowAsync(string portrait, CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<bool> FollowAsync(string portrait, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
+
         public Task<bool> UnfollowAsync(string portrait, CancellationToken cancellationToken = default)
         {
             LastPortrait = portrait;
@@ -210,7 +220,8 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult<UserList>(null!);
         }
 
-        public Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait, CancellationToken cancellationToken = default)
+        public Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait,
+            CancellationToken cancellationToken = default)
         {
             LastLookupText = nameOrPortrait;
             return Task.FromResult<UserInfoPanel>(null!);
@@ -222,34 +233,113 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult<UserInfoJson>(null!);
         }
 
-        public Task<UserInfo> GetSelfInfoAsync(CancellationToken cancellationToken = default) => Task.FromResult(new UserInfo());
-        public Task<UserInfo> GetSelfInfoInitNicknameAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(new UserInfo());
-        public Task<UserInfo> GetSelfInfoMoIndexAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(new UserInfo());
-        public Task<LoginResult> LoginAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(new LoginResult { User = new UserInfo() });
-        public Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default) => Task.FromResult<BlacklistUsers>(null!);
-        public Task<BlacklistOldUsers> GetBlacklistOldAsync(int pn, int rn, CancellationToken cancellationToken = default) => Task.FromResult<BlacklistOldUsers>(null!);
-        public Task<bool> SetBlacklistAsync(long userId, BlacklistType type, CancellationToken cancellationToken = default) => Task.FromResult(true);
-        public Task<bool> AddBlacklistOldAsync(long userId, CancellationToken cancellationToken = default) => Task.FromResult(true);
-        public Task<bool> RemoveBlacklistOldAsync(long userId, CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<UserInfo> GetSelfInfoAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new UserInfo());
+        }
+
+        public Task<UserInfo> GetSelfInfoInitNicknameAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new UserInfo());
+        }
+
+        public Task<UserInfo> GetSelfInfoMoIndexAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new UserInfo());
+        }
+
+        public Task<LoginResult> LoginAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new LoginResult { User = new UserInfo() });
+        }
+
+        public Task<BlacklistUsers> GetBlacklistAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<BlacklistUsers>(null!);
+        }
+
+        public Task<BlacklistOldUsers> GetBlacklistOldAsync(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<BlacklistOldUsers>(null!);
+        }
+
+        public Task<bool> SetBlacklistAsync(long userId, BlacklistType type,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> AddBlacklistOldAsync(long userId, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> RemoveBlacklistOldAsync(long userId, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
+
         public Task<bool> RemoveFanAsync(long userId, CancellationToken cancellationToken = default)
         {
             LastUserId = userId;
             return Task.FromResult(true);
         }
 
-    public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default) => Task.FromResult<UserInfoGuInfoWeb>(null!);
-        public Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait, CancellationToken cancellationToken = default) => Task.FromResult<UserForumInfo>(null!);
-        public Task<UserForumInfo> GetUserForumInfoAsync(string fname, string portrait, CancellationToken cancellationToken = default) => Task.FromResult<UserForumInfo>(null!);
-        public Task<RankUsers> GetRankUsersAsync(string fname, int pn, CancellationToken cancellationToken = default) => Task.FromResult<RankUsers>(null!);
-        public Task<Homepage> GetHomepageAsync(int userId, int pn, CancellationToken cancellationToken = default) => Task.FromResult<Homepage>(null!);
-        public Task<bool> SetNicknameAsync(string nickName, CancellationToken cancellationToken = default) => Task.FromResult(true);
-        public Task<bool> SetProfileAsync(string nickName, string sign, Gender gender, CancellationToken cancellationToken = default) => Task.FromResult(true);
-        public Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default) => Task.FromResult<UserInfoTUid>(null!);
-        public Task<UserPostGroups> GetPostsAsync(int userId, uint pn, uint rn, string version, CancellationToken cancellationToken = default) => Task.FromResult<UserPostGroups>(null!);
-        public Task<UserThreads> GetThreadsAsync(int userId, uint pn, bool publicOnly, CancellationToken cancellationToken = default) => Task.FromResult<UserThreads>(null!);
+        public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<UserInfoGuInfoWeb>(null!);
+        }
+
+        public Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<UserForumInfo>(null!);
+        }
+
+        public Task<UserForumInfo> GetUserForumInfoAsync(string fname, string portrait,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<UserForumInfo>(null!);
+        }
+
+        public Task<RankUsers> GetRankUsersAsync(string fname, int pn, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<RankUsers>(null!);
+        }
+
+        public Task<Homepage> GetHomepageAsync(int userId, int pn, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<Homepage>(null!);
+        }
+
+        public Task<bool> SetNicknameAsync(string nickName, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> SetProfileAsync(string nickName, string sign, Gender gender,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
+
+        public Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<UserInfoTUid>(null!);
+        }
+
+        public Task<UserPostGroups> GetPostsAsync(int userId, uint pn, uint rn, string version,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<UserPostGroups>(null!);
+        }
+
+        public Task<UserThreads> GetThreadsAsync(int userId, uint pn, bool publicOnly,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<UserThreads>(null!);
+        }
     }
 
     private sealed class RecordingAdminProtocol : IAdminProtocol
@@ -263,63 +353,85 @@ public sealed class UserAdminMessagesModuleCoverageTests
         public IReadOnlyList<long>? LastAppealIds { get; private set; }
         public bool LastRefuse { get; private set; }
 
-        public Task<bool> AddBawuAsync(string fname, string userName, BawuType bawuType, CancellationToken cancellationToken = default)
+        public Task<bool> AddBawuAsync(string fname, string userName, BawuType bawuType,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             LastUserName = userName;
             return Task.FromResult(true);
         }
 
-        public Task<bool> DelBawuAsync(string fname, string portrait, BawuType bawuType, CancellationToken cancellationToken = default)
+        public Task<bool> DelBawuAsync(string fname, string portrait, BawuType bawuType,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             LastPortrait = portrait;
             return Task.FromResult(true);
         }
 
-        public Task<bool> AddBawuBlacklistAsync(string fname, long userId, CancellationToken cancellationToken = default)
+        public Task<bool> AddBawuBlacklistAsync(string fname, long userId,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             LastUserId = userId;
             return Task.FromResult(true);
         }
 
-        public Task<bool> DelBawuBlacklistAsync(string fname, long userId, CancellationToken cancellationToken = default)
+        public Task<bool> DelBawuBlacklistAsync(string fname, long userId,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             LastUserId = userId;
             return Task.FromResult(true);
         }
 
-        public Task<BawuBlacklistUsers> GetBawuBlacklistAsync(string fname, int pn = 1, CancellationToken cancellationToken = default)
+        public Task<BawuBlacklistUsers> GetBawuBlacklistAsync(string fname, int pn = 1,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             return Task.FromResult<BawuBlacklistUsers>(null!);
         }
 
-        public Task<BawuInfo> GetBawuInfoAsync(string fname, CancellationToken cancellationToken = default) => Task.FromResult<BawuInfo>(null!);
-        public Task<BawuPerm> GetBawuPermAsync(string fname, string portrait, CancellationToken cancellationToken = default) => Task.FromResult<BawuPerm>(null!);
-        public Task<bool> SetBawuPermAsync(string fname, string portrait, BawuPermType permissions, CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<BawuInfo> GetBawuInfoAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<BawuInfo>(null!);
+        }
 
-        public Task<BawuPostLogs> GetBawuPostLogsAsync(string fname, BawuPostLogQueryOptions? options = null, CancellationToken cancellationToken = default)
+        public Task<BawuPerm> GetBawuPermAsync(string fname, string portrait,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<BawuPerm>(null!);
+        }
+
+        public Task<bool> SetBawuPermAsync(string fname, string portrait, BawuPermType permissions,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
+
+        public Task<BawuPostLogs> GetBawuPostLogsAsync(string fname, BawuPostLogQueryOptions? options = null,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             return Task.FromResult<BawuPostLogs>(null!);
         }
 
-        public Task<BawuUserLogs> GetBawuUserLogsAsync(string fname, BawuUserLogQueryOptions? options = null, CancellationToken cancellationToken = default)
+        public Task<BawuUserLogs> GetBawuUserLogsAsync(string fname, BawuUserLogQueryOptions? options = null,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             return Task.FromResult<BawuUserLogs>(null!);
         }
 
-        public Task<Appeals> GetUnblockAppealsAsync(string fname, int pn = 1, int rn = 20, CancellationToken cancellationToken = default)
+        public Task<Appeals> GetUnblockAppealsAsync(string fname, int pn = 1, int rn = 20,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             return Task.FromResult<Appeals>(null!);
         }
 
-        public Task<bool> HandleUnblockAppealsAsync(string fname, IReadOnlyList<long> appealIds, bool refuse = false, CancellationToken cancellationToken = default)
+        public Task<bool> HandleUnblockAppealsAsync(string fname, IReadOnlyList<long> appealIds, bool refuse = false,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             LastAppealIds = appealIds;
@@ -327,14 +439,16 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult(true);
         }
 
-        public Task<Blocks> GetBlocksAsync(string fname, string userName = "", int pn = 1, CancellationToken cancellationToken = default)
+        public Task<Blocks> GetBlocksAsync(string fname, string userName = "", int pn = 1,
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             LastUserName = userName;
             return Task.FromResult<Blocks>(null!);
         }
 
-        public Task<bool> BlockAsync(string fname, string portrait, int day = 1, string reason = "", CancellationToken cancellationToken = default)
+        public Task<bool> BlockAsync(string fname, string portrait, int day = 1, string reason = "",
+            CancellationToken cancellationToken = default)
         {
             LastForumName = fname;
             LastPortrait = portrait;
@@ -343,7 +457,8 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> BlockAsync(ulong fid, string portrait, int day = 1, string reason = "", CancellationToken cancellationToken = default)
+        public Task<bool> BlockAsync(ulong fid, string portrait, int day = 1, string reason = "",
+            CancellationToken cancellationToken = default)
         {
             LastUserId = (long)fid;
             LastPortrait = portrait;
@@ -374,8 +489,15 @@ public sealed class UserAdminMessagesModuleCoverageTests
         public IReadOnlyList<long>? LastGroupIds { get; private set; }
         public WsMessage? LastMessage { get; private set; }
 
-        public Task<AtMessages> GetAtsAsync(int pn, CancellationToken cancellationToken = default) => Task.FromResult<AtMessages>(null!);
-        public Task<ReplyMessages> GetRepliesAsync(int pn, CancellationToken cancellationToken = default) => Task.FromResult<ReplyMessages>(null!);
+        public Task<AtMessages> GetAtsAsync(int pn, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<AtMessages>(null!);
+        }
+
+        public Task<ReplyMessages> GetRepliesAsync(int pn, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<ReplyMessages>(null!);
+        }
 
         public Task<WsMsgGroups> GetGroupMessagesAsync(int getType, CancellationToken cancellationToken = default)
         {
@@ -383,23 +505,32 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult<WsMsgGroups>(null!);
         }
 
-        public Task<WsMsgGroups> GetGroupMessagesAsync(IReadOnlyList<long> groupIds, int getType, CancellationToken cancellationToken = default)
+        public Task<WsMsgGroups> GetGroupMessagesAsync(IReadOnlyList<long> groupIds, int getType,
+            CancellationToken cancellationToken = default)
         {
             LastGroupIds = groupIds;
             LastGetType = getType;
             return Task.FromResult<WsMsgGroups>(null!);
         }
 
-        public Task<long> SendMessageAsync(long userId, string content, CancellationToken cancellationToken = default) => Task.FromResult(0L);
+        public Task<long> SendMessageAsync(long userId, string content, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(0L);
+        }
 
-        public Task<long> SendMessageAsync(string portraitOrUserName, string content, CancellationToken cancellationToken = default)
+        public Task<long> SendMessageAsync(string portraitOrUserName, string content,
+            CancellationToken cancellationToken = default)
         {
             LastLookupText = portraitOrUserName;
             LastContent = content;
             return Task.FromResult(998L);
         }
 
-        public Task<bool> SendChatroomMessageAsync(long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds = null, int robotCode = -1, CancellationToken cancellationToken = default) => Task.FromResult(true);
+        public Task<bool> SendChatroomMessageAsync(long chatroomId, ulong forumId, string text,
+            IReadOnlyList<long>? atUserIds = null, int robotCode = -1, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
 
         public Task<bool> SetMessageReadAsync(WsMessage message, CancellationToken cancellationToken = default)
         {
@@ -407,6 +538,9 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult(true);
         }
 
-        public IReadOnlyList<WsNotify> ParsePushNotifications(byte[] payload) => [];
+        public IReadOnlyList<WsNotify> ParsePushNotifications(byte[] payload)
+        {
+            return [];
+        }
     }
 }

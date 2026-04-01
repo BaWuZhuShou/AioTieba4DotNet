@@ -17,10 +17,8 @@ internal sealed class GetBlacklistOld(ITiebaHttpCore httpCore, ITiebaWsCore wsCo
     public async Task<BlacklistOldUsers> RequestHttpAsync(int pn, int rn, CancellationToken cancellationToken = default)
     {
         var data = PackProto(httpCore.Account!, pn, rn);
-        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/userMuteQuery")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var requestUri =
+            new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/userMuteQuery") { Query = $"cmd={Cmd}" }.Uri;
 
         var response = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(response);

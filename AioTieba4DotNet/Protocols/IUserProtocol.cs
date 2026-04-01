@@ -48,7 +48,8 @@ internal interface IUserProtocol
 
     Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default);
 
-    Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait, CancellationToken cancellationToken = default);
+    Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait,
+        CancellationToken cancellationToken = default);
 
     Task<UserForumInfo> GetUserForumInfoAsync(string fname, string portrait,
         CancellationToken cancellationToken = default);

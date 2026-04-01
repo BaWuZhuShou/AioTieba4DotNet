@@ -19,14 +19,14 @@ internal class DelThread(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         return true;
     }
 
-/// <summary>
-///     发送删除主题帖请求
-/// </summary>
-/// <param name="fid">吧 ID</param>
-/// <param name="tid">主题帖 ID</param>
-/// <param name="isHide">是否隐藏主题帖</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>操作是否成功</returns>
+    /// <summary>
+    ///     发送删除主题帖请求
+    /// </summary>
+    /// <param name="fid">吧 ID</param>
+    /// <param name="tid">主题帖 ID</param>
+    /// <param name="isHide">是否隐藏主题帖</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(ulong fid, long tid, bool isHide = false,
         CancellationToken cancellationToken = default)
     {

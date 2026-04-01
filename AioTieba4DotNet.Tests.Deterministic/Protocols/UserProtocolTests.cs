@@ -191,7 +191,8 @@ public class UserProtocolTests
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
 
-        await AssertThrowsAsync<ArgumentOutOfRangeException>(async () => await protocol.SetBlacklistAsync(0, BlacklistType.All));
+        await AssertThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await protocol.SetBlacklistAsync(0, BlacklistType.All));
 
         AssertTransportUnused(httpCore);
     }
@@ -205,7 +206,8 @@ public class UserProtocolTests
 
         await AssertThrowsAsync<ArgumentOutOfRangeException>(async () => await protocol.GetFollowsAsync(1, 0));
         await AssertThrowsAsync<ArgumentOutOfRangeException>(async () => await protocol.GetBlacklistOldAsync(1, 0));
-        await AssertThrowsAsync<ArgumentOutOfRangeException>(async () => await protocol.GetUserForumInfoAsync(0UL, "tb.1.safe"));
+        await AssertThrowsAsync<ArgumentOutOfRangeException>(async () =>
+            await protocol.GetUserForumInfoAsync(0UL, "tb.1.safe"));
         await AssertThrowsAsync<ArgumentOutOfRangeException>(async () => await protocol.GetUserByTiebaUidAsync(0));
 
         AssertTransportUnused(httpCore);
@@ -215,10 +217,7 @@ public class UserProtocolTests
     public async Task GetBlacklistOldAsync_UsesWebSocketPreferredPath_AndMapsUsers()
     {
         var httpCore = new RecordingHttpCore();
-        var wsCore = new RecordingWsCore
-        {
-            ResponsePayload = CreateMutedBlacklistResponse().ToByteArray()
-        };
+        var wsCore = new RecordingWsCore { ResponsePayload = CreateMutedBlacklistResponse().ToByteArray() };
         using var session = CreateAuthenticatedSession(httpCore, wsCore, _ => Task.FromResult("tbs-123"),
             TiebaTransportMode.Auto);
         var protocol = CreateProtocol(session);
@@ -248,14 +247,8 @@ public class UserProtocolTests
     [TestMethod]
     public async Task GetBlacklistOldAsync_WhenWebSocketUnavailable_FallsBackToHttp()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateMutedBlacklistResponse().ToByteArray()
-        };
-        var wsCore = new RecordingWsCore
-        {
-            ConnectException = new WebSocketException("offline")
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateMutedBlacklistResponse().ToByteArray() };
+        var wsCore = new RecordingWsCore { ConnectException = new WebSocketException("offline") };
         using var session = CreateAuthenticatedSession(httpCore, wsCore, _ => Task.FromResult("tbs-123"),
             TiebaTransportMode.Auto);
         var protocol = CreateProtocol(session);
@@ -277,10 +270,7 @@ public class UserProtocolTests
     [TestMethod]
     public async Task AddBlacklistOldAsync_PropagatesCancellationToken_AndPacksRequest()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppFormResponse = SuccessResponse
-        };
+        var httpCore = new RecordingHttpCore { AppFormResponse = SuccessResponse };
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
@@ -297,10 +287,7 @@ public class UserProtocolTests
     [TestMethod]
     public async Task RemoveBlacklistOldAsync_PropagatesCancellationToken_AndPacksRequest()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppFormResponse = SuccessResponse
-        };
+        var httpCore = new RecordingHttpCore { AppFormResponse = SuccessResponse };
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
@@ -329,10 +316,7 @@ public class UserProtocolTests
     [TestMethod]
     public async Task SetNicknameAsync_UsesWebFormQuery_AndPropagatesCancellationToken()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            WebFormResponse = "{\"no\":0,\"error\":\"\"}"
-        };
+        var httpCore = new RecordingHttpCore { WebFormResponse = "{\"no\":0,\"error\":\"\"}" };
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
@@ -363,10 +347,7 @@ public class UserProtocolTests
     [TestMethod]
     public async Task SetProfileAsync_PropagatesCancellationToken_AndPacksRequest()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppFormResponse = SuccessResponse
-        };
+        var httpCore = new RecordingHttpCore { AppFormResponse = SuccessResponse };
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
@@ -394,7 +375,8 @@ public class UserProtocolTests
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
 
-        var exception = await AssertThrowsAsync<TieBaServerException>(async () => await protocol.FollowAsync("tb.1.nonexistent"));
+        var exception =
+            await AssertThrowsAsync<TieBaServerException>(async () => await protocol.FollowAsync("tb.1.nonexistent"));
 
         Assert.AreEqual(340011, exception.Code);
     }
@@ -411,7 +393,8 @@ public class UserProtocolTests
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
 
-        var exception = await AssertThrowsAsync<TieBaServerException>(async () => await protocol.UnfollowAsync("tb.1.safe"));
+        var exception =
+            await AssertThrowsAsync<TieBaServerException>(async () => await protocol.UnfollowAsync("tb.1.safe"));
 
         Assert.AreEqual(3254004, exception.Code);
     }
@@ -440,10 +423,8 @@ public class UserProtocolTests
     {
         var httpCore = new RecordingHttpCore
         {
-            AppProtoResponse = new SetUserBlackResIdl
-            {
-                Error = new Error { Errorno = 0, Errmsg = string.Empty }
-            }.ToByteArray()
+            AppProtoResponse = new SetUserBlackResIdl { Error = new Error { Errorno = 0, Errmsg = string.Empty } }
+                .ToByteArray()
         };
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
@@ -711,10 +692,7 @@ public class UserProtocolTests
     public async Task GetHomepageAsync_UsesWebSocketPreferredPath()
     {
         var httpCore = new RecordingHttpCore();
-        var wsCore = new RecordingWsCore
-        {
-            ResponsePayload = CreateHomepageResponse().ToByteArray()
-        };
+        var wsCore = new RecordingWsCore { ResponsePayload = CreateHomepageResponse().ToByteArray() };
         using var session = CreateAuthenticatedSession(httpCore, wsCore, _ => Task.FromResult("tbs-123"),
             TiebaTransportMode.Auto);
         var protocol = CreateProtocol(session);
@@ -740,14 +718,8 @@ public class UserProtocolTests
     [TestMethod]
     public async Task GetHomepageAsync_WhenWebSocketUnavailable_FallsBackToHttp()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateHomepageResponse().ToByteArray()
-        };
-        var wsCore = new RecordingWsCore
-        {
-            ConnectException = new WebSocketException("offline")
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateHomepageResponse().ToByteArray() };
+        var wsCore = new RecordingWsCore { ConnectException = new WebSocketException("offline") };
         using var session = CreateAuthenticatedSession(httpCore, wsCore, _ => Task.FromResult("tbs-123"),
             TiebaTransportMode.Auto);
         var protocol = CreateProtocol(session);
@@ -770,10 +742,7 @@ public class UserProtocolTests
     public async Task GetUserByTiebaUidAsync_UsesWebSocketPreferredPath_AndMapsUser()
     {
         var httpCore = new RecordingHttpCore();
-        var wsCore = new RecordingWsCore
-        {
-            ResponsePayload = CreateTiebaUidResponse().ToByteArray()
-        };
+        var wsCore = new RecordingWsCore { ResponsePayload = CreateTiebaUidResponse().ToByteArray() };
         using var session = CreateAuthenticatedSession(httpCore, wsCore, _ => Task.FromResult("tbs-123"),
             TiebaTransportMode.Auto);
         var protocol = CreateProtocol(session);
@@ -799,14 +768,8 @@ public class UserProtocolTests
     [TestMethod]
     public async Task GetUserByTiebaUidAsync_WhenWebSocketUnavailable_FallsBackToHttp()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateTiebaUidResponse().ToByteArray()
-        };
-        var wsCore = new RecordingWsCore
-        {
-            ConnectException = new WebSocketException("offline")
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateTiebaUidResponse().ToByteArray() };
+        var wsCore = new RecordingWsCore { ConnectException = new WebSocketException("offline") };
         using var session = CreateAuthenticatedSession(httpCore, wsCore, _ => Task.FromResult("tbs-123"),
             TiebaTransportMode.Auto);
         var protocol = CreateProtocol(session);
@@ -825,10 +788,7 @@ public class UserProtocolTests
     [TestMethod]
     public async Task GetProfileAsync_Int_PropagatesCancellationToken_ToTransport()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateProfileResponse().ToByteArray()
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateProfileResponse().ToByteArray() };
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
@@ -842,10 +802,7 @@ public class UserProtocolTests
     [TestMethod]
     public async Task GetProfileAsync_String_PropagatesCancellationToken_ToTransport()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateProfileResponse().ToByteArray()
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateProfileResponse().ToByteArray() };
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
@@ -859,10 +816,7 @@ public class UserProtocolTests
     [TestMethod]
     public async Task FollowAsync_PropagatesCancellationToken_ToTransport()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppFormResponse = SuccessResponse
-        };
+        var httpCore = new RecordingHttpCore { AppFormResponse = SuccessResponse };
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
@@ -876,10 +830,7 @@ public class UserProtocolTests
     [TestMethod]
     public async Task UnfollowAsync_PropagatesCancellationToken_ToTransport()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppFormResponse = SuccessResponse
-        };
+        var httpCore = new RecordingHttpCore { AppFormResponse = SuccessResponse };
         using var session = CreateAuthenticatedSession(httpCore, _ => Task.FromResult("tbs-123"));
         var protocol = CreateProtocol(session);
         using var cts = new CancellationTokenSource();
@@ -976,12 +927,7 @@ public class UserProtocolTests
         Func<CancellationToken, Task<string>> loadTbsAsync, TiebaTransportMode transportMode)
     {
         return new TiebaClientSession(
-            new TiebaOptions
-            {
-                Bduss = ValidBduss,
-                Stoken = ValidStoken,
-                TransportMode = transportMode
-            },
+            new TiebaOptions { Bduss = ValidBduss, Stoken = ValidStoken, TransportMode = transportMode },
             httpCore,
             wsCore,
             loadTbsAsync);
@@ -1023,13 +969,7 @@ public class UserProtocolTests
             Error = new Error { Errorno = 0 },
             Data = new ProfileResIdl.Types.DataRes
             {
-                User = new User
-                {
-                    Id = 1,
-                    Portrait = "tb.1.safe",
-                    Name = "safe-user",
-                    NameShow = "Safe User"
-                }
+                User = new User { Id = 1, Portrait = "tb.1.safe", Name = "safe-user", NameShow = "Safe User" }
             }
         };
     }
@@ -1169,7 +1109,10 @@ public class UserProtocolTests
         }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -1210,11 +1153,15 @@ public class UserProtocolTests
             return Task.FromResult(WebFormResponse);
         }
 
-        public string GetAppFormValue(string key) =>
-            LastAppFormData.Single(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData.Single(entry => entry.Key == key).Value;
+        }
 
-        public string GetWebGetValue(string key) =>
-            LastWebGetParameters.Single(entry => entry.Key == key).Value;
+        public string GetWebGetValue(string key)
+        {
+            return LastWebGetParameters.Single(entry => entry.Key == key).Value;
+        }
     }
 
     private sealed class RecordingWsCore : ITiebaWsCore
@@ -1247,8 +1194,10 @@ public class UserProtocolTests
             return Task.CompletedTask;
         }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) =>
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
             CancellationToken cancellationToken = default)
@@ -1271,77 +1220,130 @@ public class UserProtocolTests
             yield break;
         }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class StubForumProtocol : IForumProtocol
     {
-        public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<global::AioTieba4DotNet.Models.Forums.ForumDetail> GetDetailAsync(ulong fid,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<global::AioTieba4DotNet.Models.Forums.ForumDetail> GetDetailAsync(string fname,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(ulong fid,
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(string fname,
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<global::AioTieba4DotNet.Models.Forums.Forum> GetForumAsync(string fname,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Forum> GetForumAsync(string fname,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private sealed class RecordingForumProtocol : IForumProtocol
@@ -1359,65 +1361,108 @@ public class UserProtocolTests
             return Task.FromResult(FidResult);
         }
 
-        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<Forum> GetForumAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<Forum> GetForumAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    private static Models.Threads.PageT GetBlacklistOldPage(BlacklistOldUsers users) =>
-        (Models.Threads.PageT)typeof(BlacklistOldUsers).GetProperty("Page")!.GetValue(users)!;
+    private static Models.Threads.PageT GetBlacklistOldPage(BlacklistOldUsers users)
+    {
+        return (Models.Threads.PageT)typeof(BlacklistOldUsers).GetProperty("Page")!.GetValue(users)!;
+    }
 }

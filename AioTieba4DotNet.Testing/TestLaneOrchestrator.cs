@@ -56,7 +56,8 @@ public sealed record TestLaneExecutionResult(
     IReadOnlyList<TestLaneStageExecutionResult> StageResults,
     Exception? Failure)
 {
-    public bool Succeeded => Failure is null && StageResults.All(static result => result.Status != TestLaneStageStatus.Failed);
+    public bool Succeeded =>
+        Failure is null && StageResults.All(static result => result.Status != TestLaneStageStatus.Failed);
 }
 
 public sealed class TestLaneOrchestrator
@@ -74,7 +75,9 @@ public sealed class TestLaneOrchestrator
     }
 
     public static TestLaneOrchestrator LoadDefault()
-        => new(TestSequencingManifest.LoadDefault());
+    {
+        return new TestLaneOrchestrator(TestSequencingManifest.LoadDefault());
+    }
 
     public IReadOnlyList<string> DescribeManifestDryRun()
     {
@@ -202,20 +205,16 @@ public sealed class TestLaneOrchestrator
         var knownStages = _manifest.GetStageNames().ToHashSet(StringComparer.Ordinal);
         var unknownStages = stageFilter.Where(stage => !knownStages.Contains(stage)).ToArray();
         if (unknownStages.Length > 0)
-        {
             throw new InvalidOperationException(
                 $"Unknown stage filter(s): {string.Join(", ", unknownStages)}.");
-        }
 
         var laneStages = _manifest.GetStagesForLane(lane)
             .Select(static stage => stage.Name)
             .ToHashSet(StringComparer.Ordinal);
         var outOfLaneStages = stageFilter.Where(stage => !laneStages.Contains(stage)).ToArray();
         if (outOfLaneStages.Length > 0)
-        {
             throw new InvalidOperationException(
                 $"Stage filter(s) are not available for lane '{lane}': {string.Join(", ", outOfLaneStages)}.");
-        }
     }
 
     private static IReadOnlyList<string> NormalizeStageFilter(IEnumerable<string>? stageFilter)
@@ -243,7 +242,9 @@ public sealed class TestLaneOrchestrator
     }
 
     private static bool IsCleanupStage(string stageName)
-        => string.Equals(stageName, TestCategoryNames.Cleanup, StringComparison.Ordinal);
+    {
+        return string.Equals(stageName, TestCategoryNames.Cleanup, StringComparison.Ordinal);
+    }
 
     private static string BuildCategoryFilter(string lane, string stageName)
     {
@@ -263,7 +264,9 @@ public sealed class TestLaneOrchestrator
         if (report is null)
             return "No cleanup report was recorded.";
 
-        var failureCount = report.CompensationResults.Count(static result => result.Status == TestCleanupActionStatus.Failed);
-        return $"objects={report.RecordedObjects.Count}, compensations={report.CompensationResults.Count}, failures={failureCount}";
+        var failureCount =
+            report.CompensationResults.Count(static result => result.Status == TestCleanupActionStatus.Failed);
+        return
+            $"objects={report.RecordedObjects.Count}, compensations={report.CompensationResults.Count}, failures={failureCount}";
     }
 }

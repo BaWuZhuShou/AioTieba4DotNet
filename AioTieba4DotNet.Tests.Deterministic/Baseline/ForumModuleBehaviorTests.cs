@@ -32,10 +32,11 @@ public class ForumModuleBehaviorTests
     [TestMethod]
     public async Task ForumModule_FollowDelegatesToInternalProtocol()
     {
-        var protocol = new RecordingForumProtocol(new Forum { Fid = 7356044, Fname = CanonicalSafeForumName })
-        {
-            FollowResult = true
-        };
+        var protocol =
+            new RecordingForumProtocol(new Forum { Fid = 7356044, Fname = CanonicalSafeForumName })
+            {
+                FollowResult = true
+            };
         var module = new ForumModule(protocol);
 
         var result = await module.FollowAsync(7356044);
@@ -49,7 +50,7 @@ public class ForumModuleBehaviorTests
     {
         var expected = new SelfFollowForums(
             new List<SelfFollowForum> { new() { Fid = 7356044, Fname = CanonicalSafeForumName, IsSigned = true } },
-            hasMore: true);
+            true);
         var protocol = new RecordingForumProtocol(new Forum { Fid = 7356044, Fname = CanonicalSafeForumName })
         {
             SelfFollowForumsResult = expected
@@ -103,10 +104,8 @@ public class ForumModuleBehaviorTests
     [TestMethod]
     public async Task ForumModule_GetCidDelegatesToInternalProtocol()
     {
-        var protocol = new RecordingForumProtocol(new Forum { Fid = 7356044, Fname = CanonicalSafeForumName })
-        {
-            CidResult = 42
-        };
+        var protocol =
+            new RecordingForumProtocol(new Forum { Fid = 7356044, Fname = CanonicalSafeForumName }) { CidResult = 42 };
         var module = new ForumModule(protocol);
 
         var actual = await module.GetCidAsync(CanonicalSafeForumName, "目标分类");
@@ -121,8 +120,7 @@ public class ForumModuleBehaviorTests
     {
         var protocol = new RecordingForumProtocol(new Forum { Fid = 7356044, Fname = CanonicalSafeForumName })
         {
-            SignForumsResult = true,
-            SignGrowthResult = true
+            SignForumsResult = true, SignGrowthResult = true
         };
         var module = new ForumModule(protocol);
 
@@ -217,39 +215,57 @@ public class ForumModuleBehaviorTests
         public ExactSearches? SearchExactResult { get; init; }
         public RoomList? RoomListResult { get; init; }
         public SelfFollowForums? SelfFollowForumsResult { get; init; }
-    public SelfFollowForumsV1? SelfFollowForumsV1Result { get; init; }
+        public SelfFollowForumsV1? SelfFollowForumsV1Result { get; init; }
         public ulong LastRoomListFid { get; private set; }
         public int LastSelfFollowForumsPn { get; private set; }
         public int LastSelfFollowForumsRn { get; private set; }
-    public int LastSelfFollowForumsV1Pn { get; private set; }
-    public int LastSelfFollowForumsV1Rn { get; private set; }
+        public int LastSelfFollowForumsV1Pn { get; private set; }
+        public int LastSelfFollowForumsV1Rn { get; private set; }
 
-        public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default) =>
-            Task.FromResult(7356044UL);
+        public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(7356044UL);
+        }
 
-        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default) =>
-            Task.FromResult(CanonicalSafeForumName);
+        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(CanonicalSafeForumName);
+        }
 
-        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
-            Task.FromResult(RecordFollow(fid));
+        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(RecordFollow(fid));
+        }
 
-        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default)
         {
@@ -270,7 +286,10 @@ public class ForumModuleBehaviorTests
         }
 
         public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
             CancellationToken cancellationToken = default)
@@ -280,13 +299,14 @@ public class ForumModuleBehaviorTests
             return Task.FromResult(SelfFollowForumsResult ?? new SelfFollowForums([], false));
         }
 
-    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
-        CancellationToken cancellationToken = default)
-    {
-        LastSelfFollowForumsV1Pn = pn;
-        LastSelfFollowForumsV1Rn = rn;
-        return Task.FromResult(SelfFollowForumsV1Result ?? new SelfFollowForumsV1([], new SelfFollowForumsV1Page()));
-    }
+        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
+            LastSelfFollowForumsV1Pn = pn;
+            LastSelfFollowForumsV1Rn = rn;
+            return Task.FromResult(SelfFollowForumsV1Result ??
+                                   new SelfFollowForumsV1([], new SelfFollowForumsV1Page()));
+        }
 
         public Task<int> GetCidAsync(string fname, string cname = "", CancellationToken cancellationToken = default)
         {
@@ -314,17 +334,25 @@ public class ForumModuleBehaviorTests
             return Task.FromResult(RoomListResult ?? new RoomList([]));
         }
 
-        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn,
             CancellationToken cancellationToken = default)

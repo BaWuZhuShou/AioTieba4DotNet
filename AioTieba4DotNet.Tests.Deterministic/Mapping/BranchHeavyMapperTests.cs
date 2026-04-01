@@ -17,13 +17,14 @@ public sealed class BranchHeavyMapperTests
     {
         var mapped = UserForumInfoMapper.FromTbData(new JObject
         {
-            ["user_info"] = new JObject
-            {
-                ["id"] = 42,
-                ["name"] = "user",
-                ["name_show"] = "User Show",
-                ["portrait"] = "tb.1.user?012345678901"
-            },
+            ["user_info"] =
+                new JObject
+                {
+                    ["id"] = 42,
+                    ["name"] = "user",
+                    ["name_show"] = "User Show",
+                    ["portrait"] = "tb.1.user?012345678901"
+                },
             ["user_forum_info"] = new JObject
             {
                 ["is_follow"] = 1,
@@ -41,11 +42,7 @@ public sealed class BranchHeavyMapperTests
                 ["identify"] = "badge",
                 ["high_light_sign_days"] = 16
             },
-            ["forum_info"] = new JObject
-            {
-                ["forum_name"] = "csharp",
-                ["forum_avatar"] = "avatar.png"
-            }
+            ["forum_info"] = new JObject { ["forum_name"] = "csharp", ["forum_avatar"] = "avatar.png" }
         });
         var fallback = UserForumInfoMapper.FromTbData(new JObject());
 
@@ -65,13 +62,8 @@ public sealed class BranchHeavyMapperTests
     {
         var mapped = UserForumInfoMapper.FromTbData(new JObject
         {
-            ["user_info"] = new JObject
-            {
-                ["id"] = 7,
-                ["portrait"] = "tb.1.partial",
-                ["name"] = "partial-user",
-                ["is_like"] = 1
-            },
+            ["user_info"] =
+                new JObject { ["id"] = 7, ["portrait"] = "tb.1.partial", ["name"] = "partial-user", ["is_like"] = 1 },
             ["user_forum_info"] = new JObject
             {
                 ["is_follow"] = 0,
@@ -91,8 +83,7 @@ public sealed class BranchHeavyMapperTests
             },
             ["forum_info"] = new JObject
             {
-                ["forum_name"] = JValue.CreateNull(),
-                ["forum_avatar"] = JValue.CreateNull()
+                ["forum_name"] = JValue.CreateNull(), ["forum_avatar"] = JValue.CreateNull()
             }
         });
 
@@ -114,11 +105,7 @@ public sealed class BranchHeavyMapperTests
     {
         var mapped = UserForumInfoMapper.FromTbData(new JObject
         {
-            ["user_info"] = new JObject
-            {
-                ["id"] = 9,
-                ["name"] = "present-user"
-            },
+            ["user_info"] = new JObject { ["id"] = 9, ["name"] = "present-user" },
             ["user_forum_info"] = new JObject(),
             ["forum_info"] = new JObject()
         });
@@ -186,9 +173,7 @@ public sealed class BranchHeavyMapperTests
     {
         var mapped = UserInfoPanelMapper.FromTbData(new JObject
         {
-            ["vipInfo"] = "unexpected",
-            ["post_num"] = JValue.CreateNull(),
-            ["followed_count"] = JValue.CreateNull()
+            ["vipInfo"] = "unexpected", ["post_num"] = JValue.CreateNull(), ["followed_count"] = JValue.CreateNull()
         });
 
         Assert.AreEqual(string.Empty, mapped.Portrait);
@@ -207,10 +192,7 @@ public sealed class BranchHeavyMapperTests
     {
         var mapped = AtMessageMapper.FromTbData(new JObject
         {
-            ["content"] = JValue.CreateNull(),
-            ["replyer"] = "unexpected",
-            ["is_floor"] = 0,
-            ["is_first_post"] = 0
+            ["content"] = JValue.CreateNull(), ["replyer"] = "unexpected", ["is_floor"] = 0, ["is_first_post"] = 0
         });
 
         Assert.AreEqual(string.Empty, mapped.Content);
@@ -271,19 +253,8 @@ public sealed class BranchHeavyMapperTests
     {
         var mapped = ExactSearchesMapper.FromTbData(new JObject
         {
-            ["post_list"] = new JArray
-            {
-                new JObject
-                {
-                    ["is_floor"] = 0,
-                    ["author"] = new JObject()
-                }
-            },
-            ["page"] = new JObject
-            {
-                ["has_more"] = 0,
-                ["has_prev"] = 1
-            }
+            ["post_list"] = new JArray { new JObject { ["is_floor"] = 0, ["author"] = new JObject() } },
+            ["page"] = new JObject { ["has_more"] = 0, ["has_prev"] = 1 }
         });
 
         Assert.AreEqual(string.Empty, mapped[0].Text);
@@ -305,7 +276,8 @@ public sealed class BranchHeavyMapperTests
         {
             ["data"] = new JObject
             {
-                ["content"] = "<li><a attr-uid=\"42\" attr-un=\"target-user\" attr-nn=\"Target\" attr-blockday=\"3\"></a></li>",
+                ["content"] =
+                    "<li><a attr-uid=\"42\" attr-un=\"target-user\" attr-nn=\"Target\" attr-blockday=\"3\"></a></li>",
                 ["page"] = new JObject
                 {
                     ["size"] = 20,
@@ -320,12 +292,7 @@ public sealed class BranchHeavyMapperTests
         {
             ["data"] = new JObject
             {
-                ["content"] = string.Empty,
-                ["page"] = new JObject
-                {
-                    ["pn"] = 1,
-                    ["have_next"] = 0
-                }
+                ["content"] = string.Empty, ["page"] = new JObject { ["pn"] = 1, ["have_next"] = 0 }
             }
         });
 
@@ -347,13 +314,7 @@ public sealed class BranchHeavyMapperTests
         var missingPayload = BlocksMapper.FromTbData(new JObject());
         var unexpectedToken = BlocksMapper.FromTbData(new JObject
         {
-            ["data"] = new JObject
-            {
-                ["page"] = new JObject
-                {
-                    ["have_next"] = "unexpected"
-                }
-            }
+            ["data"] = new JObject { ["page"] = new JObject { ["have_next"] = "unexpected" } }
         });
 
         Assert.AreEqual(0, missingPayload.Count);
@@ -383,7 +344,11 @@ public sealed class BranchHeavyMapperTests
                 }
             }
         });
-        var fallback = BawuPermMapper.FromTbData(new JObject { ["perm_setting"] = new JObject { ["category_user"] = new JObject() } });
+        var fallback =
+            BawuPermMapper.FromTbData(new JObject
+            {
+                ["perm_setting"] = new JObject { ["category_user"] = new JObject() }
+            });
 
         Assert.AreEqual(BawuPermType.UnblockAppeal | BawuPermType.RecoverAppeal, mapped.Permissions);
         Assert.AreEqual(BawuPermType.None, fallback.Permissions);
@@ -420,23 +385,23 @@ public sealed class BranchHeavyMapperTests
     public void BawuBlacklistUsersMapper_HandlesMalformedRows_AndNullInput()
     {
         var mapped = BawuBlacklistUsersMapper.FromTbData("""
-                                               <div class="breadcrumbs"><em>1</em></div>
-                                               <div class="tbui_pagination"><ul><li class="active">1</li><li>(1)</li></ul></div>
-                                               <table><tbody>
-                                               <tr>
-                                                 <td class="left_cell"><a data-user-name="target-user" data-user-id="42" href="/home/main?id=tb.1.target&amp;fr=home">target-user</a></td>
-                                               </tr>
-                                               <tr>
-                                                 <td class="left_cell"><a data-user-name="" data-user-id="43" href="/home/main?id=tb.1.blank">blank</a></td>
-                                               </tr>
-                                               <tr>
-                                                 <td class="left_cell"><a data-user-name="bad-id" data-user-id="oops" href="/home/main?id=tb.1.badid">bad-id</a></td>
-                                               </tr>
-                                               <tr>
-                                                 <td class="left_cell"><a data-user-name="missing-href" data-user-id="44">missing</a></td>
-                                               </tr>
-                                               </tbody></table>
-                                               """);
+                                                         <div class="breadcrumbs"><em>1</em></div>
+                                                         <div class="tbui_pagination"><ul><li class="active">1</li><li>(1)</li></ul></div>
+                                                         <table><tbody>
+                                                         <tr>
+                                                           <td class="left_cell"><a data-user-name="target-user" data-user-id="42" href="/home/main?id=tb.1.target&amp;fr=home">target-user</a></td>
+                                                         </tr>
+                                                         <tr>
+                                                           <td class="left_cell"><a data-user-name="" data-user-id="43" href="/home/main?id=tb.1.blank">blank</a></td>
+                                                         </tr>
+                                                         <tr>
+                                                           <td class="left_cell"><a data-user-name="bad-id" data-user-id="oops" href="/home/main?id=tb.1.badid">bad-id</a></td>
+                                                         </tr>
+                                                         <tr>
+                                                           <td class="left_cell"><a data-user-name="missing-href" data-user-id="44">missing</a></td>
+                                                         </tr>
+                                                         </tbody></table>
+                                                         """);
 
         Assert.AreEqual(1, mapped.Count);
         Assert.AreEqual(42L, mapped[0].UserId);
@@ -448,31 +413,31 @@ public sealed class BranchHeavyMapperTests
     public void BawuUserLogsMapper_HandlesShortRows_DurationFallbacks_AndNullInput()
     {
         var mapped = BawuUserLogsMapper.FromTbData("""
-                                               <div class="breadcrumbs"><em>2</em></div>
-                                               <div class="tbui_pagination"><ul><li class="active">1</li><li>(1)</li></ul></div>
-                                               <table><tbody>
-                                               <tr>
-                                                 <td><a href="/home/main?id=tb.1.target#/">target</a></td>
-                                                 <td>封禁</td>
-                                                 <td>7 天</td>
-                                                 <td>operator-user</td>
-                                                 <td>2026-03-30 11:22</td>
-                                               </tr>
-                                               <tr>
-                                                 <td><a href="/home/main?id=tb.1.target#/">target</a></td>
-                                                 <td>封禁</td>
-                                                 <td>3小时</td>
-                                                 <td>operator-user</td>
-                                                 <td>2026-03-30 11:22</td>
-                                               </tr>
-                                               <tr>
-                                                 <td><a href="/home/main?id=tb.1.short#/">short</a></td>
-                                                 <td>封禁</td>
-                                                 <td>7 天</td>
-                                                 <td>operator-user</td>
-                                               </tr>
-                                               </tbody></table>
-                                               """);
+                                                   <div class="breadcrumbs"><em>2</em></div>
+                                                   <div class="tbui_pagination"><ul><li class="active">1</li><li>(1)</li></ul></div>
+                                                   <table><tbody>
+                                                   <tr>
+                                                     <td><a href="/home/main?id=tb.1.target#/">target</a></td>
+                                                     <td>封禁</td>
+                                                     <td>7 天</td>
+                                                     <td>operator-user</td>
+                                                     <td>2026-03-30 11:22</td>
+                                                   </tr>
+                                                   <tr>
+                                                     <td><a href="/home/main?id=tb.1.target#/">target</a></td>
+                                                     <td>封禁</td>
+                                                     <td>3小时</td>
+                                                     <td>operator-user</td>
+                                                     <td>2026-03-30 11:22</td>
+                                                   </tr>
+                                                   <tr>
+                                                     <td><a href="/home/main?id=tb.1.short#/">short</a></td>
+                                                     <td>封禁</td>
+                                                     <td>7 天</td>
+                                                     <td>operator-user</td>
+                                                   </tr>
+                                                   </tbody></table>
+                                                   """);
 
         Assert.AreEqual(2, mapped.Count);
         Assert.AreEqual(7, mapped[0].OperationDurationDays);
@@ -485,17 +450,16 @@ public sealed class BranchHeavyMapperTests
     public void RecoverUserMapper_HandlesNullInputAndPortraitNormalization()
     {
         var empty = RecoverUserMapper.FromTbData(null, "nickname");
-        var mapped = RecoverUserMapper.FromTbData(new JObject
-        {
-            ["portrait"] = "tb.1.recover?from=app",
-            ["user_name"] = "recover-user",
-            ["show_nickname"] = "Recover Nick"
-        }, "show_nickname");
-        var noQuery = RecoverUserMapper.FromTbData(new JObject
-        {
-            ["portrait"] = "tb.1.raw",
-            ["user_name"] = "raw-user"
-        }, "missing");
+        var mapped = RecoverUserMapper.FromTbData(
+            new JObject
+            {
+                ["portrait"] = "tb.1.recover?from=app",
+                ["user_name"] = "recover-user",
+                ["show_nickname"] = "Recover Nick"
+            }, "show_nickname");
+        var noQuery =
+            RecoverUserMapper.FromTbData(new JObject { ["portrait"] = "tb.1.raw", ["user_name"] = "raw-user" },
+                "missing");
 
         Assert.AreEqual(string.Empty, empty.UserName);
         Assert.AreEqual(string.Empty, empty.Portrait);
@@ -544,9 +508,7 @@ public sealed class BranchHeavyMapperTests
                 {
                     new JObject
                     {
-                        ["appeal_id"] = "bad",
-                        ["appeal_time"] = "bad",
-                        ["punish_start_time"] = "bad"
+                        ["appeal_id"] = "bad", ["appeal_time"] = "bad", ["punish_start_time"] = "bad"
                     }
                 },
                 ["has_more"] = 0
@@ -573,13 +535,7 @@ public sealed class BranchHeavyMapperTests
         {
             ["data"] = new JObject
             {
-                ["appeal_list"] = new JArray
-                {
-                    new JObject
-                    {
-                        ["appeal_reason"] = "fallback"
-                    }
-                },
+                ["appeal_list"] = new JArray { new JObject { ["appeal_reason"] = "fallback" } },
                 ["has_more"] = "unexpected"
             }
         });

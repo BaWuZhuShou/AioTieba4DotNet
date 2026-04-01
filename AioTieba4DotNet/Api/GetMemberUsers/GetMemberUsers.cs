@@ -14,9 +14,7 @@ internal sealed class GetMemberUsers(ITiebaHttpCore httpCore) : JsonApiBase(http
     {
         var data = new List<KeyValuePair<string, string>>
         {
-            new("word", fname),
-            new("pn", pn.ToString()),
-            new("ie", "utf-8")
+            new("word", fname), new("pn", pn.ToString()), new("ie", "utf-8")
         };
 
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/bawu2/platform/listMemberInfo").Uri;

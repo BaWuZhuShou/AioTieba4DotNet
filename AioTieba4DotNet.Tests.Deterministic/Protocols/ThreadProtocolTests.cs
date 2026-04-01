@@ -36,18 +36,15 @@ public class ThreadProtocolTests
     public async Task GetThreadsAsync_UsesWebSocketWhenAvailable_AndMapsTabDictionary()
     {
         var httpCore = new RecordingHttpCore();
-        var wsCore = new RecordingWsCore
-        {
-            Response = CreateWsResponse(CreateThreadsResponse().ToByteArray())
-        };
+        var wsCore = new RecordingWsCore { Response = CreateWsResponse(CreateThreadsResponse().ToByteArray()) };
         var protocol = CreateProtocol(httpCore, wsCore);
 
         var result = await protocol.GetThreadsAsync(
             CanonicalSafeForumName,
-            pn: 2,
-            rn: 20,
-            sort: ThreadSortType.Create,
-            isGood: true);
+            2,
+            20,
+            ThreadSortType.Create,
+            true);
 
         var request = FrsPageReqIdl.Parser.ParseFrom(wsCore.LastRequestData);
 
@@ -71,22 +68,16 @@ public class ThreadProtocolTests
     [TestMethod]
     public async Task GetThreadsAsync_WsUnavailable_FallsBackToHttp()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateThreadsResponse().ToByteArray()
-        };
-        var wsCore = new RecordingWsCore
-        {
-            ConnectException = new WebSocketException("offline")
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateThreadsResponse().ToByteArray() };
+        var wsCore = new RecordingWsCore { ConnectException = new WebSocketException("offline") };
         var protocol = CreateProtocol(httpCore, wsCore);
 
         var result = await protocol.GetThreadsAsync(
             CanonicalSafeForumName,
-            pn: 1,
-            rn: 10,
-            sort: ThreadSortType.Reply,
-            isGood: false);
+            1,
+            10,
+            ThreadSortType.Reply,
+            false);
 
         var request = FrsPageReqIdl.Parser.ParseFrom(httpCore.LastAppProtoRequestData);
 
@@ -96,29 +87,27 @@ public class ThreadProtocolTests
         Assert.AreEqual(CanonicalSafeForumName, request.Data.Kw);
         Assert.AreEqual(10, request.Data.Rn);
         Assert.AreEqual((int)ThreadSortType.Reply, request.Data.SortType);
-        Assert.IsFalse(result.HasMore == false && result.Objs.Count == 0, "Fallback returned an empty result unexpectedly.");
+        Assert.IsFalse(result.HasMore == false && result.Objs.Count == 0,
+            "Fallback returned an empty result unexpectedly.");
     }
 
     [TestMethod]
     public async Task GetPostsAsync_UsesWebSocket_AndPreservesCommentPreviewParameters()
     {
         var httpCore = new RecordingHttpCore();
-        var wsCore = new RecordingWsCore
-        {
-            Response = CreateWsResponse(CreatePostsResponse().ToByteArray())
-        };
+        var wsCore = new RecordingWsCore { Response = CreateWsResponse(CreatePostsResponse().ToByteArray()) };
         var protocol = CreateProtocol(httpCore, wsCore);
         using var cts = new CancellationTokenSource();
 
         var result = await protocol.GetPostsAsync(
             SafeThreadId,
-            pn: 3,
-            rn: 15,
-            sort: PostSortType.Hot,
-            onlyThreadAuthor: true,
-            withComments: true,
-            commentRn: 2,
-            commentSortByAgree: true,
+            3,
+            15,
+            PostSortType.Hot,
+            true,
+            true,
+            2,
+            true,
             cts.Token);
 
         var request = PbPageReqIdl.Parser.ParseFrom(wsCore.LastRequestData);
@@ -149,22 +138,16 @@ public class ThreadProtocolTests
     [TestMethod]
     public async Task GetCommentsAsync_WsUnavailable_FallsBackToHttp_AndUsesSpidWhenRequested()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateCommentsResponse().ToByteArray()
-        };
-        var wsCore = new RecordingWsCore
-        {
-            ConnectException = new WebSocketException("offline")
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateCommentsResponse().ToByteArray() };
+        var wsCore = new RecordingWsCore { ConnectException = new WebSocketException("offline") };
         var protocol = CreateProtocol(httpCore, wsCore);
         using var cts = new CancellationTokenSource();
 
         var result = await protocol.GetCommentsAsync(
             SafeThreadId,
             SafeCommentId,
-            pn: 4,
-            isComment: true,
+            4,
+            true,
             cts.Token);
 
         var request = PbFloorReqIdl.Parser.ParseFrom(httpCore.LastAppProtoRequestData);
@@ -186,22 +169,16 @@ public class ThreadProtocolTests
     [TestMethod]
     public async Task GetCommentsAsync_WsUnavailable_FallsBackToHttp_AndUsesPidWhenNotComment()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateCommentsResponse().ToByteArray()
-        };
-        var wsCore = new RecordingWsCore
-        {
-            ConnectException = new WebSocketException("offline")
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateCommentsResponse().ToByteArray() };
+        var wsCore = new RecordingWsCore { ConnectException = new WebSocketException("offline") };
         var protocol = CreateProtocol(httpCore, wsCore);
         using var cts = new CancellationTokenSource();
 
         var result = await protocol.GetCommentsAsync(
             SafeThreadId,
             SafePostId,
-            pn: 4,
-            isComment: false,
+            4,
+            false,
             cts.Token);
 
         var request = PbFloorReqIdl.Parser.ParseFrom(httpCore.LastAppProtoRequestData);
@@ -224,10 +201,7 @@ public class ThreadProtocolTests
     public async Task GetTabMapAsync_UsesWebSocketWhenAvailable_AndMapsStandaloneTabMap()
     {
         var httpCore = new RecordingHttpCore();
-        var wsCore = new RecordingWsCore
-        {
-            Response = CreateWsResponse(CreateTabMapResponse(includeTabs: true).ToByteArray())
-        };
+        var wsCore = new RecordingWsCore { Response = CreateWsResponse(CreateTabMapResponse(true).ToByteArray()) };
         var protocol = CreateAuthenticatedProtocol(httpCore, wsCore);
 
         var result = await protocol.GetTabMapAsync(CanonicalSafeForumName);
@@ -247,14 +221,8 @@ public class ThreadProtocolTests
     [TestMethod]
     public async Task GetTabMapAsync_WsUnavailable_FallsBackToHttp_AndHandlesMissingMatch()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateTabMapResponse(includeTabs: false).ToByteArray()
-        };
-        var wsCore = new RecordingWsCore
-        {
-            ConnectException = new WebSocketException("offline")
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateTabMapResponse(false).ToByteArray() };
+        var wsCore = new RecordingWsCore { ConnectException = new WebSocketException("offline") };
         var protocol = CreateAuthenticatedProtocol(httpCore, wsCore);
 
         var result = await protocol.GetTabMapAsync((ulong)SafeForumId);
@@ -271,14 +239,11 @@ public class ThreadProtocolTests
     [TestMethod]
     public async Task GetRecoversAsync_UsesWebGet_AndMapsRecoverEntries()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            WebGetResponse = CreateRecoversResponse().ToString()
-        };
+        var httpCore = new RecordingHttpCore { WebGetResponse = CreateRecoversResponse().ToString() };
         var protocol = CreateAuthenticatedProtocol(httpCore, new RecordingWsCore());
         using var cts = new CancellationTokenSource();
 
-        var result = await protocol.GetRecoversAsync(CanonicalSafeForumName, pn: 2, rn: 10, userId: 99, cts.Token);
+        var result = await protocol.GetRecoversAsync(CanonicalSafeForumName, 2, 10, 99, cts.Token);
 
         Assert.AreEqual(1, httpCore.SendWebGetCalls);
         Assert.AreEqual(cts.Token, httpCore.LastWebGetCancellationToken);
@@ -308,18 +273,15 @@ public class ThreadProtocolTests
         var forum = new CountingForumProtocol();
         var protocol = new ThreadProtocol(
             new TiebaOperationDispatcher(new TiebaClientSession(
-                new TiebaOptions
-                {
-                    Bduss = ValidBduss,
-                    Stoken = ValidStoken,
-                    TransportMode = TiebaTransportMode.Http
-                },
+                new TiebaOptions { Bduss = ValidBduss, Stoken = ValidStoken, TransportMode = TiebaTransportMode.Http },
                 new RecordingHttpCore(),
                 new RecordingWsCore())),
             forum);
 
-        await AssertThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetRecoversAsync(CanonicalSafeForumName, 0, 10, null));
-        await AssertThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetRecoversAsync(CanonicalSafeForumName, 1, 51, null));
+        await AssertThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.GetRecoversAsync(CanonicalSafeForumName, 0, 10, null));
+        await AssertThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.GetRecoversAsync(CanonicalSafeForumName, 1, 51, null));
 
         Assert.AreEqual(0, forum.GetFidCalls);
     }
@@ -330,19 +292,16 @@ public class ThreadProtocolTests
         var forum = new CountingForumProtocol();
         var protocol = new ThreadProtocol(
             new TiebaOperationDispatcher(new TiebaClientSession(
-                new TiebaOptions
-                {
-                    Bduss = ValidBduss,
-                    Stoken = ValidStoken,
-                    TransportMode = TiebaTransportMode.Http
-                },
+                new TiebaOptions { Bduss = ValidBduss, Stoken = ValidStoken, TransportMode = TiebaTransportMode.Http },
                 new RecordingHttpCore(),
                 new RecordingWsCore())),
             forum);
 
         await AssertThrowsAsync<ArgumentException>(() => protocol.GetRecoversAsync(" ", 1, 10, null));
-        await AssertThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetRecoversAsync(CanonicalSafeForumName, 1, 0, null));
-        await AssertThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetRecoversAsync(CanonicalSafeForumName, 1, 10, 0));
+        await AssertThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.GetRecoversAsync(CanonicalSafeForumName, 1, 0, null));
+        await AssertThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.GetRecoversAsync(CanonicalSafeForumName, 1, 10, 0));
         await AssertThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetRecoversAsync(0UL, 1, 10, null));
 
         Assert.AreEqual(0, forum.GetFidCalls);
@@ -351,10 +310,7 @@ public class ThreadProtocolTests
     [TestMethod]
     public async Task GetRecoverInfoAsync_UsesWebGet_AndMapsContentDetails()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            WebGetResponse = CreateRecoverInfoResponse().ToString()
-        };
+        var httpCore = new RecordingHttpCore { WebGetResponse = CreateRecoverInfoResponse().ToString() };
         var protocol = CreateAuthenticatedProtocol(httpCore, new RecordingWsCore());
 
         var result = await protocol.GetRecoverInfoAsync(CanonicalSafeForumName, SafeThreadId, SafePostId);
@@ -382,17 +338,13 @@ public class ThreadProtocolTests
         var forum = new CountingForumProtocol();
         var protocol = new ThreadProtocol(
             new TiebaOperationDispatcher(new TiebaClientSession(
-                new TiebaOptions
-                {
-                    Bduss = ValidBduss,
-                    Stoken = ValidStoken,
-                    TransportMode = TiebaTransportMode.Http
-                },
+                new TiebaOptions { Bduss = ValidBduss, Stoken = ValidStoken, TransportMode = TiebaTransportMode.Http },
                 new RecordingHttpCore(),
                 new RecordingWsCore())),
             forum);
 
-        await AssertThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetRecoverInfoAsync(CanonicalSafeForumName, 0, 0));
+        await AssertThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.GetRecoverInfoAsync(CanonicalSafeForumName, 0, 0));
 
         Assert.AreEqual(0, forum.GetFidCalls);
     }
@@ -403,17 +355,13 @@ public class ThreadProtocolTests
         var forum = new CountingForumProtocol();
         var protocol = new ThreadProtocol(
             new TiebaOperationDispatcher(new TiebaClientSession(
-                new TiebaOptions
-                {
-                    Bduss = ValidBduss,
-                    Stoken = ValidStoken,
-                    TransportMode = TiebaTransportMode.Http
-                },
+                new TiebaOptions { Bduss = ValidBduss, Stoken = ValidStoken, TransportMode = TiebaTransportMode.Http },
                 new RecordingHttpCore(),
                 new RecordingWsCore())),
             forum);
 
-        await AssertThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetRecoverInfoAsync(CanonicalSafeForumName, SafeThreadId, -1));
+        await AssertThrowsAsync<ArgumentOutOfRangeException>(() =>
+            protocol.GetRecoverInfoAsync(CanonicalSafeForumName, SafeThreadId, -1));
 
         Assert.AreEqual(0, forum.GetFidCalls);
     }
@@ -428,20 +376,15 @@ public class ThreadProtocolTests
                               """
         };
         using var session = new TiebaClientSession(
-            new TiebaOptions
-            {
-                Bduss = ValidBduss,
-                Stoken = ValidStoken,
-                TransportMode = TiebaTransportMode.Http
-            },
+            new TiebaOptions { Bduss = ValidBduss, Stoken = ValidStoken, TransportMode = TiebaTransportMode.Http },
             httpCore,
             new RecordingWsCore(),
             _ => Task.FromResult("tbs-123"));
         var protocol = new ThreadProtocol(new TiebaOperationDispatcher(session), new StubForumProtocol());
         using var cts = new CancellationTokenSource();
 
-        var result = await protocol.AgreeAsync(SafeThreadId, SafePostId, isComment: false, isDisagree: false,
-            isUndo: false, cts.Token);
+        var result = await protocol.AgreeAsync(SafeThreadId, SafePostId, false, false,
+            false, cts.Token);
 
         Assert.IsTrue(result);
         Assert.AreEqual(1, httpCore.SendAppFormCalls);
@@ -463,12 +406,7 @@ public class ThreadProtocolTests
     private static ThreadProtocol CreateAuthenticatedProtocol(RecordingHttpCore httpCore, RecordingWsCore wsCore)
     {
         var session = new TiebaClientSession(
-            new TiebaOptions
-            {
-                Bduss = ValidBduss,
-                Stoken = ValidStoken,
-                TransportMode = TiebaTransportMode.Auto
-            },
+            new TiebaOptions { Bduss = ValidBduss, Stoken = ValidStoken, TransportMode = TiebaTransportMode.Auto },
             httpCore,
             wsCore);
 
@@ -479,13 +417,7 @@ public class ThreadProtocolTests
 
     private static WSRes CreateWsResponse(byte[] payload)
     {
-        return new WSRes
-        {
-            Payload = new WSRes.Types.Payload
-            {
-                Data = ByteString.CopyFrom(payload)
-            }
-        };
+        return new WSRes { Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(payload) } };
     }
 
     private static FrsPageResIdl CreateThreadsResponse()
@@ -495,16 +427,17 @@ public class ThreadProtocolTests
             Error = new Error { Errorno = 0 },
             Data = new FrsPageResIdl.Types.DataRes
             {
-                Forum = new FrsPageResIdl.Types.DataRes.Types.ForumInfo
-                {
-                    Id = (long)SafeForumId,
-                    Name = CanonicalSafeForumName,
-                    FirstClass = "游戏",
-                    SecondClass = "网络游戏",
-                    MemberNum = 46807,
-                    PostNum = 526788,
-                    ThreadNum = 14003
-                },
+                Forum =
+                    new FrsPageResIdl.Types.DataRes.Types.ForumInfo
+                    {
+                        Id = (long)SafeForumId,
+                        Name = CanonicalSafeForumName,
+                        FirstClass = "游戏",
+                        SecondClass = "网络游戏",
+                        MemberNum = 46807,
+                        PostNum = 526788,
+                        ThreadNum = 14003
+                    },
                 Page = new Page
                 {
                     CurrentPage = 2,
@@ -513,18 +446,16 @@ public class ThreadProtocolTests
                     TotalCount = 180,
                     HasMore = 1
                 },
-                NavTabInfo = new FrsPageResIdl.Types.DataRes.Types.NavTabInfo
-                {
-                    Tab =
+                NavTabInfo =
+                    new FrsPageResIdl.Types.DataRes.Types.NavTabInfo
                     {
-                        new FrsTabInfo { TabId = 101, TabName = "全部" },
-                        new FrsTabInfo { TabId = 202, TabName = "攻略" }
-                    }
-                },
-                ForumRule = new FrsPageResIdl.Types.DataRes.Types.ForumRuleStatus
-                {
-                    HasForumRule = 1
-                },
+                        Tab =
+                        {
+                            new FrsTabInfo { TabId = 101, TabName = "全部" },
+                            new FrsTabInfo { TabId = 202, TabName = "攻略" }
+                        }
+                    },
+                ForumRule = new FrsPageResIdl.Types.DataRes.Types.ForumRuleStatus { HasForumRule = 1 },
                 ThreadList =
                 {
                     new ThreadInfo
@@ -553,16 +484,14 @@ public class ThreadProtocolTests
     {
         var response = new SearchPostForumResIdl
         {
-            Error = new Error { Errorno = 0 },
-            Data = new SearchPostForumResIdl.Types.DataRes()
+            Error = new Error { Errorno = 0 }, Data = new SearchPostForumResIdl.Types.DataRes()
         };
 
         if (includeTabs)
         {
             response.Data.ExactMatch = new SearchPostForumResIdl.Types.DataRes.Types.SearchForum
             {
-                ForumId = (long)SafeForumId,
-                ForumName = CanonicalSafeForumName
+                ForumId = (long)SafeForumId, ForumName = CanonicalSafeForumName
             };
             response.Data.ExactMatch.TabInfo.Add(new FrsTabInfo { TabId = 101, TabName = "全部" });
             response.Data.ExactMatch.TabInfo.Add(new FrsTabInfo { TabId = 202, TabName = "攻略" });
@@ -575,93 +504,93 @@ public class ThreadProtocolTests
     {
         return JObject.Parse(
             $$"""
-            {
-              "no": 0,
-              "error": "",
-              "data": {
-                "thread_list": [
-                  {
-                    "thread_info": {
-                      "tid": "{{SafeThreadId}}",
-                      "abstract": "hidden thread text",
-                      "portrait": "portrait-thread?foo=bar",
-                      "user_name": "thread-author",
-                      "user_nickname": "Thread Author"
+              {
+                "no": 0,
+                "error": "",
+                "data": {
+                  "thread_list": [
+                    {
+                      "thread_info": {
+                        "tid": "{{SafeThreadId}}",
+                        "abstract": "hidden thread text",
+                        "portrait": "portrait-thread?foo=bar",
+                        "user_name": "thread-author",
+                        "user_nickname": "Thread Author"
+                      },
+                      "post_info": null,
+                      "is_foor": 0,
+                      "is_frs_mask": "1",
+                      "op_info": {
+                        "name": "moderator-a",
+                        "time": "1711111111"
+                      }
                     },
-                    "post_info": null,
-                    "is_foor": 0,
-                    "is_frs_mask": "1",
-                    "op_info": {
-                      "name": "moderator-a",
-                      "time": "1711111111"
+                    {
+                      "thread_info": {
+                        "tid": "{{SafeThreadId}}",
+                        "abstract": "reply thread text",
+                        "portrait": "portrait-thread?foo=bar",
+                        "user_name": "thread-author",
+                        "user_nickname": "Thread Author"
+                      },
+                      "post_info": {
+                        "abstract": "reply abstract",
+                        "pid": "{{SafePostId}}",
+                        "portrait": "portrait-post?foo=bar",
+                        "user_name": "post-author",
+                        "user_nickname": "Post Author"
+                      },
+                      "is_foor": 1,
+                      "is_frs_mask": "0",
+                      "op_info": {
+                        "name": "moderator-b",
+                        "time": "1711112222"
+                      }
                     }
-                  },
-                  {
-                    "thread_info": {
-                      "tid": "{{SafeThreadId}}",
-                      "abstract": "reply thread text",
-                      "portrait": "portrait-thread?foo=bar",
-                      "user_name": "thread-author",
-                      "user_nickname": "Thread Author"
-                    },
-                    "post_info": {
-                      "abstract": "reply abstract",
-                      "pid": "{{SafePostId}}",
-                      "portrait": "portrait-post?foo=bar",
-                      "user_name": "post-author",
-                      "user_nickname": "Post Author"
-                    },
-                    "is_foor": 1,
-                    "is_frs_mask": "0",
-                    "op_info": {
-                      "name": "moderator-b",
-                      "time": "1711112222"
-                    }
+                  ],
+                  "page": {
+                    "rn": 10,
+                    "pn": 2,
+                    "has_more": 1
                   }
-                ],
-                "page": {
-                  "rn": 10,
-                  "pn": 2,
-                  "has_more": 1
                 }
               }
-            }
-            """);
+              """);
     }
 
     private static JObject CreateRecoverInfoResponse()
     {
         return JObject.Parse(
             $$"""
-            {
-              "no": 0,
-              "error": "",
-              "data": {
-                "thread_info": {
-                  "title": "Recover detail title",
-                  "thread_id": {{SafeThreadId}},
-                  "post_id": {{SafePostId}},
-                  "content_detail": [
-                    { "type": 1, "value": "第一段" },
-                    { "type": 3, "value": "ignored" },
-                    { "type": 1, "value": "第二段" }
-                  ],
-                  "all_pics": [
-                    {
-                      "url": "https://imgsrc.baidu.com/forum/pic/item/1234567890abcdef1234567890abcdef.jpg",
-                      "width": 640,
-                      "height": 480
-                    }
-                  ]
-                },
-                "user_info": {
-                  "portrait": "recover-portrait?foo=bar",
-                  "user_name": "recover-author",
-                  "show_nickname": "Recover Author"
+              {
+                "no": 0,
+                "error": "",
+                "data": {
+                  "thread_info": {
+                    "title": "Recover detail title",
+                    "thread_id": {{SafeThreadId}},
+                    "post_id": {{SafePostId}},
+                    "content_detail": [
+                      { "type": 1, "value": "第一段" },
+                      { "type": 3, "value": "ignored" },
+                      { "type": 1, "value": "第二段" }
+                    ],
+                    "all_pics": [
+                      {
+                        "url": "https://imgsrc.baidu.com/forum/pic/item/1234567890abcdef1234567890abcdef.jpg",
+                        "width": 640,
+                        "height": 480
+                      }
+                    ]
+                  },
+                  "user_info": {
+                    "portrait": "recover-portrait?foo=bar",
+                    "user_name": "recover-author",
+                    "show_nickname": "Recover Author"
+                  }
                 }
               }
-            }
-            """);
+              """);
     }
 
     private static PbPageResIdl CreatePostsResponse()
@@ -671,15 +600,16 @@ public class ThreadProtocolTests
             Error = new Error { Errorno = 0 },
             Data = new PbPageResIdl.Types.DataRes
             {
-                Forum = new SimpleForum
-                {
-                    Id = (long)SafeForumId,
-                    Name = CanonicalSafeForumName,
-                    FirstClass = "游戏",
-                    SecondClass = "网络游戏",
-                    MemberNum = 46807,
-                    PostNum = 526788
-                },
+                Forum =
+                    new SimpleForum
+                    {
+                        Id = (long)SafeForumId,
+                        Name = CanonicalSafeForumName,
+                        FirstClass = "游戏",
+                        SecondClass = "网络游戏",
+                        MemberNum = 46807,
+                        PostNum = 526788
+                    },
                 Page = new Page
                 {
                     CurrentPage = 3,
@@ -688,15 +618,16 @@ public class ThreadProtocolTests
                     TotalCount = 90,
                     HasMore = 1
                 },
-                Thread = new ThreadInfo
-                {
-                    Id = SafeThreadId,
-                    Title = "Safe thread title",
-                    FirstPostId = SafePostId,
-                    AuthorId = ThreadAuthorId,
-                    Author = CreateUser(ThreadAuthorId, "thread-author"),
-                    FirstPostContent = { CreateTextContent("thread body") }
-                },
+                Thread =
+                    new ThreadInfo
+                    {
+                        Id = SafeThreadId,
+                        Title = "Safe thread title",
+                        FirstPostId = SafePostId,
+                        AuthorId = ThreadAuthorId,
+                        Author = CreateUser(ThreadAuthorId, "thread-author"),
+                        FirstPostContent = { CreateTextContent("thread body") }
+                    },
                 PostList =
                 {
                     new Post
@@ -708,20 +639,21 @@ public class ThreadProtocolTests
                         Author = CreateUser(ThreadAuthorId, "thread-author"),
                         Content = { CreateTextContent("post body") },
                         SubPostNumber = 1,
-                        SubPostList = new Post.Types.SubPost
-                        {
-                            SubPostList =
+                        SubPostList =
+                            new Post.Types.SubPost
                             {
-                                CreateReplyComment(SafeCommentId, CommentAuthorId, ReplyToUserId, "preview reply")
-                            }
-                        },
+                                SubPostList =
+                                {
+                                    CreateReplyComment(SafeCommentId, CommentAuthorId, ReplyToUserId,
+                                        "preview reply")
+                                }
+                            },
                         Agree = new Agree { AgreeNum = 5, DisagreeNum = 0 }
                     }
                 },
                 UserList =
                 {
-                    CreateUser(ThreadAuthorId, "thread-author"),
-                    CreateUser(CommentAuthorId, "comment-author")
+                    CreateUser(ThreadAuthorId, "thread-author"), CreateUser(CommentAuthorId, "comment-author")
                 }
             }
         };
@@ -734,22 +666,17 @@ public class ThreadProtocolTests
             Error = new Error { Errorno = 0 },
             Data = new PbFloorResIdl.Types.DataRes
             {
-                Forum = new SimpleForum
-                {
-                    Id = (long)SafeForumId,
-                    Name = CanonicalSafeForumName,
-                    FirstClass = "游戏",
-                    SecondClass = "网络游戏",
-                    MemberNum = 46807,
-                    PostNum = 526788
-                },
-                Page = new Page
-                {
-                    CurrentPage = 4,
-                    PageSize = 10,
-                    TotalPage = 5,
-                    TotalCount = 41
-                },
+                Forum =
+                    new SimpleForum
+                    {
+                        Id = (long)SafeForumId,
+                        Name = CanonicalSafeForumName,
+                        FirstClass = "游戏",
+                        SecondClass = "网络游戏",
+                        MemberNum = 46807,
+                        PostNum = 526788
+                    },
+                Page = new Page { CurrentPage = 4, PageSize = 10, TotalPage = 5, TotalCount = 41 },
                 Thread = new ThreadInfo
                 {
                     Id = SafeThreadId,
@@ -768,10 +695,7 @@ public class ThreadProtocolTests
                     Author = CreateUser(ThreadAuthorId, "thread-author"),
                     Content = { CreateTextContent("post body") }
                 },
-                SubpostList =
-                {
-                    CreateReplyComment(SafeCommentId, CommentAuthorId, ReplyToUserId, "deep comment")
-                }
+                SubpostList = { CreateReplyComment(SafeCommentId, CommentAuthorId, ReplyToUserId, "deep comment") }
             }
         };
     }
@@ -808,11 +732,7 @@ public class ThreadProtocolTests
 
     private static PbContent CreateTextContent(string text)
     {
-        return new PbContent
-        {
-            Type = 0,
-            Text = text
-        };
+        return new PbContent { Type = 0, Text = text };
     }
 
     private sealed class RecordingHttpCore : ITiebaHttpCore
@@ -851,7 +771,10 @@ public class ThreadProtocolTests
         }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -880,7 +803,10 @@ public class ThreadProtocolTests
         }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private sealed class RecordingWsCore : ITiebaWsCore
@@ -913,8 +839,10 @@ public class ThreadProtocolTests
             return Task.CompletedTask;
         }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) =>
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
             CancellationToken cancellationToken = default)
@@ -925,82 +853,139 @@ public class ThreadProtocolTests
             return Task.FromResult(Response);
         }
 
-        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) =>
+        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class StubForumProtocol : IForumProtocol
     {
-        public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default) =>
-            Task.FromResult(SafeForumId);
+        public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(SafeForumId);
+        }
 
-        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default) =>
-            Task.FromResult(CanonicalSafeForumName);
+        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(CanonicalSafeForumName);
+        }
 
-        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<global::AioTieba4DotNet.Models.Forums.Forum> GetForumAsync(string fname,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<Forum> GetForumAsync(string fname,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private sealed class CountingForumProtocol : IForumProtocol
@@ -1013,75 +998,127 @@ public class ThreadProtocolTests
             return Task.FromResult(SafeForumId);
         }
 
-        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default) =>
-            Task.FromResult(CanonicalSafeForumName);
+        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(CanonicalSafeForumName);
+        }
 
-        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<global::AioTieba4DotNet.Models.Forums.Forum> GetForumAsync(string fname,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<Forum> GetForumAsync(string fname,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    private static string GetQueryValue(IReadOnlyList<KeyValuePair<string, string>> parameters, string key) =>
-        parameters.Single(pair => pair.Key == key).Value;
+    private static string GetQueryValue(IReadOnlyList<KeyValuePair<string, string>> parameters, string key)
+    {
+        return parameters.Single(pair => pair.Key == key).Value;
+    }
 
     private static async Task<TException> AssertThrowsAsync<TException>(Func<Task> action)
         where TException : Exception

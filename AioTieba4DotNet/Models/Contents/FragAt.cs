@@ -32,6 +32,7 @@ public class FragAt : IFrag
     {
         return new Dictionary<string, object> { { "type", "4" }, { "uid", UserId }, { "text", Text } };
     }
+
     /// <summary>
     ///     格式设置成员
     /// </summary>

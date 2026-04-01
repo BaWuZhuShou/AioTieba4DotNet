@@ -19,9 +19,7 @@ public sealed class UserAndThreadMappingCoverageTests
     {
         var mapped = UserInfoLoginMapper.FromTbData(new JObject
         {
-            ["id"] = 42,
-            ["portrait"] = "tb.1.login?012345678901",
-            ["name"] = "login-user"
+            ["id"] = 42, ["portrait"] = "tb.1.login?012345678901", ["name"] = "login-user"
         });
 
         var fallback = UserInfoLoginMapper.FromTbData(new JObject());
@@ -39,16 +37,11 @@ public sealed class UserAndThreadMappingCoverageTests
     {
         var trimmed = UserInfoGuInfoWebMapper.FromTbData(new JObject
         {
-            ["uid"] = 42,
-            ["uname"] = "42",
-            ["portrait"] = "tb.1.web?from=pc",
-            ["show_nickname"] = "Web Nick"
+            ["uid"] = 42, ["uname"] = "42", ["portrait"] = "tb.1.web?from=pc", ["show_nickname"] = "Web Nick"
         });
         var fallback = UserInfoGuInfoWebMapper.FromTbData(new JObject
         {
-            ["uid"] = 43,
-            ["uname"] = "safe-user",
-            ["portrait"] = "tb.1.raw"
+            ["uid"] = 43, ["uname"] = "safe-user", ["portrait"] = "tb.1.raw"
         });
 
         Assert.AreEqual(42L, trimmed.UserId);
@@ -67,17 +60,11 @@ public sealed class UserAndThreadMappingCoverageTests
         var empty = UserInfoUfMapper.FromTbData(null);
         var trimmed = UserInfoUfMapper.FromTbData(new JObject
         {
-            ["id"] = 42,
-            ["portrait"] = "tb.1.uf?012345678901",
-            ["name"] = "uf-user",
-            ["is_like"] = 1
+            ["id"] = 42, ["portrait"] = "tb.1.uf?012345678901", ["name"] = "uf-user", ["is_like"] = 1
         });
         var raw = UserInfoUfMapper.FromTbData(new JObject
         {
-            ["id"] = 43,
-            ["portrait"] = "tb.1.raw",
-            ["name"] = "raw-user",
-            ["is_like"] = 0
+            ["id"] = 43, ["portrait"] = "tb.1.raw", ["name"] = "raw-user", ["is_like"] = 0
         });
 
         Assert.AreEqual(0L, empty.UserId);
@@ -97,26 +84,26 @@ public sealed class UserAndThreadMappingCoverageTests
     [TestMethod]
     public void UserInfoGuInfoAppMapper_FromTbData_TrimsPortraitQueryAndPreservesFlags()
     {
-        var trimmed = UserInfoGuInfoAppMapper.FromTbData(new global::User
+        var trimmed = UserInfoGuInfoAppMapper.FromTbData(new User
         {
             Id = 42,
             Portrait = "tb.1.app?012345678901",
             Name = "app-user",
             NameShow = "App User",
-            Gender = (int)AioTieba4DotNet.Models.Gender.Male,
-            VipInfo = new global::User.Types.UserVipInfo { VStatus = 1 },
-            NewGodData = new global::User.Types.NewGodInfo { Status = 1 },
+            Gender = (int)Models.Gender.Male,
+            VipInfo = new User.Types.UserVipInfo { VStatus = 1 },
+            NewGodData = new User.Types.NewGodInfo { Status = 1 },
             IpAddress = "127.0.0.1"
         });
-        var raw = UserInfoGuInfoAppMapper.FromTbData(new global::User
+        var raw = UserInfoGuInfoAppMapper.FromTbData(new User
         {
             Id = 43,
             Portrait = "tb.1.raw",
             Name = "raw-user",
             NameShow = "Raw User",
-            Gender = (int)AioTieba4DotNet.Models.Gender.Female,
-            VipInfo = new global::User.Types.UserVipInfo(),
-            NewGodData = new global::User.Types.NewGodInfo(),
+            Gender = (int)Models.Gender.Female,
+            VipInfo = new User.Types.UserVipInfo(),
+            NewGodData = new User.Types.NewGodInfo(),
             IpAddress = "10.0.0.1"
         });
 
@@ -124,13 +111,13 @@ public sealed class UserAndThreadMappingCoverageTests
         Assert.AreEqual("tb.1.app", trimmed.Portrait);
         Assert.AreEqual("app-user", trimmed.UserName);
         Assert.AreEqual("App User", trimmed.NickNameOld);
-        Assert.AreEqual(AioTieba4DotNet.Models.Gender.Male, trimmed.Gender);
+        Assert.AreEqual(Models.Gender.Male, trimmed.Gender);
         Assert.IsTrue(trimmed.IsVip);
         Assert.IsTrue(trimmed.IsGod);
         Assert.AreEqual("127.0.0.1", trimmed.Ip);
         Assert.AreEqual(43L, raw.UserId);
         Assert.AreEqual("tb.1.raw", raw.Portrait);
-        Assert.AreEqual(AioTieba4DotNet.Models.Gender.Female, raw.Gender);
+        Assert.AreEqual(Models.Gender.Female, raw.Gender);
         Assert.IsFalse(raw.IsVip);
         Assert.IsFalse(raw.IsGod);
         Assert.AreEqual("10.0.0.1", raw.Ip);
@@ -149,13 +136,14 @@ public sealed class UserAndThreadMappingCoverageTests
                     ["fname"] = "csharp",
                     ["thread_id"] = 11,
                     ["post_id"] = 22,
-                    ["replyer"] = new JObject
-                    {
-                        ["id"] = 42,
-                        ["portrait"] = "tb.1.replyer?012345678901",
-                        ["name"] = "replyer",
-                        ["name_show"] = "Replyer"
-                    },
+                    ["replyer"] =
+                        new JObject
+                        {
+                            ["id"] = 42,
+                            ["portrait"] = "tb.1.replyer?012345678901",
+                            ["name"] = "replyer",
+                            ["name_show"] = "Replyer"
+                        },
                     ["is_floor"] = 1,
                     ["is_first_post"] = 1,
                     ["time"] = 1711111111
@@ -197,12 +185,7 @@ public sealed class UserAndThreadMappingCoverageTests
                     ["portrait"] = "tb.1.blocked?012345678901",
                     ["name"] = "blocked-user",
                     ["name_show"] = "Blocked",
-                    ["perm_list"] = new JObject
-                    {
-                        ["follow"] = 1,
-                        ["interact"] = 0,
-                        ["chat"] = 1
-                    }
+                    ["perm_list"] = new JObject { ["follow"] = 1, ["interact"] = 0, ["chat"] = 1 }
                 }
             }
         });
@@ -219,14 +202,14 @@ public sealed class UserAndThreadMappingCoverageTests
     [TestMethod]
     public void UserPostsMapper_FromTbData_AssignsContainerForumAndThreadIds()
     {
-        var postList = CreateUserPostList(title: "ignored", forumId: 8, forumName: "forum", threadId: 9, postId: 10,
-            userId: 42, userName: "author", portrait: "tb.1.author?012345678901", contentText: "body");
-        postList.Content.Add(new global::PostInfoList.Types.PostInfoContent
+        var postList = CreateUserPostList("ignored", 8, "forum", 9, 10,
+            42, "author", "tb.1.author?012345678901", "body");
+        postList.Content.Add(new PostInfoList.Types.PostInfoContent
         {
             PostId = 10,
             PostType = 1,
             CreateTime = 1711111111,
-            PostContent = { new global::PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 0, Text = "reply" } }
+            PostContent = { new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 0, Text = "reply" } }
         });
 
         var mapped = UserPostsMapper.FromTbData(postList);
@@ -244,16 +227,16 @@ public sealed class UserAndThreadMappingCoverageTests
     [TestMethod]
     public void UserThreadMapper_FromTbData_CoversAgreeFallbackAndTitleBranches()
     {
-        var noAgree = CreateUserPostList(title: string.Empty, forumId: 8, forumName: "forum", threadId: 9, postId: 10,
-            userId: 42, userName: "author", portrait: "tb.1.author?012345678901", contentText: "body");
+        var noAgree = CreateUserPostList(string.Empty, 8, "forum", 9, 10,
+            42, "author", "tb.1.author?012345678901", "body");
         noAgree.ThreadType = 70;
         noAgree.Agree = null!;
         var mappedNoAgree = UserThreadMapper.FromTbData(noAgree);
 
-        var withAgree = CreateUserPostList(title: "Help title", forumId: 8, forumName: "forum", threadId: 9, postId: 10,
-            userId: 42, userName: "author", portrait: "tb.1.author?012345678901", contentText: "body");
+        var withAgree = CreateUserPostList("Help title", 8, "forum", 9, 10,
+            42, "author", "tb.1.author?012345678901", "body");
         withAgree.ThreadType = 71;
-        withAgree.Agree = new global::Agree { AgreeNum = 7, DisagreeNum = 2 };
+        withAgree.Agree = new Agree { AgreeNum = 7, DisagreeNum = 2 };
         var mappedWithAgree = UserThreadMapper.FromTbData(withAgree);
 
         Assert.AreEqual(string.Empty, mappedNoAgree.Title);
@@ -271,20 +254,20 @@ public sealed class UserAndThreadMappingCoverageTests
     [TestMethod]
     public void UserPostGroupsMapper_FromTbData_AssignsSharedUserAcrossNestedPosts()
     {
-        var response = new global::UserPostResIdl.Types.DataRes();
-        var postList = CreateUserPostList(title: "ignored", forumId: 8, forumName: "forum", threadId: 9, postId: 10,
-            userId: 42, userName: "author", portrait: "tb.1.author?012345678901", contentText: "body");
-        postList.Content.Add(new global::PostInfoList.Types.PostInfoContent
+        var response = new UserPostResIdl.Types.DataRes();
+        var postList = CreateUserPostList("ignored", 8, "forum", 9, 10,
+            42, "author", "tb.1.author?012345678901", "body");
+        postList.Content.Add(new PostInfoList.Types.PostInfoContent
         {
             PostId = 10,
             PostType = 0,
             CreateTime = 1711111111,
-            PostContent = { new global::PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 0, Text = "reply" } }
+            PostContent = { new PostInfoList.Types.PostInfoContent.Types.Abstract { Type = 0, Text = "reply" } }
         });
         response.PostList.Add(postList);
 
         var mapped = UserPostGroupsMapper.FromTbData(response);
-        var empty = UserPostGroupsMapper.FromTbData(new global::UserPostResIdl.Types.DataRes());
+        var empty = UserPostGroupsMapper.FromTbData(new UserPostResIdl.Types.DataRes());
 
         Assert.AreEqual(1, mapped.Count);
         Assert.AreEqual(1, mapped[0].Count);
@@ -296,12 +279,12 @@ public sealed class UserAndThreadMappingCoverageTests
     [TestMethod]
     public void UserThreadsMapper_FromTbData_AssignsSharedUserAcrossThreads()
     {
-        var response = new global::UserPostResIdl.Types.DataRes();
-        response.PostList.Add(CreateUserPostList(title: "Thread title", forumId: 8, forumName: "forum", threadId: 9,
-            postId: 10, userId: 42, userName: "author", portrait: "tb.1.author?012345678901", contentText: "body"));
+        var response = new UserPostResIdl.Types.DataRes();
+        response.PostList.Add(CreateUserPostList("Thread title", 8, "forum", 9,
+            10, 42, "author", "tb.1.author?012345678901", "body"));
 
         var mapped = UserThreadsMapper.FromTbData(response);
-        var empty = UserThreadsMapper.FromTbData(new global::UserPostResIdl.Types.DataRes());
+        var empty = UserThreadsMapper.FromTbData(new UserPostResIdl.Types.DataRes());
 
         Assert.AreEqual(1, mapped.Count);
         Assert.AreEqual("Thread title", mapped[0].Title);
@@ -314,23 +297,23 @@ public sealed class UserAndThreadMappingCoverageTests
     [TestMethod]
     public void ShareThreadMapper_FromTbData_MapsVoteInfoIdentifiersAndContent()
     {
-        var origin = new global::ThreadInfo.Types.OriginThreadInfo
+        var origin = new ThreadInfo.Types.OriginThreadInfo
         {
             Title = "Shared title",
             Fid = 8,
             Fname = "forum",
             Tid = "9",
             Pid = 10,
-            PollInfo = new global::PollInfo
+            PollInfo = new PollInfo
             {
                 Title = "Vote",
                 IsMulti = 1,
                 TotalPoll = 100,
                 TotalNum = 2,
-                Options = { new global::PollInfo.Types.PollOption { Num = 60, Text = "Option A" } }
+                Options = { new PollInfo.Types.PollOption { Num = 60, Text = "Option A" } }
             }
         };
-        origin.Content.Add(new global::PbContent { Type = 0, Text = "shared text", Uid = 42 });
+        origin.Content.Add(new PbContent { Type = 0, Text = "shared text", Uid = 42 });
 
         var mapped = ShareThreadMapper.FromTbData(origin);
 
@@ -352,26 +335,24 @@ public sealed class UserAndThreadMappingCoverageTests
     public void ThreadMapper_FromTbData_HandlesNullAndShareBranches()
     {
         var empty = ThreadMapper.FromTbData(null);
-        var noAgree = ThreadMapper.FromTbData(new global::ThreadInfo
-        {
-            Title = "No agree"
-        });
-        var shared = ThreadMapper.FromTbData(new global::ThreadInfo
+        var noAgree = ThreadMapper.FromTbData(new ThreadInfo { Title = "No agree" });
+        var shared = ThreadMapper.FromTbData(new ThreadInfo
         {
             Title = "Thread title",
             Id = 123,
             FirstPostId = 456,
             AuthorId = 42,
-            Author = new global::User
-            {
-                Id = 42,
-                Name = "author",
-                NameShow = "Author",
-                Portrait = "tb.1.author?012345678901",
-                IsBawu = 1,
-                PrivSets = new global::User.Types.PrivSets { Like = 0, Reply = 0 }
-            },
-            FirstPostContent = { new global::PbContent { Type = 0, Text = "body" } },
+            Author =
+                new User
+                {
+                    Id = 42,
+                    Name = "author",
+                    NameShow = "Author",
+                    Portrait = "tb.1.author?012345678901",
+                    IsBawu = 1,
+                    PrivSets = new User.Types.PrivSets { Like = 0, Reply = 0 }
+                },
+            FirstPostContent = { new PbContent { Type = 0, Text = "body" } },
             ThreadType = 71,
             TabId = 9,
             IsGood = 1,
@@ -379,22 +360,23 @@ public sealed class UserAndThreadMappingCoverageTests
             IsShareThread = 1,
             IsFrsMask = 1,
             IsLivepost = 1,
-            PollInfo = new global::PollInfo
-            {
-                Title = "Vote",
-                IsMulti = 1,
-                Options = { new global::PollInfo.Types.PollOption { Num = 1, Text = "Option" } }
-            },
-            OriginThreadInfo = new global::ThreadInfo.Types.OriginThreadInfo
+            PollInfo =
+                new PollInfo
+                {
+                    Title = "Vote",
+                    IsMulti = 1,
+                    Options = { new PollInfo.Types.PollOption { Num = 1, Text = "Option" } }
+                },
+            OriginThreadInfo = new ThreadInfo.Types.OriginThreadInfo
             {
                 Title = "Shared title",
                 Fid = 8,
                 Fname = "forum",
                 Tid = "789",
                 Pid = 99,
-                Content = { new global::PbContent { Type = 0, Text = "shared body", Uid = 42 } }
+                Content = { new PbContent { Type = 0, Text = "shared body", Uid = 42 } }
             },
-            Agree = new global::Agree { AgreeNum = 7, DisagreeNum = 2 },
+            Agree = new Agree { AgreeNum = 7, DisagreeNum = 2 },
             ViewNum = 100,
             ReplyNum = 5,
             ShareNum = 6,
@@ -427,8 +409,7 @@ public sealed class UserAndThreadMappingCoverageTests
     {
         var content = new Content
         {
-            Texts = [new FragText { Text = "hello" }],
-            Frags = [new FragText { Text = "hello" }]
+            Texts = [new FragText { Text = "hello" }], Frags = [new FragText { Text = "hello" }]
         };
         var post = new global::AioTieba4DotNet.Models.Threads.Post
         {
@@ -453,12 +434,7 @@ public sealed class UserAndThreadMappingCoverageTests
             Pid = 10,
             VoteInfo = new VoteInfo { Title = "Vote", Options = [] }
         };
-        var userThread = new UserThread
-        {
-            Contents = content,
-            Title = "Help title",
-            Type = 71
-        };
+        var userThread = new UserThread { Contents = content, Title = "Help title", Type = 71 };
 
         Assert.AreEqual("hello\nfrom phone", post.Text);
         StringAssert.Contains(share.Text, "Title");
@@ -471,17 +447,24 @@ public sealed class UserAndThreadMappingCoverageTests
     public void CommentMapper_FromTbData_HandlesNullAndFullyTrimmedReplyPrefix()
     {
         var empty = CommentMapper.FromTbData(null);
-        var replyOnly = CommentMapper.FromTbData(new global::SubPostList
+        var replyOnly = CommentMapper.FromTbData(new SubPostList
         {
             Id = 10,
             AuthorId = 20,
-            Author = new global::User { Id = 20, Name = "comment-author", NameShow = "Comment Author", Portrait = "tb.1.comment?012345678901" },
+            Author =
+                new User
+                {
+                    Id = 20,
+                    Name = "comment-author",
+                    NameShow = "Comment Author",
+                    Portrait = "tb.1.comment?012345678901"
+                },
             Time = 1711111111,
             Content =
             {
-                new global::PbContent { Type = 0, Text = "回复 " },
-                new global::PbContent { Type = 2, Text = "@target", Uid = 30 },
-                new global::PbContent { Type = 0, Text = " :" }
+                new PbContent { Type = 0, Text = "回复 " },
+                new PbContent { Type = 2, Text = "@target", Uid = 30 },
+                new PbContent { Type = 0, Text = " :" }
             }
         });
 
@@ -498,10 +481,10 @@ public sealed class UserAndThreadMappingCoverageTests
         Assert.AreEqual(1711111111L, replyOnly.CreateTime);
     }
 
-    private static global::PostInfoList CreateUserPostList(string title, ulong forumId, string forumName, ulong threadId,
+    private static PostInfoList CreateUserPostList(string title, ulong forumId, string forumName, ulong threadId,
         ulong postId, long userId, string userName, string portrait, string contentText)
     {
-        return new global::PostInfoList
+        return new PostInfoList
         {
             Title = title,
             ForumId = forumId,
@@ -512,7 +495,7 @@ public sealed class UserAndThreadMappingCoverageTests
             UserName = userName,
             UserPortrait = portrait,
             NameShow = userName,
-            FirstPostContent = { new global::PbContent { Type = 0, Text = contentText } }
+            FirstPostContent = { new PbContent { Type = 0, Text = contentText } }
         };
     }
 }

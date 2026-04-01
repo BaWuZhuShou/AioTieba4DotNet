@@ -45,11 +45,13 @@ public sealed class TiebaClientMessagesIntegrationTests : TestBase
         }
         catch (TiebaException exception)
         {
-            Assert.Inconclusive($"Skipping websocket message integration path in this environment: {exception.Message}");
+            Assert.Inconclusive(
+                $"Skipping websocket message integration path in this environment: {exception.Message}");
         }
         catch (Exception exception)
         {
-            Assert.Inconclusive($"Skipping websocket message integration path after transport failure: {exception.Message}");
+            Assert.Inconclusive(
+                $"Skipping websocket message integration path after transport failure: {exception.Message}");
         }
     }
 }

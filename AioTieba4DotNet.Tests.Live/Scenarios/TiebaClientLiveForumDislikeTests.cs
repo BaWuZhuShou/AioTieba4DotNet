@@ -24,16 +24,16 @@ public sealed class TiebaClientLiveForumDislikeTests : TestBase
             $"restore dislike state for {fixture.ResolvedName}",
             wasDisliked ? "re-apply the original dislike state" : "undo the temporary dislike state",
             async cancellationToken =>
-        {
-            var isDislikedNow = await IsForumDislikedAsync(fixture.Fid, cancellationToken);
-            if (wasDisliked == isDislikedNow)
-                return;
+            {
+                var isDislikedNow = await IsForumDislikedAsync(fixture.Fid, cancellationToken);
+                if (wasDisliked == isDislikedNow)
+                    return;
 
-            if (wasDisliked)
-                await Client.Forums.DislikeAsync(fixture.Fid, cancellationToken);
-            else
-                await Client.Forums.UndislikeAsync(fixture.Fid, cancellationToken);
-        });
+                if (wasDisliked)
+                    await Client.Forums.DislikeAsync(fixture.Fid, cancellationToken);
+                else
+                    await Client.Forums.UndislikeAsync(fixture.Fid, cancellationToken);
+            });
 
         if (wasDisliked)
         {

@@ -29,16 +29,16 @@ public sealed class ThreadReadSampleDiscoveryTests
             CreateThreadsPage(CreateThread(1002))
         ]);
         var module = new StubThreadModule(
-            getThreadsAsync: () => Task.FromResult(threadPages.Dequeue()),
-            getPostsAsync: _ => throw new NotSupportedException());
+            () => Task.FromResult(threadPages.Dequeue()),
+            _ => throw new NotSupportedException());
 
         var sample = await ThreadReadSampleDiscovery.RequireThreadSampleAsync(
             module,
             SafeForum,
             nameof(RequireThreadSampleAsync_ReturnsFirstThreadFromLaterPage_WhenEarlierPagesAreEmpty),
-            maxThreadPages: 3,
-            threadPageSize: 10,
-            threadSort: ThreadSortType.Reply);
+            3,
+            10,
+            ThreadSortType.Reply);
 
         Assert.AreEqual(1002L, sample.Tid);
         Assert.AreEqual(2, sample.ThreadsPageNumber);
@@ -52,17 +52,17 @@ public sealed class ThreadReadSampleDiscoveryTests
     public async Task RequireThreadSampleAsync_ThrowsInconclusive_WhenSampleWindowHasNoThreads()
     {
         var module = new StubThreadModule(
-            getThreadsAsync: () => Task.FromResult(CreateThreadsPage()),
-            getPostsAsync: _ => throw new NotSupportedException());
+            () => Task.FromResult(CreateThreadsPage()),
+            _ => throw new NotSupportedException());
 
         var exception = await Assert.ThrowsExactlyAsync<AssertInconclusiveException>(async () =>
             await ThreadReadSampleDiscovery.RequireThreadSampleAsync(
                 module,
                 SafeForum,
                 nameof(RequireThreadSampleAsync_ThrowsInconclusive_WhenSampleWindowHasNoThreads),
-                maxThreadPages: 2,
-                threadPageSize: 10,
-                threadSort: ThreadSortType.Reply));
+                2,
+                10,
+                ThreadSortType.Reply));
 
         Assert.Contains("returned zero threads across 2 sampled page(s)", exception.Message);
     }
@@ -77,24 +77,24 @@ public sealed class ThreadReadSampleDiscoveryTests
         var postResults = new Dictionary<long, Func<Task<Posts>>>
         {
             [1001] = () => throw new TieBaServerException(110004, "expired sample"),
-            [1002] = () => Task.FromResult(CreatePostsPage(1002, CreatePost(2002, replyNum: 0, commentCount: 0))),
-            [1003] = () => Task.FromResult(CreatePostsPage(1003, CreatePost(2003, replyNum: 2, commentCount: 1)))
+            [1002] = () => Task.FromResult(CreatePostsPage(1002, CreatePost(2002, 0, 0))),
+            [1003] = () => Task.FromResult(CreatePostsPage(1003, CreatePost(2003, 2, 1)))
         };
         var module = new StubThreadModule(
-            getThreadsAsync: () => Task.FromResult(threadPages.Dequeue()),
-            getPostsAsync: tid => postResults[tid]());
+            () => Task.FromResult(threadPages.Dequeue()),
+            tid => postResults[tid]());
 
         var sample = await ThreadReadSampleDiscovery.RequireCommentSourceSampleAsync(
             module,
             SafeForum,
             nameof(RequireCommentSourceSampleAsync_SkipsExpiredThreadAndReturnsLaterCommentCandidate),
-            maxThreadPages: 3,
-            threadPageSize: 10,
-            maxThreadsPerPage: 2,
-            postPageSize: 20,
-            previewCommentCount: 2,
-            threadSort: ThreadSortType.Reply,
-            postSort: PostSortType.Hot);
+            3,
+            10,
+            2,
+            20,
+            2,
+            ThreadSortType.Reply,
+            PostSortType.Hot);
 
         Assert.AreEqual(1003L, sample.ThreadSample.Tid);
         Assert.AreEqual(2, sample.ThreadSample.ThreadsPageNumber);
@@ -111,21 +111,21 @@ public sealed class ThreadReadSampleDiscoveryTests
             CreateThreadsPage()
         ]);
         var module = new StubThreadModule(
-            getThreadsAsync: () => Task.FromResult(threadPages.Dequeue()),
-            getPostsAsync: tid => Task.FromResult(CreatePostsPage(tid, CreatePost(tid + 1000, replyNum: 0, commentCount: 0))));
+            () => Task.FromResult(threadPages.Dequeue()),
+            tid => Task.FromResult(CreatePostsPage(tid, CreatePost(tid + 1000, 0, 0))));
 
         var exception = await Assert.ThrowsExactlyAsync<AssertInconclusiveException>(async () =>
             await ThreadReadSampleDiscovery.RequireCommentSourceSampleAsync(
                 module,
                 SafeForum,
                 nameof(RequireCommentSourceSampleAsync_ThrowsInconclusive_WhenNoCommentCandidateExists),
-                maxThreadPages: 2,
-                threadPageSize: 10,
-                maxThreadsPerPage: 2,
-                postPageSize: 20,
-                previewCommentCount: 2,
-                threadSort: ThreadSortType.Reply,
-                postSort: PostSortType.Hot));
+                2,
+                10,
+                2,
+                20,
+                2,
+                ThreadSortType.Reply,
+                PostSortType.Hot));
 
         Assert.Contains("no post with comments was found", exception.Message);
         Assert.Contains("2 sampled page(s) and 2 sampled thread(s)", exception.Message);
@@ -169,21 +169,9 @@ public sealed class ThreadReadSampleDiscoveryTests
     {
         var comments = new List<CommentModel>();
         for (var index = 0; index < commentCount; index++)
-        {
-            comments.Add(new CommentModel
-            {
-                Content = CreateContent(),
-                Pid = pid + index + 1,
-            });
-        }
+            comments.Add(new CommentModel { Content = CreateContent(), Pid = pid + index + 1 });
 
-        return new PostModel
-        {
-            Content = CreateContent(),
-            Pid = pid,
-            ReplyNum = (uint)replyNum,
-            Comments = comments
-        };
+        return new PostModel { Content = CreateContent(), Pid = pid, ReplyNum = (uint)replyNum, Comments = comments };
     }
 
     private static Content CreateContent()
@@ -213,7 +201,8 @@ public sealed class ThreadReadSampleDiscoveryTests
         }
 
         public Task<Posts> GetPostsAsync(long tid, int pn = 1, int rn = 30, PostSortType sort = PostSortType.Asc,
-            bool onlyThreadAuthor = false, bool withComments = false, int commentRn = 0, bool commentSortByAgree = false,
+            bool onlyThreadAuthor = false, bool withComments = false, int commentRn = 0,
+            bool commentSortByAgree = false,
             CancellationToken cancellationToken = default)
         {
             return getPostsAsync(tid);
@@ -311,7 +300,8 @@ public sealed class ThreadReadSampleDiscoveryTests
             throw new NotSupportedException();
         }
 
-        public Task<bool> GoodAsync(string fname, long tid, string cname = "", CancellationToken cancellationToken = default)
+        public Task<bool> GoodAsync(string fname, long tid, string cname = "",
+            CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }
@@ -321,12 +311,14 @@ public sealed class ThreadReadSampleDiscoveryTests
             throw new NotSupportedException();
         }
 
-        public Task<bool> TopAsync(string fname, long tid, bool isVip = false, CancellationToken cancellationToken = default)
+        public Task<bool> TopAsync(string fname, long tid, bool isVip = false,
+            CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }
 
-        public Task<bool> UntopAsync(string fname, long tid, bool isVip = false, CancellationToken cancellationToken = default)
+        public Task<bool> UntopAsync(string fname, long tid, bool isVip = false,
+            CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException();
         }

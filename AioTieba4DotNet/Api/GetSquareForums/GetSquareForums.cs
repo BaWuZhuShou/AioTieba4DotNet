@@ -44,10 +44,8 @@ internal sealed class GetSquareForums(ITiebaHttpCore httpCore, ITiebaWsCore wsCo
         CancellationToken cancellationToken = default)
     {
         var data = PackProto(_httpCore.Account!, cname, pn, rn);
-        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/forum/getForumSquare")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var requestUri =
+            new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/forum/getForumSquare") { Query = $"cmd={Cmd}" }.Uri;
 
         var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(result);

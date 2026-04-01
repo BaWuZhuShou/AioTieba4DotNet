@@ -9,6 +9,8 @@ internal sealed class SystemTiebaWebSocketDelayStrategy : ITiebaWebSocketDelaySt
 {
     internal static SystemTiebaWebSocketDelayStrategy Instance { get; } = new();
 
-    public Task DelayAsync(TimeSpan interval, CancellationToken cancellationToken) =>
-        Task.Delay(interval, cancellationToken);
+    public Task DelayAsync(TimeSpan interval, CancellationToken cancellationToken)
+    {
+        return Task.Delay(interval, cancellationToken);
+    }
 }

@@ -13,7 +13,7 @@ internal sealed class ClientProtocol(TiebaOperationDispatcher dispatcher) : ICli
         _ = await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(InitWebSocketAsync),
-                TiebaOperationCapabilities.WebSocketOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.WebSocketOnly(true),
                 ExecuteWebSocketAsync: static (_, _) => Task.FromResult(true)),
             cancellationToken);
     }
@@ -25,7 +25,7 @@ internal sealed class ClientProtocol(TiebaOperationDispatcher dispatcher) : ICli
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<string>(
                 nameof(InitZIdAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => session.ExecuteZIdInitializationAsync(
                     nameof(InitZIdAsync),
                     innerCancellationToken => new InitZId(session.HttpCore).RequestAsync(innerCancellationToken),
@@ -41,7 +41,7 @@ internal sealed class ClientProtocol(TiebaOperationDispatcher dispatcher) : ICli
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<(string ClientId, string SampleId)>(
                 nameof(SyncAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => session.ExecuteClientSyncAsync(
                     nameof(SyncAsync),
                     innerCancellationToken => new Sync(session.HttpCore).RequestAsync(innerCancellationToken),

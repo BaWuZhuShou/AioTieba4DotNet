@@ -20,11 +20,7 @@ internal sealed class GetTabMap(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
         {
             Data = new SearchPostForumReqIdl.Types.DataReq
             {
-                Common = new CommonReq
-                {
-                    BDUSS = account.Bduss,
-                    ClientVersion = Const.MainVersion
-                },
+                Common = new CommonReq { BDUSS = account.Bduss, ClientVersion = Const.MainVersion },
                 Fname = fname
             }
         };
@@ -42,10 +38,8 @@ internal sealed class GetTabMap(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     public async Task<TabMap> RequestHttpAsync(string fname, CancellationToken cancellationToken = default)
     {
         var data = PackProto(httpCore.Account!, fname);
-        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/forum/searchPostForum")
-        {
-            Query = $"cmd={Cmd}"
-        }.Uri;
+        var requestUri =
+            new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/forum/searchPostForum") { Query = $"cmd={Cmd}" }.Uri;
 
         var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(result);

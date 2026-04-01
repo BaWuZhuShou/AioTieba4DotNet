@@ -15,14 +15,15 @@ internal static class BawuUserLogsMapper
             .ToList();
 
         var (currentPage, totalPage, totalCount, hasMore, hasPrevious) = AdminHtmlParsing.ParseCommonPage(html);
-        return new BawuUserLogs(logs, new BawuUserLogPage
-        {
-            CurrentPage = currentPage,
-            TotalPage = totalPage,
-            TotalCount = totalCount,
-            HasMore = hasMore,
-            HasPrevious = hasPrevious
-        });
+        return new BawuUserLogs(logs,
+            new BawuUserLogPage
+            {
+                CurrentPage = currentPage,
+                TotalPage = totalPage,
+                TotalCount = totalCount,
+                HasMore = hasMore,
+                HasPrevious = hasPrevious
+            });
     }
 
     private static BawuUserLog? MapRow(string rowHtml)
@@ -31,7 +32,8 @@ internal static class BawuUserLogsMapper
         if (cells.Count < 5)
             return null;
 
-        var durationText = AdminHtmlParsing.NormalizeText(cells[2]).Replace(" ", string.Empty, StringComparison.Ordinal);
+        var durationText = AdminHtmlParsing.NormalizeText(cells[2])
+            .Replace(" ", string.Empty, StringComparison.Ordinal);
         var durationDays = durationText.EndsWith("天", StringComparison.Ordinal) &&
                            int.TryParse(durationText[..^1], out var parsedDuration)
             ? parsedDuration
@@ -39,7 +41,8 @@ internal static class BawuUserLogsMapper
 
         return new BawuUserLog
         {
-            UserPortrait = AdminHtmlParsing.ExtractPortraitFromHomeHref(AdminHtmlParsing.GetAttributeValue(cells[0], "href")),
+            UserPortrait =
+                AdminHtmlParsing.ExtractPortraitFromHomeHref(AdminHtmlParsing.GetAttributeValue(cells[0], "href")),
             OperationType = AdminHtmlParsing.NormalizeText(cells[1]),
             OperationDurationDays = durationDays,
             OperatorUserName = AdminHtmlParsing.NormalizeText(cells[3]),

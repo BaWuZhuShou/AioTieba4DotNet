@@ -196,7 +196,8 @@ public interface IUserModule
     /// <param name="portrait">用户 portrait</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>吧内信息 <see cref="UserForumInfo"/></returns>
-    Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait, CancellationToken cancellationToken = default);
+    Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     获取用户在指定贴吧内的信息

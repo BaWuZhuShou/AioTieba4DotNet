@@ -32,7 +32,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateRequiredText(userName, nameof(userName));
         ValidateEnum(bawuType, nameof(bawuType));
 
-        var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true);
+        var capabilities = TiebaOperationCapabilities.HttpOnly(true, true);
         var fid = await ResolveForumIdAsync(nameof(AddBawuAsync), capabilities, fname, cancellationToken);
 
         return await dispatcher.ExecuteAsync(
@@ -52,7 +52,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateRequiredText(portrait, nameof(portrait));
         ValidateEnum(bawuType, nameof(bawuType));
 
-        var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true);
+        var capabilities = TiebaOperationCapabilities.HttpOnly(true);
         var fid = await ResolveForumIdAsync(nameof(DelBawuAsync), capabilities, fname, cancellationToken);
 
         return await dispatcher.ExecuteAsync(
@@ -74,7 +74,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(AddBawuBlacklistAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new AddBawuBlacklist(session.HttpCore).RequestAsync(fname, userId, ct)),
             cancellationToken);
     }
@@ -89,7 +89,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(DelBawuBlacklistAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new DelBawuBlacklist(session.HttpCore).RequestAsync(fname, userId, ct)),
             cancellationToken);
     }
@@ -104,7 +104,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<BawuBlacklistUsers>(
                 nameof(GetBawuBlacklistAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetBawuBlacklist(session.HttpCore).RequestAsync(fname, pn, ct)),
             cancellationToken);
     }
@@ -133,7 +133,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateForumName(fname);
         ValidateRequiredText(portrait, nameof(portrait));
 
-        var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true);
+        var capabilities = TiebaOperationCapabilities.HttpOnly(true);
         var fid = await ResolveForumIdAsync(nameof(GetBawuPermAsync), capabilities, fname, cancellationToken);
 
         return await dispatcher.ExecuteAsync(
@@ -151,7 +151,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateForumName(fname);
         ValidateRequiredText(portrait, nameof(portrait));
 
-        var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true);
+        var capabilities = TiebaOperationCapabilities.HttpOnly(true);
         var fid = await ResolveForumIdAsync(nameof(SetBawuPermAsync), capabilities, fname, cancellationToken);
 
         return await dispatcher.ExecuteAsync(
@@ -177,7 +177,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<BawuPostLogs>(
                 nameof(GetBawuPostLogsAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetBawuPostlogs(session.HttpCore).RequestAsync(fname, query.PageNumber,
                     query.SearchValue, query.SearchType, query.StartTime, query.EndTime, query.OperationType, ct)),
             cancellationToken);
@@ -198,7 +198,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<BawuUserLogs>(
                 nameof(GetBawuUserLogsAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetBawuUserlogs(session.HttpCore).RequestAsync(fname, query.PageNumber,
                     query.SearchValue, query.SearchType, query.StartTime, query.EndTime, query.OperationType, ct)),
             cancellationToken);
@@ -212,7 +212,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidatePageNumber(pn);
         ValidatePageSize(rn);
 
-        var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true);
+        var capabilities = TiebaOperationCapabilities.HttpOnly(true, true);
         var fid = await ResolveForumIdAsync(nameof(GetUnblockAppealsAsync), capabilities, fname, cancellationToken);
 
         return await dispatcher.ExecuteAsync(
@@ -230,7 +230,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateForumName(fname);
         ValidateAppealIds(appealIds);
 
-        var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true);
+        var capabilities = TiebaOperationCapabilities.HttpOnly(true, true);
         var fid = await ResolveForumIdAsync(nameof(HandleUnblockAppealsAsync), capabilities, fname,
             cancellationToken);
 
@@ -249,7 +249,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateForumName(fname);
         ValidatePageNumber(pn);
 
-        var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true);
+        var capabilities = TiebaOperationCapabilities.HttpOnly(true);
         var fid = await ResolveForumIdAsync(nameof(GetBlocksAsync), capabilities, fname, cancellationToken);
 
         return await dispatcher.ExecuteAsync(
@@ -271,7 +271,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(BlockAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new BlockApi(session.HttpCore).RequestAsync(fid, portrait, day, reason, ct)),
             cancellationToken);
     }
@@ -282,7 +282,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
         ValidateForumName(fname);
 
-        var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true);
+        var capabilities = TiebaOperationCapabilities.HttpOnly(true, true);
         var fid = await ResolveForumIdAsync(nameof(BlockAsync), capabilities, fname, cancellationToken);
         return await BlockAsync(fid, portrait, day, reason, cancellationToken);
     }
@@ -296,7 +296,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(UnblockAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new Unblock(session.HttpCore).RequestAsync(fid, userId, ct)),
             cancellationToken);
     }
@@ -306,7 +306,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
         ValidateForumName(fname);
 
-        var capabilities = TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true);
+        var capabilities = TiebaOperationCapabilities.HttpOnly(true, true);
         var fid = await ResolveForumIdAsync(nameof(UnblockAsync), capabilities, fname, cancellationToken);
         return await UnblockAsync(fid, userId, cancellationToken);
     }
@@ -408,13 +408,16 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
 
 internal static class BawuTypeWireMapper
 {
-    internal static string ToWireValue(BawuType bawuType) => bawuType switch
+    internal static string ToWireValue(BawuType bawuType)
     {
-        BawuType.Manager => "assist",
-        BawuType.ImageEditor => "picadmin",
-        BawuType.VoiceEditor => "voiceadmin",
-        _ => throw new ArgumentOutOfRangeException(nameof(bawuType), bawuType, "Enum value is not supported.")
-    };
+        return bawuType switch
+        {
+            BawuType.Manager => "assist",
+            BawuType.ImageEditor => "picadmin",
+            BawuType.VoiceEditor => "voiceadmin",
+            _ => throw new ArgumentOutOfRangeException(nameof(bawuType), bawuType, "Enum value is not supported.")
+        };
+    }
 
     internal static bool TryFromWireValue(string value, out BawuType bawuType)
     {

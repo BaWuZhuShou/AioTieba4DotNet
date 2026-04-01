@@ -21,10 +21,7 @@ public sealed class MessagesModuleBehaviorTests
     public async Task MessagesModule_DelegatesGetAtsToInternalProtocol()
     {
         var expected = new AtMessages([], new Models.Threads.PageT { CurrentPage = 2 });
-        var protocol = new RecordingMessagesProtocol
-        {
-            AtMessagesResult = expected
-        };
+        var protocol = new RecordingMessagesProtocol { AtMessagesResult = expected };
         var module = new MessagesModule(protocol);
 
         var actual = await module.GetAtsAsync(2);
@@ -37,10 +34,7 @@ public sealed class MessagesModuleBehaviorTests
     public async Task MessagesModule_DelegatesGetRepliesToInternalProtocol()
     {
         var expected = new ReplyMessages([], new Models.Threads.PageT { CurrentPage = 3 });
-        var protocol = new RecordingMessagesProtocol
-        {
-            ReplyMessagesResult = expected
-        };
+        var protocol = new RecordingMessagesProtocol { ReplyMessagesResult = expected };
         var module = new MessagesModule(protocol);
 
         var actual = await module.GetRepliesAsync(3);
@@ -161,12 +155,16 @@ public sealed class MessagesModuleBehaviorTests
             return Task.FromResult(ReplyMessagesResult);
         }
 
-        public Task<WsMsgGroups> GetGroupMessagesAsync(int getType, CancellationToken cancellationToken = default) =>
-            Task.FromResult(new WsMsgGroups([]));
+        public Task<WsMsgGroups> GetGroupMessagesAsync(int getType, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new WsMsgGroups([]));
+        }
 
         public Task<WsMsgGroups> GetGroupMessagesAsync(IReadOnlyList<long> groupIds, int getType,
-            CancellationToken cancellationToken = default) =>
-            Task.FromResult(new WsMsgGroups([]));
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new WsMsgGroups([]));
+        }
 
         public Task<long> SendMessageAsync(long userId, string content, CancellationToken cancellationToken = default)
         {
@@ -176,7 +174,10 @@ public sealed class MessagesModuleBehaviorTests
         }
 
         public Task<long> SendMessageAsync(string portraitOrUserName, string content,
-            CancellationToken cancellationToken = default) => Task.FromResult(778899L);
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(778899L);
+        }
 
         public Task<bool> SendChatroomMessageAsync(long chatroomId, ulong forumId, string text,
             IReadOnlyList<long>? atUserIds = null, int robotCode = -1, CancellationToken cancellationToken = default)
@@ -188,9 +189,14 @@ public sealed class MessagesModuleBehaviorTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> SetMessageReadAsync(WsMessage message, CancellationToken cancellationToken = default) =>
-            Task.FromResult(true);
+        public Task<bool> SetMessageReadAsync(WsMessage message, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(true);
+        }
 
-        public IReadOnlyList<WsNotify> ParsePushNotifications(byte[] payload) => PushNotify.ParseBody(payload);
+        public IReadOnlyList<WsNotify> ParsePushNotifications(byte[] payload)
+        {
+            return PushNotify.ParseBody(payload);
+        }
     }
 }

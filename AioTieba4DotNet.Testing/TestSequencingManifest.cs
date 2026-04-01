@@ -34,7 +34,9 @@ public sealed record TestSequencingManifest(int Version, IReadOnlyList<TestSeque
     }
 
     public IReadOnlyList<string> GetStageNames()
-        => Stages.Select(static stage => stage.Name).ToArray();
+    {
+        return Stages.Select(static stage => stage.Name).ToArray();
+    }
 
     public IReadOnlyList<TestSequenceStage> GetStagesForLane(string lane)
     {
@@ -48,14 +50,9 @@ public sealed record TestSequencingManifest(int Version, IReadOnlyList<TestSeque
     public void ValidateExpectedBusinessOrder()
     {
         if (!GetStageNames().SequenceEqual(ExpectedBusinessOrder, StringComparer.Ordinal))
-        {
             throw new InvalidDataException(
                 "The test sequencing manifest does not match the expected business order.");
-        }
     }
 
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 }

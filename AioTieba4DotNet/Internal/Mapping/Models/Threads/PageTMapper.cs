@@ -7,31 +7,20 @@ internal static class PageTMapper
 {
     internal static PageT FromTbData(Page? page)
 
+    {
+        if (page == null) return new PageT();
+
+
+        return new PageT
         {
-
-            if (page == null) return new PageT();
-
-
-
-            return new PageT
-
-            {
-
-                PageSize = page.PageSize,
-
-                CurrentPage = page.CurrentPage,
-
-                TotalPage = page.TotalPage,
-
-                TotalCount = page.TotalCount,
-
-                HasMore = page.HasMore == 1,
-
-                HasPrevious = page.HasPrev == 1
-
-            };
-
-        }
+            PageSize = page.PageSize,
+            CurrentPage = page.CurrentPage,
+            TotalPage = page.TotalPage,
+            TotalCount = page.TotalCount,
+            HasMore = page.HasMore == 1,
+            HasPrevious = page.HasPrev == 1
+        };
+    }
 
     internal static PageT FromTbData(JObject? page)
     {

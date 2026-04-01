@@ -23,10 +23,7 @@ public sealed class GetBawuInfoApiTests
     [TestMethod]
     public async Task RequestHttpAsync_PacksExpectedProtoAndMapsBawuRoles()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            AppProtoResponse = CreateResponseBytes()
-        };
+        var httpCore = new RecordingHttpCore { AppProtoResponse = CreateResponseBytes() };
         var api = new GetBawuInfo(httpCore, new StubWsCore());
         using var cts = new CancellationTokenSource();
 
@@ -47,50 +44,56 @@ public sealed class GetBawuInfoApiTests
         Assert.AreEqual("manager-user", result.Managers[0].UserName);
     }
 
-    private static byte[] CreateResponseBytes() => new GetBawuInfoResIdl
+    private static byte[] CreateResponseBytes()
     {
-        Error = new Error { Errorno = 0, Errmsg = string.Empty },
-        Data = new GetBawuInfoResIdl.Types.DataRes
+        return new GetBawuInfoResIdl
         {
-            BawuTeamInfo = new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
+            Data = new GetBawuInfoResIdl.Types.DataRes
             {
-                TotalNum = 2,
-                BawuTeamList =
+                BawuTeamInfo = new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam
                 {
-                    new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes
+                    TotalNum = 2,
+                    BawuTeamList =
                     {
-                        RoleName = "吧主",
-                        RoleInfo =
+                        new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes
                         {
-                            new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes.Types.BawuRoleInfoPub
+                            RoleName = "吧主",
+                            RoleInfo =
                             {
-                                UserId = 1,
-                                Portrait = "tb.1.admin",
-                                UserName = "admin-user",
-                                NameShow = "Admin",
-                                UserLevel = 18
+                                new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.
+                                    BawuRoleDes.Types.
+                                    BawuRoleInfoPub
+                                    {
+                                        UserId = 1,
+                                        Portrait = "tb.1.admin",
+                                        UserName = "admin-user",
+                                        NameShow = "Admin",
+                                        UserLevel = 18
+                                    }
                             }
-                        }
-                    },
-                    new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes
-                    {
-                        RoleName = "小吧主",
-                        RoleInfo =
+                        },
+                        new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes
                         {
-                            new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.BawuRoleDes.Types.BawuRoleInfoPub
+                            RoleName = "小吧主",
+                            RoleInfo =
                             {
-                                UserId = 2,
-                                Portrait = "tb.1.manager",
-                                UserName = "manager-user",
-                                NameShow = "Manager",
-                                UserLevel = 12
+                                new GetBawuInfoResIdl.Types.DataRes.Types.BawuTeam.Types.
+                                    BawuRoleDes.Types.BawuRoleInfoPub
+                                    {
+                                        UserId = 2,
+                                        Portrait = "tb.1.manager",
+                                        UserName = "manager-user",
+                                        NameShow = "Manager",
+                                        UserLevel = 12
+                                    }
                             }
                         }
                     }
                 }
             }
-        }
-    }.ToByteArray();
+        }.ToByteArray();
+    }
 
     private sealed class RecordingHttpCore : ITiebaHttpCore
     {
@@ -106,13 +109,22 @@ public sealed class GetBawuInfoApiTests
 
         public CancellationToken LastAppProtoCancellationToken { get; private set; }
 
-        public void SetAccount(Account newAccount) => throw new NotImplementedException();
+        public void SetAccount(Account newAccount)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
         {
@@ -123,25 +135,42 @@ public sealed class GetBawuInfoApiTests
         }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     private sealed class StubWsCore : ITiebaWsCore
     {
         public Account? Account { get; } = new();
 
-        public void SetAccount(Account newAccount) => throw new NotImplementedException();
-
-        public Task ConnectAsync(CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) =>
+        public void SetAccount(Account newAccount)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task ConnectAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public async IAsyncEnumerable<WSRes> ListenAsync(
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -150,6 +179,9 @@ public sealed class GetBawuInfoApiTests
             yield break;
         }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

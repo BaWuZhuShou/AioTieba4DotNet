@@ -33,8 +33,8 @@ internal sealed class TiebaWebSocketEngine(
             if (TryGetOpenConnection(out _)) return;
 
             if (TryGetCurrentConnection(out var staleConnection))
-                await ShutdownConnectionAsync(staleConnection!, graceful: false, failure: null,
-                    cancellationToken: CancellationToken.None);
+                await ShutdownConnectionAsync(staleConnection!, false, null,
+                    CancellationToken.None);
 
             var connection = await OpenConnectionAsync(cancellationToken);
             SetCurrentConnection(connection);
@@ -63,7 +63,7 @@ internal sealed class TiebaWebSocketEngine(
         {
             var failure = CreateConnectionLostException(
                 $"WebSocket send failed for command {req.Cmd} before a response boundary was reached.", exception);
-            await ShutdownConnectionAsync(connection, graceful: false, failure, CancellationToken.None);
+            await ShutdownConnectionAsync(connection, false, failure, CancellationToken.None);
             throw failure;
         }
     }
@@ -88,7 +88,7 @@ internal sealed class TiebaWebSocketEngine(
         ThrowIfDisposed();
         if (!TryGetCurrentConnection(out var connection)) return;
 
-        await ShutdownConnectionAsync(connection!, graceful: true, failure: null, cancellationToken);
+        await ShutdownConnectionAsync(connection!, true, null, cancellationToken);
     }
 
     public void Dispose()
@@ -147,12 +147,12 @@ internal sealed class TiebaWebSocketEngine(
         }
         catch (OperationCanceledException)
         {
-            await ShutdownConnectionAsync(connection, graceful: false, failure: null, cancellationToken: CancellationToken.None);
+            await ShutdownConnectionAsync(connection, false, null, CancellationToken.None);
             throw;
         }
         catch (Exception exception)
         {
-            await ShutdownConnectionAsync(connection, graceful: false, failure: null, cancellationToken: CancellationToken.None);
+            await ShutdownConnectionAsync(connection, false, null, CancellationToken.None);
             throw new TiebaWebSocketUnavailableException(
                 "WebSocket connect/handshake failed before the request pipeline became available.", exception);
         }
@@ -166,7 +166,8 @@ internal sealed class TiebaWebSocketEngine(
         var reqId = Interlocked.Increment(ref _reqIdCounter);
         var pending = connection.Router.RegisterPending(reqId);
         var buffer = frameCodec.Pack(data, cmd, reqId, accountProvider(), encrypt);
-        using var registration = cancellationToken.Register(() => connection.Router.CancelPending(reqId, cancellationToken));
+        using var registration =
+            cancellationToken.Register(() => connection.Router.CancelPending(reqId, cancellationToken));
 
         try
         {
@@ -183,7 +184,7 @@ internal sealed class TiebaWebSocketEngine(
             var failure = CreateConnectionLostException(
                 $"WebSocket request {cmd} failed after transport selection; HTTP fallback is no longer safe.",
                 exception);
-            await ShutdownConnectionAsync(connection, graceful: false, failure, CancellationToken.None);
+            await ShutdownConnectionAsync(connection, false, failure, CancellationToken.None);
             throw failure;
         }
     }
@@ -199,8 +200,8 @@ internal sealed class TiebaWebSocketEngine(
                 {
                     var failure = new TiebaWebSocketConnectionLostException(
                         "The WebSocket server closed the connection before the engine was explicitly closed.");
-                    await ShutdownConnectionAsync(connection, graceful: false, failure, CancellationToken.None,
-                        awaitListenTask: false);
+                    await ShutdownConnectionAsync(connection, false, failure, CancellationToken.None,
+                        false);
                     return;
                 }
 
@@ -223,8 +224,8 @@ internal sealed class TiebaWebSocketEngine(
         {
             var failure = CreateConnectionLostException(
                 "The WebSocket receive loop failed and the active connection was torn down.", exception);
-            await ShutdownConnectionAsync(connection, graceful: false, failure, CancellationToken.None,
-                awaitListenTask: false);
+            await ShutdownConnectionAsync(connection, false, failure, CancellationToken.None,
+                false);
         }
     }
 
@@ -246,7 +247,7 @@ internal sealed class TiebaWebSocketEngine(
         {
             var failure = CreateConnectionLostException(
                 "The WebSocket heartbeat loop failed and the active connection was torn down.", exception);
-            await ShutdownConnectionAsync(connection, graceful: false, failure, CancellationToken.None,
+            await ShutdownConnectionAsync(connection, false, failure, CancellationToken.None,
                 awaitHeartbeatTask: false);
         }
     }
@@ -260,7 +261,7 @@ internal sealed class TiebaWebSocketEngine(
         ClearCurrentConnection(connection);
         connection.LifetimeSource.Cancel();
 
-        Exception? combinedFailure = failure;
+        var combinedFailure = failure;
 
         try
         {
@@ -285,7 +286,9 @@ internal sealed class TiebaWebSocketEngine(
         combinedFailure = CombineFailures(combinedFailure, heartbeatFailure);
 
         if (combinedFailure == null)
+        {
             connection.Router.Complete();
+        }
         else
         {
             connection.Router.FailPending(combinedFailure);
@@ -327,9 +330,11 @@ internal sealed class TiebaWebSocketEngine(
         };
     }
 
-    private TiebaWebSocketConnectionLostException CreateConnectionLostException(string message, Exception exception) =>
-        exception as TiebaWebSocketConnectionLostException ?? new TiebaWebSocketConnectionLostException(message,
+    private TiebaWebSocketConnectionLostException CreateConnectionLostException(string message, Exception exception)
+    {
+        return exception as TiebaWebSocketConnectionLostException ?? new TiebaWebSocketConnectionLostException(message,
             exception);
+    }
 
     private bool TryGetOpenConnection(out TiebaWebSocketConnectionContext? connection)
     {

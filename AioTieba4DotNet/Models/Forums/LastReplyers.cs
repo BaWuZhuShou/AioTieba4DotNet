@@ -47,10 +47,16 @@ public sealed class LastReplyerUser
             : UserId.ToString();
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is LastReplyerUser other && UserId == other.UserId;
+    public override bool Equals(object? obj)
+    {
+        return obj is LastReplyerUser other && UserId == other.UserId;
+    }
 
     /// <inheritdoc />
-    public override int GetHashCode() => UserId.GetHashCode();
+    public override int GetHashCode()
+    {
+        return UserId.GetHashCode();
+    }
 }
 
 /// <summary>
@@ -89,10 +95,16 @@ public sealed class LastReplyer
     public string LogName => !string.IsNullOrEmpty(UserName) ? UserName : UserId.ToString();
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is LastReplyer other && UserId == other.UserId;
+    public override bool Equals(object? obj)
+    {
+        return obj is LastReplyer other && UserId == other.UserId;
+    }
 
     /// <inheritdoc />
-    public override int GetHashCode() => UserId.GetHashCode();
+    public override int GetHashCode()
+    {
+        return UserId.GetHashCode();
+    }
 }
 
 /// <summary>
@@ -202,10 +214,16 @@ public sealed class LastReplyerThread
     public long AuthorId => User.UserId;
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is LastReplyerThread other && Pid == other.Pid;
+    public override bool Equals(object? obj)
+    {
+        return obj is LastReplyerThread other && Pid == other.Pid;
+    }
 
     /// <inheritdoc />
-    public override int GetHashCode() => Pid.GetHashCode();
+    public override int GetHashCode()
+    {
+        return Pid.GetHashCode();
+    }
 }
 
 /// <summary>

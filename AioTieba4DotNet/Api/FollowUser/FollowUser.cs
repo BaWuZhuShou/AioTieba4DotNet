@@ -13,12 +13,12 @@ namespace AioTieba4DotNet.Api.FollowUser;
 [PythonApi("aiotieba.api.follow_user")]
 internal class FollowUser(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-/// <summary>
-///     发送关注用户请求
-/// </summary>
-/// <param name="portrait">用户头像 ID (Portrait)</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>操作是否成功</returns>
+    /// <summary>
+    ///     发送关注用户请求
+    /// </summary>
+    /// <param name="portrait">用户头像 ID (Portrait)</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(string portrait, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>

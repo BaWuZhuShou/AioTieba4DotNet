@@ -22,17 +22,11 @@ internal static class RepositorySourceTextAssert
 
     public static void ContainsAll(string text, params string[] expectedValues)
     {
-        foreach (var expectedValue in expectedValues)
-        {
-            Assert.Contains(expectedValue, text);
-        }
+        foreach (var expectedValue in expectedValues) Assert.Contains(expectedValue, text);
     }
 
     public static void DoesNotContainAny(string text, params string[] unexpectedValues)
     {
-        foreach (var unexpectedValue in unexpectedValues)
-        {
-            Assert.DoesNotContain(unexpectedValue, text);
-        }
+        foreach (var unexpectedValue in unexpectedValues) Assert.DoesNotContain(unexpectedValue, text);
     }
 }

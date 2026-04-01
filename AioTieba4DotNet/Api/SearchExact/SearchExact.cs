@@ -9,7 +9,8 @@ namespace AioTieba4DotNet.Api.SearchExact;
 [PythonApi("aiotieba.api.search_exact")]
 internal sealed class SearchExact(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    public async Task<ExactSearches> RequestAsync(string fname, string query, int pn, int rn, ForumSearchType searchType,
+    public async Task<ExactSearches> RequestAsync(string fname, string query, int pn, int rn,
+        ForumSearchType searchType,
         bool onlyThread, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>

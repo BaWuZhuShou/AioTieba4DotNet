@@ -8,13 +8,7 @@ internal static class RecoverInfoMapper
     internal static RecoverInfo FromTbData(JObject? data)
     {
         if (data is null)
-        {
-            return new RecoverInfo
-            {
-                Content = new Models.Contents.Content(),
-                User = new RecoverUser()
-            };
-        }
+            return new RecoverInfo { Content = new Models.Contents.Content(), User = new RecoverUser() };
 
         var threadInfo = data.GetValue("thread_info") as JObject;
         return new RecoverInfo

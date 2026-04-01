@@ -97,7 +97,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(FollowAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new LikeForum(session.HttpCore).RequestAsync(fid, ct)),
             cancellationToken);
     }
@@ -107,7 +107,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(FollowAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await GetFidAsync(fname, cancellationToken);
         return await FollowAsync(fid, cancellationToken);
@@ -121,7 +121,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(UnfollowAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new UnlikeForum(session.HttpCore).RequestAsync(fid, ct)),
             cancellationToken);
     }
@@ -131,7 +131,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(UnfollowAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await GetFidAsync(fname, cancellationToken);
         return await UnfollowAsync(fid, cancellationToken);
@@ -142,13 +142,13 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(SignAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true, true), cancellationToken);
 
         var fid = await GetFidAsync(fname, cancellationToken);
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(SignAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new Sign(session.HttpCore).RequestAsync(fname, fid, ct)),
             cancellationToken);
     }
@@ -160,7 +160,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(SignForumsAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new SignForums(session.HttpCore).RequestAsync(ct)),
             cancellationToken);
     }
@@ -172,7 +172,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(SignGrowthAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new SignGrowth(session.HttpCore).RequestAsync("page_sign", ct)),
             cancellationToken);
     }
@@ -203,7 +203,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<FollowForums>(
                 nameof(GetFollowForumsAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetFollowForums(session.HttpCore).RequestAsync(userId, pn, rn, ct)),
             cancellationToken);
     }
@@ -218,7 +218,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<SelfFollowForums>(
                 nameof(GetSelfFollowForumsAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true, requiresTbs: true),
+                TiebaOperationCapabilities.HttpOnly(true, true),
                 (session, ct) => new GetSelfFollowForums(session.HttpCore).RequestAsync(pn, rn, ct)),
             cancellationToken);
     }
@@ -233,7 +233,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<SelfFollowForumsV1>(
                 nameof(GetSelfFollowForumsV1Async),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetSelfFollowForumsV1(session.HttpCore).RequestAsync(pn, rn, ct)),
             cancellationToken);
     }
@@ -246,12 +246,12 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
 
         ValidateForumName(fname);
         await dispatcher.EnsureCanExecuteAsync(nameof(GetCidAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<int>(
                 nameof(GetCidAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new Api.GetCid.GetCid(session.HttpCore).RequestAsync(fname, cname, ct)),
             cancellationToken);
     }
@@ -263,13 +263,14 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
             return 0;
 
         await dispatcher.EnsureCanExecuteAsync(nameof(GetCidAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         var fname = await GetFnameAsync(fid, cancellationToken);
         return await GetCidAsync(fname, cname, cancellationToken);
     }
 
-    public async Task<ForumImageBytes> GetImageBytesAsync(string imageUrl, CancellationToken cancellationToken = default)
+    public async Task<ForumImageBytes> GetImageBytesAsync(string imageUrl,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var imageUri = ValidateImageUri(imageUrl);
@@ -408,13 +409,13 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateForumName(fname);
         ValidatePageNumber(pn);
         await dispatcher.EnsureCanExecuteAsync(nameof(GetMemberUsersAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
         EnsureStokenAvailable(nameof(GetMemberUsersAsync));
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<MemberUsers>(
                 nameof(GetMemberUsersAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetMemberUsers(session.HttpCore).RequestAsync(fname, pn, ct)),
             cancellationToken);
     }
@@ -425,7 +426,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
         ValidatePageNumber(pn);
         await dispatcher.EnsureCanExecuteAsync(nameof(GetMemberUsersAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
         EnsureStokenAvailable(nameof(GetMemberUsersAsync));
 
         var fname = await GetFnameAsync(fid, cancellationToken);
@@ -461,7 +462,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
         ValidateForumName(fname);
         await dispatcher.EnsureCanExecuteAsync(nameof(GetRecomStatusAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         var fid = await GetFidAsync(fname, cancellationToken);
         return await GetRecomStatusAsync(fid, cancellationToken);
@@ -475,7 +476,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<RecomStatus>(
                 nameof(GetRecomStatusAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetRecomStatus(session.HttpCore).RequestAsync(fid, ct)),
             cancellationToken);
     }
@@ -491,7 +492,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<SquareForums>(
                 nameof(GetSquareForumsAsync),
-                TiebaOperationCapabilities.WebSocketPreferred(requiresAuthentication: true),
+                TiebaOperationCapabilities.WebSocketPreferred(true),
                 (session, ct) => new GetSquareForums(session.HttpCore, session.WsCore).RequestHttpAsync(cname, pn, rn,
                     ct),
                 (session, ct) => new GetSquareForums(session.HttpCore, session.WsCore).RequestWsAsync(cname, pn, rn,
@@ -504,7 +505,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
         ValidateForumName(fname);
         await dispatcher.EnsureCanExecuteAsync(nameof(GetStatisticsAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         var fid = await GetFidAsync(fname, cancellationToken);
         return await GetStatisticsAsync(fid, cancellationToken);
@@ -518,7 +519,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<ForumStatistics>(
                 nameof(GetStatisticsAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetStatistics(session.HttpCore).RequestAsync(fid, ct)),
             cancellationToken);
     }
@@ -528,7 +529,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
         ValidateForumName(fname);
         await dispatcher.EnsureCanExecuteAsync(nameof(GetForumLevelAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         var fid = await GetFidAsync(fname, cancellationToken);
         return await GetForumLevelAsync(fid, cancellationToken);
@@ -543,7 +544,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<ForumLevelInfo>(
                 nameof(GetForumLevelAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetForumLevel(session.HttpCore).RequestAsync(fid, ct)),
             cancellationToken);
     }
@@ -556,7 +557,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<RoomList>(
                 nameof(GetRoomListByFidAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetRoomListByFid(session.HttpCore).RequestAsync(fid, ct)),
             cancellationToken);
     }
@@ -569,7 +570,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(DislikeAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new DislikeForumApi(session.HttpCore).RequestAsync(fid, ct)),
             cancellationToken);
     }
@@ -579,7 +580,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(DislikeAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         var fid = await GetFidAsync(fname, cancellationToken);
         return await DislikeAsync(fid, cancellationToken);
@@ -593,7 +594,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(UndislikeAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new UndislikeForum(session.HttpCore).RequestAsync(fid, ct)),
             cancellationToken);
     }
@@ -603,7 +604,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
 
         await dispatcher.EnsureCanExecuteAsync(nameof(UndislikeAsync),
-            TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true), cancellationToken);
+            TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
         var fid = await GetFidAsync(fname, cancellationToken);
         return await UndislikeAsync(fid, cancellationToken);
@@ -619,7 +620,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<DislikeForums>(
                 nameof(GetDislikeForumsAsync),
-                TiebaOperationCapabilities.WebSocketPreferred(requiresAuthentication: true),
+                TiebaOperationCapabilities.WebSocketPreferred(true),
                 (session, ct) => new GetDislikeForums(session.HttpCore, session.WsCore).RequestHttpAsync(pn, rn, ct),
                 (session, ct) => new GetDislikeForums(session.HttpCore, session.WsCore).RequestWsAsync(pn, rn, ct)),
             cancellationToken);
@@ -703,7 +704,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 $"{nameof(GetForumLevelAsync)}BootstrapInitNickname",
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 async (session, ct) =>
                 {
                     _ = await new GetSelfInfoInitNickname(session.HttpCore).RequestAsync(ct);
@@ -714,7 +715,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 $"{nameof(GetForumLevelAsync)}BootstrapMoIndex",
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 async (session, ct) =>
                 {
                     _ = await new GetSelfInfoMoIndex(session.HttpCore).RequestAsync(ct);

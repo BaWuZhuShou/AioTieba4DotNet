@@ -47,26 +47,19 @@ public sealed class UserInfoPfMapperCoverageTests
                 MyLikeNum = 14,
                 Intro = "hello",
                 IpAddress = "127.0.0.1",
-                Iconinfo =
-                {
-                    new User.Types.Icon { Name = "vip" },
-                    new User.Types.Icon { Name = string.Empty }
-                },
-                VirtualImageInfo = new User.Types.VirtualImageInfo
-                {
-                    IssetVirtualImage = 1,
-                    PersonalState = new User.Types.VirtualImageInfo.Types.PersonalState { Text = "state-text" }
-                },
+                Iconinfo = { new User.Types.Icon { Name = "vip" }, new User.Types.Icon { Name = string.Empty } },
+                VirtualImageInfo =
+                    new User.Types.VirtualImageInfo
+                    {
+                        IssetVirtualImage = 1,
+                        PersonalState =
+                            new User.Types.VirtualImageInfo.Types.PersonalState { Text = "state-text" }
+                    },
                 NewTshowIcon = { new User.Types.TshowInfo { Name = "badge" } },
                 NewGodData = new User.Types.NewGodInfo { Status = 1 },
                 PrivSets = new User.Types.PrivSets { Like = 2, Reply = 3 }
             },
-            AntiStat = new ProfileResIdl.Types.DataRes.Types.Anti
-            {
-                BlockStat = 1,
-                HideStat = 1,
-                DaysTofree = 31
-            },
+            AntiStat = new ProfileResIdl.Types.DataRes.Types.Anti { BlockStat = 1, HideStat = 1, DaysTofree = 31 },
             UserAgreeInfo = new ProfileResIdl.Types.DataRes.Types.UserAgreeInfo { TotalAgreeNum = 88 }
         };
 
@@ -111,12 +104,7 @@ public sealed class UserInfoPfMapperCoverageTests
                 TbAge = string.Empty,
                 VirtualImageInfo = new User.Types.VirtualImageInfo()
             },
-            AntiStat = new ProfileResIdl.Types.DataRes.Types.Anti
-            {
-                BlockStat = 1,
-                HideStat = 0,
-                DaysTofree = 99
-            }
+            AntiStat = new ProfileResIdl.Types.DataRes.Types.Anti { BlockStat = 1, HideStat = 0, DaysTofree = 99 }
         };
 
         var mapped = UserInfoPfMapper.FromTbData(data);
@@ -156,12 +144,7 @@ public sealed class UserInfoPfMapperCoverageTests
                 NewGodData = new User.Types.NewGodInfo { Status = 0 },
                 NewTshowIcon = { new User.Types.TshowInfo { Name = "badge" } }
             },
-            AntiStat = new ProfileResIdl.Types.DataRes.Types.Anti
-            {
-                BlockStat = 1,
-                HideStat = 1,
-                DaysTofree = 30
-            }
+            AntiStat = new ProfileResIdl.Types.DataRes.Types.Anti { BlockStat = 1, HideStat = 1, DaysTofree = 30 }
         };
 
         var mapped = UserInfoPfMapper.FromTbData(data);

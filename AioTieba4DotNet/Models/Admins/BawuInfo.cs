@@ -50,10 +50,16 @@ public sealed class BawuUser
             : UserId.ToString();
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is BawuUser other && UserId == other.UserId;
+    public override bool Equals(object? obj)
+    {
+        return obj is BawuUser other && UserId == other.UserId;
+    }
 
     /// <inheritdoc />
-    public override int GetHashCode() => UserId.GetHashCode();
+    public override int GetHashCode()
+    {
+        return UserId.GetHashCode();
+    }
 }
 
 /// <summary>

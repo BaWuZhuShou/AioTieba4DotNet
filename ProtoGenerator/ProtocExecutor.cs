@@ -73,10 +73,7 @@ internal sealed class ProtocExecutor : IProtocExecutor
         try
         {
             using var process = new Process { StartInfo = startInfo };
-            if (!process.Start())
-            {
-                return new ProtoExecutionResult(false, string.Empty, string.Empty, "无法启动 protoc 进程。");
-            }
+            if (!process.Start()) return new ProtoExecutionResult(false, string.Empty, string.Empty, "无法启动 protoc 进程。");
 
             var outputTask = process.StandardOutput.ReadToEndAsync();
             var errorTask = process.StandardError.ReadToEndAsync();

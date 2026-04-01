@@ -45,14 +45,26 @@ public sealed class TabMap : IReadOnlyDictionary<string, int>
     public int Count => _map.Count;
 
     /// <inheritdoc/>
-    public bool ContainsKey(string key) => _map.ContainsKey(key);
+    public bool ContainsKey(string key)
+    {
+        return _map.ContainsKey(key);
+    }
 
     /// <inheritdoc/>
-    public bool TryGetValue(string key, out int value) => _map.TryGetValue(key, out value);
+    public bool TryGetValue(string key, out int value)
+    {
+        return _map.TryGetValue(key, out value);
+    }
 
     /// <inheritdoc/>
-    public IEnumerator<KeyValuePair<string, int>> GetEnumerator() => _map.GetEnumerator();
+    public IEnumerator<KeyValuePair<string, int>> GetEnumerator()
+    {
+        return _map.GetEnumerator();
+    }
 
     /// <inheritdoc/>
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }

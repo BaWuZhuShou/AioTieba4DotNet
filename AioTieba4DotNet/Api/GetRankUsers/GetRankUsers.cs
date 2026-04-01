@@ -13,9 +13,7 @@ internal sealed class GetRankUsers(ITiebaHttpCore httpCore) : JsonApiBase(httpCo
     {
         var data = new List<KeyValuePair<string, string>>
         {
-            new("kw", fname),
-            new("pn", pn.ToString()),
-            new("ie", "utf-8")
+            new("kw", fname), new("pn", pn.ToString()), new("ie", "utf-8")
         };
 
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/f/like/furank").Uri;

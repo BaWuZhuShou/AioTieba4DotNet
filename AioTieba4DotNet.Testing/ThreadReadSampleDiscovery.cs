@@ -51,9 +51,9 @@ public static class ThreadReadSampleDiscovery
         {
             var threads = await threadModule.GetThreadsAsync(
                 forum.ResolvedName,
-                pn: pageNumber,
-                rn: threadPageSize,
-                sort: threadSort,
+                pageNumber,
+                threadPageSize,
+                threadSort,
                 cancellationToken: cancellationToken);
 
             var firstThread = threads.Objs.FirstOrDefault();
@@ -105,9 +105,9 @@ public static class ThreadReadSampleDiscovery
         {
             var threads = await threadModule.GetThreadsAsync(
                 forum.ResolvedName,
-                pn: threadPageNumber,
-                rn: threadPageSize,
-                sort: threadSort,
+                threadPageNumber,
+                threadPageSize,
+                threadSort,
                 cancellationToken: cancellationToken);
 
             foreach (var thread in threads.Objs.Take(maxThreadsPerPage))
@@ -118,17 +118,16 @@ public static class ThreadReadSampleDiscovery
                 {
                     var posts = await threadModule.GetPostsAsync(
                         thread.Tid,
-                        pn: 1,
-                        rn: postPageSize,
-                        sort: postSort,
-                        onlyThreadAuthor: false,
-                        withComments: true,
-                        commentRn: previewCommentCount,
-                        commentSortByAgree: true,
-                        cancellationToken: cancellationToken);
+                        1,
+                        postPageSize,
+                        postSort,
+                        false,
+                        true,
+                        previewCommentCount,
+                        true,
+                        cancellationToken);
                     var candidate = posts.Objs.FirstOrDefault(post => post.ReplyNum > 0 || post.Comments.Count > 0);
                     if (candidate is not null)
-                    {
                         return new CommentSourceSample(
                             new ThreadReadSample(forum, thread.Tid, threadPageNumber, threadPageSize, threadSort),
                             candidate.Pid,
@@ -137,7 +136,6 @@ public static class ThreadReadSampleDiscovery
                             postSort,
                             candidate.ReplyNum,
                             candidate.Comments.Count);
-                    }
                 }
                 catch (TieBaServerException exception)
                 {

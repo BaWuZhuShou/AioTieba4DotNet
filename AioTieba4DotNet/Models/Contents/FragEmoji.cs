@@ -32,6 +32,7 @@ public class FragEmoji : IFrag
     {
         return new Dictionary<string, object> { { "type", "2" }, { "text", Id } };
     }
+
     /// <summary>
     ///     格式设置成员
     /// </summary>

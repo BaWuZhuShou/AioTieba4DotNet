@@ -56,10 +56,7 @@ public sealed class Task18HotspotCoverageTests
         init.SetValue(99);
         var third = await init.GetAsync();
 
-        var frag = FragItemMapper.FromTbData(new PbContent
-        {
-            Item = new PbContent.Types.Item { ItemName = "badge" }
-        });
+        var frag = FragItemMapper.FromTbData(new PbContent { Item = new PbContent.Types.Item { ItemName = "badge" } });
         var forum = new Forum
         {
             Fid = 1,
@@ -92,7 +89,7 @@ public sealed class Task18HotspotCoverageTests
             Tid = 9,
             Pid = 10,
             IsComment = true,
-            User = new global::AioTieba4DotNet.Models.Shared.UserInfo { UserId = 11, UserName = "author" },
+            User = new UserInfo { UserId = 11, UserName = "author" },
             CreateTime = 12
         };
 
@@ -135,17 +132,10 @@ public sealed class Task18HotspotCoverageTests
             }
         });
         var recoverPageNull = RecoverPageMapper.FromTbData(null);
-        var recoverPageFalse = RecoverPageMapper.FromTbData(new JObject
-        {
-            ["pn"] = 1,
-            ["rn"] = 0,
-            ["has_more"] = 0
-        });
+        var recoverPageFalse = RecoverPageMapper.FromTbData(new JObject { ["pn"] = 1, ["rn"] = 0, ["has_more"] = 0 });
         var optionsErrors = TiebaOptionsValidator.GetValidationErrors(new TiebaOptions
         {
-            Stoken = "st",
-            MaxReadRetryAttempts = -1,
-            RequestTimeout = TimeSpan.Zero
+            Stoken = "st", MaxReadRetryAttempts = -1, RequestTimeout = TimeSpan.Zero
         });
 
         Assert.IsNotNull(atsResult);
@@ -165,17 +155,16 @@ public sealed class Task18HotspotCoverageTests
         Assert.AreEqual(0, recoverPageNull.PageSize);
         Assert.IsFalse(recoverPageFalse.HasMore);
         Assert.IsFalse(recoverPageFalse.HasPrevious);
-        CollectionAssert.AreEqual(new[]
-        {
-            "Stoken cannot be supplied without Bduss.",
-            "MaxReadRetryAttempts must be greater than or equal to 0.",
-            "RequestTimeout must be positive or Timeout.InfiniteTimeSpan."
-        }, optionsErrors.ToArray());
+        CollectionAssert.AreEqual(
+            new[]
+            {
+                "Stoken cannot be supplied without Bduss.",
+                "MaxReadRetryAttempts must be greater than or equal to 0.",
+                "RequestTimeout must be positive or Timeout.InfiniteTimeSpan."
+            }, optionsErrors.ToArray());
         Throws<TiebaConfigurationException>(() => TiebaOptionsValidator.Validate(new TiebaOptions
         {
-            Stoken = "st",
-            MaxReadRetryAttempts = -1,
-            RequestTimeout = TimeSpan.Zero
+            Stoken = "st", MaxReadRetryAttempts = -1, RequestTimeout = TimeSpan.Zero
         }));
     }
 
@@ -186,9 +175,9 @@ public sealed class Task18HotspotCoverageTests
         var stringCore = new RecordingHttpCore { AppProtoResponse = CreateProfileResponse().ToByteArray() };
 
         var byId = await new GetUInfoProfile<int>(intCore).RequestAsync(42);
-        var requestById = global::ProfileReqIdl.Parser.ParseFrom(intCore.LastAppProtoRequestData!);
+        var requestById = ProfileReqIdl.Parser.ParseFrom(intCore.LastAppProtoRequestData!);
         var byPortrait = await new GetUInfoProfile<string>(stringCore).RequestAsync("tb.1.profile");
-        var requestByPortrait = global::ProfileReqIdl.Parser.ParseFrom(stringCore.LastAppProtoRequestData!);
+        var requestByPortrait = ProfileReqIdl.Parser.ParseFrom(stringCore.LastAppProtoRequestData!);
 
         var unsupported = new GetUInfoProfile<DateTime>(new RecordingHttpCore());
 
@@ -204,7 +193,7 @@ public sealed class Task18HotspotCoverageTests
     [TestMethod]
     public void TailModelsContainersAndClientHelpers_CoverRemainingSmallTypes()
     {
-        var pythonApi = new AioTieba4DotNet.Attributes.PythonApiAttribute("aiotieba.api.tail");
+        var pythonApi = new Attributes.PythonApiAttribute("aiotieba.api.tail");
         var transportException = new TiebaTransportException("boom", new InvalidOperationException("inner"));
         var client = new TiebaClient(new string('b', 192), new string('s', 64));
         var delayStrategy = SystemTiebaWebSocketDelayStrategy.Instance;
@@ -217,46 +206,103 @@ public sealed class Task18HotspotCoverageTests
             [new Block { UserId = 1, UserName = "user", NickNameOld = "old", Day = 3 }],
             new BlocksPage { CurrentPage = 1, TotalPage = 2, HasMore = true, HasPrevious = false });
         var squareForums = new SquareForums(
-            [new SquareForum { Fid = 1, Fname = "square", MemberNum = 2, PostNum = 3, IsFollowed = true }],
+            [
+                new SquareForum
+                {
+                    Fid = 1,
+                    Fname = "square",
+                    MemberNum = 2,
+                    PostNum = 3,
+                    IsFollowed = true
+                }
+            ],
             new SquareForumsPage { CurrentPage = 1, TotalPage = 2, HasMore = true, HasPrevious = false });
         var blacklists = new BawuBlacklistUsers(
             [new BawuBlacklistUser { UserId = 1, Portrait = "tb.1.user", UserName = "user" }],
             new BawuBlacklistPage { CurrentPage = 1, TotalPage = 2, HasMore = true, HasPrevious = false });
         var postLogs = new BawuPostLogs(
-            [new BawuPostLog { Title = "title", Text = "text", Medias = [], Tid = 1, Pid = 2, OperationType = "op", PostPortrait = "tb.1.user", PostTime = new DateTime(2026, 1, 1), OperatorUserName = "op", OperationTime = new DateTime(2026, 1, 2) }],
-            new BawuPostLogPage { CurrentPage = 1, TotalPage = 2, TotalCount = 1, HasMore = true, HasPrevious = false });
+            [
+                new BawuPostLog
+                {
+                    Title = "title",
+                    Text = "text",
+                    Medias = [],
+                    Tid = 1,
+                    Pid = 2,
+                    OperationType = "op",
+                    PostPortrait = "tb.1.user",
+                    PostTime = new DateTime(2026, 1, 1),
+                    OperatorUserName = "op",
+                    OperationTime = new DateTime(2026, 1, 2)
+                }
+            ],
+            new BawuPostLogPage
+            {
+                CurrentPage = 1,
+                TotalPage = 2,
+                TotalCount = 1,
+                HasMore = true,
+                HasPrevious = false
+            });
         var userLogs = new BawuUserLogs(
-            [new BawuUserLog { OperationType = "op", OperationDurationDays = 3, UserPortrait = "tb.1.user", OperatorUserName = "op", OperationTime = new DateTime(2026, 1, 2) }],
-            new BawuUserLogPage { CurrentPage = 1, TotalPage = 2, TotalCount = 1, HasMore = true, HasPrevious = false });
+            [
+                new BawuUserLog
+                {
+                    OperationType = "op",
+                    OperationDurationDays = 3,
+                    UserPortrait = "tb.1.user",
+                    OperatorUserName = "op",
+                    OperationTime = new DateTime(2026, 1, 2)
+                }
+            ],
+            new BawuUserLogPage
+            {
+                CurrentPage = 1,
+                TotalPage = 2,
+                TotalCount = 1,
+                HasMore = true,
+                HasPrevious = false
+            });
         var recoverUserA = new RecoverUser { UserName = "user", Portrait = "portrait", NickNameNew = "nick" };
         var recoverUserB = new RecoverUser { UserName = string.Empty, Portrait = "portrait", NickNameNew = "nick" };
-        var recoverUserC = new RecoverUser { UserName = string.Empty, Portrait = string.Empty, NickNameNew = string.Empty };
+        var recoverUserC =
+            new RecoverUser { UserName = string.Empty, Portrait = string.Empty, NickNameNew = string.Empty };
         var recoverUserD = new RecoverUser { UserName = "user", Portrait = string.Empty, NickNameNew = string.Empty };
-        var lastReplyerUser = new LastReplyerUser { UserId = 1, Portrait = "portrait", UserName = "user", NickNameOld = "old" };
-        var lastReplyerUserFallback = new LastReplyerUser { UserId = 3, Portrait = "portrait3", UserName = string.Empty, NickNameOld = "old3" };
+        var lastReplyerUser =
+            new LastReplyerUser { UserId = 1, Portrait = "portrait", UserName = "user", NickNameOld = "old" };
+        var lastReplyerUserFallback = new LastReplyerUser
+        {
+            UserId = 3, Portrait = "portrait3", UserName = string.Empty, NickNameOld = "old3"
+        };
         var lastReplyer = new LastReplyer { UserId = 2, UserName = "user2", NickNameOld = "old2" };
         var lastReplyers = new LastReplyers(
-            [new LastReplyerThread
-            {
-                Title = "title",
-                Fid = 1,
-                Fname = "forum",
-                Tid = 2,
-                Pid = 3,
-                User = lastReplyerUser,
-                LastReplyer = lastReplyer,
-                IsGood = true,
-                IsTop = false,
-                CreateTime = 4,
-                LastTime = 5
-            }],
+            [
+                new LastReplyerThread
+                {
+                    Title = "title",
+                    Fid = 1,
+                    Fname = "forum",
+                    Tid = 2,
+                    Pid = 3,
+                    User = lastReplyerUser,
+                    LastReplyer = lastReplyer,
+                    IsGood = true,
+                    IsTop = false,
+                    CreateTime = 4,
+                    LastTime = 5
+                }
+            ],
             new LastReplyersPage { CurrentPage = 1, TotalPage = 2, HasMore = true, HasPrevious = false },
             new Forum { Fid = 1, Fname = "forum" });
         var comments = new Comments
         {
             Page = new PageT { CurrentPage = 1, TotalPage = 2, HasMore = true, HasPrevious = false },
             Forum = new ForumT(),
-            Thread = new AioTieba4DotNet.Models.Threads.Thread { Content = new Content(), VirtualImage = new VirtualImagePf() },
+            Thread =
+                new AioTieba4DotNet.Models.Threads.Thread
+                {
+                    Content = new Content(), VirtualImage = new VirtualImagePf()
+                },
             Post = new AioTieba4DotNet.Models.Threads.Post { Content = new Content() },
             Objs = []
         };
@@ -264,7 +310,10 @@ public sealed class Task18HotspotCoverageTests
         {
             Page = new PageT { CurrentPage = 1, TotalPage = 2, HasMore = true, HasPrevious = false },
             Forum = new ForumT(),
-            Thread = new AioTieba4DotNet.Models.Threads.Thread { Content = new Content(), VirtualImage = new VirtualImagePf() },
+            Thread = new AioTieba4DotNet.Models.Threads.Thread
+            {
+                Content = new Content(), VirtualImage = new VirtualImagePf()
+            },
             Objs = []
         };
         var tailContainer = new TailContainer();
@@ -328,9 +377,7 @@ public sealed class Task18HotspotCoverageTests
         var unpadded = Utils.RemovePkcs7Padding([1, 2, 2, 2], 4);
         var client = new TiebaClient(new TiebaOptions
         {
-            Bduss = new string('b', 192),
-            Stoken = new string('s', 64),
-            TransportMode = TiebaTransportMode.Http
+            Bduss = new string('b', 192), Stoken = new string('s', 64), TransportMode = TiebaTransportMode.Http
         });
 
         Assert.AreEqual(16, androidId.Length);
@@ -359,20 +406,38 @@ public sealed class Task18HotspotCoverageTests
         await new UndislikeForum(core).RequestAsync(1);
         await new RemoveFan(core).RequestAsync(2);
 
-        var fragVoiceFromAbstract = FragVoiceMapper.FromTbData(new global::PostInfoList.Types.PostInfoContent.Types.Abstract
+        var fragVoiceFromAbstract = FragVoiceMapper.FromTbData(new PostInfoList.Types.PostInfoContent.Types.Abstract
         {
-            VoiceMd5 = "voice-md5",
-            DuringTime = "2500"
+            VoiceMd5 = "voice-md5", DuringTime = "2500"
         });
-        var fragItem = FragItemMapper.FromTbData(new PbContent { Item = new PbContent.Types.Item { ItemName = "badge" } });
+        var fragItem =
+            FragItemMapper.FromTbData(new PbContent { Item = new PbContent.Types.Item { ItemName = "badge" } });
         var block = new Block { UserId = 1, UserName = "user", NickNameOld = "old", Day = 3 };
         var blockFallback = new Block { UserId = 2, UserName = "user2", NickNameOld = string.Empty, Day = 4 };
-        var squareForum = new SquareForum { Fid = 1, Fname = "square", MemberNum = 2, PostNum = 3, IsFollowed = true };
-        var squareForumOther = new SquareForum { Fid = 2, Fname = "square2", MemberNum = 3, PostNum = 4, IsFollowed = false };
+        var squareForum = new SquareForum
+        {
+            Fid = 1,
+            Fname = "square",
+            MemberNum = 2,
+            PostNum = 3,
+            IsFollowed = true
+        };
+        var squareForumOther = new SquareForum
+        {
+            Fid = 2,
+            Fname = "square2",
+            MemberNum = 3,
+            PostNum = 4,
+            IsFollowed = false
+        };
         var blacklisted = new BawuBlacklistUser { UserId = 1, Portrait = "portrait", UserName = "user" };
         var blacklistedOther = new BawuBlacklistUser { UserId = 2, Portrait = "portrait2", UserName = string.Empty };
-        var lastReplyerUser = new LastReplyerUser { UserId = 1, Portrait = "portrait", UserName = "user", NickNameOld = "old" };
-        var lastReplyerUserFallback = new LastReplyerUser { UserId = 2, Portrait = "portrait2", UserName = string.Empty, NickNameOld = "old2" };
+        var lastReplyerUser =
+            new LastReplyerUser { UserId = 1, Portrait = "portrait", UserName = "user", NickNameOld = "old" };
+        var lastReplyerUserFallback = new LastReplyerUser
+        {
+            UserId = 2, Portrait = "portrait2", UserName = string.Empty, NickNameOld = "old2"
+        };
         var lastReplyer = new LastReplyer { UserId = 3, UserName = "user3", NickNameOld = "old3" };
         var lastReplyerOther = new LastReplyer { UserId = 4, UserName = string.Empty, NickNameOld = string.Empty };
         var lastReplyerThread = new LastReplyerThread
@@ -393,16 +458,16 @@ public sealed class Task18HotspotCoverageTests
         var fragItemText = fragItem.ToString();
         var content = new Content();
         var setFragsIndex = typeof(Content).GetMethod("SetFragsIndex", BindingFlags.NonPublic | BindingFlags.Static);
-        var frags = new List<IFrag>
-        {
-            new FragText { Text = "a" },
-            new FragText { Text = "b" }
-        };
+        var frags = new List<IFrag> { new FragText { Text = "a" }, new FragText { Text = "b" } };
         var comments = new Comments
         {
             Page = new PageT { CurrentPage = 1, TotalPage = 1 },
             Forum = new ForumT(),
-            Thread = new AioTieba4DotNet.Models.Threads.Thread { Content = new Content(), VirtualImage = new VirtualImagePf() },
+            Thread =
+                new AioTieba4DotNet.Models.Threads.Thread
+                {
+                    Content = new Content(), VirtualImage = new VirtualImagePf()
+                },
             Post = new AioTieba4DotNet.Models.Threads.Post { Content = new Content() },
             Objs = []
         };
@@ -410,7 +475,10 @@ public sealed class Task18HotspotCoverageTests
         {
             Page = new PageT { CurrentPage = 1, TotalPage = 1 },
             Forum = new ForumT(),
-            Thread = new AioTieba4DotNet.Models.Threads.Thread { Content = new Content(), VirtualImage = new VirtualImagePf() },
+            Thread = new AioTieba4DotNet.Models.Threads.Thread
+            {
+                Content = new Content(), VirtualImage = new VirtualImagePf()
+            },
             Objs = []
         };
 
@@ -497,7 +565,17 @@ public sealed class Task18HotspotCoverageTests
         ]);
         var emptyTabs = new TabMap();
         var dislikeForums = new DislikeForums(
-            [new DislikeForum { Fid = 3, Fname = "forum-a", MemberNum = 4, PostNum = 5, ThreadNum = 6, IsFollowed = true }],
+            [
+                new DislikeForum
+                {
+                    Fid = 3,
+                    Fname = "forum-a",
+                    MemberNum = 4,
+                    PostNum = 5,
+                    ThreadNum = 6,
+                    IsFollowed = true
+                }
+            ],
             new DislikeForumsPage { CurrentPage = 1, HasMore = true, HasPrevious = false });
         var selfFollowForumsV1 = new SelfFollowForumsV1(
             [new SelfFollowForumV1 { Fid = 7, Fname = "forum-b", Level = 8 }],
@@ -529,9 +607,7 @@ public sealed class Task18HotspotCoverageTests
         var (parsedPayload, parsedCmd, parsedReqId) = core.ParseWsBytes(packed);
         var sendTask = wsCore.SendAsync(new WSReq
         {
-            Cmd = 301001,
-            ReqId = 1,
-            Payload = new WSReq.Types.Payload { Data = ByteString.CopyFromUtf8("ping") }
+            Cmd = 301001, ReqId = 1, Payload = new WSReq.Types.Payload { Data = ByteString.CopyFromUtf8("ping") }
         });
         sendTask.GetAwaiter().GetResult();
         wsCore.Dispose();
@@ -586,10 +662,12 @@ public sealed class Task18HotspotCoverageTests
     public void ResidualValidationAndEqualityBranches_CloseHotspotTails()
     {
         var responseException = Throws<TieBaServerException>(() => ApiResponseValidator.CheckError(1, null));
-        var parseException = Throws<TieBaServerException>(() => ApiResponseValidator.ParseJsonBody("{\"error_code\":2}"));
+        var parseException =
+            Throws<TieBaServerException>(() => ApiResponseValidator.ParseJsonBody("{\"error_code\":2}"));
         var nullOptionsErrors = TiebaOptionsValidator.GetValidationErrors(null);
         var store = new MessageCursorStore();
-        var validateBatchIds = typeof(ThreadProtocol).GetMethod("ValidateBatchIds", BindingFlags.NonPublic | BindingFlags.Static)!;
+        var validateBatchIds =
+            typeof(ThreadProtocol).GetMethod("ValidateBatchIds", BindingFlags.NonPublic | BindingFlags.Static)!;
         var invalidBatch = Throws<TargetInvocationException>(() => validateBatchIds.Invoke(null,
             ["ids", (IReadOnlyList<long>)new long[] { 1, 0 }]));
         validateBatchIds.Invoke(null, ["ids", (IReadOnlyList<long>)new long[] { 1, 2 }]);
@@ -598,11 +676,7 @@ public sealed class Task18HotspotCoverageTests
             new WsMsgGroupInfo { GroupId = 88, GroupType = 6, LastMessageId = 5 }
         ]);
 
-        var blankShare = new ShareThread
-        {
-            Content = new Content { Texts = [], Frags = [] },
-            Title = string.Empty
-        };
+        var blankShare = new ShareThread { Content = new Content { Texts = [], Frags = [] }, Title = string.Empty };
         var squareForum = new SquareForum { Fid = 1 };
         var block = new Block { UserId = 2 };
         var bawuBlacklistUser = new BawuBlacklistUser { UserId = 3 };
@@ -629,13 +703,13 @@ public sealed class Task18HotspotCoverageTests
     {
         var retryPolicy = TiebaHttpExecutionPolicy.FromOptions(new TiebaOptions
         {
-            RequestTimeout = TimeSpan.FromSeconds(1),
-            MaxReadRetryAttempts = 1
+            RequestTimeout = TimeSpan.FromSeconds(1), MaxReadRetryAttempts = 1
         });
         var retryDescriptor = TiebaHttpRequestDescriptor.AppForm(new Uri("https://tiebac.baidu.com/retry"),
             [new KeyValuePair<string, string>("a", "1")]);
         var operationCanceledAttempts = 0;
-        using var client = new HttpClient(new SwitchingHandler(_ => new HttpResponseMessage(System.Net.HttpStatusCode.OK)));
+        using var client =
+            new HttpClient(new SwitchingHandler(_ => new HttpResponseMessage(System.Net.HttpStatusCode.OK)));
         var operationCanceledResponse = await retryPolicy.SendAsync(client,
             async ct =>
             {
@@ -645,9 +719,9 @@ public sealed class Task18HotspotCoverageTests
 
                 return await TiebaHttpRequestFactory.CreateMessageAsync(retryDescriptor, ct);
             },
-            allowRetry: true,
-            requestKind: TiebaHttpRequestKind.AppForm,
-            cancellationToken: CancellationToken.None);
+            true,
+            TiebaHttpRequestKind.AppForm,
+            CancellationToken.None);
 
         var packProto = typeof(AddPost).GetMethod("PackProto", BindingFlags.NonPublic | BindingFlags.Static)!;
         var parseBody = typeof(AddPost).GetMethod("ParseBody", BindingFlags.NonPublic | BindingFlags.Static)!;
@@ -661,7 +735,8 @@ public sealed class Task18HotspotCoverageTests
             AndroidId = "0123456789abcdef"
         };
         var guest = new Account(new string('b', 192), new string('s', 64));
-        var packedAuthenticated = (AddPostReqIdl)packProto.Invoke(null, [authenticated, "forum", 1UL, 2L, "show", "content"])!;
+        var packedAuthenticated =
+            (AddPostReqIdl)packProto.Invoke(null, [authenticated, "forum", 1UL, 2L, "show", "content"])!;
         var packedGuest = (AddPostReqIdl)packProto.Invoke(null, [guest, "forum", 1UL, 2L, string.Empty, "content"])!;
         var needVcode = new AddPostResIdl
         {
@@ -693,7 +768,7 @@ public sealed class Task18HotspotCoverageTests
     {
         return new ProfileResIdl
         {
-            Error = new global::Error { Errorno = 0, Errmsg = string.Empty },
+            Error = new Error { Errorno = 0, Errmsg = string.Empty },
             Data = new ProfileResIdl.Types.DataRes
             {
                 User = new User
@@ -721,7 +796,10 @@ public sealed class Task18HotspotCoverageTests
         public Uri? LastAppProtoUri { get; private set; }
         public byte[]? LastAppProtoRequestData { get; private set; }
 
-        public void SetAccount(Account newAccount) => Account = newAccount;
+        public void SetAccount(Account newAccount)
+        {
+            Account = newAccount;
+        }
 
         public async Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
             CancellationToken cancellationToken = default)
@@ -747,14 +825,26 @@ public sealed class Task18HotspotCoverageTests
         }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
-        public string GetAppFormValue(string key) => LastAppFormData.Last(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData.Last(entry => entry.Key == key).Value;
+        }
 
-        public string GetCustomFormValue(string key) => LastCustomFormData.Last(entry => entry.Key == key).Value;
+        public string GetCustomFormValue(string key)
+        {
+            return LastCustomFormData.Last(entry => entry.Key == key).Value;
+        }
 
         private static async Task<List<KeyValuePair<string, string>>> ReadFormDataAsync(HttpRequestMessage request,
             CancellationToken cancellationToken)
@@ -802,7 +892,7 @@ public sealed class Task18HotspotCoverageTests
             return pending.Task;
         }
 
-        public Task CloseAsync(System.Net.WebSockets.WebSocketCloseStatus closeStatus, string statusDescription,
+        public Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -810,13 +900,19 @@ public sealed class Task18HotspotCoverageTests
             return Task.CompletedTask;
         }
 
-        public void Dispose() => State = WebSocketState.Closed;
+        public void Dispose()
+        {
+            State = WebSocketState.Closed;
+        }
     }
 
     private sealed class RecordingWebSocketConnectionFactory(RecordingWebSocketConnection connection)
         : ITiebaWebSocketConnectionFactory
     {
-        public ITiebaWebSocketConnection CreateConnection() => connection;
+        public ITiebaWebSocketConnection CreateConnection()
+        {
+            return connection;
+        }
     }
 
     private sealed class SwitchingHandler(params Func<int, HttpResponseMessage>[] behaviors) : HttpMessageHandler
@@ -834,7 +930,10 @@ public sealed class Task18HotspotCoverageTests
 
     private sealed class ImmediateDelayStrategy : ITiebaWebSocketDelayStrategy
     {
-        public Task DelayAsync(TimeSpan interval, CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task DelayAsync(TimeSpan interval, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private static async Task<TException> ThrowsAsync<TException>(Func<Task> action)
@@ -875,6 +974,9 @@ public sealed class Task18HotspotCoverageTests
         {
         }
 
-        public void Push(int value) => Add(value);
+        public void Push(int value)
+        {
+            Add(value);
+        }
     }
 }

@@ -50,15 +50,7 @@ internal static partial class RankUsersMapper
     {
         var pageMatch = PageRegex.Match(body);
         if (!pageMatch.Success)
-        {
-            return new PageT
-            {
-                CurrentPage = 1,
-                TotalPage = 1,
-                HasMore = false,
-                HasPrevious = false
-            };
-        }
+            return new PageT { CurrentPage = 1, TotalPage = 1, HasMore = false, HasPrevious = false };
 
         var pageJson = JObject.Parse(WebUtility.HtmlDecode(pageMatch.Groups["data"].Value));
         var currentPage = pageJson.GetValue("cur_page")?.Value<int>() ?? 1;
@@ -73,9 +65,15 @@ internal static partial class RankUsersMapper
         };
     }
 
-    private static string StripTags(string value) => WebUtility.HtmlDecode(TagRegex.Replace(value, string.Empty)).Trim();
+    private static string StripTags(string value)
+    {
+        return WebUtility.HtmlDecode(TagRegex.Replace(value, string.Empty)).Trim();
+    }
 
-    private static int ParseInt(string value, int defaultValue = 0) => int.TryParse(value, out var parsed) ? parsed : defaultValue;
+    private static int ParseInt(string value, int defaultValue = 0)
+    {
+        return int.TryParse(value, out var parsed) ? parsed : defaultValue;
+    }
 
     [GeneratedRegex("<tr[^>]*class=\"[^\"]*(?:drl_list_item|drl_list_item_self)[^\"]*\"[^>]*>(?<row>.*?)</tr>",
         RegexOptions.IgnoreCase | RegexOptions.Singleline)]

@@ -16,16 +16,25 @@ internal static partial class AdminHtmlParsing
     private static readonly Regex AttributeRegexTemplate = BuildAttributeRegexTemplate();
     private static readonly Regex ImageHashRegex = BuildImageHashRegex();
 
-    internal static string DecodeAndStrip(string html) => WebUtility.HtmlDecode(TagRegex.Replace(html, string.Empty)).Trim();
+    internal static string DecodeAndStrip(string html)
+    {
+        return WebUtility.HtmlDecode(TagRegex.Replace(html, string.Empty)).Trim();
+    }
 
-    internal static string NormalizeText(string html) =>
-        Regex.Replace(DecodeAndStrip(html), @"\s+", " ").Trim();
+    internal static string NormalizeText(string html)
+    {
+        return Regex.Replace(DecodeAndStrip(html), @"\s+", " ").Trim();
+    }
 
-    internal static IReadOnlyList<string> ExtractTableRows(string html) =>
-        TrRegex.Matches(html).Select(static match => match.Groups["content"].Value).ToArray();
+    internal static IReadOnlyList<string> ExtractTableRows(string html)
+    {
+        return TrRegex.Matches(html).Select(static match => match.Groups["content"].Value).ToArray();
+    }
 
-    internal static IReadOnlyList<string> ExtractTableCells(string rowHtml) =>
-        TdRegex.Matches(rowHtml).Select(static match => match.Groups["content"].Value).ToArray();
+    internal static IReadOnlyList<string> ExtractTableCells(string rowHtml)
+    {
+        return TdRegex.Matches(rowHtml).Select(static match => match.Groups["content"].Value).ToArray();
+    }
 
     internal static string GetAttributeValue(string html, string attributeName)
     {
@@ -59,7 +68,9 @@ internal static partial class AdminHtmlParsing
         string html)
     {
         var totalCountMatch = BreadcrumbCountRegex.Match(html);
-        var totalCount = totalCountMatch.Success ? int.Parse(totalCountMatch.Groups["count"].Value, CultureInfo.InvariantCulture) : 0;
+        var totalCount = totalCountMatch.Success
+            ? int.Parse(totalCountMatch.Groups["count"].Value, CultureInfo.InvariantCulture)
+            : 0;
 
         var paginationMatch = PaginationRegex.Match(html);
         if (!paginationMatch.Success)
@@ -89,11 +100,9 @@ internal static partial class AdminHtmlParsing
     {
         var normalized = Regex.Replace(text.Trim(), @"\s+", " ");
         foreach (var format in new[] { "yyyy-MM-ddHH:mm", "yyyy-MM-dd HH:mm" })
-        {
             if (DateTime.TryParseExact(normalized, format, CultureInfo.InvariantCulture, DateTimeStyles.None,
                     out var parsed))
                 return parsed;
-        }
 
         throw new FormatException($"Unsupported admin datetime format: '{text}'.");
     }
@@ -113,19 +122,24 @@ internal static partial class AdminHtmlParsing
     [GeneratedRegex("<tr[^>]*>(?<content>.*?)</tr>", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex BuildTrRegex();
 
-    [GeneratedRegex("<div[^>]*class=(['\"])[^'\"]*breadcrumbs[^'\"]*\\1[^>]*>.*?<em[^>]*>\\s*(?<count>\\d+)\\s*</em>", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    [GeneratedRegex("<div[^>]*class=(['\"])[^'\"]*breadcrumbs[^'\"]*\\1[^>]*>.*?<em[^>]*>\\s*(?<count>\\d+)\\s*</em>",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex BuildBreadcrumbCountRegex();
 
-    [GeneratedRegex("<div[^>]*class=(['\"])[^'\"]*tbui_pagination[^'\"]*\\1[^>]*>(?<content>.*?)</div>", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    [GeneratedRegex("<div[^>]*class=(['\"])[^'\"]*tbui_pagination[^'\"]*\\1[^>]*>(?<content>.*?)</div>",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex BuildPaginationRegex();
 
-    [GeneratedRegex("<li[^>]*class=(['\"])[^'\"]*active[^'\"]*\\1[^>]*>\\s*(?:<a[^>]*>)?\\s*(?<page>\\d+)\\s*(?:</a>)?\\s*</li>", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    [GeneratedRegex(
+        "<li[^>]*class=(['\"])[^'\"]*active[^'\"]*\\1[^>]*>\\s*(?:<a[^>]*>)?\\s*(?<page>\\d+)\\s*(?:</a>)?\\s*</li>",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex BuildActivePageRegex();
 
     [GeneratedRegex("\\((?<page>\\d+)\\)", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex BuildTotalPageRegex();
 
-    [GeneratedRegex("\\b__ATTRIBUTE__\\s*=\\s*(['\"])(?<value>.*?)\\1", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
+    [GeneratedRegex("\\b__ATTRIBUTE__\\s*=\\s*(['\"])(?<value>.*?)\\1",
+        RegexOptions.Singleline | RegexOptions.IgnoreCase)]
     private static partial Regex BuildAttributeRegexTemplate();
 
     [GeneratedRegex("(?<hash>[^/?#]+)\\.jpg(?:$|[?#])", RegexOptions.Singleline | RegexOptions.IgnoreCase)]

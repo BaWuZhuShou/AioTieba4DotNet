@@ -25,7 +25,7 @@ public class ThreadWriteProtocolTests
         var protocol = CreateProtocol(CreateAuthenticatedSession(httpCore), forum);
         IReadOnlyList<long> pids = Enumerable.Range(1, 31).Select(value => (long)value).ToArray();
 
-        await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.DelPostsAsync("lol欧服", 10377929712, pids, block: false));
+        await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.DelPostsAsync("lol欧服", 10377929712, pids, false));
 
         Assert.AreEqual(0, forum.GetFidCalls);
     }
@@ -37,8 +37,8 @@ public class ThreadWriteProtocolTests
         var httpCore = new RecordingHttpCore();
         var protocol = CreateProtocol(CreateAuthenticatedSession(httpCore), forum);
 
-        await ThrowsAsync<ArgumentNullException>(() => protocol.DelThreadsAsync("lol欧服", null!, block: false));
-        await ThrowsAsync<ArgumentException>(() => protocol.DelThreadsAsync("lol欧服", Array.Empty<long>(), block: false));
+        await ThrowsAsync<ArgumentNullException>(() => protocol.DelThreadsAsync("lol欧服", null!, false));
+        await ThrowsAsync<ArgumentException>(() => protocol.DelThreadsAsync("lol欧服", Array.Empty<long>(), false));
 
         Assert.AreEqual(0, forum.GetFidCalls);
     }
@@ -50,7 +50,7 @@ public class ThreadWriteProtocolTests
         var httpCore = new RecordingHttpCore();
         var protocol = CreateProtocol(CreateAuthenticatedSession(httpCore), forum);
 
-        await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.DelPostsAsync("lol欧服", 10377929712, [0], block: false));
+        await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.DelPostsAsync("lol欧服", 10377929712, [0], false));
 
         Assert.AreEqual(0, forum.GetFidCalls);
     }
@@ -95,14 +95,11 @@ public class ThreadWriteProtocolTests
     [TestMethod]
     public async Task RecoverAsync_UsesWebFormForPostRecovery()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            WebFormResponse = "{\"no\":0,\"error\":\"\"}"
-        };
+        var httpCore = new RecordingHttpCore { WebFormResponse = "{\"no\":0,\"error\":\"\"}" };
         var forum = new CountingForumProtocol();
         var protocol = CreateProtocol(CreateAuthenticatedSession(httpCore), forum);
 
-        var success = await protocol.RecoverAsync("lol欧服", tid: 0, pid: 153071185710, isHide: false);
+        var success = await protocol.RecoverAsync("lol欧服", 0, 153071185710, false);
 
         Assert.IsTrue(success);
         Assert.AreEqual(1, forum.GetFidCalls);
@@ -119,8 +116,8 @@ public class ThreadWriteProtocolTests
         var httpCore = new RecordingHttpCore();
         var protocol = CreateProtocol(CreateAuthenticatedSession(httpCore), forum);
 
-        await ThrowsAsync<ArgumentException>(() => protocol.RecoverAsync("lol欧服", tid: 0, pid: 0, isHide: false));
-        await ThrowsAsync<ArgumentException>(() => protocol.RecoverAsync("lol欧服", tid: 10377929712, pid: 153071185710, isHide: false));
+        await ThrowsAsync<ArgumentException>(() => protocol.RecoverAsync("lol欧服", 0, 0, false));
+        await ThrowsAsync<ArgumentException>(() => protocol.RecoverAsync("lol欧服", 10377929712, 153071185710, false));
 
         Assert.AreEqual(0, forum.GetFidCalls);
     }
@@ -137,9 +134,7 @@ public class ThreadWriteProtocolTests
         return new TiebaClientSession(
             new TiebaOptions
             {
-                Bduss = new string('a', 192),
-                Stoken = new string('b', 64),
-                TransportMode = TiebaTransportMode.Http
+                Bduss = new string('a', 192), Stoken = new string('b', 64), TransportMode = TiebaTransportMode.Http
             },
             httpCore,
             new StubWsCore(),
@@ -149,17 +144,16 @@ public class ThreadWriteProtocolTests
     private static TiebaClientSession CreateGuestSession(RecordingHttpCore httpCore)
     {
         return new TiebaClientSession(
-            new TiebaOptions
-            {
-                TransportMode = TiebaTransportMode.Http
-            },
+            new TiebaOptions { TransportMode = TiebaTransportMode.Http },
             httpCore,
             new StubWsCore(),
             _ => Task.FromResult("tbs"));
     }
 
-    private static string GetValue(IReadOnlyList<KeyValuePair<string, string>> data, string key) =>
-        data.Last(entry => entry.Key == key).Value;
+    private static string GetValue(IReadOnlyList<KeyValuePair<string, string>> data, string key)
+    {
+        return data.Last(entry => entry.Key == key).Value;
+    }
 
     private static async Task<TException> ThrowsAsync<TException>(Func<Task> action)
         where TException : Exception
@@ -199,7 +193,10 @@ public class ThreadWriteProtocolTests
         }
 
         public Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendAppFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -210,11 +207,16 @@ public class ThreadWriteProtocolTests
                 : AppFormResponse);
         }
 
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -233,18 +235,31 @@ public class ThreadWriteProtocolTests
             Account = newAccount;
         }
 
-        public Task ConnectAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public Task ConnectAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
-        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default) =>
+        public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+        public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CloseAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class CountingForumProtocol : IForumProtocol
@@ -257,70 +272,120 @@ public class ThreadWriteProtocolTests
             return Task.FromResult(3581744UL);
         }
 
-        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default) =>
-            Task.FromResult("lol欧服");
+        public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult("lol欧服");
+        }
 
-        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> LikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> FollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnlikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> UnfollowAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> SignAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignForumsAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default) =>
+        public Task<bool> SignGrowthAsync(CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<global::AioTieba4DotNet.Models.Forums.Forum> GetForumAsync(string fname,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+        public Task<Forum> GetForumAsync(string fname,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<FollowForums> GetFollowForumsAsync(long userId, int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-    public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
-
-        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn, int rn,
+            CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
-        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default) =>
+        public Task<bool> DislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(ulong fid, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UndislikeAsync(string fname, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<DislikeForums> GetDislikeForumsAsync(int pn, int rn,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<bool> DelBaWuAsync(string fname, string portrait, string baWuType,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

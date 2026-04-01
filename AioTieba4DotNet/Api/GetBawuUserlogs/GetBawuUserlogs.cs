@@ -25,24 +25,24 @@ internal sealed class GetBawuUserlogs(ITiebaHttpCore httpCore)
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
-            new("word", fname),
-            new("pn", pn.ToString()),
-            new("ie", "utf-8")
+            new("word", fname), new("pn", pn.ToString()), new("ie", "utf-8")
         };
 
         if (operationType != 0)
-            parameters.Add(new("op_type", operationType.ToString()));
+            parameters.Add(new KeyValuePair<string, string>("op_type", operationType.ToString()));
 
         if (!string.IsNullOrWhiteSpace(searchValue))
         {
-            parameters.Add(new("svalue", searchValue));
-            parameters.Add(new("stype", searchType == BawuSearchType.User ? "post_uname" : "op_uname"));
+            parameters.Add(new KeyValuePair<string, string>("svalue", searchValue));
+            parameters.Add(new KeyValuePair<string, string>("stype",
+                searchType == BawuSearchType.User ? "post_uname" : "op_uname"));
         }
 
         if (startTime.HasValue)
         {
-            parameters.Add(new("end", ((long)(endTime ?? DateTimeOffset.UtcNow).ToUnixTimeSeconds()).ToString()));
-            parameters.Add(new("begin", startTime.Value.ToUnixTimeSeconds().ToString()));
+            parameters.Add(new KeyValuePair<string, string>("end",
+                ((long)(endTime ?? DateTimeOffset.UtcNow).ToUnixTimeSeconds()).ToString()));
+            parameters.Add(new KeyValuePair<string, string>("begin", startTime.Value.ToUnixTimeSeconds().ToString()));
         }
 
         return parameters;

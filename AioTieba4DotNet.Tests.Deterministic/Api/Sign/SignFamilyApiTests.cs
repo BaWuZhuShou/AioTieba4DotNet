@@ -112,10 +112,7 @@ public sealed class SignFamilyApiTests
     [TestMethod]
     public async Task SignGrowth_RequestAsync_PacksPageSignWebForm()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            WebFormResponse = "{\"no\":0,\"error\":\"\"}"
-        };
+        var httpCore = new RecordingHttpCore { WebFormResponse = "{\"no\":0,\"error\":\"\"}" };
         var api = new SignGrowth(httpCore);
 
         var success = await api.RequestAsync("page_sign");
@@ -130,10 +127,7 @@ public sealed class SignFamilyApiTests
     [TestMethod]
     public async Task SignGrowth_RequestAsync_ThrowsWhenTaskCommitFails()
     {
-        var httpCore = new RecordingHttpCore
-        {
-            WebFormResponse = "{\"no\":1,\"error\":\"growth denied\"}"
-        };
+        var httpCore = new RecordingHttpCore { WebFormResponse = "{\"no\":1,\"error\":\"growth denied\"}" };
         var api = new SignGrowth(httpCore);
 
         var exception = await Assert.ThrowsAsync<TieBaServerException>(() => api.RequestAsync("page_sign"));
@@ -147,10 +141,7 @@ public sealed class SignFamilyApiTests
         public string WebFormResponse { get; init; } = "{\"no\":0,\"error\":\"\"}";
         public string CustomResponse { get; init; } = "{}";
 
-        public Account? Account { get; private set; } = new(new string('a', 192), new string('b', 64))
-        {
-            Tbs = "tbs"
-        };
+        public Account? Account { get; private set; } = new(new string('a', 192), new string('b', 64)) { Tbs = "tbs" };
 
         public HttpClient HttpClient { get; } = new();
 
@@ -182,11 +173,16 @@ public sealed class SignFamilyApiTests
             return Task.FromResult(AppFormResponse);
         }
 
-        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default) =>
+        public Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
+        {
             throw new NotImplementedException();
+        }
 
         public Task<string> SendWebGetAsync(Uri uri, List<KeyValuePair<string, string>> parameters,
-            CancellationToken cancellationToken = default) => throw new NotImplementedException();
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
 
         public Task<string> SendWebFormAsync(Uri uri, List<KeyValuePair<string, string>> data,
             CancellationToken cancellationToken = default)
@@ -196,11 +192,20 @@ public sealed class SignFamilyApiTests
             return Task.FromResult(WebFormResponse);
         }
 
-        public string GetAppFormValue(string key) => LastAppFormData.Last(entry => entry.Key == key).Value;
+        public string GetAppFormValue(string key)
+        {
+            return LastAppFormData.Last(entry => entry.Key == key).Value;
+        }
 
-        public string GetWebFormValue(string key) => LastWebFormData.Last(entry => entry.Key == key).Value;
+        public string GetWebFormValue(string key)
+        {
+            return LastWebFormData.Last(entry => entry.Key == key).Value;
+        }
 
-        public string GetCustomFormValue(string key) => LastCustomFormData.Last(entry => entry.Key == key).Value;
+        public string GetCustomFormValue(string key)
+        {
+            return LastCustomFormData.Last(entry => entry.Key == key).Value;
+        }
 
         private static async Task<List<KeyValuePair<string, string>>> ReadFormDataAsync(HttpRequestMessage request,
             CancellationToken cancellationToken)

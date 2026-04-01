@@ -143,6 +143,7 @@ public class Thread
     ///     最后回复时间 10位时间戳 以秒为单位
     /// </summary>
     public int LastTime { get; init; }
+
     /// <summary>
     ///     字符串输出
     /// </summary>

@@ -21,10 +21,13 @@ internal delegate Task<bool> SendChatroomMessageHandler(Account account, UserInf
     long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds, int robotCode,
     CancellationToken cancellationToken);
 
-internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUserProtocol users,
+internal sealed class MessagesProtocol(
+    TiebaOperationDispatcher dispatcher,
+    IUserProtocol users,
     SendChatroomMessageHandler? sendChatroomMessageAsync = null) : IMessagesProtocol
 {
     private readonly MessageCursorStore _cursorStore = new();
+
     private readonly SendChatroomMessageHandler _sendChatroomMessageAsync =
         sendChatroomMessageAsync ?? DefaultSendChatroomMessageAsync;
 
@@ -36,7 +39,7 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<AtMessages>(
                 nameof(GetAtsAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetAts(session.HttpCore).RequestAsync(pn, ct)),
             cancellationToken);
     }
@@ -49,7 +52,7 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<ReplyMessages>(
                 nameof(GetRepliesAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetReplys(session.HttpCore).RequestAsync(pn, ct)),
             cancellationToken);
     }
@@ -57,8 +60,10 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
     private static Task<bool> DefaultSendChatroomMessageAsync(Account account, UserInfo selfInfo,
         ForumLevelInfo forumLevel, long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds,
         int robotCode, CancellationToken cancellationToken)
-        => new BlcpChatroomSender().SendMessageAsync(account, selfInfo, forumLevel, chatroomId, forumId, text,
+    {
+        return new BlcpChatroomSender().SendMessageAsync(account, selfInfo, forumLevel, chatroomId, forumId, text,
             atUserIds, robotCode, cancellationToken);
+    }
 
     public async Task<WsMsgGroups> GetGroupMessagesAsync(int getType, CancellationToken cancellationToken = default)
     {
@@ -95,7 +100,7 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
         var messageId = await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<long>(
                 nameof(SendMessageAsync),
-                TiebaOperationCapabilities.WebSocketOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.WebSocketOnly(true),
                 ExecuteWebSocketAsync: (session, ct) =>
                     new SendMsg(session.WsCore).RequestAsync(userId, content, _cursorStore.GetRecordId(), ct)),
             cancellationToken);
@@ -133,7 +138,7 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(SendChatroomMessageAsync),
-                TiebaOperationCapabilities.HttpOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.HttpOnly(true),
                 async (session, ct) =>
                 {
                     var account = session.RequireAuthenticatedAccount(nameof(SendChatroomMessageAsync));
@@ -165,12 +170,13 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
 
         var groupId = _cursorStore.PrivateGroupId > 0 ? _cursorStore.PrivateGroupId : message.GroupId;
         if (groupId <= 0)
-            throw new TiebaProtocolException("Unable to determine the private-message group id for read-state updates.");
+            throw new TiebaProtocolException(
+                "Unable to determine the private-message group id for read-state updates.");
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
                 nameof(SetMessageReadAsync),
-                TiebaOperationCapabilities.WebSocketOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.WebSocketOnly(true),
                 ExecuteWebSocketAsync: (session, ct) =>
                     new SetMsgReaded(session.WsCore).RequestAsync(message.User.UserId, groupId, message.MsgId, ct)),
             cancellationToken);
@@ -188,8 +194,9 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
             async ct => await dispatcher.ExecuteAsync(
                 new TiebaOperationDescriptor<IReadOnlyList<WsMsgGroupInfo>>(
                     "InitWebSocketAsync",
-                    TiebaOperationCapabilities.WebSocketOnly(requiresAuthentication: true),
-                    ExecuteWebSocketAsync: (session, innerCt) => new InitWebSocket(session.WsCore).RequestAsync(innerCt)),
+                    TiebaOperationCapabilities.WebSocketOnly(true),
+                    ExecuteWebSocketAsync: (session, innerCt) =>
+                        new InitWebSocket(session.WsCore).RequestAsync(innerCt)),
                 ct),
             cancellationToken);
     }
@@ -201,7 +208,7 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
         var groups = await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<WsMsgGroups>(
                 nameof(GetGroupMessagesAsync),
-                TiebaOperationCapabilities.WebSocketOnly(requiresAuthentication: true),
+                TiebaOperationCapabilities.WebSocketOnly(true),
                 ExecuteWebSocketAsync: (session, ct) =>
                     new GetGroupMsg(session.WsCore).RequestAsync(groupIds, lastMessageIds, getType, ct)),
             cancellationToken);
@@ -229,20 +236,17 @@ internal sealed class MessagesProtocol(TiebaOperationDispatcher dispatcher, IUse
             throw new ArgumentException("At least one group id is required.", nameof(groupIds));
 
         foreach (var groupId in groupIds)
-        {
             if (groupId <= 0)
                 throw new ArgumentOutOfRangeException(nameof(groupIds), groupId, "Group ids must be positive.");
-        }
     }
 
     private static void ValidateAtUserIds(IReadOnlyList<long>? atUserIds)
     {
         if (atUserIds is null) return;
         foreach (var userId in atUserIds)
-        {
             if (userId <= 0)
-                throw new ArgumentOutOfRangeException(nameof(atUserIds), userId, "Mentioned user ids must be positive.");
-        }
+                throw new ArgumentOutOfRangeException(nameof(atUserIds), userId,
+                    "Mentioned user ids must be positive.");
     }
 
     private static void ValidateForumId(ulong forumId)

@@ -31,8 +31,7 @@ internal static partial class RankForumsMapper
         var cells = CellRegex.Matches(row)
             .Select(static match => new
             {
-                ClassName = match.Groups["className"].Value,
-                Content = match.Groups["content"].Value
+                ClassName = match.Groups["className"].Value, Content = match.Groups["content"].Value
             })
             .ToList();
 
@@ -45,7 +44,7 @@ internal static partial class RankForumsMapper
             SignNum = ParseInt(StripTags(cells[2].Content)),
             MemberNum = ParseInt(StripTags(cells[3].Content)),
             HasBaWu = !cells[4].ClassName.Contains("no_bawu", StringComparison.OrdinalIgnoreCase)
-                && !cells[4].Content.Contains("no_bawu", StringComparison.OrdinalIgnoreCase)
+                      && !cells[4].Content.Contains("no_bawu", StringComparison.OrdinalIgnoreCase)
         };
     }
 
@@ -53,15 +52,7 @@ internal static partial class RankForumsMapper
     {
         var paginationMatch = PaginationRegex.Match(body);
         if (!paginationMatch.Success)
-        {
-            return new RankForumsPage
-            {
-                CurrentPage = 1,
-                TotalPage = 1,
-                HasMore = false,
-                HasPrevious = false
-            };
-        }
+            return new RankForumsPage { CurrentPage = 1, TotalPage = 1, HasMore = false, HasPrevious = false };
 
         var content = paginationMatch.Groups["content"].Value;
         var current = ParseInt(CurrentPageRegex.Match(content).Groups["current"].Value, 1);
@@ -69,16 +60,19 @@ internal static partial class RankForumsMapper
 
         return new RankForumsPage
         {
-            CurrentPage = current,
-            TotalPage = total,
-            HasMore = current < total,
-            HasPrevious = current > 1
+            CurrentPage = current, TotalPage = total, HasMore = current < total, HasPrevious = current > 1
         };
     }
 
-    private static string StripTags(string value) => WebUtility.HtmlDecode(TagRegex.Replace(value, string.Empty)).Trim();
+    private static string StripTags(string value)
+    {
+        return WebUtility.HtmlDecode(TagRegex.Replace(value, string.Empty)).Trim();
+    }
 
-    private static int ParseInt(string value, int defaultValue = 0) => int.TryParse(value, out var parsed) ? parsed : defaultValue;
+    private static int ParseInt(string value, int defaultValue = 0)
+    {
+        return int.TryParse(value, out var parsed) ? parsed : defaultValue;
+    }
 
     [GeneratedRegex("<tr[^>]*class=\"[^\"]*j_rank_row[^\"]*\"[^>]*>(?<row>.*?)</tr>",
         RegexOptions.IgnoreCase | RegexOptions.Singleline)]

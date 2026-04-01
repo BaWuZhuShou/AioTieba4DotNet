@@ -22,11 +22,11 @@ internal class DelBaWu(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <summary>
     ///     发送移除吧务请求
     /// </summary>
-/// <param name="fid">吧 ID</param>
-/// <param name="portrait">用户头像 ID (Portrait)</param>
-/// <param name="baWuType">吧务类型 (如 manager, moderator)</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>操作是否成功</returns>
+    /// <param name="fid">吧 ID</param>
+    /// <param name="portrait">用户头像 ID (Portrait)</param>
+    /// <param name="baWuType">吧务类型 (如 manager, moderator)</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>操作是否成功</returns>
     public async Task<bool> RequestAsync(long fid, string portrait, string baWuType,
         CancellationToken cancellationToken = default)
     {

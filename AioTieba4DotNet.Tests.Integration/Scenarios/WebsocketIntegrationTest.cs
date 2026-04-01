@@ -81,13 +81,10 @@ public sealed class WebsocketIntegrationTest : TestBase
     private static bool IsRemoteCloseWithoutHandshake(Exception exception)
     {
         for (var current = exception; current is not null; current = current.InnerException!)
-        {
             if (current is WebSocketException websocketException &&
-                websocketException.Message.Contains("without completing the close handshake", StringComparison.OrdinalIgnoreCase))
-            {
+                websocketException.Message.Contains("without completing the close handshake",
+                    StringComparison.OrdinalIgnoreCase))
                 return true;
-            }
-        }
 
         return false;
     }
@@ -97,16 +94,13 @@ public sealed class WebsocketIntegrationTest : TestBase
         for (var current = exception; current is not null; current = current.InnerException!)
         {
             if (current is WebSocketException websocketException &&
-                (websocketException.Message.Contains("Unable to connect to the remote server", StringComparison.OrdinalIgnoreCase) ||
-                 websocketException.Message.Contains("without completing the close handshake", StringComparison.OrdinalIgnoreCase)))
-            {
+                (websocketException.Message.Contains("Unable to connect to the remote server",
+                     StringComparison.OrdinalIgnoreCase) ||
+                 websocketException.Message.Contains("without completing the close handshake",
+                     StringComparison.OrdinalIgnoreCase)))
                 return true;
-            }
 
-            if (current.Message.Contains("远程主机强迫关闭了一个现有的连接", StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
+            if (current.Message.Contains("远程主机强迫关闭了一个现有的连接", StringComparison.OrdinalIgnoreCase)) return true;
         }
 
         return false;

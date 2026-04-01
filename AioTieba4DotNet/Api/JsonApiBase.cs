@@ -11,6 +11,8 @@ internal abstract class JsonApiBase(ITiebaHttpCore httpCore)
     protected readonly ITiebaHttpCore HttpCore = httpCore;
 
     protected static Newtonsoft.Json.Linq.JObject ParseBody(string body, string codeField = "error_code",
-        string msgField = "error_msg") =>
-        ApiResponseValidator.ParseJsonBody(body, codeField, msgField);
+        string msgField = "error_msg")
+    {
+        return ApiResponseValidator.ParseJsonBody(body, codeField, msgField);
+    }
 }

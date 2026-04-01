@@ -16,7 +16,8 @@ public sealed class FollowForumTest : TestBase
     [TestMethod]
     public async Task FollowAsync_UsesSafeForumFixtureAndRestoresOriginalState()
     {
-        var fixture = await RequireSafeForumFixtureAsync(nameof(FollowAsync_UsesSafeForumFixtureAndRestoresOriginalState));
+        var fixture =
+            await RequireSafeForumFixtureAsync(nameof(FollowAsync_UsesSafeForumFixtureAndRestoresOriginalState));
         var wasFollowing = await IsForumFollowedAsync(fixture.Fid);
         Cleanup.RecordObject(TestCategoryNames.ForumExtensions, "forum", fixture.Fid.ToString(),
             TestCleanupObjectRelation.MutationTarget, $"safe forum follow state for {fixture.ResolvedName}");
@@ -24,16 +25,16 @@ public sealed class FollowForumTest : TestBase
             $"restore follow state for {fixture.ResolvedName}",
             wasFollowing ? "re-follow the safe forum" : "undo the temporary follow state",
             async cancellationToken =>
-        {
-            var isFollowingNow = await IsForumFollowedAsync(fixture.Fid, cancellationToken);
-            if (wasFollowing == isFollowingNow)
-                return;
+            {
+                var isFollowingNow = await IsForumFollowedAsync(fixture.Fid, cancellationToken);
+                if (wasFollowing == isFollowingNow)
+                    return;
 
-            if (wasFollowing)
-                await Client.Forums.FollowAsync(fixture.Fid, cancellationToken);
-            else
-                await Client.Forums.UnfollowAsync(fixture.Fid, cancellationToken);
-        });
+                if (wasFollowing)
+                    await Client.Forums.FollowAsync(fixture.Fid, cancellationToken);
+                else
+                    await Client.Forums.UnfollowAsync(fixture.Fid, cancellationToken);
+            });
 
         if (wasFollowing)
         {

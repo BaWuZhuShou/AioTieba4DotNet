@@ -32,6 +32,7 @@ public class FragTiebaPlus : IFrag
     {
         return new Dictionary<string, object>();
     }
+
     /// <summary>
     ///     格式设置成员
     /// </summary>

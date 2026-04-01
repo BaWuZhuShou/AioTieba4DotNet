@@ -8,12 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" />
-        <PackageReference Include="Google.Protobuf.Tools" GeneratePathProperty="true" />
+        <PackageReference Include="Google.Protobuf"/>
+        <PackageReference Include="Google.Protobuf.Tools" GeneratePathProperty="true"/>
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Deterministic" />
+        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Deterministic"/>
     </ItemGroup>
 
     <!-- 自动将 protoc 复制到输出目录，实现彻底独立运行 -->

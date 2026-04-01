@@ -15,11 +15,7 @@ internal class GetCid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         if (string.IsNullOrWhiteSpace(cname))
             return 0;
 
-        var data = new List<KeyValuePair<string, string>>
-        {
-            new("BDUSS", HttpCore.Account!.Bduss),
-            new("word", fname)
-        };
+        var data = new List<KeyValuePair<string, string>> { new("BDUSS", HttpCore.Account!.Bduss), new("word", fname) };
 
         var requestUri = new UriBuilder(Const.AppInsecureScheme, Const.AppBaseHost, 80, "/c/c/bawu/goodlist").Uri;
         var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);

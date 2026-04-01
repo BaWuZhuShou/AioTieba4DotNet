@@ -36,9 +36,12 @@ public sealed class BlcpChatroomSenderTests
         var self = new UserInfo { UserId = 42, UserName = "sender", Portrait = "tb.1.sender" };
         var level = new ForumLevelInfo { UserLevel = 9 };
 
-        await ThrowsAsync<ArgumentNullException>(() => sender.SendMessageAsync(null!, self, level, 1, 2, "hi", null, -1, CancellationToken.None));
-        await ThrowsAsync<ArgumentNullException>(() => sender.SendMessageAsync(account, null!, level, 1, 2, "hi", null, -1, CancellationToken.None));
-        await ThrowsAsync<ArgumentNullException>(() => sender.SendMessageAsync(account, self, null!, 1, 2, "hi", null, -1, CancellationToken.None));
+        await ThrowsAsync<ArgumentNullException>(() =>
+            sender.SendMessageAsync(null!, self, level, 1, 2, "hi", null, -1, CancellationToken.None));
+        await ThrowsAsync<ArgumentNullException>(() =>
+            sender.SendMessageAsync(account, null!, level, 1, 2, "hi", null, -1, CancellationToken.None));
+        await ThrowsAsync<ArgumentNullException>(() =>
+            sender.SendMessageAsync(account, self, null!, 1, 2, "hi", null, -1, CancellationToken.None));
 
         var exception = await ThrowsAsync<TiebaConfigurationException>(() =>
             sender.SendMessageAsync(account, self, level, 1, 2, "hi", null, -1, CancellationToken.None));
@@ -50,7 +53,7 @@ public sealed class BlcpChatroomSenderTests
     public void BlcpHelpers_BuildRpcBodyAndAtData_ReturnExpectedShapes()
     {
         var rpcBody = InvokeStatic<byte[]>(typeof(BlcpChatroomSender), "BuildRpcBody", 3L, 185L, 123456L, 1);
-        var rpcMeta = global::RpcMeta.Parser.ParseFrom(rpcBody);
+        var rpcMeta = RpcMeta.Parser.ParseFrom(rpcBody);
         var atData = InvokeStatic<JArray>(typeof(BlcpChatroomSender), "BuildAtData", (IReadOnlyList<long>)[11L, 22L]);
 
         Assert.AreEqual(3L, rpcMeta.Request.ServiceId);
@@ -65,8 +68,10 @@ public sealed class BlcpChatroomSenderTests
     [TestMethod]
     public void BlcpHelpers_BuildMainData_HandlesVipAndNonVipBranches()
     {
-        var vipMainData = InvokeStatic<JArray>(typeof(BlcpChatroomSender), "BuildMainData", 9, true, 12, 7356044UL, "tb.1.sender", "Sender");
-        var normalMainData = InvokeStatic<JArray>(typeof(BlcpChatroomSender), "BuildMainData", 3, false, 5, 7356044UL, "tb.1.sender", "Sender");
+        var vipMainData = InvokeStatic<JArray>(typeof(BlcpChatroomSender), "BuildMainData", 9, true, 12, 7356044UL,
+            "tb.1.sender", "Sender");
+        var normalMainData = InvokeStatic<JArray>(typeof(BlcpChatroomSender), "BuildMainData", 3, false, 5, 7356044UL,
+            "tb.1.sender", "Sender");
 
         Assert.AreEqual(4, vipMainData.Count);
         Assert.AreEqual(3, normalMainData.Count);
@@ -100,7 +105,7 @@ public sealed class BlcpChatroomSenderTests
         byte[] compressed;
         using (var target = new MemoryStream())
         {
-            using var gzip = new GZipStream(target, CompressionLevel.SmallestSize, leaveOpen: true);
+            using var gzip = new GZipStream(target, CompressionLevel.SmallestSize, true);
             gzip.Write(Encoding.UTF8.GetBytes("hello world"));
             gzip.Flush();
             gzip.Dispose();
@@ -112,11 +117,13 @@ public sealed class BlcpChatroomSenderTests
 
         var buffer = new byte[5];
         var stream = new MemoryStream([1, 2, 3, 4, 5]);
-        InvokeStaticTask(typeof(BlcpChatroomSender), "ReadExactAsync", stream, buffer, CancellationToken.None).GetAwaiter().GetResult();
+        InvokeStaticTask(typeof(BlcpChatroomSender), "ReadExactAsync", stream, buffer, CancellationToken.None)
+            .GetAwaiter().GetResult();
         CollectionAssert.AreEqual(new byte[] { 1, 2, 3, 4, 5 }, buffer);
 
         var eof = Throws<EndOfStreamException>(() =>
-            InvokeStaticTask(typeof(BlcpChatroomSender), "ReadExactAsync", new MemoryStream([1, 2]), new byte[3], CancellationToken.None)
+            InvokeStaticTask(typeof(BlcpChatroomSender), "ReadExactAsync", new MemoryStream([1, 2]), new byte[3],
+                    CancellationToken.None)
                 .GetAwaiter().GetResult());
         StringAssert.Contains(eof.Message, "closed unexpectedly");
     }
@@ -137,11 +144,11 @@ public sealed class BlcpChatroomSenderTests
     public void EnuidCodec_PrivateHelpers_CoverLookupAndEncodingBranches()
     {
         var buildTable = typeof(EnuidCodec).GetMethod("BuildTable", BindingFlags.NonPublic | BindingFlags.Static)
-            ?? throw new InvalidOperationException("BuildTable not found.");
+                         ?? throw new InvalidOperationException("BuildTable not found.");
         var xorWords = typeof(EnuidCodec).GetMethod("XorWords", BindingFlags.NonPublic | BindingFlags.Static)
-            ?? throw new InvalidOperationException("XorWords not found.");
+                       ?? throw new InvalidOperationException("XorWords not found.");
         var encodeInPlace = typeof(EnuidCodec).GetMethod("EncodeInPlace", BindingFlags.NonPublic | BindingFlags.Static)
-            ?? throw new InvalidOperationException("EncodeInPlace not found.");
+                            ?? throw new InvalidOperationException("EncodeInPlace not found.");
 
         var table = ((int[] State, byte[] Map))buildTable.Invoke(null, [7, true])!;
         var remainderBuffer = new byte[12];
@@ -160,7 +167,8 @@ public sealed class BlcpChatroomSenderTests
         Assert.AreEqual(6, alignedEncodedLength);
         Assert.AreEqual('C', (char)remainderBuffer[8]);
         Assert.AreEqual('A', (char)alignedBuffer[4]);
-        CollectionAssert.AreNotEqual(new byte[] { (byte)'c', (byte)'u', (byte)'i', (byte)'d', (byte)'7' }, remainderBuffer[..5]);
+        CollectionAssert.AreNotEqual(new byte[] { (byte)'c', (byte)'u', (byte)'i', (byte)'d', (byte)'7' },
+            remainderBuffer[..5]);
 
         var stateOnly = ((int[] State, byte[] Map))buildTable.Invoke(null, [0, false])!;
         var wholeWordBuffer = new byte[] { 1, 2, 3, 4 };
@@ -174,7 +182,8 @@ public sealed class BlcpChatroomSenderTests
     {
         await WithAuthenticatedTlsStreamsAsync(async (clientStream, serverStream) =>
         {
-            var writerTask = WriteBytesAsync(serverStream, [(byte)'x', (byte)'c', (byte)'p', 1], CancellationToken.None);
+            var writerTask =
+                WriteBytesAsync(serverStream, [(byte)'x', (byte)'c', (byte)'p', 1], CancellationToken.None);
 
             var exception = await ThrowsAsync<TiebaProtocolException>(() =>
                 InvokeStaticTaskWithResultAsync(typeof(BlcpChatroomSender), "ReadFrameAsync", clientStream,
@@ -209,13 +218,13 @@ public sealed class BlcpChatroomSenderTests
         {
             var payload = Encoding.UTF8.GetBytes("{\"message\":\"hello\"}");
             var writerTask = WriteBlcpFrameAsync(serverStream,
-                CreateRpcResponseBody(compressType: 1),
+                CreateRpcResponseBody(1),
                 CompressGzip(payload),
                 CancellationToken.None);
 
             var result = await InvokeStaticTaskWithResultAsync(typeof(BlcpChatroomSender), "ReadFrameAsync",
                 clientStream, CancellationToken.None);
-            var rpcMeta = (global::RpcMeta)GetTupleItem(result!, "Item1");
+            var rpcMeta = (RpcMeta)GetTupleItem(result!, "Item1");
             var lcmBody = (byte[])GetTupleItem(result!, "Item2");
 
             Assert.AreEqual(1, rpcMeta.CompressType);
@@ -236,7 +245,7 @@ public sealed class BlcpChatroomSenderTests
             var serverTask = Task.Run(async () =>
             {
                 var request = await ReadBlcpFrameAsync(serverStream, CancellationToken.None);
-                var rpcData = global::RpcData.Parser.ParseFrom(request.LcmBody);
+                var rpcData = RpcData.Parser.ParseFrom(request.LcmBody);
 
                 Assert.AreEqual(1L, request.RpcMeta.Request.ServiceId);
                 Assert.AreEqual(1L, request.RpcMeta.Request.MethodId);
@@ -245,10 +254,7 @@ public sealed class BlcpChatroomSenderTests
 
                 await WriteBlcpFrameAsync(serverStream,
                     CreateRpcResponseBody(),
-                    new global::RpcData
-                    {
-                        LcmResponse = new global::LcmResponse { ErrorCode = 0, ErrorMsg = "success" }
-                    }.ToByteArray(),
+                    new RpcData { LcmResponse = new LcmResponse { ErrorCode = 0, ErrorMsg = "success" } }.ToByteArray(),
                     CancellationToken.None);
             });
 
@@ -265,10 +271,7 @@ public sealed class BlcpChatroomSenderTests
                 _ = await ReadBlcpFrameAsync(serverStream, CancellationToken.None);
                 await WriteBlcpFrameAsync(serverStream,
                     CreateRpcResponseBody(),
-                    new global::RpcData
-                    {
-                        LcmResponse = new global::LcmResponse { ErrorCode = 7, ErrorMsg = "denied" }
-                    }.ToByteArray(),
+                    new RpcData { LcmResponse = new LcmResponse { ErrorCode = 7, ErrorMsg = "denied" } }.ToByteArray(),
                     CancellationToken.None);
             });
 
@@ -394,9 +397,7 @@ public sealed class BlcpChatroomSenderTests
         {
             var payload = new JObject
             {
-                ["client_logid"] = 123456,
-                ["rpc"] = "{\"rpc_retry_time\":9}",
-                ["message"] = "preserved"
+                ["client_logid"] = 123456, ["rpc"] = "{\"rpc_retry_time\":9}", ["message"] = "preserved"
             };
 
             var serverTask = Task.Run(async () =>
@@ -513,8 +514,9 @@ public sealed class BlcpChatroomSenderTests
                     CancellationToken.None);
             });
 
-            var loginPayload = CreateLoginPayload(triggerId: 11, uk: 0, bdUk: string.Empty);
-            var result = (bool)(await InvokeInstanceTaskWithResultAsync(sender, "SendChatroomPayloadAsync", clientStream,
+            var loginPayload = CreateLoginPayload(11, 0, string.Empty);
+            var result = (bool)(await InvokeInstanceTaskWithResultAsync(sender, "SendChatroomPayloadAsync",
+                clientStream,
                 account, vipSelf, forumLevel, loginPayload, 12345L, 7356044UL, "hello", atData, 7,
                 CancellationToken.None))!;
 
@@ -545,8 +547,9 @@ public sealed class BlcpChatroomSenderTests
                     CancellationToken.None);
             });
 
-            var loginPayload = CreateLoginPayload(triggerId: 22, uk: 456, bdUk: "login-bduk");
-            var result = (bool)(await InvokeInstanceTaskWithResultAsync(sender, "SendChatroomPayloadAsync", clientStream,
+            var loginPayload = CreateLoginPayload(22, 456, "login-bduk");
+            var result = (bool)(await InvokeInstanceTaskWithResultAsync(sender, "SendChatroomPayloadAsync",
+                clientStream,
                 account, plainSelf, forumLevel, loginPayload, 12345L, 7356044UL, "hello", (JArray?)null, -1,
                 CancellationToken.None))!;
 
@@ -610,10 +613,7 @@ public sealed class BlcpChatroomSenderTests
     {
         return new Account(new string('b', 192), new string('s', 64))
         {
-            SampleId = "sample-1",
-            ClientId = "client-1",
-            CuidGalaxy2 = "123456",
-            C3Aid = "c3-aid"
+            SampleId = "sample-1", ClientId = "client-1", CuidGalaxy2 = "123456", C3Aid = "c3-aid"
         };
     }
 
@@ -630,9 +630,9 @@ public sealed class BlcpChatroomSenderTests
             var acceptTask = listener.AcceptTcpClientAsync();
             await client.ConnectAsync(IPAddress.Loopback, port);
             using var server = await acceptTask;
-            using var clientStream = new SslStream(client.GetStream(), leaveInnerStreamOpen: false,
+            using var clientStream = new SslStream(client.GetStream(), false,
                 static (_, _, _, _) => true);
-            using var serverStream = new SslStream(server.GetStream(), leaveInnerStreamOpen: false);
+            using var serverStream = new SslStream(server.GetStream(), false);
 
             void AbortHandshake()
             {
@@ -694,7 +694,8 @@ public sealed class BlcpChatroomSenderTests
         san.AddIpAddress(IPAddress.Loopback);
         request.CertificateExtensions.Add(san.Build());
         request.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(request.PublicKey, false));
-        using var certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1));
+        using var certificate =
+            request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1));
         return new X509Certificate2(certificate.Export(X509ContentType.Pfx), (string?)null,
             X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
     }
@@ -735,7 +736,7 @@ public sealed class BlcpChatroomSenderTests
         await ReadExactAsync(stream, payload, cancellationToken);
 
         return new BlcpFrame(
-            global::RpcMeta.Parser.ParseFrom(payload.AsSpan(0, rpcLength).ToArray()),
+            RpcMeta.Parser.ParseFrom(payload.AsSpan(0, rpcLength).ToArray()),
             payload.AsSpan(rpcLength).ToArray());
     }
 
@@ -753,9 +754,9 @@ public sealed class BlcpChatroomSenderTests
 
     private static byte[] CreateRpcResponseBody(int compressType = 0, string errorText = "success", int errorCode = 0)
     {
-        return new global::RpcMeta
+        return new RpcMeta
         {
-            Response = new global::RpcResponseMeta { ErrorCode = errorCode, ErrorText = errorText },
+            Response = new RpcResponseMeta { ErrorCode = errorCode, ErrorText = errorText },
             CompressType = compressType
         }.ToByteArray();
     }
@@ -763,7 +764,7 @@ public sealed class BlcpChatroomSenderTests
     private static byte[] CompressGzip(byte[] payload)
     {
         using var target = new MemoryStream();
-        using (var gzip = new GZipStream(target, CompressionLevel.SmallestSize, leaveOpen: true))
+        using (var gzip = new GZipStream(target, CompressionLevel.SmallestSize, true))
         {
             gzip.Write(payload);
         }
@@ -784,7 +785,7 @@ public sealed class BlcpChatroomSenderTests
                    ?? throw new InvalidOperationException($"Property '{propertyName}' was not found."));
     }
 
-    private sealed record BlcpFrame(global::RpcMeta RpcMeta, byte[] LcmBody);
+    private sealed record BlcpFrame(RpcMeta RpcMeta, byte[] LcmBody);
 
     private static TException Throws<TException>(Action action)
         where TException : Exception

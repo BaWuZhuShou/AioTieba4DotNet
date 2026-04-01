@@ -21,15 +21,15 @@ internal class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         var forumDict = o.GetValue("forum")?.ToObject<Dictionary<string, object>>();
         if (forumDict == null) throw new TieBaServerException(-1, "无法获取到贴吧数据!");
 
-        return AioTieba4DotNet.Internal.Mapping.ForumMapper.FromTbData(forumDict);
+        return Internal.Mapping.ForumMapper.FromTbData(forumDict);
     }
 
-/// <summary>
-///     发送获取贴吧基础信息请求
-/// </summary>
-/// <param name="fname">吧名</param>
-/// <param name="cancellationToken">取消令牌</param>
-/// <returns>贴吧基础信息</returns>
+    /// <summary>
+    ///     发送获取贴吧基础信息请求
+    /// </summary>
+    /// <param name="fname">吧名</param>
+    /// <param name="cancellationToken">取消令牌</param>
+    /// <returns>贴吧基础信息</returns>
     public async Task<Forum> RequestAsync(string fname, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>> { new("kw", fname) };
