@@ -5,31 +5,35 @@ param(
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $manifestPath = Join-Path $repoRoot ".sisyphus/evidence/local-verification.manifest.json"
 $schemaPath = Join-Path $repoRoot ".sisyphus/evidence/local-verification.manifest.schema.json"
+$docsInstallCommand = 'pnpm --dir docs install'
+$docsBuildCommand = 'pnpm --dir docs run build'
 
 $requiredDocs = @(
-    "docs/parity-v3.md",
-    "docs/migration-v2-to-v3.md",
-    "docs/release-notes-v3.md",
     "README.md",
-    "docs/getting-started.md",
-    "docs/how-to-forums.md",
-    "docs/how-to-threads.md",
-    "docs/how-to-users.md",
-    "docs/how-to-messages.md",
-    "docs/modules.md",
-    "docs/advanced.md",
-    "docs/troubleshooting.md",
-    "docs/todo.md",
+    "docs/index.md",
+    "docs/guide/getting-started.md",
+    "docs/how-to/forums.md",
+    "docs/how-to/threads.md",
+    "docs/how-to/users.md",
+    "docs/how-to/messages.md",
+    "docs/how-to/admins.md",
+    "docs/reference/modules.md",
+    "docs/guide/advanced.md",
+    "docs/guide/troubleshooting.md",
+    "docs/related/migration-v2-to-v3.md",
+    "docs/related/release-notes-v3.md",
+    "docs/related/parity-v3.md",
+    "docs/archive/todo.md",
     "AGENTS.md",
     ".junie/guidelines.md"
 )
 
 $archivedDocs = @(
     [ordered]@{
-        path = "docs/todo.md"
+        path = "docs/archive/todo.md"
         requiredPhrases = @(
             "historical archive",
-            "docs/parity-v3.md",
+            "docs/related/parity-v3.md",
             "authoritative parity ledger"
         )
     }
@@ -40,8 +44,8 @@ $legacyRegressionScopes = @(
     [ordered]@{ path = "AioTieba4DotNet/AGENTS.md"; includes = @() },
     [ordered]@{ path = ".github/workflows/publish.yml"; includes = @() },
     [ordered]@{ path = "README.md"; includes = @() },
-    [ordered]@{ path = "docs/parity-v3.md"; includes = @() },
-    [ordered]@{ path = "docs/todo.md"; includes = @() }
+    [ordered]@{ path = "docs/related/parity-v3.md"; includes = @() },
+    [ordered]@{ path = "docs/archive/todo.md"; includes = @() }
 )
 
 $forbiddenLegacyPatterns = @(
@@ -259,7 +263,7 @@ if ($manifest.generatedBy -notin @('scripts/verify-local.ps1', 'scripts/verify-l
 }
 
 if ((ConvertTo-Json $manifest.requiredDocs -Depth 4) -ne (ConvertTo-Json $requiredDocs -Depth 4)) {
-    $errors.Add('Manifest requiredDocs must match the Task 5 governance doc contract exactly.')
+    $errors.Add('Manifest requiredDocs must match the active VitePress docs contract exactly.')
 }
 
 if ((ConvertTo-Json $manifest.localEntrypoints -Depth 4) -ne (ConvertTo-Json $localEntrypoints -Depth 4)) {
@@ -398,3 +402,5 @@ if ($errors.Count -gt 0) {
 Write-Host 'Local verification contract validation passed.'
 Write-Host 'Manifest: .sisyphus/evidence/local-verification.manifest.json'
 Write-Host 'Schema:   .sisyphus/evidence/local-verification.manifest.schema.json'
+Write-Host "Docs install: $docsInstallCommand"
+Write-Host "Docs build:   $docsBuildCommand"

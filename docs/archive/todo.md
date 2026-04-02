@@ -1,10 +1,10 @@
-﻿# docs/todo.md historical archive
+﻿# docs/archive/todo.md historical archive
 
 本文件现在是 **historical archive**，只保留早期粗粒度 backlog 作为历史参考。
 
-- `docs/parity-v3.md` 才是 v3 的 **authoritative parity ledger** / 当前范围真源。
+- `docs/related/parity-v3.md` 才是 v3 的 **authoritative parity ledger** / 当前范围真源。
 - 本页 **不是** 当前 parity 真值、**不是** release gate 判定依据、**不是** v3 完成度清单。
-- 下面保留的旧清单可能缺项、命名过粗、状态过时，不能再和 `docs/parity-v3.md` 竞争解释权。
+- 下面保留的旧清单可能缺项、命名过粗、状态过时，不能再和 `docs/related/parity-v3.md` 竞争解释权。
 
 ---
 

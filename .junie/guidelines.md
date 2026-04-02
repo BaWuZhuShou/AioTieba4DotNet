@@ -16,18 +16,19 @@
 - `Client.cs` 是过时兼容包装层。除非任务明确要求兼容性维护，不要把新能力继续堆到这里。
 
 ## 3. Parity truth 与文档契约
-- `docs/parity-v3.md` 是 **authoritative parity ledger**。
-- `docs/todo.md` 现在只保留为历史 backlog 和旧记录，不能再当成当前 parity truth。
+- `docs/related/parity-v3.md` 是 **authoritative parity ledger**。
+- `docs/archive/todo.md` 现在只保留为历史 backlog 和旧记录，不能再当成当前 parity truth。
 - 当前用户文档 IA 以 `README.md` 为入口，向下连接：
-  - `docs/getting-started.md`
-  - 四份 task guide
-  - `docs/modules.md`
-  - `docs/advanced.md`
-  - `docs/troubleshooting.md`
-  - `docs/migration-v2-to-v3.md`
-  - `docs/release-notes-v3.md`
-  - `docs/parity-v3.md`
-- `scripts/verify-local.ps1` 和 `scripts/verify-local.sh` 中的 `requiredDocs` 列表是本地文档契约检查的真源。新增或移除必需 guide 时，必须同步更新脚本与受影响文档。
+  - `docs/index.md`
+  - `docs/guide/getting-started.md`
+  - `docs/how-to/*.md`
+  - `docs/reference/modules.md`
+  - `docs/guide/advanced.md`
+  - `docs/guide/troubleshooting.md`
+  - `docs/related/migration-v2-to-v3.md`
+  - `docs/related/release-notes-v3.md`
+  - `docs/related/parity-v3.md`
+- `scripts/verify-local.ps1` 和 `scripts/verify-local.sh` 中的 `requiredDocs` 列表是本地文档契约检查的真源。新增或移除必需 guide 时，必须同步更新脚本、manifest、deterministic contract test 与受影响文档。
 
 ## 4. upstream 对齐规则
 - 任何 API 的参数语义、请求打包、响应解析、错误处理和可观察行为，都必须优先对齐 Python `aiotieba`。
@@ -57,6 +58,7 @@
 - GitHub Actions 必须保持 **build-only**。
 - GitHub Actions 不运行任何 `dotnet test`，也不运行 secret-backed lane。
 - 当前 GitHub Actions gate 只允许以下检查族：`restore`、`build`、`codegen`、`packaging`。
+- `docs/` 文档站是本地 pnpm workspace；依赖安装与站点构建命令固定为 `pnpm --dir docs install` 和 `pnpm --dir docs run build`。
 - 测试执行、凭据门控、live cleanup、lane 证据，以及 docs / evidence contract 都属于本地或 agent-run 范围，通过 `scripts/test-lane.*` 与 `scripts/verify-local.*` 管理。
 - `.sisyphus/evidence/local-verification.manifest.json` 与其 schema 是本地验证契约的一部分，不能把它们降级成可选材料。
 
@@ -88,4 +90,4 @@
 ## 11. 维护动作要求
 - 当稳定规则发生变化时，先更新实现附近的局部 guide，再把跨目录都成立的部分回写到本文件。
 - 避免把同一大段规则复制到 repo root、library、testing、generator 多处。每个 guide 只写它自己该负责的范围。
-- 如果活动 guide 出现 stale guidance，例如 v2、多目标框架、旧 tests project、`docs/todo.md` 真源说法，应该优先修正。
+- 如果活动 guide 出现 stale guidance，例如 v2、多目标框架、旧 tests project、把 `docs/archive/todo.md` 当真源，或继续声明旧 flat docs IA，应该优先修正。

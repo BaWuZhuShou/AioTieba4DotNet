@@ -12,8 +12,10 @@ fi
 repo_root="$(cd -- "$(dirname -- "$0")/.." && pwd)"
 manifest_path="$repo_root/.sisyphus/evidence/local-verification.manifest.json"
 schema_path="$repo_root/.sisyphus/evidence/local-verification.manifest.schema.json"
+docs_install_command="pnpm --dir docs install"
+docs_build_command="pnpm --dir docs run build"
 
-python - "$repo_root" "$manifest_path" "$schema_path" "$mode" <<'PY'
+python - "$repo_root" "$manifest_path" "$schema_path" "$mode" "$docs_install_command" "$docs_build_command" <<'PY'
 import json
 import os
 import re
@@ -21,32 +23,34 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 
-repo_root, manifest_path, schema_path, mode = sys.argv[1:5]
+repo_root, manifest_path, schema_path, mode, docs_install_command, docs_build_command = sys.argv[1:7]
 
 required_docs = [
-    "docs/parity-v3.md",
-    "docs/migration-v2-to-v3.md",
-    "docs/release-notes-v3.md",
     "README.md",
-    "docs/getting-started.md",
-    "docs/how-to-forums.md",
-    "docs/how-to-threads.md",
-    "docs/how-to-users.md",
-    "docs/how-to-messages.md",
-    "docs/modules.md",
-    "docs/advanced.md",
-    "docs/troubleshooting.md",
-    "docs/todo.md",
+    "docs/index.md",
+    "docs/guide/getting-started.md",
+    "docs/how-to/forums.md",
+    "docs/how-to/threads.md",
+    "docs/how-to/users.md",
+    "docs/how-to/messages.md",
+    "docs/how-to/admins.md",
+    "docs/reference/modules.md",
+    "docs/guide/advanced.md",
+    "docs/guide/troubleshooting.md",
+    "docs/related/migration-v2-to-v3.md",
+    "docs/related/release-notes-v3.md",
+    "docs/related/parity-v3.md",
+    "docs/archive/todo.md",
     "AGENTS.md",
     ".junie/guidelines.md",
 ]
 
 archived_docs = [
     {
-        "path": "docs/todo.md",
+        "path": "docs/archive/todo.md",
         "requiredPhrases": [
             "historical archive",
-            "docs/parity-v3.md",
+            "docs/related/parity-v3.md",
             "authoritative parity ledger",
         ],
     },
@@ -57,8 +61,8 @@ legacy_regression_scopes = [
     {"path": "AioTieba4DotNet/AGENTS.md", "includes": []},
     {"path": ".github/workflows/publish.yml", "includes": []},
     {"path": "README.md", "includes": []},
-    {"path": "docs/parity-v3.md", "includes": []},
-    {"path": "docs/todo.md", "includes": []},
+    {"path": "docs/related/parity-v3.md", "includes": []},
+    {"path": "docs/archive/todo.md", "includes": []},
 ]
 
 forbidden_legacy_patterns = [
@@ -259,7 +263,7 @@ if manifest.get("generatedBy") not in {"scripts/verify-local.sh", "scripts/verif
     errors.append("Manifest generatedBy must be scripts/verify-local.sh or scripts/verify-local.ps1.")
 
 if manifest.get("requiredDocs") != required_docs:
-    errors.append("Manifest requiredDocs must match the Task 5 governance doc contract exactly.")
+    errors.append("Manifest requiredDocs must match the active VitePress docs contract exactly.")
 
 if manifest.get("localEntrypoints") != local_entrypoints:
     errors.append("Manifest localEntrypoints must match the expected local verification entrypoints.")
@@ -363,4 +367,6 @@ if errors:
 print("Local verification contract validation passed.")
 print(f"Manifest: {os.path.relpath(manifest_path, repo_root).replace(os.sep, '/')}")
 print(f"Schema:   {os.path.relpath(schema_path, repo_root).replace(os.sep, '/')}")
+print(f"Docs install: {docs_install_command}")
+print(f"Docs build:   {docs_build_command}")
 PY

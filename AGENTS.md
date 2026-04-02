@@ -15,7 +15,7 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 ├── AioTieba4DotNet.Tests.Integration/ # controlled real-link verification
 ├── AioTieba4DotNet.Tests.Live/        # credentialed and mutation-capable verification
 ├── ProtoGenerator/                    # protobuf generator for Api/**/*.proto
-├── docs/                              # user-facing docs plus parity and migration docs
+├── docs/                              # VitePress source docs, related governance docs, and archive notes
 ├── skills/                            # exported AI skill packages for external installation and reuse
 ├── .github/                           # build, publish, and release automation
 ├── .junie/                            # durable maintenance rules and architecture knowledge
@@ -32,16 +32,17 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 | Integration verification | `AioTieba4DotNet.Tests.Integration/` | Staged real-link checks using the sequencing manifest |
 | Live verification | `AioTieba4DotNet.Tests.Live/` | Credentialed, mutation-capable, cleanup-aware scenarios |
 | Generator maintenance | `ProtoGenerator/` | Regenerates `.proto` outputs under `AioTieba4DotNet/Api/**/Protobuf` |
-| Docs contract and IA | `README.md`, `docs/getting-started.md`, `docs/*.md` | README routes to task guides, reference, advanced, troubleshooting, migration, release notes, and parity ledger |
+| Docs contract and IA | `README.md`, `docs/index.md`, `docs/guide/**`, `docs/how-to/**`, `docs/reference/modules.md`, `docs/related/**`, `docs/archive/todo.md` | README bridges into the active VitePress source tree; related and archive docs stay outside the main how-to/reference path |
 | Exported AI skill package | `skills/aiotieba4dotnet/` | Portable consumer-facing skill package with `SKILL.md`, `skill.json`, and `package.json` |
-| Parity truth | `docs/parity-v3.md` | Authoritative v3 parity ledger against upstream export scope |
-| Historical backlog only | `docs/todo.md` | Stale history and backlog notes, not active product truth |
+| Parity truth | `docs/related/parity-v3.md` | Authoritative v3 parity ledger against upstream export scope |
+| Historical backlog only | `docs/archive/todo.md` | Stale history and backlog notes, not active product truth |
 | Local verification entrypoints | `scripts/test-lane.*`, `scripts/verify-local.*` | Canonical local and agent-run verification commands |
 
 ## CONVENTIONS
 - Treat this root guide as repo routing only. Put durable cross-cutting rules in `.junie/guidelines.md`, and put local implementation rules in the nearest child `AGENTS.md`.
 - The active product baseline is v3 on `net10.0` only. Do not leave active guide text claiming `net8.0`, `net9.0`, multi-target support, or a live v2 release line.
-- `docs/parity-v3.md` is the parity truth. `docs/todo.md` is historical context only and must not be presented as the authoritative parity ledger.
+- `docs/related/parity-v3.md` is the parity truth. `docs/archive/todo.md` is historical context only and must not be presented as the authoritative parity ledger.
+- The active consumer docs IA is `README.md -> docs/index.md -> docs/guide/getting-started.md -> docs/how-to/*.md -> docs/reference/modules.md -> docs/guide/{advanced,troubleshooting}.md -> docs/related/*.md`; `docs/archive/todo.md` stays archive-only.
 - The user-facing docs contract is anchored by `README.md` and the required docs list enforced locally by `scripts/verify-local.*`.
 - Exported skill packages under `skills/` are distribution artifacts, not repo-local `.agents` helpers. Keep their `SKILL.md`, `skill.json`, `package.json`, and README mentions aligned when install identity or public usage guidance changes.
 - GitHub Actions must stay build-only. They validate restore, build, codegen, and packaging, but they do not run `dotnet test` or invoke local verification contracts.
@@ -49,7 +50,7 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 - `aiotieba/` is reference material only. Never treat it as maintained product code, release scope, or coverage scope.
 
 ## ANTI-PATTERNS
-- Treating `docs/todo.md` as current parity truth.
+- Treating `docs/archive/todo.md` as current parity truth.
 - Adding stale guide text that claims the repo still ships multi-target or v2-era baselines.
 - Hand-editing generated protobuf C# instead of editing `.proto` files and rerunning `ProtoGenerator`.
 - Putting test-lane or cleanup policy in GitHub Actions instead of the local verification scripts and sequencing manifest.
@@ -59,6 +60,8 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 ```bash
 dotnet restore --nologo
 dotnet build AioTieba4DotNet.sln --configuration Release --no-restore
+pnpm --dir docs install
+pnpm --dir docs run build
 pwsh ./scripts/verify-local.ps1
 pwsh ./scripts/test-lane.ps1 deterministic
 pwsh ./scripts/test-lane.ps1 integration

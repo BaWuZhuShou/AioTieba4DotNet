@@ -15,19 +15,20 @@ public sealed class LocalVerificationContractTests
 {
     private static readonly string[] RequiredDocs =
     [
-        "docs/parity-v3.md",
-        "docs/migration-v2-to-v3.md",
-        "docs/release-notes-v3.md",
         "README.md",
-        "docs/getting-started.md",
-        "docs/how-to-forums.md",
-        "docs/how-to-threads.md",
-        "docs/how-to-users.md",
-        "docs/how-to-messages.md",
-        "docs/modules.md",
-        "docs/advanced.md",
-        "docs/troubleshooting.md",
-        "docs/todo.md",
+        "docs/index.md",
+        "docs/guide/getting-started.md",
+        "docs/how-to/forums.md",
+        "docs/how-to/threads.md",
+        "docs/how-to/users.md",
+        "docs/how-to/messages.md",
+        "docs/reference/modules.md",
+        "docs/guide/advanced.md",
+        "docs/guide/troubleshooting.md",
+        "docs/related/migration-v2-to-v3.md",
+        "docs/related/release-notes-v3.md",
+        "docs/related/parity-v3.md",
+        "docs/archive/todo.md",
         "AGENTS.md",
         ".junie/guidelines.md"
     ];
@@ -190,7 +191,7 @@ public sealed class LocalVerificationContractTests
         Assert.IsFalse(policy.GetProperty("githubActionsRunsTests").GetBoolean());
         Assert.IsFalse(policy.GetProperty("githubActionsRunsSecretBackedLanes").GetBoolean());
         CollectionAssert.AreEqual(
-            new[] { "restore", "build", "codegen", "docs-contract", "packaging", "evidence-presence" },
+            new[] { "restore", "build", "codegen", "packaging" },
             ReadStringArray(policy.GetProperty("releaseGateChecks")));
 
         CollectionAssert.AreEqual(
@@ -212,8 +213,11 @@ public sealed class LocalVerificationContractTests
         {
             Assert.Contains("local-verification.manifest.json", scriptText);
             Assert.Contains("local-verification.manifest.schema.json", scriptText);
-            Assert.Contains("docs/release-notes-v3.md", scriptText);
-            Assert.Contains("docs/todo.md", scriptText);
+            Assert.Contains("docs/index.md", scriptText);
+            Assert.Contains("docs/guide/getting-started.md", scriptText);
+            Assert.Contains("docs/reference/modules.md", scriptText);
+            Assert.Contains("docs/related/release-notes-v3.md", scriptText);
+            Assert.Contains("docs/archive/todo.md", scriptText);
             Assert.Contains("local-deterministic-verification.md", scriptText);
             Assert.Contains("codeql-analysis.yml", scriptText);
             Assert.Contains("dotnet-version: 10.x", scriptText);
@@ -221,6 +225,8 @@ public sealed class LocalVerificationContractTests
             Assert.Contains("AioTieba4DotNet.Testing/appsettings.test.json", scriptText);
             Assert.Contains("Update this file", scriptText);
             Assert.Contains("AioTieba4DotNet/AGENTS.md", scriptText);
+            Assert.Contains("pnpm --dir docs install", scriptText);
+            Assert.Contains("pnpm --dir docs run build", scriptText);
         }
     }
 

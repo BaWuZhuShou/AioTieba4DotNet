@@ -1,6 +1,6 @@
 # v3 parity ledger
 
-这份文档是 v3 的 upstream 对齐账本，不是上手教程。第一次接入请从 [README](../README.md) 和 [getting-started.md](./getting-started.md) 开始，按任务落地请看四份 how-to 页面，最后再回来查这份 ledger。
+这份文档是 v3 的 upstream 对齐账本，不是上手教程。第一次接入请从 [README](../../README.md) 和 [getting-started.md](../guide/getting-started.md) 开始，按任务落地请看五份 how-to 页面，最后再回来查这份 ledger。
 
 This ledger freezes parity scope from the upstream truth sources:
 
@@ -11,7 +11,7 @@ Rules used for this freeze:
 
 - `aiotieba.api` and `aiotieba.api._protobuf` are empty package markers, so they are verified in evidence and intentionally have no ledger row.
 - Package path plus exported symbol names are authoritative. Odd upstream names such as `Replys` and `get_uinfo_getUserInfo_web` remain visible in upstream identifiers, while the normalized C# surface can expose consumer-facing names such as `UserPostGroups`.
-- `docs/todo.md` is a historical archive only. `docs/parity-v3.md` is the authoritative parity ledger, and the `Notes` column records whether each item was missing there, overly coarse there, or already outdated there.
+- `docs/archive/todo.md` is a historical archive only. `docs/related/parity-v3.md` is the authoritative parity ledger, and the `Notes` column records whether each item was missing there, overly coarse there, or already outdated there.
 - Current C# public baseline is `ITiebaClient` / `TiebaClient` with `Forums`, `Threads`, `Users`, `Admins`, `Messages`, and `Client`, plus `TiebaOptions`, DI registration, and factory entrypoints.
 - Rows whose upstream names include `old`, `v1`, or other legacy wording describe intentionally retained peer families or peer-family data shapes. They stay searchable by upstream identity, but the active C# surface uses the normalized public names listed in this ledger.
 

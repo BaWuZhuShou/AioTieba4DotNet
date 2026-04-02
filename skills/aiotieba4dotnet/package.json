@@ -24,9 +24,6 @@
     "SKILL.md",
     "references/"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "opencodeSkill": {
     "skillName": "aiotieba4dotnet",
     "manifest": "skill.json",
@@ -41,12 +38,10 @@
     },
     "installHints": {
       "preferredManifest": "skill.json",
-      "packageName": "@bawuzhushou/aiotieba4dotnet-skill",
-      "packageManager": "npm-compatible",
       "directory": "skills/aiotieba4dotnet",
       "exampleCommands": [
-        "npx skills install @bawuzhushou/aiotieba4dotnet-skill",
-        "npx skills add github:BaWuZhuShou/AioTieba4DotNet/skills/aiotieba4dotnet"
+        "npx skills add BaWuZhuShou/AioTieba4DotNet",
+        "npx skills add https://github.com/BaWuZhuShou/AioTieba4DotNet/tree/master/skills/aiotieba4dotnet"
       ]
     },
     "references": [

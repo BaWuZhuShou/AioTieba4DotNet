@@ -278,3 +278,5 @@ aiotieba
 skills-lock.json
 **/coverage.json
 nupkg/
+**/.vitepress/cache
+**/.vitepress/dist

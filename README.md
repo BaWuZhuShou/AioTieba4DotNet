@@ -1,21 +1,18 @@
-﻿# AioTieba4DotNet
+# AioTieba4DotNet
 
-面向 .NET 10 的异步贴吧客户端。v3 保留 `TiebaClient`、`ITiebaClient`、`AddAioTiebaClient(...)` 和 `ITiebaClientFactory`
-这条主线，同时把公开能力稳定在六个模块上：`Forums`、`Threads`、`Users`、`Admins`、`Messages`、`Client`。
+面向 .NET 10 的异步贴吧客户端库，适合在 .NET 应用中完成贴吧读取、用户资料查询、消息处理，以及常见的吧务管理任务。
 
 [![NuGet version (AioTieba4DotNet)](https://img.shields.io/nuget/v/AioTieba4DotNet.svg?style=flat-square)](https://www.nuget.org/packages/AioTieba4DotNet/)
 [![CodeQL](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/codeql-analysis.yml)
 [![QQ Group](https://img.shields.io/badge/QQ%E7%BE%A4-278662447-blue)](https://qm.qq.com/q/a0I1RepoA2)
 
-## v3 公开契约速览
+## 这个库能做什么
 
-- **支持矩阵**: v3 只支持 `net10.0`。
-- **客户端入口**: 继续使用 `TiebaClient`、`ITiebaClient`、`AddAioTiebaClient(...)`、`ITiebaClientFactory`。
-- **模块边界**: `Forums`、`Threads`、`Users`、`Admins`、`Messages`、`Client`。
-- **传输策略**: 公开层继续通过 `TiebaOptions.TransportMode` 控制，默认 `Auto`，唯一公开覆盖为 `Http`。
-- **消息能力**: 消息读写与 push 解析统一在 `client.Messages`，`client.Client` 只保留生命周期与连接初始化职责。
-- **异常模型**: 本地凭据缺失抛出 `TiebaAuthenticationException`，配置错误抛出 `TiebaConfigurationException`，服务端业务拒绝抛出
-  `TieBaServerException`。
+- 查吧、搜索、签到、统计和关注管理
+- 读取主题帖、楼层、楼中楼，以及常见的帖子管理操作
+- 查询用户资料、主页、社交关系和黑名单
+- 处理 `@`、回复、私信、吧群消息和推送通知解析
+- 完成吧务团队、权限、封禁、日志和申诉处理
 
 ## 安装
 
@@ -23,157 +20,59 @@
 dotnet add package AioTieba4DotNet
 ```
 
-## 30 秒快速开始
+## 最小示例
 
-### 访客读取
+先用一个不依赖登录态的读取调用确认环境可用：
 
 ```csharp
 using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var fid = await client.Forums.GetFidAsync("csharp");
+var forum = await client.Forums.GetForumAsync("csharp");
 var threads = await client.Threads.GetThreadsAsync("csharp");
 
-Console.WriteLine($"fid = {fid}");
-Console.WriteLine($"当前页主题数 = {threads.Objs.Count}");
+Console.WriteLine($"吧名: {forum.Fname}");
+Console.WriteLine($"当前页主题数: {threads.Objs.Count}");
 ```
 
-### 已登录任务
+如果你接下来要做签到、私信、消息读取或吧务操作，再继续看文档里的登录态示例和对应场景页。
 
-```csharp
-using AioTieba4DotNet;
+## 从哪里开始
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+如果你是第一次接触这个库，推荐直接从在线文档开始。文档站会把快速开始、API 参考和使用场景串在一起，阅读路径更顺。
 
-await client.Forums.SignAsync("csharp");
+- [在线文档](https://docs.tieba.bakasnow.com/): 从文档站首页开始，继续查看快速开始、使用场景和完整说明。
+- [API 参考](https://docs.tieba.bakasnow.com/reference/modules): 直接查根客户端、配置、六个模块和公开异常。
 
-var replies = await client.Messages.GetRepliesAsync();
-Console.WriteLine($"回复消息页数 = {replies.Page?.CurrentPage}");
-```
+## 让 AI 快速用起来
 
-### 用 `TiebaOptions` 控制超时和传输
-
-```csharp
-using AioTieba4DotNet;
-using AioTieba4DotNet.Contracts;
-
-using var client = new TiebaClient(new TiebaOptions
-{
-    Bduss = "你的BDUSS",
-    Stoken = "你的STOKEN",
-    TransportMode = TiebaTransportMode.Http,
-    RequestTimeout = TimeSpan.FromSeconds(15),
-    MaxReadRetryAttempts = 1
-});
-
-var profile = await client.Users.GetProfileAsync("某个 portrait 或用户名");
-Console.WriteLine(profile.ShowName);
-```
-
-## 文档导航
-
-### 1. 上手
-
-- [Getting Started](./docs/getting-started.md): 从安装、创建客户端到 DI 注册的完整入门路径。
-
-### 2. 按任务找答案
-
-- [How-to: Forums](./docs/how-to-forums.md): 查吧、关注、签到、搜索、统计，以及 `SelfFollowForums` / `SelfFollowForumsV1`
-  这两组并列支持的接口。
-- [How-to: Threads](./docs/how-to-threads.md): 读帖、回复、楼中楼、互动、吧务操作。
-- [How-to: Users](./docs/how-to-users.md): 用户资料、社交关系、对应 aiotieba `user_info` 的两组用户信息接口、黑名单两组接口，以及主页与资料修改。
-- [How-to: Messages](./docs/how-to-messages.md): @、回复、私信、吧群消息、push 解析。
-
-### 3. 参考与深入说明
-
-- [Modules Reference](./docs/modules.md): 根客户端、模块、DI、factory、选项与模块方法索引。
-- [Advanced](./docs/advanced.md): 传输策略、DI、自定义 `HttpClient`、多账户、生命周期、异常模型。
-- [Troubleshooting](./docs/troubleshooting.md): 凭据、配置、超时、消息边界与常见问题排查。
-
-### 4. 迁移、发布与范围说明
-
-- [Migration v2 to v3](./docs/migration-v2-to-v3.md): 从 v2 升级到 v3 时最需要关注的 breaking changes 和替代路径。
-- [Release Notes v3](./docs/release-notes-v3.md): v3 的发布定位、亮点和本地验证要求。
-- [Parity v3](./docs/parity-v3.md): upstream 对齐账本和 v3 范围说明。
-
-## AI Skill 导出
-
-仓库额外导出了一个面向 **AioTieba4DotNet 库使用者** 的 AI skill，位置在 `skills/aiotieba4dotnet/`。
-
-- 发布包名：`@bawuzhushou/aiotieba4dotnet-skill`
-- 机器可读 manifest：`skills/aiotieba4dotnet/skill.json`
-- 包级 manifest：`skills/aiotieba4dotnet/package.json`
-- 目标：让 AI 按中文请求稳定生成使用这个库的最小可运行 C# 示例，而不是维护仓库源码
-
-如果安装器同时支持包元信息和 skill 元信息，优先读取 `skill.json` 获取 skill 入口、语言、模式和引用文件，再用 `package.json` 读取发布信息。
-
-如果你的 skill 工具链支持 `npx skills` 风格的安装，典型用法可以写成：
+这个仓库额外导出了一个面向 `AioTieba4DotNet` 使用者的 agent skill。对支持 `skills add` 的 AI 工具，可以直接从这个仓库添加，让它更快生成正确的初始化、模块选择和示例代码。
 
 ```bash
-npx skills install BaWuZhuShou/AioTieba4DotNet
+npx skills add BaWuZhuShou/AioTieba4DotNet
 ```
 
-## 公开模块概览
+如果你更想直接指向这个 skill 所在目录，也可以使用：
 
-### `client.Forums`
+```bash
+npx skills add https://github.com/BaWuZhuShou/AioTieba4DotNet/tree/master/skills/aiotieba4dotnet
+```
 
-- 贴吧 ID、名称、详情、`forumInfo`
-- 关注、取消关注、签到、批量签到、成长签到
-- `GetSelfFollowForumsAsync(...)` 与 `GetSelfFollowForumsV1Async(...)` 这两组并列支持的关注吧读取接口
-- 精确搜索、排行、统计、图片与头像辅助
+更多说明见文档里的[AI Skill 使用](https://docs.tieba.bakasnow.com/guide/getting-started#ai-skill)。
 
-### `client.Threads`
+## 相关项目
 
-- 主题帖、回帖、楼中楼、分区映射、回收站读取
-- 点赞、点踩、取消点赞、取消点踩
-- 回复、删除、批量删除、加精、置顶、移动、推荐、恢复、隐私设置
-
-### `client.Users`
-
-- TBS、自身信息、资料页、主页、吧内用户信息
-- 关注、粉丝、黑名单、移除粉丝
-- `GetUserInfoAppAsync(...)` 与 `GetUserInfoWebAsync(...)`，分别对应 aiotieba `get_uinfo_getuserinfo_app` 和
-  `get_uinfo_getuserinfo_web`
-- `GetBlacklistAsync(...)` 与 `GetBlacklistOldAsync(...)` / `AddBlacklistOldAsync(...)` / `RemoveBlacklistOldAsync(...)`
-  ，分别对应当前黑名单接口和 `_old` 这一组接口
-- `GetProfileAsync(...)` 与 `GetHomepageAsync(...)` 这两类分开的用户读取操作
-- 资料修改、黑名单与昵称写入
-
-### `client.Admins`
-
-- 吧务团队、吧务权限、吧务黑名单
-- 吧务日志、封禁列表、解封申诉
-- `AddBawuAsync(...)`、`DelBawuAsync(...)`、`BlockAsync(...)` 等后台管理写操作，其中 `Bawu` 直接对应 upstream `add_bawu` /
-  `del_bawu`
-- 需要明确权限和安全夹具的后台管理写操作
-
-### `client.Messages`
-
-- `GetAtsAsync()`、`GetRepliesAsync()`
-- `GetGroupMessagesAsync(...)`、`SendMessageAsync(...)`
-- `SendChatroomMessageAsync(...)`、`SetMessageReadAsync(...)`
-- `ParsePushNotifications(...)`
-
-### `client.Client`
-
-- `InitWebSocketAsync()`
-- `InitZIdAsync()`
-- `SyncAsync()`
+- [aiotieba](https://github.com/lumina37/aiotieba): 上游 Python 实现，也是接口行为和能力对齐的重要参考。
+- [TiebaManager](https://github.com/dog194/TiebaManager): 吧务管理器项目，可参考实际的管理场景组织方式。
+- [tbclient.protobuf](https://github.com/n0099/tbclient.protobuf): 贴吧相关 Protobuf 定义参考。
 
 ## 开发与贡献
 
-- **对齐 upstream**: 任何 API 的参数语义、请求打包、响应解析和错误处理都必须严格参照 Python
-  版 [aiotieba](https://github.com/lumina37/aiotieba)。
-- **生成链路**: 修改 `.proto` 后请运行 `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`，不要手改生成的 `.cs`
-  文件。
-- **本地验证**: GitHub Actions 只做 restore、build、codegen 和 packaging 检查。deterministic、integration、live 验证，以及本地 docs / evidence contract，通过 `scripts/test-lane.*` 与 `scripts/verify-local.*` 在本地或 agent 环境执行。
-
-## 友情链接
-
-- 原版 Python 实现: [aiotieba](https://github.com/lumina37/aiotieba)
-- 吧务管理器: [TiebaManager](https://github.com/dog194/TiebaManager)
-- Protobuf 定义: [tbclient.protobuf](https://github.com/n0099/tbclient.protobuf)
+- 任何 API 的参数语义、请求打包、响应解析和错误处理，都应优先对齐 Python 版 [aiotieba](https://github.com/lumina37/aiotieba)。
+- 修改 `.proto` 后，请运行 `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`，不要手改生成的 `.cs` 文件。
+- 文档站源码位于 `docs/`，本地构建使用 `pnpm --dir docs install` 和 `pnpm --dir docs run build`。
+- 本地验证入口包括 `scripts/verify-local.*` 与 `scripts/test-lane.*`。
 
 ## 开源协议
 

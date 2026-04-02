@@ -1,6 +1,6 @@
-# Troubleshooting
+# 排障
 
-这页按“现象 -> 原因 -> 处理方式”来整理。先看最接近你的症状，不需要从头读完。
+这页按现象、原因、处理方式整理。先找最接近你的症状，不需要从头读完。
 
 ## 创建客户端就报配置错误
 
@@ -30,7 +30,7 @@
 
 ### 原因
 
-这是 v3 的设计。缺少必需凭据时，客户端会在本地直接失败，而不是把请求发出去再等一个不稳定的服务端错误形状。
+这是当前客户端的行为。缺少必需凭据时，客户端会在本地直接失败，而不是把请求发出去再等一个不稳定的服务端错误形状。
 
 ### 建议处理
 
@@ -43,7 +43,7 @@
 ### 常见表现
 
 - `TieBaServerException`
-- 错误码看起来像“吧不存在”“无权限”“请先登录”
+- 错误码看起来像吧不存在、无权限或请先登录
 
 ### 说明
 
@@ -63,16 +63,27 @@
 
 ### 原因
 
-这是 v3 的公开边界调整。`client.Client` 现在只保留生命周期能力，消息读写统一在 `client.Messages`。
+这是当前公开边界。`client.Client` 现在只保留生命周期能力，消息读写统一在 `client.Messages`。
 
-### 替代路径
+### 正确入口
 
 - `client.Messages.GetAtsAsync()`
 - `client.Messages.GetRepliesAsync()`
 - `client.Messages.GetGroupMessagesAsync(...)`
 - `client.Messages.SendMessageAsync(...)`
 - `client.Messages.SendChatroomMessageAsync(...)`
+- `client.Messages.SetMessageReadAsync(...)`
 - `client.Messages.ParsePushNotifications(...)`
+
+### 生命周期相关入口
+
+- `client.Client.InitWebSocketAsync()`
+- `client.Client.InitZIdAsync()`
+- `client.Client.SyncAsync()`
+
+> 模块边界
+> - 消息业务 API 去 `client.Messages` 找。
+> - 连接预热、标识初始化和同步 helper 去 `client.Client` 找。
 
 ## 想读取 `@` 或回复消息，但不知道该用哪个模块
 
@@ -96,33 +107,28 @@ using var client = new TiebaClient(new TiebaOptions
 
 ## 想提前建立 WebSocket 连接
 
-调用 `client.Client.InitWebSocketAsync()`。如果你的目标只是普通只读论坛查询，一般不用这么做。它更适合消息组或连接敏感场景。
+调用 `client.Client.InitWebSocketAsync()`。如果你的目标只是普通只读论坛查询，一般不用这么做。它更适合消息组或连接敏感场景，而且不会改变消息 API 仍然归属 `client.Messages` 这一点。
 
 ## 从 v2 升级后找不到入口
 
-先对照下面这组变化:
+先对照下面这组变化。
 
-- `Messages` 现在负责消息读取、私信和 push 解析
+- `Messages` 现在负责消息读取、私信、吧群消息、已读状态和推送通知解析
 - `Admins` 现在负责吧务和后台管理操作
 - `Client` 只保留生命周期方法
 - v3 只支持 `net10.0`
 
-更完整的迁移说明见 [migration-v2-to-v3.md](./migration-v2-to-v3.md)。
+## 文档路径改了之后，应该从哪里继续找
 
-## 只通过了文件存在校验，但文档还是不好找
+文档现在按三类入口组织。
 
-这是 Task 20 要修正的问题。当前 v3 的建议导航是:
+1. `/how-to/*`，面向直接任务操作
+2. `/reference/modules`，面向完整公开 API 查询
+3. `/guide/advanced` 与 `/guide/troubleshooting`，面向设计解释和问题排查
 
-1. `README.md`
-2. `docs/getting-started.md`
-3. 任务导向 how-to 页面
-4. `docs/modules.md` 参考索引
-5. `docs/advanced.md` / `docs/troubleshooting.md`
-6. `docs/migration-v2-to-v3.md` / `docs/release-notes-v3.md` / `docs/parity-v3.md`
+## 下一步
 
-## 相关阅读
-
-- [Getting Started](./getting-started.md)
-- [Modules Reference](./modules.md)
-- [Advanced](./advanced.md)
-- [Migration v2 to v3](./migration-v2-to-v3.md)
+- 想直接完成消息任务，继续看 [消息相关](/how-to/messages)
+- 想直接完成吧务团队、权限、封禁或申诉处理任务，继续看 [吧务相关](/how-to/admins)
+- 想确认六个模块和根客户端入口，继续看 [API 参考](/reference/modules)
+- 想理解传输和生命周期设计，继续看 [进阶](/guide/advanced)

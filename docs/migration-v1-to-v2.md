@@ -318,8 +318,8 @@ using var client2 = factory.CreateClient(new TiebaOptions
 ## 9. 参考文档
 
 - [README](../README.md)
-- [modules.md](./modules.md)
-- [advanced.md](./advanced.md)
+- [modules.md](./reference/modules.md)
+- [advanced.md](./guide/advanced.md)
 - [release-notes-v2.md](./release-notes-v2.md)
 
 如果你需要核对这份迁移指南是否覆盖了全部 intentional breaks，请参阅 `.sisyphus/evidence/task-5-public-api-inventory.md`。

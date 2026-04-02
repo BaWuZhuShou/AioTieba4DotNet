@@ -88,11 +88,14 @@ v3 的根客户端稳定为:
 主文档链路现在是:
 
 1. `README.md`
-2. `docs/getting-started.md`
-3. 四份按任务组织的 how-to 页面
-4. `docs/modules.md` 参考索引
-5. `docs/advanced.md` / `docs/troubleshooting.md`
-6. `docs/migration-v2-to-v3.md` / `docs/parity-v3.md`
+2. `docs/index.md`
+3. `docs/guide/getting-started.md`
+4. 五份位于 `docs/how-to/` 的按任务组织页面
+5. `docs/reference/modules.md` 参考索引
+6. `docs/guide/advanced.md` / `docs/guide/troubleshooting.md`
+7. `docs/related/migration-v2-to-v3.md` / `docs/related/release-notes-v3.md` / `docs/related/parity-v3.md`
+
+`docs/archive/todo.md` 继续保留为历史 archive，只用于旧 backlog 参考，不再属于主用户旅程。
 
 ## 发布治理
 
@@ -107,17 +110,22 @@ v3 发布线继续采用 **build/codegen/packaging only** 的 GitHub Actions 治
 发版前需要保证以下文件齐备并且非空:
 
 - `README.md`
-- `docs/getting-started.md`
-- `docs/how-to-forums.md`
-- `docs/how-to-threads.md`
-- `docs/how-to-users.md`
-- `docs/how-to-messages.md`
-- `docs/modules.md`
-- `docs/advanced.md`
-- `docs/troubleshooting.md`
-- `docs/migration-v2-to-v3.md`
-- `docs/release-notes-v3.md`
-- `docs/parity-v3.md`
+- `docs/index.md`
+- `docs/guide/getting-started.md`
+- `docs/how-to/forums.md`
+- `docs/how-to/threads.md`
+- `docs/how-to/users.md`
+- `docs/how-to/messages.md`
+- `docs/how-to/admins.md`
+- `docs/reference/modules.md`
+- `docs/guide/advanced.md`
+- `docs/guide/troubleshooting.md`
+- `docs/related/migration-v2-to-v3.md`
+- `docs/related/release-notes-v3.md`
+- `docs/related/parity-v3.md`
+- `docs/archive/todo.md`
+- `AGENTS.md`
+- `.junie/guidelines.md`
 
 此外还要保留本地验证 manifest 与三份 lane evidence:
 
@@ -131,11 +139,13 @@ v3 发布线继续采用 **build/codegen/packaging only** 的 GitHub Actions 治
 1. `dotnet restore --nologo`
 2. `dotnet build AioTieba4DotNet.sln --configuration Release --no-restore --nologo`
 3. `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`
-4. `pwsh ./scripts/verify-local.ps1 -ValidateOnly`
-5. 完整检查 README 和 docs 导航链路
+4. `pnpm --dir docs install`
+5. `pnpm --dir docs run build`
+6. `pwsh ./scripts/verify-local.ps1 -ValidateOnly`
+7. 完整检查 README 和 docs 导航链路
 
 ## 相关文档
 
-- [Getting Started](./getting-started.md)
+- [Getting Started](../guide/getting-started.md)
 - [Migration v2 to v3](./migration-v2-to-v3.md)
 - [Parity v3](./parity-v3.md)
