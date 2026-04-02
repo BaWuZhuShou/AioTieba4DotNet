@@ -1,16 +1,16 @@
-using AioTieba4DotNet.Models.Users;
+using AioTieba4DotNet.Models.Shared;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Internal.Mapping;
 
 internal static class UserInfoJsonMapper
 {
-    internal static UserInfoJson FromTbData(JObject data)
+    internal static UserInfo FromTbData(JObject data)
     {
         var portrait = data["portrait"]?.ToString() ?? string.Empty;
         if (portrait.Contains('?')) portrait = portrait[..^13];
 
-        return new UserInfoJson
+        return new UserInfo
         {
             UserId = data["id"]?.ToObject<long>() ?? 0,
             Portrait = portrait,

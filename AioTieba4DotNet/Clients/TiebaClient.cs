@@ -1,6 +1,3 @@
-using AioTieba4DotNet.Contracts;
-using AioTieba4DotNet.Modules;
-
 namespace AioTieba4DotNet;
 
 /// <summary>
@@ -24,7 +21,7 @@ public sealed class TiebaClient : ITiebaClient
     ///     使用公开账户对象创建客户端
     /// </summary>
     /// <param name="account">账户凭据对象</param>
-    public TiebaClient(AioTieba4DotNet.Contracts.Account account)
+    public TiebaClient(Contracts.Account account)
         : this((account ?? throw new ArgumentNullException(nameof(account))).ToTiebaOptions())
     {
     }
@@ -49,25 +46,25 @@ public sealed class TiebaClient : ITiebaClient
         Client = runtime.Client;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IForumModule Forums { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IThreadModule Threads { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IUserModule Users { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IAdminModule Admins { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IMessagesModule Messages { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IClientModule Client { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Dispose()
     {
         _lifetime.Dispose();

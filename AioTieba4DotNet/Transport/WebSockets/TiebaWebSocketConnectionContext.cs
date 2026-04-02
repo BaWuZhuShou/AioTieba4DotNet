@@ -23,14 +23,14 @@ internal sealed class TiebaWebSocketConnectionContext(
 
     internal bool IsOpen => Connection.State == WebSocketState.Open;
 
-    internal bool TryBeginShutdown()
-    {
-        return Interlocked.Exchange(ref _shutdownStarted, 1) == 0;
-    }
-
     public void Dispose()
     {
         LifetimeSource.Dispose();
         Connection.Dispose();
+    }
+
+    internal bool TryBeginShutdown()
+    {
+        return Interlocked.Exchange(ref _shutdownStarted, 1) == 0;
     }
 }

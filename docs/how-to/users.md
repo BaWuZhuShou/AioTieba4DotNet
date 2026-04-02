@@ -11,7 +11,7 @@
 
 ## 读取 App 或 Web `user_info`
 
-`GetUserInfoAppAsync(...)` 和 `GetUserInfoWebAsync(...)` 是并列支持的两组 `user_info` 接口。它们都读取用户基础信息，但返回形状不同，分别对齐 App 与 Web 这两条上游接口族。
+`GetUserInfoAppAsync(...)` 和 `GetUserInfoWebAsync(...)` 是并列支持的两组 `user_info` 接口。它们都读取用户基础信息，并统一返回 `UserInfo`；区别主要在于它们对应的上游入口不同，而不是公开 DTO 类型不同。
 
 ```csharp
 using AioTieba4DotNet;
@@ -27,8 +27,8 @@ Console.WriteLine(webInfo.ShowName);
 
 可以这样选用：
 
-- 需要 App `user_info` 返回形状时，用 `GetUserInfoAppAsync(...)`
-- 需要 Web `user_info` 返回形状时，用 `GetUserInfoWebAsync(...)`
+- 需要走 App `user_info` 入口时，用 `GetUserInfoAppAsync(...)`
+- 需要走 Web `user_info` 入口时，用 `GetUserInfoWebAsync(...)`
 - 如果你要的是资料页信息或主页帖子列表，不要在这里二选一，改看下面两节
 
 ## 区分资料页和主页

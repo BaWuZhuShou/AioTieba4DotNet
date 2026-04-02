@@ -47,7 +47,8 @@ Console.WriteLine($"当前页主题数: {threads.Objs.Count}");
 
 ## 让 AI 快速用起来
 
-这个仓库额外导出了一个面向 `AioTieba4DotNet` 使用者的 agent skill。对支持 `skills add` 的 AI 工具，可以直接从这个仓库添加，让它更快生成正确的初始化、模块选择和示例代码。
+这个仓库额外导出了一个面向 `AioTieba4DotNet` 使用者的 agent skill。对支持 `skills add` 的 AI
+工具，可以直接从这个仓库添加，让它更快生成正确的初始化、模块选择和示例代码。
 
 ```bash
 npx skills add BaWuZhuShou/AioTieba4DotNet
@@ -69,7 +70,8 @@ npx skills add https://github.com/BaWuZhuShou/AioTieba4DotNet/tree/master/skills
 
 ## 开发与贡献
 
-- 任何 API 的参数语义、请求打包、响应解析和错误处理，都应优先对齐 Python 版 [aiotieba](https://github.com/lumina37/aiotieba)。
+- 任何 API 的参数语义、请求打包、响应解析和错误处理，都应优先对齐 Python
+  版 [aiotieba](https://github.com/lumina37/aiotieba)。
 - 修改 `.proto` 后，请运行 `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`，不要手改生成的 `.cs` 文件。
 - 文档站源码位于 `docs/`，本地构建使用 `pnpm --dir docs install` 和 `pnpm --dir docs run build`。
 - 本地验证入口包括 `scripts/verify-local.*` 与 `scripts/test-lane.*`。

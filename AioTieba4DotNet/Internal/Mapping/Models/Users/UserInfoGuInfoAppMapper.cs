@@ -1,18 +1,18 @@
 using AioTieba4DotNet.Models;
-using AioTieba4DotNet.Models.Users;
+using AioTieba4DotNet.Models.Shared;
 
 namespace AioTieba4DotNet.Internal.Mapping;
 
 internal static class UserInfoGuInfoAppMapper
 {
-    internal static UserInfoGuInfoApp FromTbData(User dataProto)
+    internal static UserInfo FromTbData(User dataProto)
     {
         var dataProtoPortrait = dataProto.Portrait;
 
         if (dataProtoPortrait.Contains('?'))
             dataProtoPortrait = dataProtoPortrait[..^13];
 
-        return new UserInfoGuInfoApp
+        return new UserInfo
         {
             UserId = dataProto.Id,
             Portrait = dataProtoPortrait,

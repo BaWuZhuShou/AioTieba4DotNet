@@ -1,5 +1,4 @@
 using AioTieba4DotNet.Models.Shared;
-using AioTieba4DotNet.Models;
 
 namespace AioTieba4DotNet.Models.Threads;
 

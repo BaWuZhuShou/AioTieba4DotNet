@@ -202,8 +202,8 @@
 | 方法 / 属性 | 说明 |
 | --- | --- |
 | `GetTbsAsync()` | 获取当前会话的 TBS。 |
-| `GetUserInfoAppAsync(int userId)` | 通过 App `user_info` 接口获取用户信息，返回 `UserInfoGuInfoApp`。 |
-| `GetUserInfoWebAsync(int userId)` | 通过 Web `user_info` 接口获取用户信息，返回 `UserInfoGuInfoWeb`。 |
+| `GetUserInfoAppAsync(int userId)` | 通过 App `user_info` 接口获取用户信息，返回 `UserInfo`。 |
+| `GetUserInfoWebAsync(int userId)` | 通过 Web `user_info` 接口获取用户信息，返回 `UserInfo`。 |
 | `GetProfileAsync(int userId)` / `GetProfileAsync(string portraitOrUserName)` | 读取资料页信息。 |
 | `GetHomepageAsync(int userId, int pn = 1)` | 读取用户主页内容和主页快照。 |
 | `FollowAsync(string portrait)` | 关注用户。 |
@@ -340,13 +340,9 @@
 
 | 类型 | 常见来源 | 说明 |
 | --- | --- | --- |
-| `UserInfoGuInfoApp` | `GetUserInfoAppAsync(...)` | App `user_info` 返回类型。 |
-| `UserInfoGuInfoWeb` | `GetUserInfoWebAsync(...)` | Web `user_info` 返回类型。 |
+| `UserInfo` | `GetUserInfoAppAsync(...)`、`GetUserInfoWebAsync(...)`、`GetPanelInfoAsync(...)`、`GetUserInfoJsonAsync(...)`、`GetUserByTiebaUidAsync(...)`、`GetSelfInfoAsync()`、`GetSelfInfoInitNicknameAsync()`、`GetSelfInfoMoIndexAsync()` | 统一的用户信息结果类型。 |
 | `UserInfoPf` | `GetProfileAsync(...)` | 资料页信息。 |
 | `Homepage` | `GetHomepageAsync(...)` | 用户主页内容和主页快照。 |
-| `UserInfoPanel` | `GetPanelInfoAsync(...)` | 用户面板信息。 |
-| `UserInfoJson` | `GetUserInfoJsonAsync(...)` | 用户 JSON 信息。 |
-| `UserInfo` | `GetSelfInfoAsync()`、`GetSelfInfoInitNicknameAsync()`、`GetSelfInfoMoIndexAsync()` | 当前用户信息。 |
 | `LoginResult` | `LoginAsync()` | 登录相关结果，包含 `User` 和 `Tbs`。 |
 | `UserList` | `GetFollowsAsync(...)`、`GetFansAsync(...)` | 关注 / 粉丝列表。 |
 | `BlacklistUsers` | `GetBlacklistAsync()` | 权限型黑名单列表。 |
@@ -355,7 +351,6 @@
 | `RankUsers` | `GetRankUsersAsync(...)` | 吧内等级排行榜用户列表。 |
 | `UserPostGroups` | `GetPostsAsync(...)` | 用户回复分组列表。 |
 | `UserThreads` | `GetThreadsAsync(...)` | 用户主题帖列表。 |
-| `UserInfoTUid` | `GetUserByTiebaUidAsync(...)` | Tieba UID 查询结果。 |
 
 ### Admins
 
@@ -436,11 +431,8 @@
 - `ReplyMessage`、`ReplyMessages`
 - `UserContent`
 - `UserForumInfo`
-- `UserInfoGuInfoApp`、`UserInfoGuInfoWeb`
-- `UserInfoJson`
-- `UserInfoPanel`
+- `UserInfo`
 - `UserInfoPf`
-- `UserInfoTUid`
 - `UserInfoUf`
 - `UserPost`、`UserPostGroups`、`UserPosts`
 - `UserThread`、`UserThreads`

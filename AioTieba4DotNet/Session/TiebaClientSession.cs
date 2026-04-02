@@ -1,21 +1,19 @@
+using AioTieba4DotNet.Api.Login;
+using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Transport.Http;
 using AioTieba4DotNet.Transport.WebSockets;
-using AioTieba4DotNet.Api.Login;
-using AioTieba4DotNet.Contracts;
-using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Internal.Mapping;
 
 namespace AioTieba4DotNet.Session;
 
 internal sealed class TiebaClientSession : IDisposable
 {
     private readonly Account? _account;
+    private readonly SemaphoreSlim _clientSyncLock = new(1, 1);
     private readonly TiebaSessionStateStore _stateStore;
     private readonly TiebaSessionTbsService _tbsService;
     private readonly SemaphoreSlim _webSocketWarmupLock = new(1, 1);
     private readonly SemaphoreSlim _zIdLock = new(1, 1);
-    private readonly SemaphoreSlim _clientSyncLock = new(1, 1);
 
     internal TiebaClientSession(TiebaOptions options, HttpClient? httpClient = null)
         : this(options, new HttpCore(options, httpClient))
@@ -45,6 +43,22 @@ internal sealed class TiebaClientSession : IDisposable
 
     internal bool IsAuthenticated => CurrentState.IsAuthenticated;
 
+    internal TiebaOptions Options { get; }
+
+    internal ITiebaHttpCore HttpCore { get; }
+
+    internal ITiebaWsCore WsCore { get; }
+
+    public void Dispose()
+    {
+        _tbsService.Dispose();
+        _webSocketWarmupLock.Dispose();
+        _zIdLock.Dispose();
+        _clientSyncLock.Dispose();
+        if (HttpCore is IDisposable httpCoreDisposable) httpCoreDisposable.Dispose();
+        if (WsCore is IDisposable disposable) disposable.Dispose();
+    }
+
     internal Account RequireAuthenticatedAccount(string operationName)
     {
         if (_account == null || string.IsNullOrWhiteSpace(_account.Bduss))
@@ -52,12 +66,6 @@ internal sealed class TiebaClientSession : IDisposable
 
         return _account;
     }
-
-    internal TiebaOptions Options { get; }
-
-    internal ITiebaHttpCore HttpCore { get; }
-
-    internal ITiebaWsCore WsCore { get; }
 
     internal Task<string> GetTbsAsync(CancellationToken cancellationToken = default)
     {
@@ -208,16 +216,6 @@ internal sealed class TiebaClientSession : IDisposable
 
         account.ZId = zId;
         _stateStore.SetZId(zId);
-    }
-
-    public void Dispose()
-    {
-        _tbsService.Dispose();
-        _webSocketWarmupLock.Dispose();
-        _zIdLock.Dispose();
-        _clientSyncLock.Dispose();
-        if (HttpCore is IDisposable httpCoreDisposable) httpCoreDisposable.Dispose();
-        if (WsCore is IDisposable disposable) disposable.Dispose();
     }
 
     private static Account? CreateAccount(TiebaOptions options)

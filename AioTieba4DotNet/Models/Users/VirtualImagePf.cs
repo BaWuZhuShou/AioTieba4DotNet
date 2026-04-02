@@ -1,5 +1,3 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
 namespace AioTieba4DotNet.Models.Users;
 
 /// <summary>
@@ -8,18 +6,14 @@ namespace AioTieba4DotNet.Models.Users;
 public class VirtualImagePf
 {
     /// <summary>
-    ///     是否启用
+    ///     Gets or sets a value that indicates whether the virtual image is enabled.
     /// </summary>
-    [SuppressMessage("Minor Code Smell", "S1104:Fields should not have public accessibility",
-        Justification = "This DTO keeps its original public field shape to preserve the existing consumer-visible contract.")]
-    public bool Enabled;
+    public bool Enabled { get; set; }
 
     /// <summary>
-    ///     状态
+    ///     Gets or sets the virtual image state.
     /// </summary>
-    [SuppressMessage("Minor Code Smell", "S1104:Fields should not have public accessibility",
-        Justification = "This DTO keeps its original public field shape to preserve the existing consumer-visible contract.")]
-    public string State = string.Empty;
+    public string State { get; set; } = string.Empty;
 
     /// <summary>
     ///     转换为字符串

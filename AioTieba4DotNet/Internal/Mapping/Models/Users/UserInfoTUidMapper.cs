@@ -1,16 +1,16 @@
-using AioTieba4DotNet.Models.Users;
+using AioTieba4DotNet.Models.Shared;
 
 namespace AioTieba4DotNet.Internal.Mapping;
 
 internal static class UserInfoTUidMapper
 {
-    internal static UserInfoTUid FromTbData(User data)
+    internal static UserInfo FromTbData(User data)
     {
         var portrait = data.Portrait;
         if (portrait.Contains('?', StringComparison.Ordinal))
             portrait = portrait[..portrait.IndexOf('?', StringComparison.Ordinal)];
 
-        return new UserInfoTUid
+        return new UserInfo
         {
             UserId = data.Id,
             Portrait = portrait,

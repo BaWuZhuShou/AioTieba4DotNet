@@ -1,9 +1,8 @@
-﻿using AioTieba4DotNet.Transport;
-using AioTieba4DotNet.Models.Threads;
-using AioTieba4DotNet.Attributes;
+﻿using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
-using AioTieba4DotNet.Models;
+using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Threads;
+using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetComments;
@@ -45,7 +44,7 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
         var resProto = PbFloorResIdl.Parser.ParseFrom(body);
         ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
-        return Internal.Mapping.CommentsMapper.FromTbData(resProto.Data);
+        return CommentsMapper.FromTbData(resProto.Data);
     }
 
     /// <summary>

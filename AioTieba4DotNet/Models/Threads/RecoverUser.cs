@@ -1,5 +1,3 @@
-using System;
-
 namespace AioTieba4DotNet.Models.Threads;
 
 /// <summary>
@@ -50,20 +48,20 @@ public sealed class RecoverUser
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override string ToString()
     {
         return !string.IsNullOrEmpty(UserName) ? UserName : Portrait;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
         return obj is RecoverUser other &&
                string.Equals(Portrait, other.Portrait, StringComparison.Ordinal);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         return StringComparer.Ordinal.GetHashCode(Portrait);

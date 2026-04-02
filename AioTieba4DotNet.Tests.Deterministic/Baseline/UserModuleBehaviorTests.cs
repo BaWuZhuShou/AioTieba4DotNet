@@ -144,7 +144,7 @@ public class UserModuleBehaviorTests
     [TestMethod]
     public async Task UserModule_DelegatesGetBasicInfoAppToInternalProtocol()
     {
-        var expected = new UserInfoGuInfoApp { UserId = 123, UserName = "app-user" };
+        var expected = new UserInfo { UserId = 123, UserName = "app-user" };
         var protocol = new RecordingUserProtocol(new UserInfo()) { BasicInfoApp = expected };
         var module = new UserModule(protocol);
 
@@ -157,7 +157,7 @@ public class UserModuleBehaviorTests
     [TestMethod]
     public async Task UserModule_DelegatesGetUserInfoWebToInternalProtocol()
     {
-        var expected = new UserInfoGuInfoWeb { UserId = 123, UserName = "web-user" };
+        var expected = new UserInfo { UserId = 123, UserName = "web-user" };
         var protocol = new RecordingUserProtocol(new UserInfo()) { BasicInfoWeb = expected };
         var module = new UserModule(protocol);
 
@@ -238,7 +238,7 @@ public class UserModuleBehaviorTests
     [TestMethod]
     public async Task UserModule_DelegatesGetUserByTiebaUidToInternalProtocol()
     {
-        var expected = new UserInfoTUid { UserId = 123, TiebaUid = 778899 };
+        var expected = new UserInfo { UserId = 123, TiebaUid = 778899 };
         var protocol = new RecordingUserProtocol(new UserInfo()) { TiebaUidUser = expected };
         var module = new UserModule(protocol);
 
@@ -368,15 +368,15 @@ public class UserModuleBehaviorTests
 
         public Homepage Homepage { get; init; } = new([], new UserInfoPf { VImage = new VirtualImagePf() });
 
-        public UserInfoGuInfoApp BasicInfoApp { get; init; } = new();
+        public UserInfo BasicInfoApp { get; init; } = new();
 
-        public UserInfoGuInfoWeb BasicInfoWeb { get; init; } = new();
+        public UserInfo BasicInfoWeb { get; init; } = new();
 
         public UserForumInfo UserForumInfo { get; init; } = new();
 
         public RankUsers RankUsers { get; init; } = new([], new Models.Threads.PageT());
 
-        public UserInfoTUid TiebaUidUser { get; init; } = new();
+        public UserInfo TiebaUidUser { get; init; } = new();
 
         public UserPostGroups UserPostGroups { get; init; } = new(new List<UserPosts>());
 
@@ -391,7 +391,7 @@ public class UserModuleBehaviorTests
             throw new NotImplementedException();
         }
 
-        public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
         {
             LastBasicInfoAppUserId = userId;
             return Task.FromResult(BasicInfoApp);
@@ -428,13 +428,13 @@ public class UserModuleBehaviorTests
             throw new NotImplementedException();
         }
 
-        public Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait,
+        public Task<UserInfo> GetPanelInfoAsync(string nameOrPortrait,
             CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UserInfoJson> GetUserInfoJsonAsync(string username, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserInfoJsonAsync(string username, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
@@ -497,7 +497,7 @@ public class UserModuleBehaviorTests
             throw new NotImplementedException();
         }
 
-        public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default)
         {
             LastBasicInfoWebUserId = userId;
             return Task.FromResult(BasicInfoWeb);
@@ -548,7 +548,7 @@ public class UserModuleBehaviorTests
             return Task.FromResult(true);
         }
 
-        public Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default)
         {
             LastTiebaUid = tiebaUid;
             return Task.FromResult(TiebaUidUser);

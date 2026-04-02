@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using AioTieba4DotNet.Api.AddPost;
 using AioTieba4DotNet.Api.DelPost;
 using AioTieba4DotNet.Api.DelPosts;

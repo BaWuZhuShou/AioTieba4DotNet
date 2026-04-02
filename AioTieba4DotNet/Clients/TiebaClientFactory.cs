@@ -1,6 +1,3 @@
-using System.Net.Http;
-using AioTieba4DotNet.Contracts;
-
 namespace AioTieba4DotNet;
 
 /// <summary>
@@ -11,9 +8,9 @@ public sealed class TiebaClientFactory : ITiebaClientFactory
     private readonly TiebaClientComposition _composition;
 
     /// <summary>
-    ///     使用 <see cref="IHttpClientFactory"/> 创建可复用的客户端工厂。
+    ///     使用 <see cref="IHttpClientFactory" /> 创建可复用的客户端工厂。
     /// </summary>
-    /// <param name="httpClientFactory"><see cref="IHttpClientFactory"/> 实例。</param>
+    /// <param name="httpClientFactory"><see cref="IHttpClientFactory" /> 实例。</param>
     public TiebaClientFactory(IHttpClientFactory httpClientFactory)
         : this(TiebaClientComposition.CreateForDependencyInjection(httpClientFactory))
     {
@@ -24,13 +21,13 @@ public sealed class TiebaClientFactory : ITiebaClientFactory
         _composition = composition;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ITiebaClient CreateClient(TiebaOptions options)
     {
         return _composition.CreateClient(options);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ITiebaClient CreateClient(string bduss, string? stoken = null)
     {
         if (string.IsNullOrWhiteSpace(bduss))
@@ -39,8 +36,8 @@ public sealed class TiebaClientFactory : ITiebaClientFactory
         return CreateClient(new TiebaOptions { Bduss = bduss, Stoken = stoken });
     }
 
-    /// <inheritdoc/>
-    public ITiebaClient CreateClient(AioTieba4DotNet.Contracts.Account account)
+    /// <inheritdoc />
+    public ITiebaClient CreateClient(Contracts.Account account)
     {
         ArgumentNullException.ThrowIfNull(account);
         return CreateClient(account.ToTiebaOptions());

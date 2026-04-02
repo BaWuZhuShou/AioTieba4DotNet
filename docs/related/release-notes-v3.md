@@ -43,7 +43,7 @@ v3 的根客户端稳定为:
 
 #### Users family
 
-用户侧最明显的变化是 blacklist family、`user_info` family、nickname family 和 user-content DTO family 都用了更接近 upstream root 的公开名字。需要注意的是，`get_blacklist` family 与 `_old` sibling family 仍然是 parallel supported APIs，不是兼容残留。
+用户侧最明显的变化是 blacklist family、`user_info` family、nickname family 和 user-content DTO family 都用了更接近 upstream root 的公开名字。需要注意的是，`get_blacklist` family 与 `_old` sibling family 仍然是 parallel supported APIs，不是兼容残留；同时，App/Web/JSON/panel/Tieba UID 这些用户基础信息读取入口现在统一返回共享 `UserInfo`，不再把 endpoint-specific 用户 DTO 暴露为公开类型。这不仅是名字收敛，也是行为上的 breaking change：如果调用方过去依赖 `UserInfoGuInfoApp`、`UserInfoGuInfoWeb`、`UserInfoJson`、`UserInfoPanel`、`UserInfoTUid` 这些运行时类型来区分来源，现在需要改成根据调用的方法本身来区分。
 
 | Old public name | Current public name | Category |
 | --- | --- | --- |
@@ -57,10 +57,21 @@ v3 的根客户端稳定为:
 | `BlacklistMutedUsers` | `BlacklistOldUsers` | `shape-variant` |
 | `BlacklistMutedUser` | `BlacklistOldUser` | `shape-variant` |
 | `IUserModule.GetBasicInfoAppAsync(int userId, ...)` | `IUserModule.GetUserInfoAppAsync(int userId, ...)` | `peer-family` |
-| `UserInfoApp` | `UserInfoGuInfoApp` | `shape-variant` |
-| `UserInfoWeb` | `UserInfoGuInfoWeb` | `shape-variant` |
+| `IUserModule.GetUserInfoWebAsync(int userId, ...) : UserInfoGuInfoWeb` | `IUserModule.GetUserInfoWebAsync(int userId, ...) : UserInfo` | `shape-variant` |
+| `IUserModule.GetPanelInfoAsync(string nameOrPortrait, ...) : UserInfoPanel` | `IUserModule.GetPanelInfoAsync(string nameOrPortrait, ...) : UserInfo` | `shape-variant` |
+| `IUserModule.GetUserInfoJsonAsync(string username, ...) : UserInfoJson` | `IUserModule.GetUserInfoJsonAsync(string username, ...) : UserInfo` | `shape-variant` |
+| `IUserModule.GetUserByTiebaUidAsync(long tiebaUid, ...) : UserInfoTUid` | `IUserModule.GetUserByTiebaUidAsync(long tiebaUid, ...) : UserInfo` | `shape-variant` |
+| `UserInfoGuInfoApp` | `UserInfo` | `shape-variant` |
+| `UserInfoGuInfoWeb` | `UserInfo` | `shape-variant` |
+| `UserInfoJson` | `UserInfo` | `shape-variant` |
+| `UserInfoPanel` | `UserInfo` | `shape-variant` |
+| `UserInfoTUid` | `UserInfo` | `shape-variant` |
+| `UserInfoApp` | `UserInfo` | `shape-variant` |
+| `UserInfoWeb` | `UserInfo` | `shape-variant` |
 | `IUserModule.SetNicknameLegacyAsync(string nickName, ...)` | `IUserModule.SetNicknameAsync(string nickName, ...)` | `peer-family` |
 | `UserPostss` | `UserPostGroups` | `shape-variant` |
+
+另外，原先为了兼容旧公开面而保留的少量 public field 也已经收敛为 public property：`Thread.TabId`、`VirtualImagePf.Enabled`、`VirtualImagePf.State` 不再以字段形式公开。如果调用方做了字段级反射或依赖字段元数据，需要改为属性访问。
 
 #### Messages ownership
 

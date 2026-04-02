@@ -1,9 +1,8 @@
-using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Shared;
+using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetSelfInfoMoIndex;
@@ -13,7 +12,7 @@ internal class GetSelfInfoMoIndex(ITiebaHttpCore httpCore) : JsonApiBase(httpCor
 {
     private static UserInfo ParseBody(string body)
     {
-        var resJson = JsonApiBase.ParseBody(body, "no", "error");
+        var resJson = ParseBody(body, "no", "error");
         var data = resJson.GetValue("data") as JObject ?? new JObject();
         return UserInfoSelfMoIndexMapper.FromTbData(data);
     }

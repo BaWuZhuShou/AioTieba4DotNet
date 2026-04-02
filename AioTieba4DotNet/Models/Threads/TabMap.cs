@@ -10,14 +10,14 @@ public sealed class TabMap : IReadOnlyDictionary<string, int>
     private readonly Dictionary<string, int> _map;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="TabMap"/> class.
+    ///     Initializes a new instance of the <see cref="TabMap" /> class.
     /// </summary>
     public TabMap() : this([])
     {
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="TabMap"/> class.
+    ///     Initializes a new instance of the <see cref="TabMap" /> class.
     /// </summary>
     /// <param name="map">A tab map collection.</param>
     public TabMap(IEnumerable<KeyValuePair<string, int>> map)
@@ -32,37 +32,37 @@ public sealed class TabMap : IReadOnlyDictionary<string, int>
     /// <value>A tab-name to tab-id dictionary.</value>
     public IReadOnlyDictionary<string, int> Map => _map;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int this[string key] => _map[key];
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerable<string> Keys => _map.Keys;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerable<int> Values => _map.Values;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int Count => _map.Count;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool ContainsKey(string key)
     {
         return _map.ContainsKey(key);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool TryGetValue(string key, out int value)
     {
         return _map.TryGetValue(key, out value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerator<KeyValuePair<string, int>> GetEnumerator()
     {
         return _map.GetEnumerator();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();

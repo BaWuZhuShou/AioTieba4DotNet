@@ -1,4 +1,3 @@
-﻿using System.Diagnostics.CodeAnalysis;
 using AioTieba4DotNet.Models.Contents;
 using AioTieba4DotNet.Models.Shared;
 using AioTieba4DotNet.Models.Users;
@@ -11,11 +10,9 @@ namespace AioTieba4DotNet.Models.Threads;
 public class Thread
 {
     /// <summary>
-    ///     帖子所在分区id
+    ///     Gets or sets the tab identifier of the section that contains the thread.
     /// </summary>
-    [SuppressMessage("Minor Code Smell", "S1104:Fields should not have public accessibility",
-        Justification = "This DTO keeps its original public field shape to preserve the existing consumer-visible contract.")]
-    public int TabId;
+    public int TabId { get; set; }
 
     /// <summary>
     ///     文本内容

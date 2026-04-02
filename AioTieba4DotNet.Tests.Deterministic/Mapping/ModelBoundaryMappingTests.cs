@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Shared;
+using AioTieba4DotNet.Models.Threads;
+using AioTieba4DotNet.Models.Users;
 using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
@@ -171,6 +173,19 @@ public sealed class ModelBoundaryMappingTests
 
         Assert.AreEqual("AioTieba4DotNet.Models.Shared", typeof(UserInfo).Namespace);
         Assert.IsEmpty(fromTbDataMethods);
+    }
+
+    [TestMethod]
+    public void Public_model_members_use_properties_instead_of_legacy_fields()
+    {
+        Assert.IsNull(typeof(Thread).GetField(nameof(Thread.TabId), BindingFlags.Public | BindingFlags.Instance));
+        Assert.IsNotNull(typeof(Thread).GetProperty(nameof(Thread.TabId), BindingFlags.Public | BindingFlags.Instance));
+
+        Assert.IsNull(typeof(VirtualImagePf).GetField(nameof(VirtualImagePf.Enabled), BindingFlags.Public | BindingFlags.Instance));
+        Assert.IsNotNull(typeof(VirtualImagePf).GetProperty(nameof(VirtualImagePf.Enabled), BindingFlags.Public | BindingFlags.Instance));
+
+        Assert.IsNull(typeof(VirtualImagePf).GetField(nameof(VirtualImagePf.State), BindingFlags.Public | BindingFlags.Instance));
+        Assert.IsNotNull(typeof(VirtualImagePf).GetProperty(nameof(VirtualImagePf.State), BindingFlags.Public | BindingFlags.Instance));
     }
 
     [TestMethod]

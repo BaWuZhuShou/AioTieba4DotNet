@@ -8,7 +8,7 @@ namespace AioTieba4DotNet.Models.Users;
 public class Homepage : Containers<UserThread>
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Homepage"/> class.
+    ///     Initializes a new instance of the <see cref="Homepage" /> class.
     /// </summary>
     /// <param name="objs">A homepage thread collection.</param>
     /// <param name="user">A profile snapshot.</param>

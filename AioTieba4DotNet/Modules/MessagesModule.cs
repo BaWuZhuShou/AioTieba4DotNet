@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Contracts;
 using AioTieba4DotNet.Models.Messages;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Protocols;

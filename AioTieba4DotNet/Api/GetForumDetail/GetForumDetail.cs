@@ -1,8 +1,8 @@
-﻿using AioTieba4DotNet.Transport;
-using AioTieba4DotNet.Models.Forums;
-using AioTieba4DotNet.Attributes;
+﻿using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
+using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Forums;
+using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetForumDetail;
@@ -35,7 +35,7 @@ internal class GetForumDetail(ITiebaHttpCore httpCore)
 
         var dataForum = resProto.Data;
 
-        return Internal.Mapping.ForumDetailMapper.FromTbData(dataForum);
+        return ForumDetailMapper.FromTbData(dataForum);
     }
 
     /// <summary>

@@ -166,10 +166,10 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult("tbs-123");
         }
 
-        public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
         {
             LastUserId = userId;
-            return Task.FromResult<UserInfoGuInfoApp>(null!);
+            return Task.FromResult<UserInfo>(null!);
         }
 
         public Task<UserInfoPf> GetProfileAsync(int userId, CancellationToken cancellationToken = default)
@@ -220,17 +220,17 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult<UserList>(null!);
         }
 
-        public Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait,
+        public Task<UserInfo> GetPanelInfoAsync(string nameOrPortrait,
             CancellationToken cancellationToken = default)
         {
             LastLookupText = nameOrPortrait;
-            return Task.FromResult<UserInfoPanel>(null!);
+            return Task.FromResult<UserInfo>(null!);
         }
 
-        public Task<UserInfoJson> GetUserInfoJsonAsync(string username, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserInfoJsonAsync(string username, CancellationToken cancellationToken = default)
         {
             LastLookupText = username;
-            return Task.FromResult<UserInfoJson>(null!);
+            return Task.FromResult<UserInfo>(null!);
         }
 
         public Task<UserInfo> GetSelfInfoAsync(CancellationToken cancellationToken = default)
@@ -286,9 +286,9 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult(true);
         }
 
-        public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult<UserInfoGuInfoWeb>(null!);
+            return Task.FromResult<UserInfo>(null!);
         }
 
         public Task<UserForumInfo> GetUserForumInfoAsync(ulong fid, string portrait,
@@ -324,9 +324,9 @@ public sealed class UserAdminMessagesModuleCoverageTests
             return Task.FromResult(true);
         }
 
-        public Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult<UserInfoTUid>(null!);
+            return Task.FromResult<UserInfo>(null!);
         }
 
         public Task<UserPostGroups> GetPostsAsync(int userId, uint pn, uint rn, string version,

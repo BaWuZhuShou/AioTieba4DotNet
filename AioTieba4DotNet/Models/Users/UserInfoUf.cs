@@ -10,6 +10,6 @@ public class UserInfoUf : UserInfo
     /// <summary>
     ///     Gets a value that indicates whether the current account follows this user.
     /// </summary>
-    /// <value><see langword="true"/> if the current account follows this user; otherwise, <see langword="false"/>.</value>
+    /// <value><see langword="true" /> if the current account follows this user; otherwise, <see langword="false" />.</value>
     public bool IsLike { get; init; }
 }

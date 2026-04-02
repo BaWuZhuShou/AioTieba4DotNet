@@ -1,8 +1,8 @@
-using AioTieba4DotNet.Transport;
-using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Models;
+using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Threads;
+using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetThreads;
@@ -44,7 +44,7 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 
         var dataForum = resProto.Data;
 
-        return Internal.Mapping.ThreadsMapper.FromTbData(dataForum);
+        return ThreadsMapper.FromTbData(dataForum);
     }
 
     /// <summary>

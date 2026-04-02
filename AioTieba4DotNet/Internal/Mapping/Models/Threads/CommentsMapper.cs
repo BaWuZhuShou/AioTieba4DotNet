@@ -1,5 +1,4 @@
 using AioTieba4DotNet.Models.Threads;
-using PostModel = AioTieba4DotNet.Models.Threads.Post;
 
 namespace AioTieba4DotNet.Internal.Mapping;
 

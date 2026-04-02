@@ -1,6 +1,3 @@
-using AioTieba4DotNet.Contracts;
-using AioTieba4DotNet.Session;
-
 namespace AioTieba4DotNet.Transport.Http;
 
 internal sealed class HttpCore : ITiebaHttpCore, IDisposable
@@ -28,6 +25,16 @@ internal sealed class HttpCore : ITiebaHttpCore, IDisposable
         _ownsHttpClient = httpClient == null || ownsHttpClient;
         HttpClient = httpClient ?? TiebaHttpClientFactory.CreateClient();
         TiebaHttpClientFactory.EnsureEncodingProviderRegistered();
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+
+        if (_ownsHttpClient) HttpClient.Dispose();
+
+        _disposed = true;
+        GC.SuppressFinalize(this);
     }
 
     public Account? Account { get; private set; }
@@ -83,15 +90,5 @@ internal sealed class HttpCore : ITiebaHttpCore, IDisposable
     public static List<KeyValuePair<string, string>> Sign(List<KeyValuePair<string, string>> items)
     {
         return TiebaHttpRequestSigner.Sign(items);
-    }
-
-    public void Dispose()
-    {
-        if (_disposed) return;
-
-        if (_ownsHttpClient) HttpClient.Dispose();
-
-        _disposed = true;
-        GC.SuppressFinalize(this);
     }
 }

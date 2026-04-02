@@ -1,8 +1,8 @@
-﻿using AioTieba4DotNet.Transport;
-using AioTieba4DotNet.Models.Users;
-using AioTieba4DotNet.Attributes;
+﻿using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
+using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Shared;
+using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetUInfoGetUserInfoApp;
@@ -22,13 +22,13 @@ internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore)
         return reqProto.ToByteArray();
     }
 
-    private static UserInfoGuInfoApp ParseBody(byte[] body)
+    private static UserInfo ParseBody(byte[] body)
     {
         var resProto = GetUserInfoResIdl.Parser.ParseFrom(body);
         ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
         var dataUser = resProto.Data.User;
-        return Internal.Mapping.UserInfoGuInfoAppMapper.FromTbData(dataUser);
+        return UserInfoGuInfoAppMapper.FromTbData(dataUser);
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore)
     /// <param name="userId">用户 ID (uid)</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>用户基础信息</returns>
-    public async Task<UserInfoGuInfoApp> RequestAsync(int userId, CancellationToken cancellationToken = default)
+    public async Task<UserInfo> RequestAsync(int userId, CancellationToken cancellationToken = default)
     {
         var data = PackProto(userId);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getuserinfo") { Query = $"cmd={Cmd}" }

@@ -1,10 +1,8 @@
-using AioTieba4DotNet.Transport;
-using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
-using AioTieba4DotNet;
 using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Shared;
+using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetUInfoUserJson;
@@ -16,7 +14,7 @@ namespace AioTieba4DotNet.Api.GetUInfoUserJson;
 [PythonApi("aiotieba.api.get_uinfo_user_json")]
 internal class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    private static UserInfoJson ParseBody(string body)
+    private static UserInfo ParseBody(string body)
     {
         var o = JObject.Parse(body);
         var data = o.GetValue("creator")?.ToObject<JObject>();
@@ -29,7 +27,7 @@ internal class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <param name="username">用户名</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>用户信息 JSON 实体</returns>
-    public async Task<UserInfoJson> RequestAsync(string username, CancellationToken cancellationToken = default)
+    public async Task<UserInfo> RequestAsync(string username, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>> { new("un", username), new("ie", "utf-8") };
         var requestUri = new UriBuilder("http", Const.WebBaseHost, 80, "/i/sys/user_json").Uri;

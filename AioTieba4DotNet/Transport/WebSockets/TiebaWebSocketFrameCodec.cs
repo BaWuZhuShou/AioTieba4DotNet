@@ -2,16 +2,15 @@ using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Security.Cryptography;
-using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
-using AioTieba4DotNet;
 
 namespace AioTieba4DotNet.Transport.WebSockets;
 
 internal sealed class TiebaWebSocketFrameCodec
 {
-    [SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static",
-        Justification = "The frame codec is kept as a dedicated collaborator in the WebSocket engine composition so packing and parsing can evolve behind a single seam without changing callers.")]
+    [SuppressMessage("Minor Code Smell",
+        "S2325:Methods and properties that don't access instance data should be static",
+        Justification =
+            "The frame codec is kept as a dedicated collaborator in the WebSocket engine composition so packing and parsing can evolve behind a single seam without changing callers.")]
     internal byte[] Pack(byte[] data, int cmd, int reqId, Account? account, bool encrypt = true)
     {
         byte flag = 0x08;
@@ -30,8 +29,10 @@ internal sealed class TiebaWebSocketFrameCodec
         return result;
     }
 
-    [SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static",
-        Justification = "The frame codec is kept as a dedicated collaborator in the WebSocket engine composition so packing and parsing can evolve behind a single seam without changing callers.")]
+    [SuppressMessage("Minor Code Smell",
+        "S2325:Methods and properties that don't access instance data should be static",
+        Justification =
+            "The frame codec is kept as a dedicated collaborator in the WebSocket engine composition so packing and parsing can evolve behind a single seam without changing callers.")]
     internal (byte[] Data, int Cmd, int ReqId) Parse(byte[] frame, Account? account)
     {
         if (frame.Length < 9)

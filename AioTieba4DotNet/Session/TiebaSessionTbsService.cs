@@ -7,6 +7,11 @@ internal sealed class TiebaSessionTbsService(
 {
     private readonly SemaphoreSlim _gate = new(1, 1);
 
+    public void Dispose()
+    {
+        _gate.Dispose();
+    }
+
     internal async Task<string> GetAsync(string operationName, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(operationName);
@@ -52,11 +57,6 @@ internal sealed class TiebaSessionTbsService(
         {
             _gate.Release();
         }
-    }
-
-    public void Dispose()
-    {
-        _gate.Dispose();
     }
 
     private async Task<string> LoadAndStoreAsync(Account account, string operationName,

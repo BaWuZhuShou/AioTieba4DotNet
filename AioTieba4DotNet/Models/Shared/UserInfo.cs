@@ -1,5 +1,3 @@
-using AioTieba4DotNet.Models;
-
 namespace AioTieba4DotNet.Models.Shared;
 
 /// <summary>

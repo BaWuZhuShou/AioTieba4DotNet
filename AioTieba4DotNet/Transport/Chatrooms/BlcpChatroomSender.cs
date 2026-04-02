@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Numerics;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 using AioTieba4DotNet.Models.Forums;
@@ -30,11 +30,13 @@ internal sealed class BlcpChatroomSender
     private const string Pkcs7Key = "AFD311832EDEEAEF";
     private const string Pkcs7Iv = "2011121211143000";
     private static readonly Encoding Utf8 = new UTF8Encoding(false);
+
     private static readonly Uri LcmTokenEndpoint =
         new UriBuilder("https", LcmTokenHost, 443, "/rest/5.0/generate_lcm_token").Uri;
 
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
-        Justification = "The BLCP send entrypoint preserves the protocol-shaped message contract as discrete arguments so transport packing remains explicit.")]
+        Justification =
+            "The BLCP send entrypoint preserves the protocol-shaped message contract as discrete arguments so transport packing remains explicit.")]
     public async Task<bool> SendMessageAsync(Account account, UserInfo selfInfo, ForumLevelInfo forumLevel,
         long chatroomId,
         ulong forumId, string text, IReadOnlyList<long>? atUserIds, int robotCode, CancellationToken cancellationToken)
@@ -51,7 +53,7 @@ internal sealed class BlcpChatroomSender
         await tcpClient.ConnectAsync(BlcpHost, BlcpPort, cancellationToken);
         using var sslStream = new SslStream(tcpClient.GetStream(), false);
         await sslStream.AuthenticateAsClientAsync(BlcpHost, null,
-            System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13,
+            SslProtocols.Tls12 | SslProtocols.Tls13,
             true);
 
         var token = await GenerateLcmTokenAsync(account.CuidGalaxy2, cancellationToken);
@@ -198,7 +200,8 @@ internal sealed class BlcpChatroomSender
     }
 
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
-        Justification = "The BLCP payload builder keeps required protocol fields explicit so chatroom send packing remains auditable against the upstream message shape.")]
+        Justification =
+            "The BLCP payload builder keeps required protocol fields explicit so chatroom send packing remains auditable against the upstream message shape.")]
     private async Task<bool> SendChatroomPayloadAsync(SslStream stream, Account account, UserInfo selfInfo,
         ForumLevelInfo forumLevel, LoginPayload loginPayload, long chatroomId, ulong forumId, string text,
         JArray? atData, int robotCode, CancellationToken cancellationToken)
@@ -281,8 +284,10 @@ internal sealed class BlcpChatroomSender
         return response["err_code"]?.Value<int>() == 0;
     }
 
-    [SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static",
-        Justification = "This helper remains an instance method so existing transport tests can exercise it through the same reflection-based seam as the rest of the sender implementation.")]
+    [SuppressMessage("Minor Code Smell",
+        "S2325:Methods and properties that don't access instance data should be static",
+        Justification =
+            "This helper remains an instance method so existing transport tests can exercise it through the same reflection-based seam as the rest of the sender implementation.")]
     private async Task<JObject> SendJsonRpcAsync(SslStream stream, long serviceId, long methodId, object payload,
         CancellationToken cancellationToken, string expectLcmErrorField)
     {

@@ -262,7 +262,8 @@ internal sealed class Account
     }
 
     [SuppressMessage("Security", "S5344:Use at least 100,000 iterations here.",
-        Justification = "Tieba websocket key derivation is protocol-defined and must stay aligned with the upstream aiotieba implementation and remote server expectations.")]
+        Justification =
+            "Tieba websocket key derivation is protocol-defined and must stay aligned with the upstream aiotieba implementation and remote server expectations.")]
     private static byte[] DeriveTiebaWebSocketKey(byte[] secretKey)
     {
         return Rfc2898DeriveBytes.Pbkdf2(secretKey,

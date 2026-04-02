@@ -7,7 +7,8 @@ namespace AioTieba4DotNet.Internal.Mapping;
 internal static class CommentMapper
 {
     [SuppressMessage("Critical Code Smell", "S3776:Refactor this method to reduce its Cognitive Complexity",
-        Justification = "The comment mapper keeps reply-prefix trimming and fragment-list updates in one place so the transformation from protobuf content remains explicit and behavior-preserving.")]
+        Justification =
+            "The comment mapper keeps reply-prefix trimming and fragment-list updates in one place so the transformation from protobuf content remains explicit and behavior-preserving.")]
     internal static Comment FromTbData(SubPostList? dataProto)
 
     {

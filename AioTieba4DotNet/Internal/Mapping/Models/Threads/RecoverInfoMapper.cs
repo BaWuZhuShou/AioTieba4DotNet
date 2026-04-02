@@ -1,3 +1,4 @@
+using AioTieba4DotNet.Models.Contents;
 using AioTieba4DotNet.Models.Threads;
 using Newtonsoft.Json.Linq;
 
@@ -8,7 +9,7 @@ internal static class RecoverInfoMapper
     internal static RecoverInfo FromTbData(JObject? data)
     {
         if (data is null)
-            return new RecoverInfo { Content = new Models.Contents.Content(), User = new RecoverUser() };
+            return new RecoverInfo { Content = new Content(), User = new RecoverUser() };
 
         var threadInfo = data.GetValue("thread_info") as JObject;
         return new RecoverInfo

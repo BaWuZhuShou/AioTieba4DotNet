@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Models;
+using AioTieba4DotNet.Models.Threads;
 
 namespace AioTieba4DotNet.Contracts;
 
@@ -19,7 +18,7 @@ public interface IThreadModule
     /// <param name="sort">排序方式</param>
     /// <param name="isGood">是否只看精品贴</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>主题帖列表 <see cref="Threads"/></returns>
+    /// <returns>主题帖列表 <see cref="Threads" /></returns>
     Task<Threads> GetThreadsAsync(string fname, int pn = 1, int rn = 30,
         ThreadSortType sort = ThreadSortType.Reply, bool isGood = false,
         CancellationToken cancellationToken = default);
@@ -33,7 +32,7 @@ public interface IThreadModule
     /// <param name="sort">排序方式</param>
     /// <param name="isGood">是否只看精品贴</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>主题帖列表 <see cref="Threads"/></returns>
+    /// <returns>主题帖列表 <see cref="Threads" /></returns>
     Task<Threads> GetThreadsAsync(ulong fid, int pn = 1, int rn = 30,
         ThreadSortType sort = ThreadSortType.Reply, bool isGood = false,
         CancellationToken cancellationToken = default);
@@ -50,9 +49,10 @@ public interface IThreadModule
     /// <param name="commentRn">每层附带的楼中楼数量</param>
     /// <param name="commentSortByAgree">楼中楼是否按赞同排序</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>帖子列表 <see cref="Posts"/></returns>
+    /// <returns>帖子列表 <see cref="Posts" /></returns>
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
-        Justification = "The public thread-post query contract intentionally exposes the upstream Tieba request options as discrete arguments for compatibility.")]
+        Justification =
+            "The public thread-post query contract intentionally exposes the upstream Tieba request options as discrete arguments for compatibility.")]
     Task<Posts> GetPostsAsync(long tid, int pn = 1, int rn = 30, PostSortType sort = PostSortType.Asc,
         bool onlyThreadAuthor = false, bool withComments = false, int commentRn = 0, bool commentSortByAgree = false,
         CancellationToken cancellationToken = default);
@@ -65,7 +65,7 @@ public interface IThreadModule
     /// <param name="pn">页码</param>
     /// <param name="isComment">传入的 pid 是否为楼中楼回复 ID</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>楼中楼列表 <see cref="Comments"/></returns>
+    /// <returns>楼中楼列表 <see cref="Comments" /></returns>
     Task<Comments> GetCommentsAsync(long tid, long pid, int pn = 1,
         bool isComment = false, CancellationToken cancellationToken = default);
 

@@ -1,4 +1,6 @@
-﻿namespace AioTieba4DotNet.Models.Contents;
+﻿using System.Text;
+
+namespace AioTieba4DotNet.Models.Contents;
 
 /// <summary>
 ///     内容碎片列表
@@ -61,7 +63,7 @@ public class Content
     /// <returns>string</returns>
     public override string ToString()
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.Append(nameof(Text)).Append(": ").Append(Text);
 
         if (Emojis.Count > 0)

@@ -59,7 +59,7 @@ public interface IAdminModule
     /// <param name="fname">吧名</param>
     /// <param name="pn">页码</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>吧务黑名单列表 <see cref="BawuBlacklistUsers"/></returns>
+    /// <returns>吧务黑名单列表 <see cref="BawuBlacklistUsers" /></returns>
     Task<BawuBlacklistUsers> GetBawuBlacklistAsync(string fname, int pn = 1,
         CancellationToken cancellationToken = default);
 
@@ -68,7 +68,7 @@ public interface IAdminModule
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>吧务团队信息 <see cref="BawuInfo"/></returns>
+    /// <returns>吧务团队信息 <see cref="BawuInfo" /></returns>
     Task<BawuInfo> GetBawuInfoAsync(string fname, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -77,7 +77,7 @@ public interface IAdminModule
     /// <param name="fname">吧名</param>
     /// <param name="portrait">目标用户 portrait</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>吧务权限 <see cref="BawuPerm"/></returns>
+    /// <returns>吧务权限 <see cref="BawuPerm" /></returns>
     Task<BawuPerm> GetBawuPermAsync(string fname, string portrait, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -95,9 +95,9 @@ public interface IAdminModule
     ///     获取吧务删帖日志
     /// </summary>
     /// <param name="fname">吧名</param>
-    /// <param name="options">查询选项；为 <see langword="null"/> 时使用默认值</param>
+    /// <param name="options">查询选项；为 <see langword="null" /> 时使用默认值</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>删帖日志 <see cref="BawuPostLogs"/></returns>
+    /// <returns>删帖日志 <see cref="BawuPostLogs" /></returns>
     Task<BawuPostLogs> GetBawuPostLogsAsync(string fname, BawuPostLogQueryOptions? options = null,
         CancellationToken cancellationToken = default);
 
@@ -105,9 +105,9 @@ public interface IAdminModule
     ///     获取吧务用户管理日志
     /// </summary>
     /// <param name="fname">吧名</param>
-    /// <param name="options">查询选项；为 <see langword="null"/> 时使用默认值</param>
+    /// <param name="options">查询选项；为 <see langword="null" /> 时使用默认值</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>用户管理日志 <see cref="BawuUserLogs"/></returns>
+    /// <returns>用户管理日志 <see cref="BawuUserLogs" /></returns>
     Task<BawuUserLogs> GetBawuUserLogsAsync(string fname, BawuUserLogQueryOptions? options = null,
         CancellationToken cancellationToken = default);
 
@@ -118,7 +118,7 @@ public interface IAdminModule
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>解封申诉列表 <see cref="Appeals"/></returns>
+    /// <returns>解封申诉列表 <see cref="Appeals" /></returns>
     Task<Appeals> GetUnblockAppealsAsync(string fname, int pn = 1, int rn = 20,
         CancellationToken cancellationToken = default);
 
@@ -140,7 +140,7 @@ public interface IAdminModule
     /// <param name="userName">目标用户名筛选；空白值表示不筛选</param>
     /// <param name="pn">页码</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>封禁列表 <see cref="Blocks"/></returns>
+    /// <returns>封禁列表 <see cref="Blocks" /></returns>
     Task<Blocks> GetBlocksAsync(string fname, string userName = "", int pn = 1,
         CancellationToken cancellationToken = default);
 

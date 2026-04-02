@@ -20,6 +20,6 @@ internal readonly record struct TiebaOperationCapabilities(
 
     internal static TiebaOperationCapabilities WebSocketOnly(bool requiresAuthentication = false)
     {
-        return new TiebaOperationCapabilities(TiebaOperationTransportKind.WebSocketOnly, requiresAuthentication, false);
+        return new TiebaOperationCapabilities(TiebaOperationTransportKind.WebSocketOnly, requiresAuthentication);
     }
 }

@@ -15,7 +15,6 @@ using AioTieba4DotNet.Api.GetUInfoUserJson;
 using AioTieba4DotNet.Api.GetUserContents;
 using AioTieba4DotNet.Api.GetUserForumInfo;
 using AioTieba4DotNet.Api.Login;
-using GetHomepageApi = AioTieba4DotNet.Api.Profile.GetHomepage.GetHomepage;
 using AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 using AioTieba4DotNet.Api.RemoveFan;
 using AioTieba4DotNet.Api.SetBlacklist;
@@ -27,6 +26,7 @@ using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Models.Shared;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Transport;
+using GetHomepageApi = AioTieba4DotNet.Api.Profile.GetHomepage.GetHomepage;
 
 namespace AioTieba4DotNet.Protocols;
 
@@ -44,12 +44,12 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
+    public async Task<UserInfo> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         return await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<UserInfoGuInfoApp>(
+            new TiebaOperationDescriptor<UserInfo>(
                 nameof(GetUserInfoAppAsync),
                 TiebaOperationCapabilities.HttpOnly(),
                 (session, ct) => new GetUInfoGetUserInfoApp(session.HttpCore).RequestAsync(userId, ct)),
@@ -133,26 +133,26 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait,
+    public async Task<UserInfo> GetPanelInfoAsync(string nameOrPortrait,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         return await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<UserInfoPanel>(
+            new TiebaOperationDescriptor<UserInfo>(
                 nameof(GetPanelInfoAsync),
                 TiebaOperationCapabilities.HttpOnly(),
                 (session, ct) => new GetUInfoPanel(session.HttpCore).RequestAsync(nameOrPortrait, ct)),
             cancellationToken);
     }
 
-    public async Task<UserInfoJson> GetUserInfoJsonAsync(string username,
+    public async Task<UserInfo> GetUserInfoJsonAsync(string username,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         return await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<UserInfoJson>(
+            new TiebaOperationDescriptor<UserInfo>(
                 nameof(GetUserInfoJsonAsync),
                 TiebaOperationCapabilities.HttpOnly(),
                 (session, ct) => new GetUInfoUserJson(session.HttpCore).RequestAsync(username, ct)),
@@ -291,14 +291,14 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId,
+    public async Task<UserInfo> GetUserInfoWebAsync(int userId,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         ValidateUserId(userId);
 
         return await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<UserInfoGuInfoWeb>(
+            new TiebaOperationDescriptor<UserInfo>(
                 nameof(GetUserInfoWebAsync),
                 TiebaOperationCapabilities.HttpOnly(),
                 (session, ct) => new GetUInfoGetUserInfoWeb(session.HttpCore).RequestAsync(userId, ct)),
@@ -392,14 +392,14 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
             cancellationToken);
     }
 
-    public async Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid,
+    public async Task<UserInfo> GetUserByTiebaUidAsync(long tiebaUid,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         ValidateTiebaUid(tiebaUid);
 
         return await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<UserInfoTUid>(
+            new TiebaOperationDescriptor<UserInfo>(
                 nameof(GetUserByTiebaUidAsync),
                 TiebaOperationCapabilities.WebSocketPreferred(),
                 (session, ct) => new TiebaUid2UserInfo(session.HttpCore, session.WsCore).RequestHttpAsync(tiebaUid, ct),

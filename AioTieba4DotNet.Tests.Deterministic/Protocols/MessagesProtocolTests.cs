@@ -286,7 +286,7 @@ public sealed class MessagesProtocolTests
         }.ToByteArray()));
         var users = new RecordingUserProtocol
         {
-            PanelInfo = new UserInfoPanel { UserId = 42, UserName = "resolved-user" }
+            PanelInfo = new UserInfo { UserId = 42, UserName = "resolved-user" }
         };
         var protocol = CreateProtocol(wsCore, users);
 
@@ -486,7 +486,7 @@ public sealed class MessagesProtocolTests
     public async Task MessagesProtocol_ValidationPaths_ThrowBeforeNetworkCalls()
     {
         var wsCore = new RecordingWsCore();
-        var users = new RecordingUserProtocol { PanelInfo = new UserInfoPanel { UserId = 0 } };
+        var users = new RecordingUserProtocol { PanelInfo = new UserInfo { UserId = 0 } };
         var protocol = CreateProtocol(wsCore, users);
 
         await ThrowsAsync<ArgumentOutOfRangeException>(() => protocol.GetGroupMessagesAsync(0));
@@ -744,7 +744,7 @@ public sealed class MessagesProtocolTests
     {
         public int GetSelfInfoCalls { get; private set; }
         public string? LastPanelInfoLookup { get; private set; }
-        public UserInfoPanel PanelInfo { get; init; } = new() { UserId = 42, UserName = "resolved-user" };
+        public UserInfo PanelInfo { get; init; } = new() { UserId = 42, UserName = "resolved-user" };
         public UserInfo SelfInfo { get; init; } = new() { UserId = 42, UserName = "sender", Portrait = "tb.1.sender" };
 
         public Task<string> GetTbsAsync(CancellationToken cancellationToken = default)
@@ -752,7 +752,7 @@ public sealed class MessagesProtocolTests
             throw new NotImplementedException();
         }
 
-        public Task<UserInfoGuInfoApp> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserInfoAppAsync(int userId, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
@@ -788,14 +788,14 @@ public sealed class MessagesProtocolTests
             throw new NotImplementedException();
         }
 
-        public Task<UserInfoPanel> GetPanelInfoAsync(string nameOrPortrait,
+        public Task<UserInfo> GetPanelInfoAsync(string nameOrPortrait,
             CancellationToken cancellationToken = default)
         {
             LastPanelInfoLookup = nameOrPortrait;
             return Task.FromResult(PanelInfo);
         }
 
-        public Task<UserInfoJson> GetUserInfoJsonAsync(string username, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserInfoJsonAsync(string username, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
@@ -853,7 +853,7 @@ public sealed class MessagesProtocolTests
             throw new NotImplementedException();
         }
 
-        public Task<UserInfoGuInfoWeb> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserInfoWebAsync(int userId, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
@@ -891,7 +891,7 @@ public sealed class MessagesProtocolTests
             throw new NotImplementedException();
         }
 
-        public Task<UserInfoTUid> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default)
+        public Task<UserInfo> GetUserByTiebaUidAsync(long tiebaUid, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

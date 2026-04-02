@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using AioTieba4DotNet.Api.GetAts;
 using AioTieba4DotNet.Api.GetForumLevel;
 using AioTieba4DotNet.Api.GetGroupMsg;
-using AioTieba4DotNet.Api.GetAts;
 using AioTieba4DotNet.Api.GetReplys;
 using AioTieba4DotNet.Api.InitWebSocket;
 using AioTieba4DotNet.Api.PushNotify;
@@ -12,14 +12,14 @@ using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Models.Messages;
 using AioTieba4DotNet.Models.Shared;
 using AioTieba4DotNet.Models.Users;
-using AioTieba4DotNet.Session;
 using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Transport.Chatrooms;
 
 namespace AioTieba4DotNet.Protocols;
 
 [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
-    Justification = "The chatroom send delegate preserves the full message-send contract as discrete values so callers can supply protocol fields without a lossy adapter.")]
+    Justification =
+        "The chatroom send delegate preserves the full message-send contract as discrete values so callers can supply protocol fields without a lossy adapter.")]
 internal delegate Task<bool> SendChatroomMessageHandler(Account account, UserInfo selfInfo, ForumLevelInfo forumLevel,
     long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds, int robotCode,
     CancellationToken cancellationToken);
@@ -58,16 +58,6 @@ internal sealed class MessagesProtocol(
                 TiebaOperationCapabilities.HttpOnly(true),
                 (session, ct) => new GetReplys(session.HttpCore).RequestAsync(pn, ct)),
             cancellationToken);
-    }
-
-    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
-        Justification = "The default chatroom sender forwards the protocol-shaped message contract directly into the BLCP transport implementation.")]
-    private static Task<bool> DefaultSendChatroomMessageAsync(Account account, UserInfo selfInfo,
-        ForumLevelInfo forumLevel, long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds,
-        int robotCode, CancellationToken cancellationToken)
-    {
-        return new BlcpChatroomSender().SendMessageAsync(account, selfInfo, forumLevel, chatroomId, forumId, text,
-            atUserIds, robotCode, cancellationToken);
     }
 
     public async Task<WsMsgGroups> GetGroupMessagesAsync(int getType, CancellationToken cancellationToken = default)
@@ -191,6 +181,17 @@ internal sealed class MessagesProtocol(
     {
         ArgumentNullException.ThrowIfNull(payload);
         return PushNotify.ParseBody(payload);
+    }
+
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+        Justification =
+            "The default chatroom sender forwards the protocol-shaped message contract directly into the BLCP transport implementation.")]
+    private static Task<bool> DefaultSendChatroomMessageAsync(Account account, UserInfo selfInfo,
+        ForumLevelInfo forumLevel, long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds,
+        int robotCode, CancellationToken cancellationToken)
+    {
+        return new BlcpChatroomSender().SendMessageAsync(account, selfInfo, forumLevel, chatroomId, forumId, text,
+            atUserIds, robotCode, cancellationToken);
     }
 
     private async Task EnsureCursorStoreInitializedAsync(CancellationToken cancellationToken)

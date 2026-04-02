@@ -21,7 +21,7 @@ public sealed class WsMessage
 
     public GroupType GroupTypeValue => Enum.IsDefined(typeof(GroupType), GroupType)
         ? (GroupType)GroupType
-        : global::AioTieba4DotNet.Models.Messages.GroupType.Unknown;
+        : Messages.GroupType.Unknown;
 
     /// <summary>
     ///     获取消息 id。
@@ -37,7 +37,7 @@ public sealed class WsMessage
 
     public MsgType MsgTypeValue => Enum.IsDefined(typeof(MsgType), MsgType)
         ? (MsgType)MsgType
-        : global::AioTieba4DotNet.Models.Messages.MsgType.Unknown;
+        : Messages.MsgType.Unknown;
 
     /// <summary>
     ///     获取文本内容。

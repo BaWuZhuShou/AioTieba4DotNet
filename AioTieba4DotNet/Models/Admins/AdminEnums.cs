@@ -1,5 +1,3 @@
-using System;
-
 using System.Diagnostics.CodeAnalysis;
 
 namespace AioTieba4DotNet.Models.Admins;
@@ -45,7 +43,8 @@ public enum BawuType
 ///     已分配吧务权限
 /// </summary>
 [SuppressMessage("Naming", "S2342:Enumeration type names should comply with a naming convention",
-    Justification = "The public flags enum name is part of the existing consumer-facing admin contract and is retained for compatibility.")]
+    Justification =
+        "The public flags enum name is part of the existing consumer-facing admin contract and is retained for compatibility.")]
 [Flags]
 public enum BawuPermType
 {

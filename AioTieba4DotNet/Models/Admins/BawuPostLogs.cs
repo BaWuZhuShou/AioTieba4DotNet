@@ -28,7 +28,7 @@ public sealed class BawuPostLogQueryOptions
     public DateTimeOffset? StartTime { get; init; }
 
     /// <summary>
-    ///     结束时间；为 <see langword="null"/> 且指定起始时间时将自动使用当前时间
+    ///     结束时间；为 <see langword="null" /> 且指定起始时间时将自动使用当前时间
     /// </summary>
     public DateTimeOffset? EndTime { get; init; }
 

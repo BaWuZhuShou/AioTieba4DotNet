@@ -1,5 +1,5 @@
-﻿using AioTieba4DotNet.Models.Shared;
-using AioTieba4DotNet.Models.Contents;
+﻿using AioTieba4DotNet.Models.Contents;
+using AioTieba4DotNet.Models.Shared;
 
 namespace AioTieba4DotNet.Models.Threads;
 

@@ -1,6 +1,3 @@
-using AioTieba4DotNet.Session;
-using AioTieba4DotNet.Transport.WebSockets;
-
 namespace AioTieba4DotNet.Transport.WebSockets;
 
 /// <summary>
@@ -30,6 +27,15 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
         _frameCodec = frameCodec;
         _engine = new TiebaWebSocketEngine(() => Account, frameCodec, handshakeBuilder, connectionFactory, options,
             delayStrategy);
+    }
+
+    /// <summary>
+    ///     释放 WebSocket 引擎与底层连接资源。
+    /// </summary>
+    public void Dispose()
+    {
+        _engine.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>
@@ -84,15 +90,6 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
     public Task CloseAsync(CancellationToken cancellationToken = default)
     {
         return _engine.CloseAsync(cancellationToken);
-    }
-
-    /// <summary>
-    ///     释放 WebSocket 引擎与底层连接资源。
-    /// </summary>
-    public void Dispose()
-    {
-        _engine.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     /// <summary>

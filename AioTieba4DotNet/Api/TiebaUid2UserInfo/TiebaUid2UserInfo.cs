@@ -1,7 +1,7 @@
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
-using AioTieba4DotNet.Models.Users;
+using AioTieba4DotNet.Models.Shared;
 using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 
@@ -12,7 +12,7 @@ internal sealed class TiebaUid2UserInfo(ITiebaHttpCore httpCore, ITiebaWsCore ws
 {
     private const int Cmd = 309702;
 
-    public async Task<UserInfoTUid> RequestHttpAsync(long tiebaUid, CancellationToken cancellationToken = default)
+    public async Task<UserInfo> RequestHttpAsync(long tiebaUid, CancellationToken cancellationToken = default)
     {
         var data = PackProto(tiebaUid);
         var requestUri =
@@ -22,7 +22,7 @@ internal sealed class TiebaUid2UserInfo(ITiebaHttpCore httpCore, ITiebaWsCore ws
         return ParseResponse(response);
     }
 
-    public async Task<UserInfoTUid> RequestWsAsync(long tiebaUid, CancellationToken cancellationToken = default)
+    public async Task<UserInfo> RequestWsAsync(long tiebaUid, CancellationToken cancellationToken = default)
     {
         var data = PackProto(tiebaUid);
         var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
@@ -42,7 +42,7 @@ internal sealed class TiebaUid2UserInfo(ITiebaHttpCore httpCore, ITiebaWsCore ws
         return req.ToByteArray();
     }
 
-    private static UserInfoTUid ParseResponse(byte[] body)
+    private static UserInfo ParseResponse(byte[] body)
     {
         var response = GetUserByTiebaUidResIdl.Parser.ParseFrom(body);
         ApiResponseValidator.CheckError(response.Error.Errorno, response.Error.Errmsg);

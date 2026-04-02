@@ -6,7 +6,8 @@ namespace AioTieba4DotNet.Models.Contents;
 ///     碎片基类
 /// </summary>
 [SuppressMessage("Naming", "S101:Types should be named in PascalCase",
-    Justification = "The public abstract frag base type keeps its historical name for compatibility with the existing consumer-facing model contract.")]
+    Justification =
+        "The public abstract frag base type keeps its historical name for compatibility with the existing consumer-facing model contract.")]
 public abstract class IFrag
 {
     /// <summary>

@@ -1,9 +1,8 @@
-﻿using AioTieba4DotNet.Transport;
-using AioTieba4DotNet.Models.Forums;
-using AioTieba4DotNet.Attributes;
+﻿using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
-using AioTieba4DotNet;
+using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Forums;
+using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.GetForum;
 
@@ -21,7 +20,7 @@ internal class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         var forumDict = o.GetValue("forum")?.ToObject<Dictionary<string, object>>();
         if (forumDict == null) throw new TieBaServerException(-1, "无法获取到贴吧数据!");
 
-        return Internal.Mapping.ForumMapper.FromTbData(forumDict);
+        return ForumMapper.FromTbData(forumDict);
     }
 
     /// <summary>

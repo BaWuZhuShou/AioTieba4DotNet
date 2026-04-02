@@ -1,4 +1,3 @@
-using System.Net.Http;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;

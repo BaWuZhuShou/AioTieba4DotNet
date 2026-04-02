@@ -1,14 +1,12 @@
-using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
 using AioTieba4DotNet.Models;
-using AioTieba4DotNet.Models.Users;
+using AioTieba4DotNet.Models.Shared;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Internal.Mapping;
 
 internal static class UserInfoPanelMapper
 {
-    internal static UserInfoPanel FromTbData(JObject data)
+    internal static UserInfo FromTbData(JObject data)
     {
         var portrait = data.GetValue("portrait")?.ToObject<string>() ?? string.Empty;
         if (portrait.Contains('?')) portrait = portrait[..^13];
@@ -21,7 +19,7 @@ internal static class UserInfoPanelMapper
         var tbAge = data.GetValue("tb_age")?.ToObject<string>();
         var age = tbAge == "-" ? 0 : data.GetValue("tb_age")?.ToObject<float>() ?? 0;
 
-        return new UserInfoPanel
+        return new UserInfo
         {
             Portrait = portrait,
             UserName = data["name"]?.ToObject<string>() ?? string.Empty,

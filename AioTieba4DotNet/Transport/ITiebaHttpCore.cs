@@ -1,6 +1,4 @@
-﻿using AioTieba4DotNet.Session;
-
-namespace AioTieba4DotNet.Transport;
+﻿namespace AioTieba4DotNet.Transport;
 
 /// <summary>
 ///     HTTP 核心接口，负责底层网络请求的打包、签名与发送
@@ -8,19 +6,19 @@ namespace AioTieba4DotNet.Transport;
 internal interface ITiebaHttpCore
 {
     /// <summary>
-    ///     当前绑定的账户信息 <see cref="Account"/>
+    ///     当前绑定的账户信息 <see cref="Account" />
     /// </summary>
     Account? Account { get; }
 
     /// <summary>
-    ///     底层 HttpClient 实例 <see cref="HttpClient"/>
+    ///     底层 HttpClient 实例 <see cref="HttpClient" />
     /// </summary>
     HttpClient HttpClient { get; }
 
     /// <summary>
     ///     设置或更新绑定的账户
     /// </summary>
-    /// <param name="newAccount">新账户 <see cref="Account"/></param>
+    /// <param name="newAccount">新账户 <see cref="Account" /></param>
     void SetAccount(Account newAccount);
 
     /// <summary>

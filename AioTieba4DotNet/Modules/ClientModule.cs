@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Contracts;
 using AioTieba4DotNet.Protocols;
 
 namespace AioTieba4DotNet.Modules;
@@ -15,19 +14,19 @@ public class ClientModule : IClientModule
         _protocol = protocol;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Task InitWebSocketAsync(CancellationToken cancellationToken = default)
     {
         return _protocol.InitWebSocketAsync(cancellationToken);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Task<string> InitZIdAsync(CancellationToken cancellationToken = default)
     {
         return _protocol.InitZIdAsync(cancellationToken);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Task<(string ClientId, string SampleId)> SyncAsync(CancellationToken cancellationToken = default)
     {
         return _protocol.SyncAsync(cancellationToken);

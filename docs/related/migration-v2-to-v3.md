@@ -102,10 +102,23 @@ v3 把公开模块边界固定成下面这张表。
 | 旧名称 | 新名称 | 你要怎么改 |
 | --- | --- | --- |
 | `IUserModule.GetBasicInfoAppAsync(int userId, ...)` | `IUserModule.GetUserInfoAppAsync(int userId, ...)` | 读取 App `user_info` 时改成 `GetUserInfoAppAsync(...)`。 |
-| `UserInfoApp` | `UserInfoGuInfoApp` | 更新 App 用户信息 DTO 名称。 |
-| `UserInfoWeb` | `UserInfoGuInfoWeb` | 更新 Web 用户信息 DTO 名称。 |
+| `IUserModule.GetUserInfoWebAsync(int userId, ...) : UserInfoGuInfoWeb` | `IUserModule.GetUserInfoWebAsync(int userId, ...) : UserInfo` | Web `user_info` 读取结果也统一收敛到共享 `UserInfo`。 |
+| `IUserModule.GetPanelInfoAsync(string nameOrPortrait, ...) : UserInfoPanel` | `IUserModule.GetPanelInfoAsync(string nameOrPortrait, ...) : UserInfo` | panel 读取结果改为共享 `UserInfo`。 |
+| `IUserModule.GetUserInfoJsonAsync(string username, ...) : UserInfoJson` | `IUserModule.GetUserInfoJsonAsync(string username, ...) : UserInfo` | JSON 用户信息读取结果改为共享 `UserInfo`。 |
+| `IUserModule.GetUserByTiebaUidAsync(long tiebaUid, ...) : UserInfoTUid` | `IUserModule.GetUserByTiebaUidAsync(long tiebaUid, ...) : UserInfo` | Tieba UID 反查用户结果改为共享 `UserInfo`。 |
+| `UserInfoGuInfoApp` | `UserInfo` | App `user_info` 读取结果统一收敛到共享 `UserInfo`。 |
+| `UserInfoGuInfoWeb` | `UserInfo` | Web `user_info` 读取结果统一收敛到共享 `UserInfo`。 |
+| `UserInfoJson` | `UserInfo` | JSON 用户信息读取结果统一收敛到共享 `UserInfo`。 |
+| `UserInfoPanel` | `UserInfo` | panel 用户信息读取结果统一收敛到共享 `UserInfo`。 |
+| `UserInfoTUid` | `UserInfo` | Tieba UID 用户信息读取结果统一收敛到共享 `UserInfo`。 |
+| `UserInfoApp` | `UserInfo` | App `user_info` 读取结果统一收敛到共享 `UserInfo`。 |
+| `UserInfoWeb` | `UserInfo` | Web `user_info` 读取结果统一收敛到共享 `UserInfo`。 |
 | `IUserModule.SetNicknameLegacyAsync(string nickName, ...)` | `IUserModule.SetNicknameAsync(string nickName, ...)` | 改成 `SetNicknameAsync(...)`。 |
 | `UserPostss` | `UserPostGroups` | 更新用户回复分组 DTO 名称。 |
+
+这里还有一个行为层面的 breaking change：如果你之前通过 `result.GetType()`、`is UserInfoPanel`、`is UserInfoJson` 之类的方式区分数据来自哪个入口，这种 endpoint-specific 运行时类型标签现在已经删除，改为统一返回 `UserInfo`。调用方如果还需要区分来源，需要改成根据调用的方法本身来区分，而不是依赖返回 DTO 的运行时类型。
+
+另外，少量历史上保留下来的公开字段现在也统一改成了公开属性：`Thread.TabId`、`VirtualImagePf.Enabled`、`VirtualImagePf.State` 都从 public field 改成了可读写 property。如果你的代码依赖字段反射（例如 `GetField(...)`）或明确要求字段元数据，需要切换到属性访问或 `GetProperty(...)`。
 
 ### Messages
 

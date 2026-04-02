@@ -7,9 +7,8 @@ internal sealed class MessageCursorStore
     private readonly SemaphoreSlim _initializeLock = new(1, 1);
     private readonly Dictionary<long, MessageCursorPair> _pairs = new();
     private bool _initialized;
-    private long _privateGroupId;
 
-    internal long PrivateGroupId => _privateGroupId;
+    internal long PrivateGroupId { get; private set; }
 
     internal async Task EnsureInitializedAsync(
         Func<CancellationToken, Task<IReadOnlyList<WsMsgGroupInfo>>> loader,
@@ -34,7 +33,7 @@ internal sealed class MessageCursorStore
         foreach (var group in groups)
         {
             _pairs[group.GroupId] = new MessageCursorPair(group.LastMessageId, group.LastMessageId);
-            if (group.GroupType == 6) _privateGroupId = group.GroupId;
+            if (group.GroupType == 6) PrivateGroupId = group.GroupId;
         }
 
         _initialized = true;
@@ -52,11 +51,11 @@ internal sealed class MessageCursorStore
 
     internal long GetRecordId()
     {
-        if (_privateGroupId <= 0)
+        if (PrivateGroupId <= 0)
             throw new TiebaProtocolException(
                 "The private-message group id is not available after websocket initialization.");
 
-        return checked(GetLastMessageId(_privateGroupId) * 100 + 1);
+        return checked(GetLastMessageId(PrivateGroupId) * 100 + 1);
     }
 
     internal void Update(long groupId, long messageId)

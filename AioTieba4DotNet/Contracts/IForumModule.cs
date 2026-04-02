@@ -29,7 +29,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>贴吧详情 <see cref="ForumDetail"/></returns>
+    /// <returns>贴吧详情 <see cref="ForumDetail" /></returns>
     Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -37,7 +37,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>贴吧详情 <see cref="ForumDetail"/></returns>
+    /// <returns>贴吧详情 <see cref="ForumDetail" /></returns>
     Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -99,7 +99,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>贴吧信息 <see cref="Forum"/></returns>
+    /// <returns>贴吧信息 <see cref="Forum" /></returns>
     Task<Forum> GetForumAsync(string fname, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -109,7 +109,7 @@ public interface IForumModule
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>关注贴吧列表 <see cref="FollowForums"/></returns>
+    /// <returns>关注贴吧列表 <see cref="FollowForums" /></returns>
     Task<FollowForums> GetFollowForumsAsync(long userId, int pn = 1, int rn = 50,
         CancellationToken cancellationToken = default);
 
@@ -119,7 +119,7 @@ public interface IForumModule
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>当前账号关注贴吧列表 <see cref="SelfFollowForums"/>，包含签到状态</returns>
+    /// <returns>当前账号关注贴吧列表 <see cref="SelfFollowForums" />，包含签到状态</returns>
     Task<SelfFollowForums> GetSelfFollowForumsAsync(int pn = 1, int rn = 200,
         CancellationToken cancellationToken = default);
 
@@ -127,12 +127,13 @@ public interface IForumModule
     ///     获取当前账号关注贴吧 V1 列表
     /// </summary>
     /// <remarks>
-    ///     该方法对应 aiotieba `get_self_follow_forums_v1`。<c>V1</c> 用于标识与 <see cref="GetSelfFollowForumsAsync"/> 并列支持的 V1 这一组接口，而不是泛指分页能力。
+    ///     该方法对应 aiotieba `get_self_follow_forums_v1`。<c>V1</c> 用于标识与 <see cref="GetSelfFollowForumsAsync" /> 并列支持的 V1
+    ///     这一组接口，而不是泛指分页能力。
     /// </remarks>
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>V1 关注贴吧列表 <see cref="SelfFollowForumsV1"/>，保留独立分页返回形状</returns>
+    /// <returns>V1 关注贴吧列表 <see cref="SelfFollowForumsV1" />，保留独立分页返回形状</returns>
     Task<SelfFollowForumsV1> GetSelfFollowForumsV1Async(int pn = 1, int rn = 20,
         CancellationToken cancellationToken = default);
 
@@ -159,7 +160,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="imageUrl">图片 URL</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>图片字节结果 <see cref="ForumImageBytes"/></returns>
+    /// <returns>图片字节结果 <see cref="ForumImageBytes" /></returns>
     Task<ForumImageBytes> GetImageBytesAsync(string imageUrl, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -167,7 +168,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="imageUrl">图片 URL</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>图片结果 <see cref="ForumImage"/></returns>
+    /// <returns>图片结果 <see cref="ForumImage" /></returns>
     Task<ForumImage> GetImageAsync(string imageUrl, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -176,7 +177,7 @@ public interface IForumModule
     /// <param name="rawHash">图片 hash</param>
     /// <param name="size">图片尺寸</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>图片结果 <see cref="ForumImage"/>；尺寸非法时返回空图片</returns>
+    /// <returns>图片结果 <see cref="ForumImage" />；尺寸非法时返回空图片</returns>
     Task<ForumImage> GetImageByHashAsync(string rawHash, ForumImageSize size = ForumImageSize.Small,
         CancellationToken cancellationToken = default);
 
@@ -186,7 +187,7 @@ public interface IForumModule
     /// <param name="portrait">portrait</param>
     /// <param name="size">头像尺寸</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>头像结果 <see cref="ForumImage"/>；尺寸非法时返回空图片</returns>
+    /// <returns>头像结果 <see cref="ForumImage" />；尺寸非法时返回空图片</returns>
     Task<ForumImage> GetPortraitAsync(string portrait, ForumImageSize size = ForumImageSize.Small,
         CancellationToken cancellationToken = default);
 
@@ -200,7 +201,7 @@ public interface IForumModule
     /// <param name="searchType">搜索排序方式</param>
     /// <param name="onlyThread">是否仅搜索主题帖</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>搜索结果 <see cref="ExactSearches"/></returns>
+    /// <returns>搜索结果 <see cref="ExactSearches" /></returns>
     Task<ExactSearches> SearchExactAsync(string fname, string query, int pn = 1, int rn = 30,
         ForumSearchType searchType = ForumSearchType.All, bool onlyThread = false,
         CancellationToken cancellationToken = default);
@@ -215,7 +216,7 @@ public interface IForumModule
     /// <param name="searchType">搜索排序方式</param>
     /// <param name="onlyThread">是否仅搜索主题帖</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>搜索结果 <see cref="ExactSearches"/></returns>
+    /// <returns>搜索结果 <see cref="ExactSearches" /></returns>
     Task<ExactSearches> SearchExactAsync(ulong fid, string query, int pn = 1, int rn = 30,
         ForumSearchType searchType = ForumSearchType.All, bool onlyThread = false,
         CancellationToken cancellationToken = default);
@@ -229,7 +230,7 @@ public interface IForumModule
     /// <param name="sort">排序方式</param>
     /// <param name="isGood">是否精品区</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>帖子列表 <see cref="LastReplyers"/></returns>
+    /// <returns>帖子列表 <see cref="LastReplyers" /></returns>
     Task<LastReplyers> GetLastReplyersAsync(string fname, int pn = 1, int rn = 30,
         ThreadSortType sort = ThreadSortType.Reply, bool isGood = false,
         CancellationToken cancellationToken = default);
@@ -243,7 +244,7 @@ public interface IForumModule
     /// <param name="sort">排序方式</param>
     /// <param name="isGood">是否精品区</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>帖子列表 <see cref="LastReplyers"/></returns>
+    /// <returns>帖子列表 <see cref="LastReplyers" /></returns>
     Task<LastReplyers> GetLastReplyersAsync(ulong fid, int pn = 1, int rn = 30,
         ThreadSortType sort = ThreadSortType.Reply, bool isGood = false,
         CancellationToken cancellationToken = default);
@@ -254,7 +255,7 @@ public interface IForumModule
     /// <param name="fname">吧名</param>
     /// <param name="pn">页码</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>吧会员列表 <see cref="MemberUsers"/></returns>
+    /// <returns>吧会员列表 <see cref="MemberUsers" /></returns>
     Task<MemberUsers> GetMemberUsersAsync(string fname, int pn = 1, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -263,7 +264,7 @@ public interface IForumModule
     /// <param name="fid">吧 ID</param>
     /// <param name="pn">页码</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>吧会员列表 <see cref="MemberUsers"/></returns>
+    /// <returns>吧会员列表 <see cref="MemberUsers" /></returns>
     Task<MemberUsers> GetMemberUsersAsync(ulong fid, int pn = 1, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -273,7 +274,7 @@ public interface IForumModule
     /// <param name="pn">页码</param>
     /// <param name="rankType">榜单类型</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>排行榜 <see cref="RankForums"/></returns>
+    /// <returns>排行榜 <see cref="RankForums" /></returns>
     Task<RankForums> GetRankForumsAsync(string fname, int pn = 1,
         ForumRankType rankType = ForumRankType.Weekly, CancellationToken cancellationToken = default);
 
@@ -284,7 +285,7 @@ public interface IForumModule
     /// <param name="pn">页码</param>
     /// <param name="rankType">榜单类型</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>排行榜 <see cref="RankForums"/></returns>
+    /// <returns>排行榜 <see cref="RankForums" /></returns>
     Task<RankForums> GetRankForumsAsync(ulong fid, int pn = 1,
         ForumRankType rankType = ForumRankType.Weekly, CancellationToken cancellationToken = default);
 
@@ -293,7 +294,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>推荐配额状态 <see cref="RecomStatus"/></returns>
+    /// <returns>推荐配额状态 <see cref="RecomStatus" /></returns>
     Task<RecomStatus> GetRecomStatusAsync(string fname, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -301,7 +302,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>推荐配额状态 <see cref="RecomStatus"/></returns>
+    /// <returns>推荐配额状态 <see cref="RecomStatus" /></returns>
     Task<RecomStatus> GetRecomStatusAsync(ulong fid, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -311,7 +312,7 @@ public interface IForumModule
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>吧广场列表 <see cref="SquareForums"/></returns>
+    /// <returns>吧广场列表 <see cref="SquareForums" /></returns>
     Task<SquareForums> GetSquareForumsAsync(string cname, int pn = 1, int rn = 20,
         CancellationToken cancellationToken = default);
 
@@ -320,7 +321,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>统计数据 <see cref="ForumStatistics"/></returns>
+    /// <returns>统计数据 <see cref="ForumStatistics" /></returns>
     Task<ForumStatistics> GetStatisticsAsync(string fname, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -328,7 +329,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>统计数据 <see cref="ForumStatistics"/></returns>
+    /// <returns>统计数据 <see cref="ForumStatistics" /></returns>
     Task<ForumStatistics> GetStatisticsAsync(ulong fid, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -336,7 +337,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="fname">吧名</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>等级信息 <see cref="ForumLevelInfo"/></returns>
+    /// <returns>等级信息 <see cref="ForumLevelInfo" /></returns>
     Task<ForumLevelInfo> GetForumLevelAsync(string fname, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -344,7 +345,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>等级信息 <see cref="ForumLevelInfo"/></returns>
+    /// <returns>等级信息 <see cref="ForumLevelInfo" /></returns>
     Task<ForumLevelInfo> GetForumLevelAsync(ulong fid, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -352,7 +353,7 @@ public interface IForumModule
     /// </summary>
     /// <param name="fid">吧 ID</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>房间列表 <see cref="RoomList"/>；结果按 upstream 房间 JSON 扁平化为字典容器</returns>
+    /// <returns>房间列表 <see cref="RoomList" />；结果按 upstream 房间 JSON 扁平化为字典容器</returns>
     Task<RoomList> GetRoomListByFidAsync(ulong fid, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -393,7 +394,7 @@ public interface IForumModule
     /// <param name="pn">页码</param>
     /// <param name="rn">每页数量</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>首页推荐屏蔽贴吧列表 <see cref="DislikeForums"/></returns>
+    /// <returns>首页推荐屏蔽贴吧列表 <see cref="DislikeForums" /></returns>
     Task<DislikeForums> GetDislikeForumsAsync(int pn = 1, int rn = 20,
         CancellationToken cancellationToken = default);
 }

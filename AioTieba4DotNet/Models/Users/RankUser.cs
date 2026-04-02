@@ -26,6 +26,6 @@ public class RankUser
     /// <summary>
     ///     Gets a value that indicates whether the user is a VIP.
     /// </summary>
-    /// <value><see langword="true"/> if the user is a VIP; otherwise, <see langword="false"/>.</value>
+    /// <value><see langword="true" /> if the user is a VIP; otherwise, <see langword="false" />.</value>
     public bool IsVip { get; init; }
 }

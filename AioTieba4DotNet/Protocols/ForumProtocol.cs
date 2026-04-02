@@ -1,26 +1,27 @@
+using AioTieba4DotNet.Api.GetCid;
 using AioTieba4DotNet.Api.GetDislikeForums;
 using AioTieba4DotNet.Api.GetFid;
 using AioTieba4DotNet.Api.GetFollowForums;
-using AioTieba4DotNet.Api.GetForumLevel;
 using AioTieba4DotNet.Api.GetForum;
+using AioTieba4DotNet.Api.GetForumDetail;
+using AioTieba4DotNet.Api.GetForumLevel;
 using AioTieba4DotNet.Api.GetImages;
 using AioTieba4DotNet.Api.GetLastReplyers;
 using AioTieba4DotNet.Api.GetMemberUsers;
 using AioTieba4DotNet.Api.GetRankForums;
 using AioTieba4DotNet.Api.GetRecomStatus;
-using AioTieba4DotNet.Api.GetForumDetail;
 using AioTieba4DotNet.Api.GetRoomListByFid;
-using AioTieba4DotNet.Api.GetSquareForums;
-using AioTieba4DotNet.Api.GetStatistics;
 using AioTieba4DotNet.Api.GetSelfFollowForums;
 using AioTieba4DotNet.Api.GetSelfFollowForumsV1;
+using AioTieba4DotNet.Api.GetSelfInfoInitNickname;
+using AioTieba4DotNet.Api.GetSelfInfoMoIndex;
+using AioTieba4DotNet.Api.GetSquareForums;
+using AioTieba4DotNet.Api.GetStatistics;
 using AioTieba4DotNet.Api.LikeForum;
 using AioTieba4DotNet.Api.SearchExact;
 using AioTieba4DotNet.Api.Sign;
 using AioTieba4DotNet.Api.SignForums;
 using AioTieba4DotNet.Api.SignGrowth;
-using AioTieba4DotNet.Api.GetSelfInfoInitNickname;
-using AioTieba4DotNet.Api.GetSelfInfoMoIndex;
 using AioTieba4DotNet.Api.UndislikeForum;
 using AioTieba4DotNet.Api.UnlikeForum;
 using AioTieba4DotNet.Internal;
@@ -252,7 +253,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
             new TiebaOperationDescriptor<int>(
                 nameof(GetCidAsync),
                 TiebaOperationCapabilities.HttpOnly(true),
-                (session, ct) => new Api.GetCid.GetCid(session.HttpCore).RequestAsync(fname, cname, ct)),
+                (session, ct) => new GetCid(session.HttpCore).RequestAsync(fname, cname, ct)),
             cancellationToken);
     }
 

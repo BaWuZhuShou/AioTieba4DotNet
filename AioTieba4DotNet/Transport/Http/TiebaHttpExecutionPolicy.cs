@@ -1,6 +1,3 @@
-using AioTieba4DotNet.Contracts;
-using System.IO;
-
 namespace AioTieba4DotNet.Transport.Http;
 
 internal sealed class TiebaHttpExecutionPolicy(TimeSpan requestTimeout, int maxReadRetryAttempts)

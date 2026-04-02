@@ -1,7 +1,6 @@
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
-using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
+using Google.Protobuf;
 
 namespace AioTieba4DotNet.Transport.WebSockets;
 
@@ -20,6 +19,30 @@ internal sealed class TiebaWebSocketEngine(
     private TiebaWebSocketConnectionContext? _currentConnection;
     private bool _disposed;
     private int _reqIdCounter = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+
+        _disposed = true;
+        _lifetimeSource.Cancel();
+        _lifetimeSource.Dispose();
+        _connectLock.Dispose();
+
+        if (TryGetCurrentConnection(out var connection))
+        {
+            lock (_syncRoot)
+            {
+                if (ReferenceEquals(_currentConnection, connection)) _currentConnection = null;
+            }
+
+            connection!.Router.FailPending(new TiebaWebSocketConnectionLostException(
+                "The WebSocket engine was disposed before pending requests completed."));
+            connection.Router.Complete();
+            connection.LifetimeSource.Cancel();
+            connection.Dispose();
+        }
+    }
 
     internal async Task ConnectAsync(CancellationToken cancellationToken = default)
     {
@@ -49,7 +72,7 @@ internal sealed class TiebaWebSocketEngine(
     {
         var connection = await EnsureConnectedAsync(cancellationToken);
         var data = req.Payload?.Data?.ToByteArray() ?? [];
-        var buffer = frameCodec.Pack(data, req.Cmd, req.ReqId, accountProvider(), true);
+        var buffer = frameCodec.Pack(data, req.Cmd, req.ReqId, accountProvider());
 
         try
         {
@@ -89,30 +112,6 @@ internal sealed class TiebaWebSocketEngine(
         if (!TryGetCurrentConnection(out var connection)) return;
 
         await ShutdownConnectionAsync(connection!, true, null, cancellationToken);
-    }
-
-    public void Dispose()
-    {
-        if (_disposed) return;
-
-        _disposed = true;
-        _lifetimeSource.Cancel();
-        _lifetimeSource.Dispose();
-        _connectLock.Dispose();
-
-        if (TryGetCurrentConnection(out var connection))
-        {
-            lock (_syncRoot)
-            {
-                if (ReferenceEquals(_currentConnection, connection)) _currentConnection = null;
-            }
-
-            connection!.Router.FailPending(new TiebaWebSocketConnectionLostException(
-                "The WebSocket engine was disposed before pending requests completed."));
-            connection.Router.Complete();
-            connection.LifetimeSource.Cancel();
-            connection.Dispose();
-        }
     }
 
     private async Task<TiebaWebSocketConnectionContext> EnsureConnectedAsync(CancellationToken cancellationToken)
@@ -210,7 +209,7 @@ internal sealed class TiebaWebSocketEngine(
                 {
                     Cmd = cmd,
                     ReqId = reqId,
-                    Payload = new WSRes.Types.Payload { Data = Google.Protobuf.ByteString.CopyFrom(payload) }
+                    Payload = new WSRes.Types.Payload { Data = ByteString.CopyFrom(payload) }
                 };
 
                 if (!connection.Router.TryCompletePending(response))
@@ -219,7 +218,6 @@ internal sealed class TiebaWebSocketEngine(
         }
         catch (OperationCanceledException) when (connection.CancellationToken.IsCancellationRequested)
         {
-            return;
         }
         catch (Exception exception)
         {
@@ -237,13 +235,12 @@ internal sealed class TiebaWebSocketEngine(
             while (!connection.CancellationToken.IsCancellationRequested)
             {
                 await delayStrategy.DelayAsync(options.HeartbeatInterval, connection.CancellationToken);
-                var heartbeat = frameCodec.Pack([], 0, 0, accountProvider(), true);
+                var heartbeat = frameCodec.Pack([], 0, 0, accountProvider());
                 await connection.Connection.SendAsync(heartbeat, connection.CancellationToken);
             }
         }
         catch (OperationCanceledException) when (connection.CancellationToken.IsCancellationRequested)
         {
-            return;
         }
         catch (Exception exception)
         {
@@ -332,7 +329,8 @@ internal sealed class TiebaWebSocketEngine(
         };
     }
 
-    private static TiebaWebSocketConnectionLostException CreateConnectionLostException(string message, Exception exception)
+    private static TiebaWebSocketConnectionLostException CreateConnectionLostException(string message,
+        Exception exception)
     {
         return exception as TiebaWebSocketConnectionLostException ?? new TiebaWebSocketConnectionLostException(message,
             exception);

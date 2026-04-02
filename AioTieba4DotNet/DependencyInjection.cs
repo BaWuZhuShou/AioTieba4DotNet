@@ -1,5 +1,3 @@
-using System.Net;
-using AioTieba4DotNet.Contracts;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Transport.Http;
 using Microsoft.Extensions.DependencyInjection;

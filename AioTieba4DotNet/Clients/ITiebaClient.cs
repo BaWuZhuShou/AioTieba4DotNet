@@ -1,5 +1,3 @@
-using AioTieba4DotNet.Contracts;
-
 namespace AioTieba4DotNet;
 
 /// <summary>

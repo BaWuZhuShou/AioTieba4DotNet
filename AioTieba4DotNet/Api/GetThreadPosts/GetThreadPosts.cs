@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using AioTieba4DotNet.Transport;
-using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
-using AioTieba4DotNet.Models;
+using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Threads;
+using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetThreadPosts;
@@ -22,7 +21,8 @@ internal class GetThreadPosts(
     private const int Cmd = 302001;
 
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
-        Justification = "The protobuf request packer mirrors the upstream thread-post options one-to-one so transport packing stays explicit and protocol-aligned.")]
+        Justification =
+            "The protobuf request packer mirrors the upstream thread-post options one-to-one so transport packing stays explicit and protocol-aligned.")]
     private static byte[] PackProto(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments,
         int commentRn, bool commentSortByAgree, string? bduss)
     {
@@ -54,7 +54,7 @@ internal class GetThreadPosts(
         var resProto = PbPageResIdl.Parser.ParseFrom(body);
         ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
-        return Internal.Mapping.PostsMapper.FromTbData(resProto.Data);
+        return PostsMapper.FromTbData(resProto.Data);
     }
 
     /// <summary>
@@ -71,7 +71,8 @@ internal class GetThreadPosts(
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>回复列表实体</returns>
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
-        Justification = "The HTTP request surface intentionally matches the Tieba thread-post query options without introducing an extra abstraction layer.")]
+        Justification =
+            "The HTTP request surface intentionally matches the Tieba thread-post query options without introducing an extra abstraction layer.")]
     public async Task<Posts> RequestHttpAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor,
         bool withComments, int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
     {
@@ -97,7 +98,8 @@ internal class GetThreadPosts(
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>回复列表实体</returns>
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
-        Justification = "The WebSocket request surface intentionally matches the Tieba thread-post query options without introducing an extra abstraction layer.")]
+        Justification =
+            "The WebSocket request surface intentionally matches the Tieba thread-post query options without introducing an extra abstraction layer.")]
     public async Task<Posts> RequestWsAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor,
         bool withComments, int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
     {

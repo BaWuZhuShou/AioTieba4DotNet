@@ -1,7 +1,6 @@
-using AioTieba4DotNet.Contracts;
-using AioTieba4DotNet.Modules;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Modules;
 using AioTieba4DotNet.Protocols;
 using AioTieba4DotNet.Session;
 using AioTieba4DotNet.Transport;

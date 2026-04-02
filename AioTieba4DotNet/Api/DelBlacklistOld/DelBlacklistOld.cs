@@ -1,6 +1,5 @@
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
 using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
 

@@ -8,7 +8,7 @@ namespace AioTieba4DotNet.Models.Threads;
 public sealed class Recovers : Containers<Recover>
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="Recovers"/> class.
+    ///     Initializes a new instance of the <see cref="Recovers" /> class.
     /// </summary>
     /// <param name="objs">A recover entry collection.</param>
     /// <param name="page">A page model.</param>

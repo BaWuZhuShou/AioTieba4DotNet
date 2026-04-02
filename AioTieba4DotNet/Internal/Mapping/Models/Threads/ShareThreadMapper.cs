@@ -1,6 +1,4 @@
-﻿using AioTieba4DotNet.Models.Shared;
-using AioTieba4DotNet.Models.Contents;
-using AioTieba4DotNet.Models.Threads;
+﻿using AioTieba4DotNet.Models.Threads;
 
 namespace AioTieba4DotNet.Internal.Mapping;
 

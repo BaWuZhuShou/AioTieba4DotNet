@@ -1,11 +1,11 @@
-using AioTieba4DotNet.Models.Users;
+using AioTieba4DotNet.Models.Shared;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Internal.Mapping;
 
 internal static class UserInfoGuInfoWebMapper
 {
-    internal static UserInfoGuInfoWeb FromTbData(JObject data)
+    internal static UserInfo FromTbData(JObject data)
     {
         var userIdToken = data.GetValue("uid");
         var userId = userIdToken?.Value<long>() ?? 0;
@@ -17,7 +17,7 @@ internal static class UserInfoGuInfoWebMapper
         if (portrait.Contains('?', StringComparison.Ordinal))
             portrait = portrait[..portrait.IndexOf('?', StringComparison.Ordinal)];
 
-        return new UserInfoGuInfoWeb
+        return new UserInfo
         {
             UserId = userId,
             Portrait = portrait,

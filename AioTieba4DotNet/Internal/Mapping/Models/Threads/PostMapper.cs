@@ -1,6 +1,3 @@
-using AioTieba4DotNet.Models.Contents;
-using AioTieba4DotNet.Models.Threads;
-using CommentModel = AioTieba4DotNet.Models.Threads.Comment;
 using PostModel = AioTieba4DotNet.Models.Threads.Post;
 
 namespace AioTieba4DotNet.Internal.Mapping;

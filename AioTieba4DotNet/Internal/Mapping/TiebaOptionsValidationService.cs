@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Contracts;
 using Microsoft.Extensions.Options;
 
 namespace AioTieba4DotNet.Internal.Mapping;

@@ -1,10 +1,8 @@
-using AioTieba4DotNet.Transport;
-using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
-using AioTieba4DotNet;
 using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Shared;
+using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetUInfoPanel;
@@ -16,7 +14,7 @@ namespace AioTieba4DotNet.Api.GetUInfoPanel;
 [PythonApi("aiotieba.api.get_uinfo_panel")]
 internal class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
-    private static UserInfoPanel ParseBody(string body)
+    private static UserInfo ParseBody(string body)
     {
         var o = ParseBody(body, "no", "error");
 
@@ -32,7 +30,7 @@ internal class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     /// <param name="nameOrPortrait">用户名 (un) 或用户头像 ID (portrait)</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>用户面板信息</returns>
-    public async Task<UserInfoPanel> RequestAsync(string nameOrPortrait,
+    public async Task<UserInfo> RequestAsync(string nameOrPortrait,
         CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>>

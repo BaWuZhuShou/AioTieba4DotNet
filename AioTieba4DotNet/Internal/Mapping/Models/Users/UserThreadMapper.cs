@@ -1,5 +1,3 @@
-using AioTieba4DotNet.Models.Shared;
-using AioTieba4DotNet.Models.Contents;
 using AioTieba4DotNet.Models.Users;
 
 namespace AioTieba4DotNet.Internal.Mapping;

@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Models.Users;
 using Newtonsoft.Json.Linq;
 

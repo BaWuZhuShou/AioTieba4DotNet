@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
 
 namespace AioTieba4DotNet.Transport.Http;
 

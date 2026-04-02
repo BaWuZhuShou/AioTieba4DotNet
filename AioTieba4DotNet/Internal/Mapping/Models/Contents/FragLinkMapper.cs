@@ -1,5 +1,4 @@
-﻿using System.Web;
-using AioTieba4DotNet.Models.Contents;
+﻿using AioTieba4DotNet.Models.Contents;
 
 namespace AioTieba4DotNet.Internal.Mapping;
 

@@ -1,9 +1,8 @@
-﻿using AioTieba4DotNet.Transport;
-using AioTieba4DotNet.Models.Users;
-using AioTieba4DotNet.Attributes;
+﻿using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
-using AioTieba4DotNet.Models;
+using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Users;
+using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetUserContents;
@@ -46,7 +45,7 @@ internal class GetUserThreads(
         var resProto = UserPostResIdl.Parser.ParseFrom(body);
         ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
 
-        return Internal.Mapping.UserThreadsMapper.FromTbData(resProto.Data);
+        return UserThreadsMapper.FromTbData(resProto.Data);
     }
 
     /// <summary>

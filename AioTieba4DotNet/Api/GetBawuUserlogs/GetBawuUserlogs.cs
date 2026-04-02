@@ -12,7 +12,8 @@ namespace AioTieba4DotNet.Api.GetBawuUserlogs;
 internal sealed class GetBawuUserlogs(ITiebaHttpCore httpCore)
 {
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
-        Justification = "The admin user-log query intentionally keeps the upstream Tieba filter options explicit for parity and call-site clarity.")]
+        Justification =
+            "The admin user-log query intentionally keeps the upstream Tieba filter options explicit for parity and call-site clarity.")]
     public async Task<BawuUserLogs> RequestAsync(string fname, int pn, string searchValue, BawuSearchType searchType,
         DateTimeOffset? startTime, DateTimeOffset? endTime, int operationType,
         CancellationToken cancellationToken = default)

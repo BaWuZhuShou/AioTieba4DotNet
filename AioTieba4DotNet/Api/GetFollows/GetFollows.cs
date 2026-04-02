@@ -1,10 +1,9 @@
-using AioTieba4DotNet.Transport;
-using AioTieba4DotNet.Models.Shared;
-using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
 using AioTieba4DotNet.Internal.Mapping;
+using AioTieba4DotNet.Models.Shared;
+using AioTieba4DotNet.Models.Threads;
+using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetFollows;

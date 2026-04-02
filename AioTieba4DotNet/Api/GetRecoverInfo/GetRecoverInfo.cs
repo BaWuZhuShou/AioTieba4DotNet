@@ -3,6 +3,7 @@ using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Transport;
+using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetRecoverInfo;
 
@@ -13,7 +14,7 @@ internal sealed class GetRecoverInfo(ITiebaHttpCore httpCore) : JsonApiBase(http
     private static RecoverInfo ParseResponse(string body)
     {
         var responseJson = ParseBody(body, "no", "error");
-        return RecoverInfoMapper.FromTbData(responseJson.GetValue("data") as Newtonsoft.Json.Linq.JObject);
+        return RecoverInfoMapper.FromTbData(responseJson.GetValue("data") as JObject);
     }
 
     public async Task<RecoverInfo> RequestAsync(ulong fid, long tid, long pid,

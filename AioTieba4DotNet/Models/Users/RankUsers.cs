@@ -9,7 +9,7 @@ namespace AioTieba4DotNet.Models.Users;
 public class RankUsers : Containers<RankUser>
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="RankUsers"/> class.
+    ///     Initializes a new instance of the <see cref="RankUsers" /> class.
     /// </summary>
     /// <param name="objs">A ranked user collection.</param>
     /// <param name="page">A page snapshot.</param>

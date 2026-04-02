@@ -26,7 +26,7 @@ public class UserForumInfo
     /// <summary>
     ///     Gets a value that indicates whether the current account follows the forum.
     /// </summary>
-    /// <value><see langword="true"/> if the forum is followed; otherwise, <see langword="false"/>.</value>
+    /// <value><see langword="true" /> if the forum is followed; otherwise, <see langword="false" />.</value>
     public bool IsFollow { get; init; }
 
     /// <summary>
