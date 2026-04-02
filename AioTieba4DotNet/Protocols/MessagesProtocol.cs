@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AioTieba4DotNet.Api.GetForumLevel;
 using AioTieba4DotNet.Api.GetGroupMsg;
 using AioTieba4DotNet.Api.GetAts;
@@ -17,6 +18,8 @@ using AioTieba4DotNet.Transport.Chatrooms;
 
 namespace AioTieba4DotNet.Protocols;
 
+[SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+    Justification = "The chatroom send delegate preserves the full message-send contract as discrete values so callers can supply protocol fields without a lossy adapter.")]
 internal delegate Task<bool> SendChatroomMessageHandler(Account account, UserInfo selfInfo, ForumLevelInfo forumLevel,
     long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds, int robotCode,
     CancellationToken cancellationToken);
@@ -57,6 +60,8 @@ internal sealed class MessagesProtocol(
             cancellationToken);
     }
 
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+        Justification = "The default chatroom sender forwards the protocol-shaped message contract directly into the BLCP transport implementation.")]
     private static Task<bool> DefaultSendChatroomMessageAsync(Account account, UserInfo selfInfo,
         ForumLevelInfo forumLevel, long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds,
         int robotCode, CancellationToken cancellationToken)
@@ -235,18 +240,16 @@ internal sealed class MessagesProtocol(
         if (groupIds.Count == 0)
             throw new ArgumentException("At least one group id is required.", nameof(groupIds));
 
-        foreach (var groupId in groupIds)
-            if (groupId <= 0)
-                throw new ArgumentOutOfRangeException(nameof(groupIds), groupId, "Group ids must be positive.");
+        if (groupIds.Any(static groupId => groupId <= 0))
+            throw new ArgumentOutOfRangeException(nameof(groupIds), groupIds, "Group ids must be positive.");
     }
 
     private static void ValidateAtUserIds(IReadOnlyList<long>? atUserIds)
     {
         if (atUserIds is null) return;
-        foreach (var userId in atUserIds)
-            if (userId <= 0)
-                throw new ArgumentOutOfRangeException(nameof(atUserIds), userId,
-                    "Mentioned user ids must be positive.");
+        if (atUserIds.Any(static userId => userId <= 0))
+            throw new ArgumentOutOfRangeException(nameof(atUserIds), atUserIds,
+                "Mentioned user ids must be positive.");
     }
 
     private static void ValidateForumId(ulong forumId)

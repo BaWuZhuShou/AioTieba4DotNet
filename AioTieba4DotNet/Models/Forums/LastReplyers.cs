@@ -40,11 +40,14 @@ public sealed class LastReplyerUser
     /// <summary>
     ///     日志名称
     /// </summary>
-    public string LogName => !string.IsNullOrEmpty(UserName)
-        ? UserName
-        : !string.IsNullOrEmpty(Portrait)
-            ? $"{NickNameOld}/{Portrait}"
-            : UserId.ToString();
+    public string LogName
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(UserName)) return UserName;
+            return !string.IsNullOrEmpty(Portrait) ? $"{NickNameOld}/{Portrait}" : UserId.ToString();
+        }
+    }
 
     /// <inheritdoc />
     public override bool Equals(object? obj)

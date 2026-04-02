@@ -306,9 +306,9 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
 
         var imageUri = new Uri(size switch
         {
-            ForumImageSize.Small => $"http://imgsrc.baidu.com/forum/w=720;q=60;g=0/sign=__/{rawHash}.jpg",
-            ForumImageSize.Medium => $"http://imgsrc.baidu.com/forum/w=960;q=60;g=0/sign=__/{rawHash}.jpg",
-            ForumImageSize.Large => $"http://imgsrc.baidu.com/forum/pic/item/{rawHash}.jpg",
+            ForumImageSize.Small => $"https://imgsrc.baidu.com/forum/w=720;q=60;g=0/sign=__/{rawHash}.jpg",
+            ForumImageSize.Medium => $"https://imgsrc.baidu.com/forum/w=960;q=60;g=0/sign=__/{rawHash}.jpg",
+            ForumImageSize.Large => $"https://imgsrc.baidu.com/forum/pic/item/{rawHash}.jpg",
             _ => throw new InvalidOperationException()
         });
 
@@ -336,7 +336,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
             _ => throw new InvalidOperationException()
         };
 
-        var imageUri = new Uri($"http://tb.himg.baidu.com/sys/portrait{path}/item/{portrait}");
+        var imageUri = new Uri($"https://himg.baidu.com/sys/portrait{path}/item/{portrait}");
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<ForumImage>(
                 nameof(GetPortraitAsync),

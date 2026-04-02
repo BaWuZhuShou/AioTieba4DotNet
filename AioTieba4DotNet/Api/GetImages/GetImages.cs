@@ -8,6 +8,8 @@ namespace AioTieba4DotNet.Api.GetImages;
 [PythonApi("aiotieba.api.get_images")]
 internal sealed class GetImages(ITiebaHttpCore httpCore)
 {
+    private static readonly Uri TiebaReferrer = new UriBuilder("https", "tieba.baidu.com", 443).Uri;
+
     public async Task<ForumImageBytes> RequestBytesAsync(Uri imageUri, CancellationToken cancellationToken = default)
     {
         var (data, contentType) = await RequestCoreAsync(imageUri, cancellationToken);
@@ -24,7 +26,7 @@ internal sealed class GetImages(ITiebaHttpCore httpCore)
         CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, imageUri);
-        request.Headers.Referrer = new Uri("https://tieba.baidu.com/");
+        request.Headers.Referrer = TiebaReferrer;
 
         using var response = await httpCore.HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead,
             cancellationToken);

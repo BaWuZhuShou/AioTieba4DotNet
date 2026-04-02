@@ -430,9 +430,8 @@ internal sealed class ThreadProtocol(TiebaOperationDispatcher dispatcher, IForum
             throw new ArgumentOutOfRangeException(parameterName, ids.Count,
                 "Tieba batch moderation operations support at most 30 ids per request.");
 
-        foreach (var id in ids)
-            if (id <= 0)
-                throw new ArgumentOutOfRangeException(parameterName, id, "Target ids must be positive.");
+        if (ids.Any(static id => id <= 0))
+            throw new ArgumentOutOfRangeException(parameterName, ids, "Target ids must be positive.");
     }
 
     private static void ValidateRecoverTarget(long tid, long pid)

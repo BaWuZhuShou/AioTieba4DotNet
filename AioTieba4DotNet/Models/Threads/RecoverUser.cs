@@ -41,11 +41,14 @@ public sealed class RecoverUser
     ///     获取用于日志的名称。
     /// </summary>
     /// <value>A log-friendly name.</value>
-    public string LogName => !string.IsNullOrEmpty(UserName)
-        ? UserName
-        : !string.IsNullOrEmpty(Portrait)
-            ? $"{NickNameNew}/{Portrait}"
-            : string.Empty;
+    public string LogName
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(UserName)) return UserName;
+            return !string.IsNullOrEmpty(Portrait) ? $"{NickNameNew}/{Portrait}" : string.Empty;
+        }
+    }
 
     /// <inheritdoc/>
     public override string ToString()

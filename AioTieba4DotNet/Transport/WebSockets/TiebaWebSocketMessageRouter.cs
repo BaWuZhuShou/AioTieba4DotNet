@@ -58,8 +58,10 @@ internal sealed class TiebaWebSocketMessageRouter
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         while (await _pushChannel.Reader.WaitToReadAsync(cancellationToken))
-        while (_pushChannel.Reader.TryRead(out var response))
-            yield return response;
+        {
+            while (_pushChannel.Reader.TryRead(out var response))
+                yield return response;
+        }
 
         await _pushChannel.Reader.Completion.WaitAsync(cancellationToken);
     }

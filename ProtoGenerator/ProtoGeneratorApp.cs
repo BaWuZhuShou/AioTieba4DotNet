@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ProtoGenerator;
 
@@ -10,6 +11,8 @@ internal static class ProtoGeneratorApp
         return RunAsync(baseDirectory, output, new ProtocExecutor(), cancellationToken);
     }
 
+    [SuppressMessage("Critical Code Smell", "S3776:Refactor this method to reduce its Cognitive Complexity",
+        Justification = "The generator run method intentionally sequences discovery, validation, execution, and summary output in a single orchestration flow for reproducible command behavior.")]
     internal static async Task<int> RunAsync(
         string baseDirectory,
         TextWriter output,

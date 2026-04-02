@@ -11,8 +11,6 @@ namespace AioTieba4DotNet.Api.SetBlacklist;
 [PythonApi("aiotieba.api.set_blacklist")]
 internal class SetBlacklist(ITiebaHttpCore httpCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-
     private const int Cmd = 309697;
 
     private static byte[] PackProto(Account account, long userId, BlacklistType type)
@@ -44,10 +42,10 @@ internal class SetBlacklist(ITiebaHttpCore httpCore)
 
     public async Task<bool> RequestAsync(long userId, BlacklistType type, CancellationToken cancellationToken = default)
     {
-        var data = PackProto(_httpCore.Account!, userId, type);
+        var data = PackProto(httpCore.Account!, userId, type);
         var requestUri =
             new UriBuilder("https", Const.AppBaseHost, 443, "/c/c/user/setUserBlack") { Query = $"cmd={Cmd}" }.Uri;
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         ParseBody(result);
         return true;
     }

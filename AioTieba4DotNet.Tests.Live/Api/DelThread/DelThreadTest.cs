@@ -16,6 +16,7 @@ public sealed class DelThreadTest : TestBase
     public void OwnedThreadFixture_IsRequired_ForLiveDelThread()
     {
         var ownedThreadId = RequireOwnedThreadFixture(nameof(OwnedThreadFixture_IsRequired_ForLiveDelThread));
+        Assert.IsGreaterThan(0L, ownedThreadId);
         Console.WriteLine(
             $"safeForumQuery={ConfiguredSafeForumQuery}, canonicalFname={ConfiguredCanonicalSafeForumName}, ownedTid={ownedThreadId}, api={typeof(DelThreadApi).Name}");
     }

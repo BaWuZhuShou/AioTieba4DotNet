@@ -11,8 +11,7 @@ internal static partial class BawuBlacklistUsersMapper
 
         var users = AdminHtmlParsing.ExtractTableRows(html)
             .Select(MapRow)
-            .Where(static user => user is not null)
-            .Cast<BawuBlacklistUser>()
+            .OfType<BawuBlacklistUser>()
             .ToList();
 
         var (currentPage, totalPage, totalCount, hasMore, hasPrevious) = AdminHtmlParsing.ParseCommonPage(html);

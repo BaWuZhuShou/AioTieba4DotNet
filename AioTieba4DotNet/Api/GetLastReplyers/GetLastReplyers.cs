@@ -11,9 +11,6 @@ namespace AioTieba4DotNet.Api.GetLastReplyers;
 [PythonApi("aiotieba.api.get_last_replyers")]
 internal sealed class GetLastReplyers(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-    private readonly ITiebaWsCore _wsCore = wsCore;
-
     private const int Cmd = 301001;
     private const string ClientVersion = "6.0.1";
 
@@ -49,7 +46,7 @@ internal sealed class GetLastReplyers(ITiebaHttpCore httpCore, ITiebaWsCore wsCo
         var data = PackProto(fname, pn, rn, sort, isGood);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/frs/page") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(result);
     }
 
@@ -57,7 +54,7 @@ internal sealed class GetLastReplyers(ITiebaHttpCore httpCore, ITiebaWsCore wsCo
         CancellationToken cancellationToken = default)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);
-        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseResponse(response.Payload.Data.ToByteArray());
     }
 }

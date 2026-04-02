@@ -17,6 +17,7 @@ public sealed class AddPostTest : TestBase
     {
         var ownedThreadId = RequireOwnedThreadFixture(nameof(OwnedThreadFixture_IsRequired_ForLiveAddPost));
 
+        Assert.IsGreaterThan(0L, ownedThreadId);
         Console.WriteLine(
             $"safeForumQuery={ConfiguredSafeForumQuery}, canonicalFname={ConfiguredCanonicalSafeForumName}, ownedTid={ownedThreadId}, api={typeof(AddPostApi).Name}");
     }

@@ -130,9 +130,9 @@ jobs:
                     name: nuget-package-${{ needs.package.outputs.version }}
                     path: ./nupkg
 
-            -   name: Login to NuGet
+            -   name: "Login to NuGet (uses: NuGet/login@v1 contract)"
                 id: login
-                uses: NuGet/login@v1
+                uses: NuGet/login@d22cc5f58ff5b88bf9bd452535b4335137e24544
                 with:
                     user: ${{ github.actor }}
 

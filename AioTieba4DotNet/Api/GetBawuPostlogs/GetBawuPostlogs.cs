@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
@@ -10,6 +11,8 @@ namespace AioTieba4DotNet.Api.GetBawuPostlogs;
 [PythonApi("aiotieba.api.get_bawu_postlogs")]
 internal sealed class GetBawuPostlogs(ITiebaHttpCore httpCore)
 {
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+        Justification = "The admin post-log query intentionally keeps the upstream Tieba filter options explicit for parity and call-site clarity.")]
     public async Task<BawuPostLogs> RequestAsync(string fname, int pn, string searchValue, BawuSearchType searchType,
         DateTimeOffset? startTime, DateTimeOffset? endTime, int operationType,
         CancellationToken cancellationToken = default)
@@ -41,7 +44,7 @@ internal sealed class GetBawuPostlogs(ITiebaHttpCore httpCore)
         if (startTime.HasValue)
         {
             parameters.Add(new KeyValuePair<string, string>("end",
-                ((long)(endTime ?? DateTimeOffset.UtcNow).ToUnixTimeSeconds()).ToString()));
+                (endTime ?? DateTimeOffset.UtcNow).ToUnixTimeSeconds().ToString()));
             parameters.Add(new KeyValuePair<string, string>("begin", startTime.Value.ToUnixTimeSeconds().ToString()));
         }
 

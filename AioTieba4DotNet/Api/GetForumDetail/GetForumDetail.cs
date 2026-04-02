@@ -14,8 +14,6 @@ namespace AioTieba4DotNet.Api.GetForumDetail;
 [PythonApi("aiotieba.api.get_forum_detail")]
 internal class GetForumDetail(ITiebaHttpCore httpCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-
     private const int Cmd = 303021;
 
     private static byte[] PackProto(long fid)
@@ -52,7 +50,7 @@ internal class GetForumDetail(ITiebaHttpCore httpCore)
         var requestUri =
             new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/forum/getforumdetail") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

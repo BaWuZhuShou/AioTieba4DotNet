@@ -17,6 +17,8 @@ public sealed class DelPostTest : TestBase
     {
         var ownedThreadId = RequireOwnedThreadFixture(nameof(OwnedReplyFixture_IsRequired_ForLiveDelPost));
         var ownedReplyId = RequireOwnedReplyFixture(nameof(OwnedReplyFixture_IsRequired_ForLiveDelPost));
+        Assert.IsGreaterThan(0L, ownedThreadId);
+        Assert.IsGreaterThan(0L, ownedReplyId);
         Console.WriteLine(
             $"safeForumQuery={ConfiguredSafeForumQuery}, canonicalFname={ConfiguredCanonicalSafeForumName}, ownedTid={ownedThreadId}, ownedPid={ownedReplyId}, api={typeof(DelPostApi).Name}");
     }

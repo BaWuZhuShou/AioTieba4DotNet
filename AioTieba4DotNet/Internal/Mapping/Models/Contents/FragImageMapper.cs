@@ -5,7 +5,8 @@ namespace AioTieba4DotNet.Internal.Mapping;
 
 internal static class FragImageMapper
 {
-    private static readonly Regex ImageHashExp = new("/([a-z0-9]{32,})\\.");
+    private static readonly Regex ImageHashExp =
+        new("/([a-z0-9]{32,})\\.", RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1));
 
     internal static FragImage FromTbData(PbContent dataProto)
 

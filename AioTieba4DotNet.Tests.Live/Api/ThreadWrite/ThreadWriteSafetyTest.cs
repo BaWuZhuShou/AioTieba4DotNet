@@ -15,6 +15,7 @@ public sealed class ThreadWriteSafetyTest : TestBase
         var ownedThreadId =
             RequireOwnedThreadFixture(nameof(OwnedThreadFixture_IsExplicitlyRequired_ForLiveThreadMutations));
 
+        Assert.IsGreaterThan(0L, ownedThreadId);
         Console.WriteLine(
             $"safeForumQuery={ConfiguredSafeForumQuery}, canonicalFname={ConfiguredCanonicalSafeForumName}, ownedTid={ownedThreadId}");
     }
@@ -27,6 +28,7 @@ public sealed class ThreadWriteSafetyTest : TestBase
         var ownedReplyId =
             RequireOwnedReplyFixture(nameof(OwnedReplyFixture_IsExplicitlyRequired_ForLiveReplyMutations));
 
+        Assert.IsGreaterThan(0L, ownedReplyId);
         Console.WriteLine(
             $"safeForumQuery={ConfiguredSafeForumQuery}, canonicalFname={ConfiguredCanonicalSafeForumName}, ownedPid={ownedReplyId}");
     }

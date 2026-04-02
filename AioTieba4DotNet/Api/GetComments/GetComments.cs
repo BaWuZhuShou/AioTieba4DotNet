@@ -16,9 +16,6 @@ namespace AioTieba4DotNet.Api.GetComments;
 [PythonApi("aiotieba.api.get_comments")]
 internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-    private readonly ITiebaWsCore _wsCore = wsCore;
-
     private const int Cmd = 302002;
 
     private static byte[] PackProto(long tid, long pid, int pn, bool isComment, string? bduss)
@@ -63,10 +60,10 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     public async Task<Comments> RequestHttpAsync(long tid, long pid, int pn, bool isComment,
         CancellationToken cancellationToken = default)
     {
-        var data = PackProto(tid, pid, pn, isComment, _httpCore.Account?.Bduss);
+        var data = PackProto(tid, pid, pn, isComment, httpCore.Account?.Bduss);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/pb/floor") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -82,8 +79,8 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     public async Task<Comments> RequestWsAsync(long tid, long pid, int pn, bool isComment,
         CancellationToken cancellationToken = default)
     {
-        var data = PackProto(tid, pid, pn, isComment, _wsCore.Account?.Bduss);
-        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        var data = PackProto(tid, pid, pn, isComment, wsCore.Account?.Bduss);
+        var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

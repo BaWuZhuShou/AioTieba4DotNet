@@ -25,8 +25,14 @@ public sealed class BawuBlacklistUser
     /// <summary>
     ///     日志名称
     /// </summary>
-    public string LogName => !string.IsNullOrEmpty(UserName) ? UserName :
-        !string.IsNullOrEmpty(Portrait) ? Portrait : UserId.ToString();
+    public string LogName
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(UserName)) return UserName;
+            return !string.IsNullOrEmpty(Portrait) ? Portrait : UserId.ToString();
+        }
+    }
 
     /// <inheritdoc />
     public override bool Equals(object? obj)

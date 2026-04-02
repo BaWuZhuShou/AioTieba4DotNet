@@ -24,7 +24,9 @@ public sealed class WebsocketIntegrationTest : TestBase
 
             // 如果连接成功，我们尝试发送一个心跳
             // 心跳 cmd 为 0，不加密
-            await wsCore.SendAsync(0, [], false);
+            var response = await wsCore.SendAsync(0, [], false);
+
+            Assert.IsNotNull(response, "WebSocket connect and heartbeat send should return a response object.");
         }, nameof(TestWsConnectionSuccessAsync));
     }
 
@@ -40,13 +42,18 @@ public sealed class WebsocketIntegrationTest : TestBase
             await wsCore2.ConnectAsync();
 
             // 验证它们是否都能正常工作
-            await wsCore1.SendAsync(0, [], false);
-            await wsCore2.SendAsync(0, [], false);
+            var firstResponse = await wsCore1.SendAsync(0, [], false);
+            var secondResponse = await wsCore2.SendAsync(0, [], false);
 
             // 如果它们共享连接，其中一个 Close 后另一个也会失效
             wsCore1.Dispose();
 
-            await wsCore2.SendAsync(0, [], false);
+            var continuedResponse = await wsCore2.SendAsync(0, [], false);
+
+            Assert.IsNotNull(firstResponse, "The first WebSocket instance should return a response before disposal.");
+            Assert.IsNotNull(secondResponse, "The second WebSocket instance should return a response before disposal.");
+            Assert.IsNotNull(continuedResponse,
+                "The remaining WebSocket instance should stay usable after the other instance is disposed.");
         }, nameof(TestMultipleConnectionsIsolationAsync));
     }
 

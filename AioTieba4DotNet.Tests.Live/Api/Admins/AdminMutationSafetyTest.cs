@@ -14,6 +14,7 @@ public sealed class AdminMutationSafetyTest : TestBase
     {
         EnsureAdminMutationManualGate(nameof(AdminMutationManualGate_IsExplicitlyRequired_ForLiveTask13Mutations));
 
+        Assert.IsTrue(EnableAdminMutationTests);
         Console.WriteLine($"adminMutationGate={EnableAdminMutationTests}");
     }
 
@@ -25,6 +26,7 @@ public sealed class AdminMutationSafetyTest : TestBase
             RequireSafeTargetUserNameFixture(
                 nameof(SafeTargetUserNameFixture_IsExplicitlyRequired_ForLiveAddBaWuMutations));
 
+        Assert.IsFalse(string.IsNullOrWhiteSpace(userName));
         Console.WriteLine($"safeTargetUserName={userName}");
     }
 
@@ -37,6 +39,7 @@ public sealed class AdminMutationSafetyTest : TestBase
             RequireSafeTargetUserIdFixture(
                 nameof(SafeTargetUserIdFixture_IsExplicitlyRequired_ForLiveBlacklistAndUnblockMutations));
 
+        Assert.IsGreaterThan(0L, userId);
         Console.WriteLine($"safeTargetUserId={userId}");
     }
 
@@ -49,6 +52,7 @@ public sealed class AdminMutationSafetyTest : TestBase
             RequireSafeTargetPortraitFixture(
                 nameof(SafeTargetPortraitFixture_IsExplicitlyRequired_ForLiveBaWuRollbackMutations));
 
+        Assert.IsFalse(string.IsNullOrWhiteSpace(portrait));
         Console.WriteLine($"safeTargetPortrait={portrait}");
     }
 }

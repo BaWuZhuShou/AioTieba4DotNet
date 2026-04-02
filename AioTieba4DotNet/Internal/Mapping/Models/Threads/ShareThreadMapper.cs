@@ -12,7 +12,7 @@ internal static class ShareThreadMapper
         return new ShareThread
         {
             Content = ContentMapper.FromTbData(threadInfo),
-            AuthorId = threadInfo.Content.Count != 0 ? threadInfo.Content.First().Uid : 0,
+            AuthorId = threadInfo.Content.Count != 0 ? threadInfo.Content[0].Uid : 0,
             Title = threadInfo.Title,
             Fid = threadInfo.Fid,
             Fname = threadInfo.Fname,

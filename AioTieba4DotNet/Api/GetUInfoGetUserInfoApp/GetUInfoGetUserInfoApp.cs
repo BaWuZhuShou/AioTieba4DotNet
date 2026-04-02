@@ -14,8 +14,6 @@ namespace AioTieba4DotNet.Api.GetUInfoGetUserInfoApp;
 [PythonApi("aiotieba.api.get_uinfo_getuserinfo_app")]
 internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-
     private const int Cmd = 303024;
 
     private static byte[] PackProto(int userId)
@@ -44,7 +42,7 @@ internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore)
         var data = PackProto(userId);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getuserinfo") { Query = $"cmd={Cmd}" }
             .Uri;
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

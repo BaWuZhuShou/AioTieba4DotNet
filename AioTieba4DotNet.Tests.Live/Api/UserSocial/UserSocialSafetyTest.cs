@@ -16,6 +16,7 @@ public sealed class UserSocialSafetyTest : TestBase
             RequireSafeTargetPortraitFixture(
                 nameof(SafeTargetPortraitFixture_IsExplicitlyRequired_ForLiveFollowMutations));
 
+        Assert.IsFalse(string.IsNullOrWhiteSpace(portrait));
         Console.WriteLine($"safeTargetPortrait={portrait}");
     }
 
@@ -26,6 +27,7 @@ public sealed class UserSocialSafetyTest : TestBase
             RequireSafeTargetUserIdFixture(
                 nameof(SafeTargetUserIdFixture_IsExplicitlyRequired_ForLiveBlacklistAndFanMutations));
 
+        Assert.IsGreaterThan(0L, userId);
         Console.WriteLine($"safeTargetUserId={userId}");
     }
 }

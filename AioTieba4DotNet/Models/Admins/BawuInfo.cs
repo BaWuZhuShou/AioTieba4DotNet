@@ -43,11 +43,14 @@ public sealed class BawuUser
     /// <summary>
     ///     日志名称
     /// </summary>
-    public string LogName => !string.IsNullOrEmpty(UserName)
-        ? UserName
-        : !string.IsNullOrEmpty(Portrait)
-            ? $"{NickNameNew}/{Portrait}"
-            : UserId.ToString();
+    public string LogName
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(UserName)) return UserName;
+            return !string.IsNullOrEmpty(Portrait) ? $"{NickNameNew}/{Portrait}" : UserId.ToString();
+        }
+    }
 
     /// <inheritdoc />
     public override bool Equals(object? obj)

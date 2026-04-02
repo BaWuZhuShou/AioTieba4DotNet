@@ -12,9 +12,6 @@ namespace AioTieba4DotNet.Api.GetSquareForums;
 [PythonApi("aiotieba.api.get_square_forums")]
 internal sealed class GetSquareForums(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-    private readonly ITiebaWsCore _wsCore = wsCore;
-
     private const int Cmd = 309653;
 
     private static byte[] PackProto(Account account, string cname, int pn, int rn)
@@ -43,19 +40,19 @@ internal sealed class GetSquareForums(ITiebaHttpCore httpCore, ITiebaWsCore wsCo
     public async Task<SquareForums> RequestHttpAsync(string cname, int pn, int rn,
         CancellationToken cancellationToken = default)
     {
-        var data = PackProto(_httpCore.Account!, cname, pn, rn);
+        var data = PackProto(httpCore.Account!, cname, pn, rn);
         var requestUri =
             new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/forum/getForumSquare") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(result);
     }
 
     public async Task<SquareForums> RequestWsAsync(string cname, int pn, int rn,
         CancellationToken cancellationToken = default)
     {
-        var data = PackProto(_wsCore.Account!, cname, pn, rn);
-        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        var data = PackProto(wsCore.Account!, cname, pn, rn);
+        var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseResponse(response.Payload.Data.ToByteArray());
     }
 }

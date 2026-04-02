@@ -12,9 +12,6 @@ namespace AioTieba4DotNet.Api.GetDislikeForums;
 [PythonApi("aiotieba.api.get_dislike_forums")]
 internal sealed class GetDislikeForums(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-    private readonly ITiebaWsCore _wsCore = wsCore;
-
     private const int Cmd = 309692;
 
     private static byte[] PackProto(Account account, int pn, int rn)
@@ -41,18 +38,18 @@ internal sealed class GetDislikeForums(ITiebaHttpCore httpCore, ITiebaWsCore wsC
 
     public async Task<DislikeForums> RequestHttpAsync(int pn, int rn, CancellationToken cancellationToken = default)
     {
-        var data = PackProto(_httpCore.Account!, pn, rn);
+        var data = PackProto(httpCore.Account!, pn, rn);
         var requestUri =
             new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getDislikeList") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseResponse(result);
     }
 
     public async Task<DislikeForums> RequestWsAsync(int pn, int rn, CancellationToken cancellationToken = default)
     {
-        var data = PackProto(_wsCore.Account!, pn, rn);
-        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        var data = PackProto(wsCore.Account!, pn, rn);
+        var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseResponse(response.Payload.Data.ToByteArray());
     }
 }

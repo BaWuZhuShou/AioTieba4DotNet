@@ -15,9 +15,6 @@ namespace AioTieba4DotNet.Api.GetThreads;
 [PythonApi("aiotieba.api.get_threads")]
 internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-    private readonly ITiebaWsCore _wsCore = wsCore;
-
     private const int Cmd = 301001;
 
     private static byte[] PackProto(string fname, int pn, int rn, int sort, int isGood)
@@ -66,7 +63,7 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
         var data = PackProto(fname, pn, rn, sort, isGood);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/frs/page") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -84,7 +81,7 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
         CancellationToken cancellationToken = default)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);
-        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

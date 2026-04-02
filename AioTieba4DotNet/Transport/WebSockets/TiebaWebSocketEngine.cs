@@ -219,6 +219,7 @@ internal sealed class TiebaWebSocketEngine(
         }
         catch (OperationCanceledException) when (connection.CancellationToken.IsCancellationRequested)
         {
+            return;
         }
         catch (Exception exception)
         {
@@ -242,6 +243,7 @@ internal sealed class TiebaWebSocketEngine(
         }
         catch (OperationCanceledException) when (connection.CancellationToken.IsCancellationRequested)
         {
+            return;
         }
         catch (Exception exception)
         {
@@ -259,7 +261,7 @@ internal sealed class TiebaWebSocketEngine(
         if (!connection.TryBeginShutdown()) return;
 
         ClearCurrentConnection(connection);
-        connection.LifetimeSource.Cancel();
+        await connection.LifetimeSource.CancelAsync();
 
         var combinedFailure = failure;
 
@@ -326,11 +328,11 @@ internal sealed class TiebaWebSocketEngine(
         {
             null => secondary,
             not null when secondary == null => primary,
-            not null => new AggregateException(primary, secondary)
+            _ => new AggregateException(primary, secondary)
         };
     }
 
-    private TiebaWebSocketConnectionLostException CreateConnectionLostException(string message, Exception exception)
+    private static TiebaWebSocketConnectionLostException CreateConnectionLostException(string message, Exception exception)
     {
         return exception as TiebaWebSocketConnectionLostException ?? new TiebaWebSocketConnectionLostException(message,
             exception);

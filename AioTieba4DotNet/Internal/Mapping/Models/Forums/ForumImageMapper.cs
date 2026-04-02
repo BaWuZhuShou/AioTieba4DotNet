@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AioTieba4DotNet.Models.Forums;
 
 namespace AioTieba4DotNet.Internal.Mapping;
@@ -73,6 +74,8 @@ internal static class ForumImageMapper
         return width > 0 && height > 0;
     }
 
+    [SuppressMessage("Critical Code Smell", "S3776:Refactor this method to reduce its Cognitive Complexity",
+        Justification = "JPEG marker parsing is a protocol-format walker where the current branch structure mirrors the binary format and is easier to audit than a more abstract refactor.")]
     private static bool TryGetJpegSize(byte[] data, out int width, out int height)
     {
         width = 0;

@@ -27,11 +27,9 @@ internal static class ForumStatisticsMapper
         if (index >= data.Count || data[index] is not JObject group)
             return [];
 
-        var values = group.GetValue("group") is JArray groups && groups.Count > 1
-            ? groups[1] is JObject secondGroup
-                ? secondGroup["values"] as JArray
-                : null
-            : null;
+        JArray? values = null;
+        if (group.GetValue("group") is JArray groups && groups.Count > 1 && groups[1] is JObject secondGroup)
+            values = secondGroup["values"] as JArray;
 
         return values?.Select(static token => token?["value"]?.Value<int>() ?? 0).ToList() ?? [];
     }

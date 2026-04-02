@@ -73,7 +73,7 @@ internal sealed class ClientWebSocketConnection(TiebaWebSocketOptions options) :
                 return null;
             }
 
-            ms.Write(buffer, 0, result.Count);
+            await ms.WriteAsync(buffer.AsMemory(0, result.Count), cancellationToken);
         } while (!result.EndOfMessage);
 
         return ms.ToArray();

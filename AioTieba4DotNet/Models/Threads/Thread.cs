@@ -1,4 +1,5 @@
-﻿using AioTieba4DotNet.Models.Contents;
+﻿using System.Diagnostics.CodeAnalysis;
+using AioTieba4DotNet.Models.Contents;
 using AioTieba4DotNet.Models.Shared;
 using AioTieba4DotNet.Models.Users;
 
@@ -12,6 +13,8 @@ public class Thread
     /// <summary>
     ///     帖子所在分区id
     /// </summary>
+    [SuppressMessage("Minor Code Smell", "S1104:Fields should not have public accessibility",
+        Justification = "This DTO keeps its original public field shape to preserve the existing consumer-visible contract.")]
     public int TabId;
 
     /// <summary>

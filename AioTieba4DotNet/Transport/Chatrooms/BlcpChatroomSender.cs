@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -24,10 +25,16 @@ internal sealed class BlcpChatroomSender
     private const string LcmSdkVersion = "3460016";
     private const string LoginFrom = "1008550l";
     private const string UserAgent = "okhttp/3.11.0";
+    private const string AndroidPlatform = "android";
+    private const string LcmTokenHost = "pim.baidu.com";
     private const string Pkcs7Key = "AFD311832EDEEAEF";
     private const string Pkcs7Iv = "2011121211143000";
     private static readonly Encoding Utf8 = new UTF8Encoding(false);
+    private static readonly Uri LcmTokenEndpoint =
+        new UriBuilder("https", LcmTokenHost, 443, "/rest/5.0/generate_lcm_token").Uri;
 
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+        Justification = "The BLCP send entrypoint preserves the protocol-shaped message contract as discrete arguments so transport packing remains explicit.")]
     public async Task<bool> SendMessageAsync(Account account, UserInfo selfInfo, ForumLevelInfo forumLevel,
         long chatroomId,
         ulong forumId, string text, IReadOnlyList<long>? atUserIds, int robotCode, CancellationToken cancellationToken)
@@ -42,11 +49,10 @@ internal sealed class BlcpChatroomSender
 
         using var tcpClient = new TcpClient(AddressFamily.InterNetwork);
         await tcpClient.ConnectAsync(BlcpHost, BlcpPort, cancellationToken);
-        using var sslStream = new SslStream(tcpClient.GetStream(), false,
-            static (_, _, _, _) => true);
+        using var sslStream = new SslStream(tcpClient.GetStream(), false);
         await sslStream.AuthenticateAsClientAsync(BlcpHost, null,
             System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13,
-            false);
+            true);
 
         var token = await GenerateLcmTokenAsync(account.CuidGalaxy2, cancellationToken);
         await PerformHandshakeAsync(sslStream, account, token, cancellationToken);
@@ -60,21 +66,20 @@ internal sealed class BlcpChatroomSender
     private async Task<string> GenerateLcmTokenAsync(string cuidGalaxy2, CancellationToken cancellationToken)
     {
         using var client = new HttpClient();
-        using var request = new HttpRequestMessage(HttpMethod.Post,
-            new Uri("https://pim.baidu.com/rest/5.0/generate_lcm_token"));
+        using var request = new HttpRequestMessage(HttpMethod.Post, LcmTokenEndpoint);
         request.Headers.TryAddWithoutValidation("Accept-Encoding", "gzip");
         request.Headers.TryAddWithoutValidation("User-Agent", UserAgent);
-        request.Headers.TryAddWithoutValidation("Host", "pim.baidu.com");
+        request.Headers.TryAddWithoutValidation("Host", LcmTokenHost);
 
         var ts = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var requestId = ts.ToString();
-        var sign = ComputeMd5Hex($"{ChatAppId}{cuidGalaxy2}android{ts}");
+        var sign = ComputeMd5Hex($"{ChatAppId}{cuidGalaxy2}{AndroidPlatform}{ts}");
         var payload = new
         {
             app_id = ChatAppId.ToString(),
             app_version = ChatVersion,
             cuid = cuidGalaxy2,
-            device_type = "android",
+            device_type = AndroidPlatform,
             manufacture = string.Empty,
             model_type = string.Empty,
             request_id = requestId,
@@ -106,7 +111,7 @@ internal sealed class BlcpChatroomSender
                 Common = new Common
                 {
                     Cuid = account.CuidGalaxy2,
-                    Device = "android",
+                    Device = AndroidPlatform,
                     AppId = ChatAppId.ToString(),
                     AppVersion = ChatVersion,
                     SdkVersion = LcmSdkVersion,
@@ -192,6 +197,8 @@ internal sealed class BlcpChatroomSender
             secondResponse["bd_uid"]?.Value<string>() ?? selfInfo.BdUk);
     }
 
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+        Justification = "The BLCP payload builder keeps required protocol fields explicit so chatroom send packing remains auditable against the upstream message shape.")]
     private async Task<bool> SendChatroomPayloadAsync(SslStream stream, Account account, UserInfo selfInfo,
         ForumLevelInfo forumLevel, LoginPayload loginPayload, long chatroomId, ulong forumId, string text,
         JArray? atData, int robotCode, CancellationToken cancellationToken)
@@ -213,7 +220,7 @@ internal sealed class BlcpChatroomSender
             ["robot_role"] = 0,
             ["role"] = 0,
             ["send_status"] = 0,
-            ["from"] = "android",
+            ["from"] = AndroidPlatform,
             ["session_id"] = chatroomId,
             ["type"] = 1,
             ["user_name"] = name,
@@ -274,6 +281,8 @@ internal sealed class BlcpChatroomSender
         return response["err_code"]?.Value<int>() == 0;
     }
 
+    [SuppressMessage("Minor Code Smell", "S2325:Methods and properties that don't access instance data should be static",
+        Justification = "This helper remains an instance method so existing transport tests can exercise it through the same reflection-based seam as the rest of the sender implementation.")]
     private async Task<JObject> SendJsonRpcAsync(SslStream stream, long serviceId, long methodId, object payload,
         CancellationToken cancellationToken, string expectLcmErrorField)
     {

@@ -1,7 +1,6 @@
 using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
-using AioTieba4DotNet.Session;
 
 namespace AioTieba4DotNet.Api.Top;
 

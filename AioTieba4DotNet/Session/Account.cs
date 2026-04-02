@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
 using AioTieba4DotNet.Internal;
 
 namespace AioTieba4DotNet.Session;
@@ -210,9 +211,7 @@ internal sealed class Account
                 var aes = Aes.Create();
                 aes.Mode = CipherMode.ECB;
                 aes.Padding = PaddingMode.PKCS7;
-                aes.Key = Rfc2898DeriveBytes.Pbkdf2(AesEcbSecKey,
-                    (byte[])[0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13], 5,
-                    HashAlgorithmName.SHA1, 32);
+                aes.Key = DeriveTiebaWebSocketKey(AesEcbSecKey);
 
                 _aesEcbCipher = aes;
 
@@ -260,5 +259,14 @@ internal sealed class Account
                 return aes;
             }
         }
+    }
+
+    [SuppressMessage("Security", "S5344:Use at least 100,000 iterations here.",
+        Justification = "Tieba websocket key derivation is protocol-defined and must stay aligned with the upstream aiotieba implementation and remote server expectations.")]
+    private static byte[] DeriveTiebaWebSocketKey(byte[] secretKey)
+    {
+        return Rfc2898DeriveBytes.Pbkdf2(secretKey,
+            (byte[])[0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13], 5,
+            HashAlgorithmName.SHA1, 32);
     }
 }

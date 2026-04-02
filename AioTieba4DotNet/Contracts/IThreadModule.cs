@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Models;
 
@@ -50,6 +51,8 @@ public interface IThreadModule
     /// <param name="commentSortByAgree">楼中楼是否按赞同排序</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>帖子列表 <see cref="Posts"/></returns>
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+        Justification = "The public thread-post query contract intentionally exposes the upstream Tieba request options as discrete arguments for compatibility.")]
     Task<Posts> GetPostsAsync(long tid, int pn = 1, int rn = 30, PostSortType sort = PostSortType.Asc,
         bool onlyThreadAuthor = false, bool withComments = false, int commentRn = 0, bool commentSortByAgree = false,
         CancellationToken cancellationToken = default);

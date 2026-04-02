@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using AioTieba4DotNet.Models.Admins;
 using Newtonsoft.Json.Linq;
 
@@ -5,6 +6,8 @@ namespace AioTieba4DotNet.Internal.Mapping;
 
 internal static class BawuPermMapper
 {
+    [SuppressMessage("Critical Code Smell", "S3776:Refactor this method to reduce its Cognitive Complexity",
+        Justification = "The permission mapper mirrors the nested admin permission payload directly so each category and permission bit stays easy to compare with the upstream response shape.")]
     internal static BawuPerm FromTbData(JObject data)
     {
         ArgumentNullException.ThrowIfNull(data);

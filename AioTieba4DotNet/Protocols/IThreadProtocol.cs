@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Models;
@@ -12,6 +13,8 @@ internal interface IThreadProtocol
     Task<Threads> GetThreadsAsync(ulong fid, int pn, int rn, ThreadSortType sort, bool isGood,
         CancellationToken cancellationToken = default);
 
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+        Justification = "The internal thread-post protocol keeps the upstream Tieba request shape explicit so callers can map one-to-one onto transport options.")]
     Task<Posts> GetPostsAsync(long tid, int pn, int rn, PostSortType sort, bool onlyThreadAuthor,
         bool withComments, int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default);
 

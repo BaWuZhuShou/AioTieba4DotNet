@@ -448,7 +448,7 @@ internal static class ContentMapper
                         Duration = (int)(double.TryParse(content.DuringTime, out var d) ? d / 1000 : 0)
                     };
 
-                    if (voice != null) frags.Add(voice);
+                    frags.Add(voice);
                 }
             }
         };

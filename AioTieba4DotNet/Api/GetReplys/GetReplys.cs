@@ -12,8 +12,6 @@ namespace AioTieba4DotNet.Api.GetReplys;
 [PythonApi("aiotieba.api.get_replys")]
 internal class GetReplys(ITiebaHttpCore httpCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-
     private const int Cmd = 303007;
 
     private static byte[] PackProto(Account account, int pn)
@@ -39,10 +37,10 @@ internal class GetReplys(ITiebaHttpCore httpCore)
 
     public async Task<ReplyMessages> RequestAsync(int pn, CancellationToken cancellationToken = default)
     {
-        var data = PackProto(_httpCore.Account!, pn);
+        var data = PackProto(httpCore.Account!, pn);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/replyme") { Query = $"cmd={Cmd}" }
             .Uri;
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

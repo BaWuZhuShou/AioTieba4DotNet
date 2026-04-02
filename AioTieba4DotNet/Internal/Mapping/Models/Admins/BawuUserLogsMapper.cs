@@ -10,8 +10,7 @@ internal static class BawuUserLogsMapper
 
         var logs = AdminHtmlParsing.ExtractTableRows(html)
             .Select(MapRow)
-            .Where(static log => log is not null)
-            .Cast<BawuUserLog>()
+            .OfType<BawuUserLog>()
             .ToList();
 
         var (currentPage, totalPage, totalCount, hasMore, hasPrevious) = AdminHtmlParsing.ParseCommonPage(html);

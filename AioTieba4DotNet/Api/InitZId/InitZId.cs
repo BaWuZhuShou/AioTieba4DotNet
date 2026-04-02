@@ -18,8 +18,6 @@ namespace AioTieba4DotNet.Api.InitZId;
 [PythonApi("aiotieba.api.init_z_id")]
 internal class InitZId(ITiebaHttpCore httpCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-
     private const string AppKey = "200033"; // Get by p/5/aio
     private const string SecKey = "ea737e4f435b53786043369d2e5ace4f";
 
@@ -30,7 +28,7 @@ internal class InitZId(ITiebaHttpCore httpCore)
     /// <returns>ZID (token)</returns>
     public async Task<string> RequestAsync(CancellationToken cancellationToken = default)
     {
-        var account = _httpCore.Account!;
+        var account = httpCore.Account!;
         var xyus = GetMd5Hash(account.AndroidId + account.Uuid) + "|0";
         var xyusMd5Str = GetMd5Hash(xyus).ToLower();
         var currentTs = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
@@ -51,7 +49,7 @@ internal class InitZId(ITiebaHttpCore httpCore)
         var reqQuerySkey = Convert.ToBase64String(rc4.Crypt(account.AesCbcSecKey));
         var uri = new UriBuilder("https", Const.SofireHost, 443, $"/c/11/z/100/{AppKey}/{currentTs}/{pathCombineMd5}"
         ) { Query = $"skey={HttpUtility.UrlEncode(reqQuerySkey)}" }.Uri;
-        var result = await _httpCore.SendAsync(() =>
+        var result = await httpCore.SendAsync(() =>
         {
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
             request.Headers.Add("x-device-id", xyusMd5Str);
@@ -68,7 +66,7 @@ internal class InitZId(ITiebaHttpCore httpCore)
 
     private string ParseBody(string body)
     {
-        var account = _httpCore.Account!;
+        var account = httpCore.Account!;
         var xyus = GetMd5Hash(account.AndroidId + account.Uuid) + "|0";
         var xyusMd5Str = GetMd5Hash(xyus).ToLower();
         var resJson = JObject.Parse(body);

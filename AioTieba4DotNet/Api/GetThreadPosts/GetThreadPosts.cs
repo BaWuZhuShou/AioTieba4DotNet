@@ -1,4 +1,5 @@
-﻿using AioTieba4DotNet.Transport;
+﻿using System.Diagnostics.CodeAnalysis;
+using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
@@ -18,11 +19,10 @@ internal class GetThreadPosts(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-    private readonly ITiebaWsCore _wsCore = wsCore;
-
     private const int Cmd = 302001;
 
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+        Justification = "The protobuf request packer mirrors the upstream thread-post options one-to-one so transport packing stays explicit and protocol-aligned.")]
     private static byte[] PackProto(long tid, int pn, int rn, int sort, bool onlyThreadAuthor, bool withComments,
         int commentRn, bool commentSortByAgree, string? bduss)
     {
@@ -70,14 +70,16 @@ internal class GetThreadPosts(
     /// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>回复列表实体</returns>
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+        Justification = "The HTTP request surface intentionally matches the Tieba thread-post query options without introducing an extra abstraction layer.")]
     public async Task<Posts> RequestHttpAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor,
         bool withComments, int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
     {
         var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree,
-            _httpCore.Account?.Bduss);
+            httpCore.Account?.Bduss);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/pb/page") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -94,12 +96,14 @@ internal class GetThreadPosts(
     /// <param name="commentSortByAgree">楼中楼是否按点赞数排序</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>回复列表实体</returns>
+    [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
+        Justification = "The WebSocket request surface intentionally matches the Tieba thread-post query options without introducing an extra abstraction layer.")]
     public async Task<Posts> RequestWsAsync(long tid, int pn, int rn, int sort, bool onlyThreadAuthor,
         bool withComments, int commentRn, bool commentSortByAgree, CancellationToken cancellationToken = default)
     {
         var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree,
-            _wsCore.Account?.Bduss);
-        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+            wsCore.Account?.Bduss);
+        var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

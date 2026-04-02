@@ -16,9 +16,6 @@ namespace AioTieba4DotNet.Api.AddPost;
 [PythonApi("aiotieba.api.add_post")]
 internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-    private readonly ITiebaWsCore _wsCore = wsCore;
-
     private const int Cmd = 309731;
 
     private static AddPostReqIdl PackProto(Account account, string fname, ulong fid, long tid, string showName,
@@ -125,13 +122,13 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     public async Task<bool> RequestHttpAsync(string fname, ulong fid, long tid, string content,
         string? showName = null, CancellationToken cancellationToken = default)
     {
-        var account = _httpCore.Account!;
+        var account = httpCore.Account!;
         var reqProto = PackProto(account, fname, fid, tid, showName ?? "", content);
         var data = reqProto.ToByteArray();
 
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/c/post/add") { Query = $"cmd={Cmd}" }.Uri;
 
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -148,11 +145,11 @@ internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     public async Task<bool> RequestWsAsync(string fname, ulong fid, long tid, string content,
         string? showName = null, CancellationToken cancellationToken = default)
     {
-        var account = _httpCore.Account!;
+        var account = httpCore.Account!;
         var reqProto = PackProto(account, fname, fid, tid, showName ?? "", content);
         var data = reqProto.ToByteArray();
 
-        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

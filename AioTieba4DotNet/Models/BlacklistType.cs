@@ -1,10 +1,13 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AioTieba4DotNet.Models;
 
 /// <summary>
 ///     黑名单类型
 /// </summary>
+[SuppressMessage("Naming", "S2342:Enumeration type names should comply with a naming convention",
+    Justification = "The public enum name is part of the existing consumer-facing contract and is retained for compatibility.")]
 [Flags]
 public enum BlacklistType
 {

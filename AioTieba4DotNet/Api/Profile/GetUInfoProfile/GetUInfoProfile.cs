@@ -15,8 +15,6 @@ namespace AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 [PythonApi("aiotieba.api.profile")]
 internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-
     private const int Cmd = 303012;
 
     private static byte[] PackProto<TP>(TP uidOrPortrait)
@@ -63,7 +61,7 @@ internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore)
         var data = PackProto(requestParams);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/profile") { Query = $"cmd={Cmd}" }
             .Uri;
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 }

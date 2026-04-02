@@ -19,9 +19,6 @@ internal class GetUserThreads(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore)
 {
-    private readonly ITiebaHttpCore _httpCore = httpCore;
-    private readonly ITiebaWsCore _wsCore = wsCore;
-
     private const int Cmd = 303002;
 
     private static byte[] PackProto(Account account, int userId, uint pn, bool publicOnly)
@@ -63,11 +60,11 @@ internal class GetUserThreads(
     public async Task<UserThreads> RequestHttpAsync(int userId, uint pn, bool publicOnly,
         CancellationToken cancellationToken = default)
     {
-        var data = PackProto(_httpCore.Account!, userId, pn, publicOnly);
+        var data = PackProto(httpCore.Account!, userId, pn, publicOnly);
         var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/userpost") { Query = $"cmd={Cmd}" }
             .Uri;
 
-        var result = await _httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
+        var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }
 
@@ -82,8 +79,8 @@ internal class GetUserThreads(
     public async Task<UserThreads> RequestWsAsync(int userId, uint pn, bool publicOnly,
         CancellationToken cancellationToken = default)
     {
-        var data = PackProto(_wsCore.Account!, userId, pn, publicOnly);
-        var response = await _wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        var data = PackProto(wsCore.Account!, userId, pn, publicOnly);
+        var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
         return ParseBody(response.Payload.Data.ToByteArray());
     }
 }
