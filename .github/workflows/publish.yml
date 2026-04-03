@@ -78,9 +78,8 @@ jobs:
                 run: |
                     VERSION="${GITHUB_REF_NAME#v}"
 
-                    if [[ ! "$VERSION" =~ ^3\.0\.0(-(preview|rc)\.[0-9]+)?$ ]]; then
+                    if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-(preview|rc)\.[0-9]+)?$ ]]; then
                         printf "Release tag '%s' produced VERSION='%s'.\n" "$GITHUB_REF_NAME" "$VERSION"
-                        printf 'Expected v3.0.0, v3.0.0-preview.N, or v3.0.0-rc.N so the v3 release line only publishes preview, rc, and GA cutover tags.\n'
                         exit 1
                     fi
 
