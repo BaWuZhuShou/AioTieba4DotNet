@@ -58,12 +58,15 @@ AioTieba4DotNet/
   contract allows.
 - Add `[PythonApi("aiotieba.api....")]` to API implementations so parity tracing remains searchable.
 - Apply `[RequireBduss]` on authenticated API classes.
+- When upstream protocol compatibility depends on legacy or weak hash algorithms, preserve the required algorithm and keep the compatibility story explicit. Prefer narrow method-level suppressions with clear compatibility justifications over broad type-level suppressions or fake algorithm swaps done only to satisfy static analysis.
 - Reuse the existing base classes and `HttpCore.Send*Async` helpers instead of reimplementing transport selection,
   parsing, or response disposal.
 - Prefer protobuf-backed implementations where upstream supports them, and keep `CommonReq` packing aligned with the
   upstream family.
 - Keep protobuf transport and generated types out of the public DTO contract. Public models belong under `Models/**`;
   protocol-to-model conversion belongs under internal mapping code.
+- Prefer shared public DTOs for the same consumer-facing concept across parallel endpoints. Only split public DTO types
+  when the endpoint semantics materially differ, and expose public DTO members as properties rather than public fields.
 - If `.proto` files change, rerun `ProtoGenerator`. Do not patch generated `*.cs` outputs by hand.
 
 ## ANTI-PATTERNS
@@ -71,6 +74,7 @@ AioTieba4DotNet/
 - Exposing `Api/*`, transport internals, or generated protobuf types as the public product surface.
 - Inventing request parameters or business logic that upstream `aiotieba` does not have unless a task explicitly
   requires a product-level deviation.
+- Broad compatibility suppressions on whole types when only a few methods need them, or swapping protocol-required hash algorithms just to silence static analysis.
 - Spreading message read or push behavior back into `client.Client` now that `Messages` is the public home for that
   family.
 - Treating compatibility cleanup tasks as license to remove supported compatibility entrypoints before docs, parity, and

@@ -35,6 +35,7 @@
 - 对齐时以 upstream 导出路径和导出符号为准，不要把友好别名或旧 backlog 名称当成权威命名。
 - 不要擅自增加 upstream 不存在的请求参数、行为分支或传输语义，除非任务明确要求产品偏离。
 - `PythonApi` 标记必须保持可搜索，方便 parity 追踪和实现比对。
+- 对预期取消路径，保持取消语义本身可观察；不要用空 `catch` 或仅靠冗余 `return` 吞掉 `OperationCanceledException`。如果已有统一 observer / aggregation 层负责把预期取消归一化为非故障，应在边界 rethrow/cancel，再由该层收敛。
 
 ## 5. 生成代码与 ProtoGenerator
 - `.proto` 是可维护真源，生成出来的 `AioTieba4DotNet/Api/Protobuf/*.cs` 与 `AioTieba4DotNet/Api/*/Protobuf/*.cs` 都是派生产物。
@@ -53,6 +54,7 @@
   `ForumFoundation -> ForumExtensions -> ThreadRead -> ThreadWriteModeration -> UserSocial -> MessagingClient -> Cleanup`
 - `Cleanup` 是 synthetic compensation wave，不是可直接运行的 MSTest category filter。
 - 需要真实链路或 fixture gate 的测试应复用 `TestBase` 与共享 gate，而不是私自读取 secrets 或绕过 safe fixture。
+- 测试必须断言可观察结果；`Console.WriteLine`、调试输出或仅验证“不抛异常”都不能替代行为断言，除非任务明确只要求 smoke / probe 级证据。
 
 ## 7. CI 与本地验证边界
 - GitHub Actions 必须保持 **build-only**。
