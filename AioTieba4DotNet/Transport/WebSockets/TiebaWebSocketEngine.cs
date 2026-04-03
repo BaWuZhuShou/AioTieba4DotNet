@@ -218,7 +218,7 @@ internal sealed class TiebaWebSocketEngine(
         }
         catch (OperationCanceledException) when (connection.CancellationToken.IsCancellationRequested)
         {
-            return;
+            throw;
         }
         catch (Exception exception)
         {
@@ -242,7 +242,7 @@ internal sealed class TiebaWebSocketEngine(
         }
         catch (OperationCanceledException) when (connection.CancellationToken.IsCancellationRequested)
         {
-            return;
+            throw;
         }
         catch (Exception exception)
         {
