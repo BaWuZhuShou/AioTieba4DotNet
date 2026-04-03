@@ -1,5 +1,9 @@
+using System.IO;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Threading.Channels;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Transport.WebSockets;
@@ -82,12 +86,29 @@ internal sealed class TiebaWebSocketEngine(
         {
             throw;
         }
-        catch (Exception exception)
+        catch (WebSocketException exception)
         {
-            var failure = CreateConnectionLostException(
-                $"WebSocket send failed for command {req.Cmd} before a response boundary was reached.", exception);
-            await ShutdownConnectionAsync(connection, false, failure, CancellationToken.None);
-            throw failure;
+            throw await HandleConnectionFailureAsync(connection,
+                $"WebSocket send failed for command {req.Cmd} before a response boundary was reached.",
+                exception);
+        }
+        catch (IOException exception)
+        {
+            throw await HandleConnectionFailureAsync(connection,
+                $"WebSocket send failed for command {req.Cmd} before a response boundary was reached.",
+                exception);
+        }
+        catch (ObjectDisposedException exception)
+        {
+            throw await HandleConnectionFailureAsync(connection,
+                $"WebSocket send failed for command {req.Cmd} before a response boundary was reached.",
+                exception);
+        }
+        catch (InvalidOperationException exception)
+        {
+            throw await HandleConnectionFailureAsync(connection,
+                $"WebSocket send failed for command {req.Cmd} before a response boundary was reached.",
+                exception);
         }
     }
 
@@ -149,10 +170,44 @@ internal sealed class TiebaWebSocketEngine(
             await ShutdownConnectionAsync(connection, false, null, CancellationToken.None);
             throw;
         }
-        catch (Exception exception)
+        catch (TiebaWebSocketConnectionLostException exception)
         {
-            await ShutdownConnectionAsync(connection, false, null, CancellationToken.None);
-            throw new TiebaWebSocketUnavailableException(
+            throw await HandleUnavailableConnectionAsync(connection,
+                "WebSocket connect/handshake failed before the request pipeline became available.", exception);
+        }
+        catch (WebSocketException exception)
+        {
+            throw await HandleUnavailableConnectionAsync(connection,
+                "WebSocket connect/handshake failed before the request pipeline became available.", exception);
+        }
+        catch (HttpRequestException exception)
+        {
+            throw await HandleUnavailableConnectionAsync(connection,
+                "WebSocket connect/handshake failed before the request pipeline became available.", exception);
+        }
+        catch (IOException exception)
+        {
+            throw await HandleUnavailableConnectionAsync(connection,
+                "WebSocket connect/handshake failed before the request pipeline became available.", exception);
+        }
+        catch (ObjectDisposedException exception)
+        {
+            throw await HandleUnavailableConnectionAsync(connection,
+                "WebSocket connect/handshake failed before the request pipeline became available.", exception);
+        }
+        catch (InvalidOperationException exception)
+        {
+            throw await HandleUnavailableConnectionAsync(connection,
+                "WebSocket connect/handshake failed before the request pipeline became available.", exception);
+        }
+        catch (CryptographicException exception)
+        {
+            throw await HandleUnavailableConnectionAsync(connection,
+                "WebSocket connect/handshake failed before the request pipeline became available.", exception);
+        }
+        catch (TiebaProtocolException exception)
+        {
+            throw await HandleUnavailableConnectionAsync(connection,
                 "WebSocket connect/handshake failed before the request pipeline became available.", exception);
         }
     }
@@ -178,13 +233,29 @@ internal sealed class TiebaWebSocketEngine(
             connection.Router.CancelPending(reqId, cancellationToken);
             throw;
         }
-        catch (Exception exception)
+        catch (WebSocketException exception)
         {
-            var failure = CreateConnectionLostException(
+            throw await HandleConnectionFailureAsync(connection,
                 $"WebSocket request {cmd} failed after transport selection; HTTP fallback is no longer safe.",
                 exception);
-            await ShutdownConnectionAsync(connection, false, failure, CancellationToken.None);
-            throw failure;
+        }
+        catch (IOException exception)
+        {
+            throw await HandleConnectionFailureAsync(connection,
+                $"WebSocket request {cmd} failed after transport selection; HTTP fallback is no longer safe.",
+                exception);
+        }
+        catch (ObjectDisposedException exception)
+        {
+            throw await HandleConnectionFailureAsync(connection,
+                $"WebSocket request {cmd} failed after transport selection; HTTP fallback is no longer safe.",
+                exception);
+        }
+        catch (InvalidOperationException exception)
+        {
+            throw await HandleConnectionFailureAsync(connection,
+                $"WebSocket request {cmd} failed after transport selection; HTTP fallback is no longer safe.",
+                exception);
         }
     }
 
@@ -220,12 +291,53 @@ internal sealed class TiebaWebSocketEngine(
         {
             throw;
         }
-        catch (Exception exception)
+        catch (WebSocketException exception)
         {
-            var failure = CreateConnectionLostException(
-                "The WebSocket receive loop failed and the active connection was torn down.", exception);
-            await ShutdownConnectionAsync(connection, false, failure, CancellationToken.None,
-                false);
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket receive loop failed and the active connection was torn down.", exception,
+                awaitListenTask: false);
+        }
+        catch (IOException exception)
+        {
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket receive loop failed and the active connection was torn down.", exception,
+                awaitListenTask: false);
+        }
+        catch (ObjectDisposedException exception)
+        {
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket receive loop failed and the active connection was torn down.", exception,
+                awaitListenTask: false);
+        }
+        catch (InvalidDataException exception)
+        {
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket receive loop failed and the active connection was torn down.", exception,
+                awaitListenTask: false);
+        }
+        catch (ChannelClosedException exception)
+        {
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket receive loop failed and the active connection was torn down.", exception,
+                awaitListenTask: false);
+        }
+        catch (InvalidOperationException exception)
+        {
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket receive loop failed and the active connection was torn down.", exception,
+                awaitListenTask: false);
+        }
+        catch (CryptographicException exception)
+        {
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket receive loop failed and the active connection was torn down.", exception,
+                awaitListenTask: false);
+        }
+        catch (TiebaProtocolException exception)
+        {
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket receive loop failed and the active connection was torn down.", exception,
+                awaitListenTask: false);
         }
     }
 
@@ -244,11 +356,28 @@ internal sealed class TiebaWebSocketEngine(
         {
             throw;
         }
-        catch (Exception exception)
+        catch (WebSocketException exception)
         {
-            var failure = CreateConnectionLostException(
-                "The WebSocket heartbeat loop failed and the active connection was torn down.", exception);
-            await ShutdownConnectionAsync(connection, false, failure, CancellationToken.None,
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket heartbeat loop failed and the active connection was torn down.", exception,
+                awaitHeartbeatTask: false);
+        }
+        catch (IOException exception)
+        {
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket heartbeat loop failed and the active connection was torn down.", exception,
+                awaitHeartbeatTask: false);
+        }
+        catch (ObjectDisposedException exception)
+        {
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket heartbeat loop failed and the active connection was torn down.", exception,
+                awaitHeartbeatTask: false);
+        }
+        catch (InvalidOperationException exception)
+        {
+            await HandleConnectionFailureAsync(connection,
+                "The WebSocket heartbeat loop failed and the active connection was torn down.", exception,
                 awaitHeartbeatTask: false);
         }
     }
@@ -274,7 +403,19 @@ internal sealed class TiebaWebSocketEngine(
         {
             throw;
         }
-        catch (Exception closeException)
+        catch (WebSocketException closeException)
+        {
+            combinedFailure = CombineFailures(combinedFailure, closeException);
+        }
+        catch (IOException closeException)
+        {
+            combinedFailure = CombineFailures(combinedFailure, closeException);
+        }
+        catch (ObjectDisposedException closeException)
+        {
+            combinedFailure = CombineFailures(combinedFailure, closeException);
+        }
+        catch (InvalidOperationException closeException)
         {
             combinedFailure = CombineFailures(combinedFailure, closeException);
         }
@@ -315,10 +456,68 @@ internal sealed class TiebaWebSocketEngine(
         {
             return null;
         }
-        catch (Exception exception)
+        catch (TiebaWebSocketConnectionLostException exception)
         {
             return exception;
         }
+        catch (WebSocketException exception)
+        {
+            return exception;
+        }
+        catch (HttpRequestException exception)
+        {
+            return exception;
+        }
+        catch (IOException exception)
+        {
+            return exception;
+        }
+        catch (ObjectDisposedException exception)
+        {
+            return exception;
+        }
+        catch (InvalidDataException exception)
+        {
+            return exception;
+        }
+        catch (ChannelClosedException exception)
+        {
+            return exception;
+        }
+        catch (InvalidOperationException exception)
+        {
+            return exception;
+        }
+        catch (CryptographicException exception)
+        {
+            return exception;
+        }
+        catch (TiebaProtocolException exception)
+        {
+            return exception;
+        }
+    }
+
+    private async Task<TiebaWebSocketConnectionLostException> HandleConnectionFailureAsync(
+        TiebaWebSocketConnectionContext connection,
+        string message,
+        Exception exception,
+        bool awaitListenTask = true,
+        bool awaitHeartbeatTask = true)
+    {
+        var failure = CreateConnectionLostException(message, exception);
+        await ShutdownConnectionAsync(connection, false, failure, CancellationToken.None, awaitListenTask,
+            awaitHeartbeatTask);
+        return failure;
+    }
+
+    private async Task<TiebaWebSocketUnavailableException> HandleUnavailableConnectionAsync(
+        TiebaWebSocketConnectionContext connection,
+        string message,
+        Exception exception)
+    {
+        await ShutdownConnectionAsync(connection, false, null, CancellationToken.None);
+        return new TiebaWebSocketUnavailableException(message, exception);
     }
 
     private static Exception? CombineFailures(Exception? primary, Exception? secondary)

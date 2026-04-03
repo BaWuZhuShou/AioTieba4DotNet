@@ -398,8 +398,8 @@ public sealed class Task18TinyBranchFamilyCoverageTests
         Assert.AreEqual("recover title\nrecover body", recoverWithTitle.Text);
         Assert.AreEqual("recover plain", recoverWithoutTitle.Text);
 
-        Assert.AreEqual("shared title\n" + shareWithTitle.Content.Texts, shareWithTitle.Text);
-        Assert.AreEqual(shareWithoutTitle.Content.Texts.ToString() ?? string.Empty, shareWithoutTitle.Text);
+        Assert.AreEqual("shared title\nshared body", shareWithTitle.Text);
+        Assert.AreEqual("shared plain", shareWithoutTitle.Text);
 
         Assert.AreEqual("thread title\nthread body", threadWithTitle.Text);
         Assert.AreEqual("thread plain", threadWithoutTitle.Text);

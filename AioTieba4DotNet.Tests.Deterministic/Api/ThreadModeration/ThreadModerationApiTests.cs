@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using AioTieba4DotNet.Api.Agree;
 using AioTieba4DotNet.Transport;
 using AioTieba4DotNet.Api.DelPosts;
 using AioTieba4DotNet.Api.DelThreads;
@@ -179,6 +180,22 @@ public class ThreadModerationApiTests
         Assert.AreEqual("1", httpCore.GetAppFormValue("is_hide"));
         Assert.AreEqual("153071185710", httpCore.GetAppFormValue("post_id"));
         Assert.AreEqual("10377929712", httpCore.GetAppFormValue("thread_id"));
+    }
+
+    [TestMethod]
+    public async Task Agree_RequestAsync_PacksExpectedObjectTypeForThreadPostAndComment()
+    {
+        var httpCore = new RecordingHttpCore();
+        var api = new global::AioTieba4DotNet.Api.Agree.Agree(httpCore);
+
+        await api.RequestAsync(10377929712, 0, false, false, false);
+        Assert.AreEqual("3", httpCore.GetAppFormValue("obj_type"));
+
+        await api.RequestAsync(10377929712, 153071185710, false, false, false);
+        Assert.AreEqual("1", httpCore.GetAppFormValue("obj_type"));
+
+        await api.RequestAsync(10377929712, 153071185710, true, false, false);
+        Assert.AreEqual("2", httpCore.GetAppFormValue("obj_type"));
     }
 
     private sealed class RecordingHttpCore : ITiebaHttpCore

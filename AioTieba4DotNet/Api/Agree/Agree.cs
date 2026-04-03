@@ -25,11 +25,7 @@ internal class Agree(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     public async Task<bool> RequestAsync(long tid, long pid, bool isComment, bool isDisagree, bool isUndo,
         CancellationToken cancellationToken = default)
     {
-        int objType;
-        if (pid == 0)
-            objType = 3;
-        else
-            objType = isComment ? 2 : 1;
+        var objType = pid == 0 ? 3 : isComment ? 2 : 1;
 
         var data = new List<KeyValuePair<string, string>>
         {

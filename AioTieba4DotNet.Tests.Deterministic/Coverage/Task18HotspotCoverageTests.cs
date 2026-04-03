@@ -690,7 +690,7 @@ public sealed class Task18HotspotCoverageTests
         Assert.AreEqual(5L, store.GetLastMessageId(88));
         Assert.AreEqual(0L, store.GetLastMessageId(999));
         Assert.IsInstanceOfType<ArgumentOutOfRangeException>(invalidBatch.InnerException);
-        StringAssert.Contains(blankShare.Text, "System.Collections.Generic.List");
+        Assert.AreEqual(string.Empty, blankShare.Text);
         Assert.IsFalse(squareForum.Equals("not-a-forum"));
         Assert.IsFalse(block.Equals("not-a-block"));
         Assert.IsFalse(bawuBlacklistUser.Equals("not-a-blacklist-user"));

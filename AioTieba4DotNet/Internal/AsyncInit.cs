@@ -21,17 +21,11 @@ internal sealed class AsyncInit<T>(Func<Task<T>> factory)
     /// <returns>资源实例</returns>
     public async Task<T> GetAsync()
     {
-        // 1. 快速检查
-        if (IsValueCreated) return _value!;
-
-        // 2. 加锁
         await _lock.WaitAsync();
         try
         {
-            // 3. 双重检查
             if (IsValueCreated) return _value!;
 
-            // 4. 执行初始化
             _value = await factory();
             IsValueCreated = true;
             return _value;

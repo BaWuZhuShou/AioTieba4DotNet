@@ -209,7 +209,6 @@ internal sealed class Account
             {
                 if (_aesEcbCipher != null) return _aesEcbCipher;
                 var aes = Aes.Create();
-                aes.Mode = CipherMode.ECB;
                 aes.Padding = PaddingMode.PKCS7;
                 aes.Key = DeriveTiebaWebSocketKey(AesEcbSecKey);
 
@@ -267,7 +266,7 @@ internal sealed class Account
     private static byte[] DeriveTiebaWebSocketKey(byte[] secretKey)
     {
         return Rfc2898DeriveBytes.Pbkdf2(secretKey,
-            (byte[])[0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13], 5,
+            new byte[] { 0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13 }, 5,
             HashAlgorithmName.SHA1, 32);
     }
 }

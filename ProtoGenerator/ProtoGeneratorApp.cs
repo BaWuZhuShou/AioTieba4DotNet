@@ -30,8 +30,8 @@ internal static class ProtoGeneratorApp
             return 1;
         }
 
-        var apiDirectory = Path.Combine(projectRoot, "AioTieba4DotNet", "Api");
-        var baseProtobufDirectory = Path.Combine(apiDirectory, "Protobuf");
+        var apiDirectory = Path.Join(projectRoot, "AioTieba4DotNet", "Api");
+        var baseProtobufDirectory = Path.Join(apiDirectory, "Protobuf");
 
         await output.WriteLineAsync("🚀 开始生成 Proto 代码...");
         await output.WriteLineAsync($"📂 项目根目录: {projectRoot}");

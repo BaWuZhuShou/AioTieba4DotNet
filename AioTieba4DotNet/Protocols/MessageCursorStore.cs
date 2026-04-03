@@ -14,8 +14,6 @@ internal sealed class MessageCursorStore
         Func<CancellationToken, Task<IReadOnlyList<WsMsgGroupInfo>>> loader,
         CancellationToken cancellationToken)
     {
-        if (_initialized) return;
-
         await _initializeLock.WaitAsync(cancellationToken);
         try
         {

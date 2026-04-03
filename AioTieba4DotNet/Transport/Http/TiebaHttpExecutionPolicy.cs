@@ -42,10 +42,51 @@ internal sealed class TiebaHttpExecutionPolicy(TimeSpan requestTimeout, int maxR
                 lastRequestUri = request.RequestUri;
                 return await httpClient.SendAsync(request, effectiveToken);
             }
-            catch (Exception exception)
+            catch (HttpRequestException exception)
             {
-                var timedOut = !cancellationToken.IsCancellationRequested && exception is OperationCanceledException &&
-                               timeoutSource is { IsCancellationRequested: true };
+                const bool timedOut = false;
+
+                if (ShouldRetry(exception, attempt, totalAttempts, timedOut, cancellationToken))
+                {
+                    lastException = exception;
+                    lastAttemptTimedOut = timedOut;
+                    continue;
+                }
+
+                throw TiebaHttpErrorNormalizer.Normalize(exception, requestKind, lastRequestUri, timedOut,
+                    cancellationToken);
+            }
+            catch (IOException exception)
+            {
+                const bool timedOut = false;
+
+                if (ShouldRetry(exception, attempt, totalAttempts, timedOut, cancellationToken))
+                {
+                    lastException = exception;
+                    lastAttemptTimedOut = timedOut;
+                    continue;
+                }
+
+                throw TiebaHttpErrorNormalizer.Normalize(exception, requestKind, lastRequestUri, timedOut,
+                    cancellationToken);
+            }
+            catch (InvalidOperationException exception)
+            {
+                const bool timedOut = false;
+
+                if (ShouldRetry(exception, attempt, totalAttempts, timedOut, cancellationToken))
+                {
+                    lastException = exception;
+                    lastAttemptTimedOut = timedOut;
+                    continue;
+                }
+
+                throw TiebaHttpErrorNormalizer.Normalize(exception, requestKind, lastRequestUri, timedOut,
+                    cancellationToken);
+            }
+            catch (OperationCanceledException exception)
+            {
+                var timedOut = !cancellationToken.IsCancellationRequested && timeoutSource is { IsCancellationRequested: true };
 
                 if (ShouldRetry(exception, attempt, totalAttempts, timedOut, cancellationToken))
                 {

@@ -36,7 +36,7 @@ public class VoteInfo
     /// <returns></returns>
     public override string ToString()
     {
-        var optionStr = Options.Aggregate("", (current, option) => current + (option + ", "));
+        var optionStr = string.Join(", ", Options.Select(static option => option.Text));
         return
             $"{nameof(Title)}: {Title}, {nameof(IsMulti)}: {IsMulti}, {nameof(Options)}: {optionStr}, {nameof(TotalVotes)}: {TotalVotes}, {nameof(TotalUsers)}: {TotalUsers}";
     }

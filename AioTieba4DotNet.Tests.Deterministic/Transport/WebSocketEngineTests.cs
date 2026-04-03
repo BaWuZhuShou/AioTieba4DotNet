@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -121,6 +122,23 @@ public class WebSocketEngineTests
         Assert.IsTrue(await moveNextTask);
         Assert.AreEqual(777, enumerator.Current.Cmd);
         CollectionAssert.AreEqual(payload, enumerator.Current.Payload.Data.ToByteArray());
+    }
+
+    [TestMethod]
+    public async Task ListenLoop_WithMalformedGzipFrame_FailsPendingRequests()
+    {
+        var codec = new TiebaWebSocketFrameCodec();
+        var connection = new FakeWebSocketConnection();
+        var core = CreateCore(null, codec, new ManualDelayStrategy(), connection);
+
+        var pendingSend = core.SendAsync(301001, "request"u8.ToArray(), false);
+        var sentFrame = await connection.ReadSentFrameAsync();
+        var (_, cmd, reqId) = codec.Parse(sentFrame, null);
+
+        connection.EnqueueInbound(CreateMalformedGzipFrame(cmd, reqId));
+
+        await AssertConnectionLostAsync(pendingSend);
+        Assert.AreEqual(WebSocketState.Closed, connection.State);
     }
 
     [TestMethod]
@@ -280,6 +298,17 @@ public class WebSocketEngineTests
         }
 
         return output.ToArray();
+    }
+
+    private static byte[] CreateMalformedGzipFrame(int cmd, int reqId)
+    {
+        byte[] invalidPayload = [0x1F, 0x8B, 0x00, 0x00];
+        var frame = new byte[9 + invalidPayload.Length];
+        frame[0] = 0x40;
+        BinaryPrimitives.WriteInt32BigEndian(frame.AsSpan(1, 4), cmd);
+        BinaryPrimitives.WriteInt32BigEndian(frame.AsSpan(5, 4), reqId);
+        invalidPayload.CopyTo(frame.AsSpan(9));
+        return frame;
     }
 
     private sealed class QueueConnectionFactory(params FakeWebSocketConnection[] connections)

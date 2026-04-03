@@ -16,16 +16,12 @@ internal static class BawuPermMapper
         var permissions = BawuPermType.None;
         var permissionSetting = data.GetValue("perm_setting") as JObject;
         if (permissionSetting is not null)
-            foreach (var category in new[] { "category_user", "category_thread" })
+            foreach (var entries in new[] { "category_user", "category_thread" }
+                         .Select(permissionSetting.GetValue)
+                         .OfType<JArray>())
             {
-                if (permissionSetting.GetValue(category) is not JArray entries)
-                    continue;
-
-                foreach (var entry in entries.OfType<JObject>())
+                foreach (var entry in entries.OfType<JObject>().Where(static entry => IsEnabled(entry.GetValue("switch"))))
                 {
-                    if (!IsEnabled(entry.GetValue("switch")))
-                        continue;
-
                     permissions |= entry.GetValue("perm")?.Value<int>() switch
                     {
                         2 => BawuPermType.RecoverAppeal,

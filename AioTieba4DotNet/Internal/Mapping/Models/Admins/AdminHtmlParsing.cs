@@ -101,10 +101,9 @@ internal static partial class AdminHtmlParsing
     internal static DateTime ParseFullDateTime(string text)
     {
         var normalized = WhitespaceRegex.Replace(text.Trim(), " ");
-        foreach (var format in new[] { "yyyy-MM-ddHH:mm", "yyyy-MM-dd HH:mm" })
-            if (DateTime.TryParseExact(normalized, format, CultureInfo.InvariantCulture, DateTimeStyles.None,
-                    out var parsed))
-                return parsed;
+        if (DateTime.TryParseExact(normalized, ["yyyy-MM-ddHH:mm", "yyyy-MM-dd HH:mm"],
+                CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+            return parsed;
 
         throw new FormatException($"Unsupported admin datetime format: '{text}'.");
     }

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 
 namespace ProtoGenerator;
@@ -25,9 +26,9 @@ internal sealed class ProtocExecutor : IProtocExecutor
     {
         ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
 
-        foreach (var executableName in new[] { "protoc.exe", "protoc" })
+        foreach (var localPath in new[] { "protoc.exe", "protoc" }
+                     .Select(executableName => Path.Join(baseDirectory, executableName)))
         {
-            var localPath = Path.Combine(baseDirectory, executableName);
             if (File.Exists(localPath))
                 return localPath;
         }
@@ -91,7 +92,27 @@ internal sealed class ProtocExecutor : IProtocExecutor
         {
             throw;
         }
-        catch (Exception ex)
+        catch (ObjectDisposedException ex)
+        {
+            return new ProtoExecutionResult(false, string.Empty, string.Empty, ex.Message);
+        }
+        catch (NotSupportedException ex)
+        {
+            return new ProtoExecutionResult(false, string.Empty, string.Empty, ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return new ProtoExecutionResult(false, string.Empty, string.Empty, ex.Message);
+        }
+        catch (IOException ex)
+        {
+            return new ProtoExecutionResult(false, string.Empty, string.Empty, ex.Message);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return new ProtoExecutionResult(false, string.Empty, string.Empty, ex.Message);
+        }
+        catch (Win32Exception ex)
         {
             return new ProtoExecutionResult(false, string.Empty, string.Empty, ex.Message);
         }

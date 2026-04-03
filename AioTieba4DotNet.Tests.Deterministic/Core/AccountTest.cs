@@ -71,10 +71,11 @@ public class AccountTest
 
         var cipher = account.AesEcbCipher;
         Assert.IsNotNull(cipher);
-        Assert.AreEqual(CipherMode.ECB, cipher.Mode);
+        Assert.AreEqual(PaddingMode.PKCS7, cipher.Padding);
 
         // 验证 Key 是否是通过 PBKDF2 生成的
-        var expectedKey = Rfc2898DeriveBytes.Pbkdf2(key, (byte[])[0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13], 5,
+        var expectedKey = Rfc2898DeriveBytes.Pbkdf2(key,
+            new byte[] { 0xa4, 0x0b, 0xc8, 0x34, 0xd6, 0x95, 0xf3, 0x13 }, 5,
             HashAlgorithmName.SHA1, 32);
         CollectionAssert.AreEqual(expectedKey, cipher.Key);
     }

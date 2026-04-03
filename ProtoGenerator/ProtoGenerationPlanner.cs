@@ -9,7 +9,7 @@ internal static class ProtoGenerationPlanner
         ArgumentException.ThrowIfNullOrEmpty(baseDirectory);
 
         for (var directory = new DirectoryInfo(baseDirectory); directory is not null; directory = directory.Parent)
-            if (File.Exists(Path.Combine(directory.FullName, SolutionFileName)))
+            if (File.Exists(Path.Join(directory.FullName, SolutionFileName)))
                 return directory.FullName;
 
         return null;

@@ -179,7 +179,8 @@ public class UserInfo
     /// <returns>True 如果 UserId 相等</returns>
     public override bool Equals(object? obj)
     {
-        return obj is UserInfo user && UserId == user.UserId;
+        return ReferenceEquals(this, obj) ||
+               obj is not null && obj.GetType() == GetType() && UserId == ((UserInfo)obj).UserId;
     }
 
     /// <summary>

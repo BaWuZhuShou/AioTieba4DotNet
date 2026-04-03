@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AioTieba4DotNet.Api.Login.Entities;
 using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Models.Admins;
 using AioTieba4DotNet.Models.Contents;
@@ -89,6 +90,7 @@ public sealed class ModelCoverageTests
         Assert.AreEqual("4", fallbackId.LogName);
         Assert.AreEqual("4", fallbackId.ToString());
         Assert.IsTrue(preferred.Equals(fallbackOld));
+        Assert.IsFalse(preferred.Equals(new UserInfoLogin { UserId = 1 }));
         Assert.IsFalse(preferred.Equals("not-user"));
         Assert.AreEqual(preferred.GetHashCode(), fallbackOld.GetHashCode());
         Assert.IsTrue(comparer.Equals(preferred, preferred));
@@ -387,8 +389,40 @@ public sealed class ModelCoverageTests
         Assert.AreEqual(1, userThreads.Count);
         Assert.AreEqual(1, userThreadsFromEnumerable.Count);
         Assert.IsTrue(threads.HasMore);
+        StringAssert.Contains(threads.ToString(), "全部:1");
         StringAssert.Contains(threads.ToString(), nameof(Threads.TabDictionary));
         StringAssert.Contains(threads.ToString(), nameof(Threads.Objs));
+    }
+
+    [TestMethod]
+    public void ShareThreadAndVoteInfo_FormatReadableText()
+    {
+        var shareThread = new ShareThread
+        {
+            Title = "share title",
+            Content = new Content
+            {
+                Texts = [new FragText { Text = "body" }],
+                Frags = [new FragText { Text = "body" }]
+            }
+        };
+        var shareThreadWithoutTitle = new ShareThread
+        {
+            Content = new Content
+            {
+                Texts = [new FragText { Text = "plain" }],
+                Frags = [new FragText { Text = "plain" }]
+            }
+        };
+        var voteInfo = new VoteInfo
+        {
+            Title = "vote",
+            Options = [new VoteOption { Text = "first" }, new VoteOption { Text = "second" }]
+        };
+
+        Assert.AreEqual("share title\nbody", shareThread.Text);
+        Assert.AreEqual("plain", shareThreadWithoutTitle.Text);
+        StringAssert.Contains(voteInfo.ToString(), "first, second");
     }
 
     private sealed class TestContainers : Containers<string>

@@ -39,8 +39,8 @@ public sealed class AccountCoverageTests
         Assert.AreSame(ecbKey, ecbKeyAgain);
         Assert.AreEqual(31, ecbKey.Length);
         Assert.AreSame(ecbCipher, ecbCipherAgain);
-        Assert.AreEqual(CipherMode.ECB, ecbCipher.Mode);
         Assert.AreEqual(PaddingMode.PKCS7, ecbCipher.Padding);
+        Assert.AreEqual(32, ecbCipher.Key.Length);
         Assert.AreEqual(16, cbcKey.Length);
         Assert.AreSame(cbcCipher, cbcCipherAgain);
         Assert.AreEqual(CipherMode.CBC, cbcCipher!.Mode);

@@ -251,8 +251,8 @@ public sealed class LowLevelHelperCoverageTests
         Assert.IsTrue(externalLinkWithoutUrl.IsExternal);
         Assert.AreSame(externalLinkWithoutUrl.RawUrl, externalLinkWithoutUrl.Url);
 
-        Assert.AreEqual("shared title\n" + shareWithTitle.Content.Texts, shareWithTitle.Text);
-        Assert.AreEqual(shareWithoutTitle.Content.Texts.ToString() ?? string.Empty, shareWithoutTitle.Text);
+        Assert.AreEqual("shared title\nshared body", shareWithTitle.Text);
+        Assert.AreEqual("shared plain", shareWithoutTitle.Text);
         Assert.AreEqual("shared empty", shareMapped.Title);
         Assert.AreEqual(0L, shareMapped.AuthorId);
         Assert.AreEqual(41L, shareMapped.Fid);

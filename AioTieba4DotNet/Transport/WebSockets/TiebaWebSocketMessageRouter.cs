@@ -44,8 +44,8 @@ internal sealed class TiebaWebSocketMessageRouter
 
     internal void FailPending(Exception exception)
     {
-        foreach (var entry in _pending)
-            if (_pending.TryRemove(entry.Key, out var pending))
+        foreach (var reqId in _pending.Keys.ToArray())
+            if (_pending.TryRemove(reqId, out var pending))
                 pending.TrySetException(exception);
     }
 

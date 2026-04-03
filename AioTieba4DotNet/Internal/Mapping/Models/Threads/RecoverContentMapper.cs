@@ -16,11 +16,9 @@ internal static partial class RecoverContentMapper
         var frags = new List<IFrag>();
 
         if (data.GetValue("content_detail") is JArray contentDetail)
-            foreach (var item in contentDetail.OfType<JObject>())
+            foreach (var item in contentDetail.OfType<JObject>()
+                         .Where(static item => item.GetValue("type")?.Value<int>() == 1))
             {
-                if (item.GetValue("type")?.Value<int>() != 1)
-                    continue;
-
                 var text = new FragText { Text = item.GetValue("value")?.Value<string>() ?? string.Empty };
                 texts.Add(text);
                 frags.Add(text);

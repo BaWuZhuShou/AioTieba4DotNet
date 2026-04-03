@@ -39,8 +39,9 @@ public class Threads
     public override string ToString()
     {
         var sb = new StringBuilder();
+        var tabDictionary = string.Join(", ", TabDictionary.Select(static kvp => $"{kvp.Key}:{kvp.Value}"));
         sb.AppendLine(
-            $"{nameof(Page)}: {Page}, {nameof(Forum)}: {Forum}, {nameof(TabDictionary)}: {TabDictionary}, {nameof(HasMore)}: {HasMore}");
+            $"{nameof(Page)}: {Page}, {nameof(Forum)}: {Forum}, {nameof(TabDictionary)}: [{tabDictionary}], {nameof(HasMore)}: {HasMore}");
         sb.AppendLine($"{nameof(Objs)}:");
         foreach (var obj in Objs) sb.AppendLine($"{obj}");
 
