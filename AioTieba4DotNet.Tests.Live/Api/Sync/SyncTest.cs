@@ -20,7 +20,9 @@ public sealed class SyncTest : TestBase
         var syncApi = new AioTieba4DotNet.Api.Sync.Sync(HttpCore);
         try
         {
-            await syncApi.RequestAsync();
+            var result = await syncApi.RequestAsync();
+            Assert.IsFalse(string.IsNullOrWhiteSpace(result.ClientId));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(result.SampleId));
         }
         catch (Exception e)
         {

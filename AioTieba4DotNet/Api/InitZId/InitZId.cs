@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
@@ -25,6 +26,9 @@ internal class InitZId(ITiebaHttpCore httpCore)
     ///     发送初始化 ZID 请求
     /// </summary>
     /// <returns>ZID (token)</returns>
+    [SuppressMessage("Security Hotspot", "S4790:Using weak hashing algorithms is security-sensitive",
+        Justification =
+            "The upstream Tieba InitZId protocol requires MD5-derived integrity data for compatibility; this value is not used for password storage or as a general-purpose security primitive.")]
     public async Task<string> RequestAsync(CancellationToken cancellationToken = default)
     {
         var account = httpCore.Account!;
@@ -94,6 +98,9 @@ internal class InitZId(ITiebaHttpCore httpCore)
     /// </summary>
     /// <param name="input">输入字符串</param>
     /// <returns>MD5 字符串</returns>
+    [SuppressMessage("Security Hotspot", "S4790:Using weak hashing algorithms is security-sensitive",
+        Justification =
+            "The upstream Tieba InitZId protocol requires MD5-derived identifiers for compatibility; this hash is not used for password storage or as a standalone security control.")]
     public static string GetMd5Hash(string input)
     {
         var data = MD5.HashData(Encoding.UTF8.GetBytes(input));

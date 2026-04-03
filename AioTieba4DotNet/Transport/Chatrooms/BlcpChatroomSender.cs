@@ -492,6 +492,9 @@ internal sealed class BlcpChatroomSender
         return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000;
     }
 
+    [SuppressMessage("Security Hotspot", "S4790:Using weak hashing algorithms is security-sensitive",
+        Justification =
+            "The BLCP token bootstrap endpoint requires an MD5 request signature for protocol compatibility with the upstream mobile client.")]
     private static string ComputeMd5Hex(string text)
     {
         var bytes = MD5.HashData(Utf8.GetBytes(text));

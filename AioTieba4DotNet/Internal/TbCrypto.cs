@@ -1,4 +1,5 @@
-﻿using System.IO.Hashing;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO.Hashing;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -102,6 +103,9 @@ internal static class TbCrypto
 
 
     // 生成 CUID Galaxy 2 并返回结果
+    [SuppressMessage("Security Hotspot", "S4790:Using weak hashing algorithms is security-sensitive",
+        Justification =
+            "Tieba device identifiers intentionally reproduce upstream MD5-based derivation steps for protocol parity; this hash is a compatibility artifact rather than credential storage or a general-purpose security primitive.")]
     private static string TbcCuidGalaxy2(byte[] androidId)
     {
         // 构建MD5输入缓冲区
@@ -131,6 +135,9 @@ internal static class TbCrypto
     }
 
     // 生成 CUID 3 AID 并返回结果
+    [SuppressMessage("Security Hotspot", "S4790:Using weak hashing algorithms is security-sensitive",
+        Justification =
+            "Tieba device identifiers intentionally reproduce upstream SHA1-based derivation steps for protocol parity; this hash is a compatibility artifact rather than credential storage or a general-purpose security primitive.")]
     private static string? TbcC3Aid(ReadOnlySpan<byte> androidId, ReadOnlySpan<byte> uuid)
     {
         var sha1InputLength = Cuid3Prefix.Length + Const.TbcAndroidIdSize + uuid.Length;
@@ -187,10 +194,9 @@ internal static class TbCrypto
         }
 
         if (bitCount <= 0) return sb.ToString();
-        {
-            var index = (bitBuffer << (5 - bitCount)) & 31;
-            sb.Append(base32Chars[index]);
-        }
+
+        var tailIndex = (bitBuffer << (5 - bitCount)) & 31;
+        sb.Append(base32Chars[tailIndex]);
 
         return sb.ToString();
     }

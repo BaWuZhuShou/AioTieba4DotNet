@@ -1,4 +1,6 @@
-﻿namespace AioTieba4DotNet.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace AioTieba4DotNet.Models;
 
 /// <summary>
 ///     使用该枚举类指定待获取的用户信息字段
@@ -7,6 +9,9 @@
 ///     其中BASIC = USER_ID | PORTRAIT | USER_NAME
 /// </summary>
 [Flags]
+[SuppressMessage("Minor Code Smell", "S2342:Enumeration types should comply with a naming convention",
+    Justification =
+        "ReqUInfo is an established public API name and aligns with the upstream/exported contract; renaming it would be a breaking change.")]
 public enum ReqUInfo
 {
     /// <summary>

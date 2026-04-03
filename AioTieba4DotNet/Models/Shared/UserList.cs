@@ -20,5 +20,5 @@ public class UserList : Containers<UserInfo>
     /// <summary>
     ///     页码信息
     /// </summary>
-    public PageT Page { get; set; } = new();
+    public PageT Page { get; set; }
 }

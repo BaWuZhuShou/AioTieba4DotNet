@@ -77,7 +77,7 @@ internal static class Const
     /// <summary>
     ///     SHA1 Base32 长度
     /// </summary>
-    public static int TbcSha1Base32Size = BASE32_LEN(TbcSha1HashSize);
+    public static readonly int TbcSha1Base32Size = BASE32_LEN(TbcSha1HashSize);
 
     /// <summary>
     ///     计算 Base32 编码长度

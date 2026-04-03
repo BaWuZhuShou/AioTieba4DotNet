@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Session;
@@ -15,7 +16,8 @@ public class UtilsTest
     public void TestGenerateAndroidId()
     {
         var generateAndroidId = Utils.GenerateAndroidId();
-        Console.WriteLine(generateAndroidId);
+        Assert.AreEqual(16, generateAndroidId.Length);
+        Assert.IsTrue(generateAndroidId.All(static c => char.IsDigit(c) || (c >= 'a' && c <= 'f')));
     }
 
     [TestMethod]
@@ -23,6 +25,7 @@ public class UtilsTest
     {
         var bytes = Encoding.UTF8.GetBytes("11111111111111112222222222");
         var applyPkcs7Padding = Utils.ApplyPkcs7Padding(bytes, 32);
-        Console.WriteLine(BitConverter.ToString(applyPkcs7Padding).Replace("-", string.Empty));
+        Assert.AreEqual("3131313131313131313131313131313132323232323232323232060606060606",
+            BitConverter.ToString(applyPkcs7Padding).Replace("-", string.Empty));
     }
 }

@@ -133,14 +133,28 @@ public class UserInfo
     /// <summary>
     ///     显示名称
     /// </summary>
-    public string ShowName => !string.IsNullOrEmpty(NickNameNew) ? NickNameNew :
-        !string.IsNullOrEmpty(NickNameOld) ? NickNameOld : UserName;
+    public string ShowName
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(NickNameNew)) return NickNameNew;
+            if (!string.IsNullOrEmpty(NickNameOld)) return NickNameOld;
+            return UserName;
+        }
+    }
 
     /// <summary>
     ///     用于在日志中记录用户信息
     /// </summary>
-    public string LogName => !string.IsNullOrEmpty(UserName) ? UserName :
-        !string.IsNullOrEmpty(Portrait) ? $"{NickName}/{Portrait}" : UserId.ToString();
+    public string LogName
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(UserName)) return UserName;
+            if (!string.IsNullOrEmpty(Portrait)) return $"{NickName}/{Portrait}";
+            return UserId.ToString();
+        }
+    }
 
     /// <summary>
     ///     基于 UserId 的比较器
@@ -153,8 +167,9 @@ public class UserInfo
     /// <returns>用户名、头像 ID 或 UserId</returns>
     public override string ToString()
     {
-        return !string.IsNullOrEmpty(UserName) ? UserName :
-            !string.IsNullOrEmpty(Portrait) ? Portrait : UserId.ToString();
+        if (!string.IsNullOrEmpty(UserName)) return UserName;
+        if (!string.IsNullOrEmpty(Portrait)) return Portrait;
+        return UserId.ToString();
     }
 
     /// <summary>

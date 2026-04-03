@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace AioTieba4DotNet.Internal;
@@ -6,6 +7,9 @@ namespace AioTieba4DotNet.Internal;
 /// <summary>
 ///     签名器
 /// </summary>
+[SuppressMessage("Security Hotspot", "S4790:Using weak hashing algorithms is security-sensitive",
+    Justification =
+        "The mobile Tieba request contract requires an MD5 signature for protocol compatibility; this hash is not used for password storage or as a standalone security control.")]
 internal static class Signer
 {
     // 定义签名后缀

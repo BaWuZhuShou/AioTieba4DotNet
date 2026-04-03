@@ -24,7 +24,7 @@ public class Rc4Test
     {
         var rc4 = new Rc4(Encoding.UTF8.GetBytes("f00c29de98c67b3866a9a816efde42eb"));
         var crypt = rc4.Crypt([24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24]);
-        Console.WriteLine(Convert.ToBase64String(crypt));
+        Assert.AreEqual("VNjlOgmLB6BGHxlv4efzvw==", Convert.ToBase64String(crypt));
     }
 
     [TestMethod]
