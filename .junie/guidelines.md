@@ -16,7 +16,7 @@
 - `Client.cs` 是过时兼容包装层。除非任务明确要求兼容性维护，不要把新能力继续堆到这里。
 
 ## 3. Parity truth 与文档契约
-- `docs/related/parity-v3.md` 是 **authoritative parity ledger**。
+- `docs/related/parity.md` 是 **authoritative parity ledger**，同时也是内部 `Api/**` 实现到 upstream Python family 的权威对照表与认证需求注记真源。
 - `docs/archive/todo.md` 现在只保留为历史 backlog 和旧记录，不能再当成当前 parity truth。
 - 当前用户文档 IA 以 `README.md` 为入口，向下连接：
   - `docs/index.md`
@@ -27,14 +27,14 @@
   - `docs/guide/troubleshooting.md`
   - `docs/related/migration-v2-to-v3.md`
   - `docs/related/release-notes-v3.md`
-  - `docs/related/parity-v3.md`
-- `scripts/verify-local.ps1` 和 `scripts/verify-local.sh` 中的 `requiredDocs` 列表是本地文档契约检查的真源。新增或移除必需 guide 时，必须同步更新脚本、manifest、deterministic contract test 与受影响文档。
+  - `docs/related/parity.md`
+- `scripts/verify-local.ps1` 和 `scripts/verify-local.sh` 中的 `requiredDocs` 列表是本地文档契约检查的真源。新增或移除必需 guide 时，必须同步更新脚本、manifest、本地验证契约，以及受影响文档。
 
 ## 4. upstream 对齐规则
 - 任何 API 的参数语义、请求打包、响应解析、错误处理和可观察行为，都必须优先对齐 Python `aiotieba`。
 - 对齐时以 upstream 导出路径和导出符号为准，不要把友好别名或旧 backlog 名称当成权威命名。
 - 不要擅自增加 upstream 不存在的请求参数、行为分支或传输语义，除非任务明确要求产品偏离。
-- `PythonApi` 标记必须保持可搜索，方便 parity 追踪和实现比对。
+- internal `Api/**` 到 upstream `aiotieba.api.*` 的实现对照与认证注记必须维护在 `docs/related/parity.md`，而不是 C# attribute。
 - 对预期取消路径，保持取消语义本身可观察；不要用空 `catch` 或仅靠冗余 `return` 吞掉 `OperationCanceledException`。如果已有统一 observer / aggregation 层负责把预期取消归一化为非故障，应在边界 rethrow/cancel，再由该层收敛。
 
 ## 5. 生成代码与 ProtoGenerator
@@ -45,15 +45,17 @@
 
 ## 6. 测试分层与执行规则
 - 当前测试结构固定拆分为：
-  - `AioTieba4DotNet.Testing`: 共享基础设施、fixture gate、cleanup orchestration、sequencing manifest
-  - `AioTieba4DotNet.Tests.Deterministic`: 离线 deterministic tests，也是 coverage-bearing lane
-  - `AioTieba4DotNet.Tests.Integration`: 受控真实链路验证
-  - `AioTieba4DotNet.Tests.Live`: 带凭据、带写操作、带回滚意识的 live 验证
-- 本地和 agent 环境统一通过 `scripts/test-lane.*` 调度四条 lane：`deterministic`、`integration`、`live`、`sequence-dry-run`。
-- `AioTieba4DotNet.Testing/test-sequencing.manifest.json` 是 integration 和 live 阶段顺序的唯一真源，当前顺序固定为：
-  `ForumFoundation -> ForumExtensions -> ThreadRead -> ThreadWriteModeration -> UserSocial -> MessagingClient -> Cleanup`
-- `Cleanup` 是 synthetic compensation wave，不是可直接运行的 MSTest category filter。
-- 需要真实链路或 fixture gate 的测试应复用 `TestBase` 与共享 gate，而不是私自读取 secrets 或绕过 safe fixture。
+  - `AioTieba4DotNet.Tests.Infrastructure`: online 测试契约、环境模板、suite metadata、repo-path 支撑
+  - `AioTieba4DotNet.Tests.Online.Safe`: 默认本地 safe ordered 场景
+  - `AioTieba4DotNet.Tests.Online.Restricted`: 显式 opt-in 的 restricted moderation/admin 场景
+  - `AioTieba4DotNet.Tests.Online.Suite`: discoverable ordered suite host，以及对治理和旧路径清除的契约测试
+- 本地和 agent 环境统一通过 `scripts/test-lane.*` 指向 ordered online suite reality，默认 `safe`，显式 `restricted`，可选 `sequence-dry-run` 只输出计划，不恢复旧 lane。
+- `Suite:SafeOrdered` 是默认可执行 truth，顺序固定为：
+  `ForumFoundation -> ForumExtensions -> ThreadRead -> UserSocial -> Messaging -> ThreadWrite`
+- `Suite:RestrictedOrdered` 只在显式选择时执行，顺序固定为：
+  `ModerationRestricted -> AdminRestricted`
+- `CompensationAudit` 是 suite-level synthetic reporting truth，不是可直接运行的 MSTest category filter，也不是公开 lane 名称。
+- 需要真实链路或 fixture gate 的测试应复用新的 online environment / contract 体系，而不是私自读取 secrets 或暗中回退到旧 lane 配置。
 - 测试必须断言可观察结果；`Console.WriteLine`、调试输出或仅验证“不抛异常”都不能替代行为断言，除非任务明确只要求 smoke / probe 级证据。
 
 ## 7. CI 与本地验证边界
@@ -69,7 +71,7 @@
 - 当前 coverage scope 只面向维护中的手写代码，重点是 `AioTieba4DotNet/**` 和 `ProtoGenerator/**`。
 - 允许的窄排除项包括：
   - 生成的 protobuf 输出
-  - 测试支持代码 `AioTieba4DotNet.Testing/**`
+  - 测试支持代码 `AioTieba4DotNet.Tests.Infrastructure/**`
   - 编译器生成文件，例如 `*.g.cs`、`*.generated.cs`
   - `obj/**`
 - 不要把 docs、`.sisyphus/**`、测试项目、或 `aiotieba/**` 写成 coverage 真源。

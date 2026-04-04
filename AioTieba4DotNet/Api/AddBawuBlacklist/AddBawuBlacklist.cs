@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.AddBawuBlacklist;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.add_bawu_blacklist")]
 internal sealed class AddBawuBlacklist(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseResponse(string body)

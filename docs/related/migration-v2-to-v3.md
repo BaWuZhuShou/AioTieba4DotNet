@@ -216,4 +216,4 @@ await client.Admins.DelBawuAsync("csharp", "目标 portrait", BawuType.Manager);
 - [Getting Started](../guide/getting-started.md)
 - [API 参考](../reference/modules.md)
 - [Release Notes v3](./release-notes-v3.md)
-- [Parity v3](./parity-v3.md)
+- [Parity](./parity.md)

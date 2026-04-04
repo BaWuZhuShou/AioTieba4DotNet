@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Messages;
@@ -7,8 +6,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetGroupMsg;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_group_msg")]
 internal sealed class GetGroupMsg(ITiebaWsCore wsCore)
 {
     private const int Cmd = 202003;

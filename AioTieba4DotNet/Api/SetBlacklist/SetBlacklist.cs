@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Transport;
@@ -6,8 +5,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.SetBlacklist;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.set_blacklist")]
 internal class SetBlacklist(ITiebaHttpCore httpCore)
 {
     private const int Cmd = 309697;

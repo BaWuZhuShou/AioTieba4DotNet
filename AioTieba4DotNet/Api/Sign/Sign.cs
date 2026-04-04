@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
@@ -8,8 +7,6 @@ namespace AioTieba4DotNet.Api.Sign;
 ///     贴吧签到的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[RequireBduss]
-[PythonApi("aiotieba.api.sign_forum")]
 internal class Sign(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     /// <summary>

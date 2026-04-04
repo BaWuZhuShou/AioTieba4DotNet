@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\AioTieba4DotNet\AioTieba4DotNet.csproj" />
+        <ProjectReference Include="..\AioTieba4DotNet.Tests.Infrastructure\AioTieba4DotNet.Tests.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

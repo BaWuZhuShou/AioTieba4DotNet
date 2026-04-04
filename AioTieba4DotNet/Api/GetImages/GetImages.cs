@@ -1,11 +1,9 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.GetImages;
 
-[PythonApi("aiotieba.api.get_images")]
 internal sealed class GetImages(ITiebaHttpCore httpCore)
 {
     private static readonly Uri TiebaReferrer = new UriBuilder("https", "tieba.baidu.com", 443).Uri;

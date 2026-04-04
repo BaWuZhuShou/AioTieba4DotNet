@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models;
@@ -8,7 +7,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetLastReplyers;
 
-[PythonApi("aiotieba.api.get_last_replyers")]
 internal sealed class GetLastReplyers(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
     private const int Cmd = 301001;

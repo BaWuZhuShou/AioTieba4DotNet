@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.HandleUnblockAppeals;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.handle_unblock_appeals")]
 internal sealed class HandleUnblockAppeals(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseResponse(string body)

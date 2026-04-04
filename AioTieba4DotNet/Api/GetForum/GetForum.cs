@@ -1,5 +1,4 @@
-﻿using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Internal;
+﻿using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Transport;
@@ -10,7 +9,6 @@ namespace AioTieba4DotNet.Api.GetForum;
 ///     获取贴吧基础信息的 API (主要用于获取 Fid)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[PythonApi("aiotieba.api.get_forum")]
 internal class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static Forum ParseBody(string body)

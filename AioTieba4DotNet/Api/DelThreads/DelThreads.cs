@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.DelThreads;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.del_threads")]
 internal class DelThreads(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseResult(string body)

@@ -4,7 +4,6 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
@@ -15,7 +14,6 @@ namespace AioTieba4DotNet.Api.InitZId;
 ///     初始化 ZID 的 API (用于 App 端的设备标识)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[PythonApi("aiotieba.api.init_z_id")]
 internal class InitZId(ITiebaHttpCore httpCore)
 {
     private const string AppKey = "200033"; // Get by p/5/aio

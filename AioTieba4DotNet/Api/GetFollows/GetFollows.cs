@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Shared;
@@ -12,7 +11,6 @@ namespace AioTieba4DotNet.Api.GetFollows;
 ///     获取用户关注列表的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[PythonApi("aiotieba.api.get_follows")]
 internal class GetFollows(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static UserList ParseBody(string body)

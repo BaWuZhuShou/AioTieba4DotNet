@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Users;
@@ -7,8 +6,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetReplys;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_replys")]
 internal class GetReplys(ITiebaHttpCore httpCore)
 {
     private const int Cmd = 303007;

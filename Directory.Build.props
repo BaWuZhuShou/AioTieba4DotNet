@@ -15,6 +15,22 @@
         <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <IsOnlineTestInfrastructureProject Condition="'$(MSBuildProjectName)' == 'AioTieba4DotNet.Tests.Infrastructure'">true</IsOnlineTestInfrastructureProject>
+        <IsOnlineSafeTestProject Condition="'$(MSBuildProjectName)' == 'AioTieba4DotNet.Tests.Online.Safe'">true</IsOnlineSafeTestProject>
+        <IsOnlineRestrictedTestProject Condition="'$(MSBuildProjectName)' == 'AioTieba4DotNet.Tests.Online.Restricted'">true</IsOnlineRestrictedTestProject>
+        <IsOnlineSuiteTestProject Condition="'$(MSBuildProjectName)' == 'AioTieba4DotNet.Tests.Online.Suite'">true</IsOnlineSuiteTestProject>
+        <IsOnlineScenarioProject Condition="'$(IsOnlineSafeTestProject)' == 'true' Or '$(IsOnlineRestrictedTestProject)' == 'true'">true</IsOnlineScenarioProject>
+        <IsOnlineContractProject Condition="'$(IsOnlineTestInfrastructureProject)' == 'true' Or '$(IsOnlineSuiteTestProject)' == 'true'">true</IsOnlineContractProject>
+        <IsOnlineTestProject Condition="'$(IsOnlineScenarioProject)' == 'true' Or '$(IsOnlineContractProject)' == 'true'">true</IsOnlineTestProject>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IsOnlineTestProject)' == 'true'">
+        <IsTestProject>true</IsTestProject>
+        <IsPackable>false</IsPackable>
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    </PropertyGroup>
+
     <PropertyGroup Condition="'$(TF_BUILD)' == 'true' Or '$(GITHUB_ACTIONS)' == 'true' Or '$(APPVEYOR)' == 'true' Or '$(CI)' == 'true'">
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>

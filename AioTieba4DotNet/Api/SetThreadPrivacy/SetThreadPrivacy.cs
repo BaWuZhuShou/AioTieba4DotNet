@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.SetThreadPrivacy;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.set_thread_privacy")]
 internal class SetThreadPrivacy(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseResult(string body)

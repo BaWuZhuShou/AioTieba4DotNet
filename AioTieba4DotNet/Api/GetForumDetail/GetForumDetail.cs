@@ -1,5 +1,4 @@
-﻿using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Internal;
+﻿using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Transport;
@@ -11,7 +10,6 @@ namespace AioTieba4DotNet.Api.GetForumDetail;
 ///     获取贴吧详情信息的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[PythonApi("aiotieba.api.get_forum_detail")]
 internal class GetForumDetail(ITiebaHttpCore httpCore)
 {
     private const int Cmd = 303021;

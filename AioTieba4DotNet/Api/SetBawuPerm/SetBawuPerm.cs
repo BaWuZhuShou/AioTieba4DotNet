@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Models.Admins;
 using AioTieba4DotNet.Transport;
@@ -7,8 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.SetBawuPerm;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.set_bawu_perm")]
 internal sealed class SetBawuPerm(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static readonly (BawuPermType Permission, int Id)[] PermissionOrder =

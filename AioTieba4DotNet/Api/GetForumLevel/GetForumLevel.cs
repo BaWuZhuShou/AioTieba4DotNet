@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Forums;
@@ -7,8 +6,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetForumLevel;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_forum_level")]
 internal sealed class GetForumLevel(ITiebaHttpCore httpCore)
 {
     private const int Cmd = 301005;

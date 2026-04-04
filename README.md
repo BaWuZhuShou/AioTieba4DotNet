@@ -74,7 +74,7 @@ npx skills add https://github.com/BaWuZhuShou/AioTieba4DotNet/tree/master/skills
   版 [aiotieba](https://github.com/lumina37/aiotieba)。
 - 修改 `.proto` 后，请运行 `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`，不要手改生成的 `.cs` 文件。
 - 文档站源码位于 `docs/`，本地构建使用 `pnpm --dir docs install` 和 `pnpm --dir docs run build`。
-- 本地验证入口包括 `scripts/verify-local.*` 与 `scripts/test-lane.*`。
+- 本地验证入口包括 `scripts/verify-local.*` 与 `scripts/test-lane.*`，其中 `test-lane` 现在路由到 `AioTieba4DotNet.Tests.Online.Suite` 的 `safe` / `restricted` ordered suite reality。
 
 ## 开源协议
 

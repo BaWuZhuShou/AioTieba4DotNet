@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.Unblock;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.unblock")]
 internal sealed class Unblock(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseResponse(string body)

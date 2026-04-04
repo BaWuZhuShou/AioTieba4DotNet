@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Threads;
@@ -7,8 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetRecoverInfo;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_recover_info")]
 internal sealed class GetRecoverInfo(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static RecoverInfo ParseResponse(string body)

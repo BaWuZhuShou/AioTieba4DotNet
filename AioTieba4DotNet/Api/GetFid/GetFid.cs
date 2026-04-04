@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
@@ -9,7 +8,6 @@ namespace AioTieba4DotNet.Api.GetFid;
 ///     获取吧 ID (fid) 的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[PythonApi("aiotieba.api.get_fid")]
 internal class GetFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static ulong ParseBody(string body)

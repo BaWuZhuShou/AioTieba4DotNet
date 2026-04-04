@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Shared;
@@ -7,7 +6,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.TiebaUid2UserInfo;
 
-[PythonApi("aiotieba.api.tieba_uid2user_info")]
 internal sealed class TiebaUid2UserInfo(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
     private const int Cmd = 309702;

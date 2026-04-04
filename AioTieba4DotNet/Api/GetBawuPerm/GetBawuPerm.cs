@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Admins;
@@ -7,8 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetBawuPerm;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_bawu_perm")]
 internal sealed class GetBawuPerm(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static BawuPerm ParseResponse(string body)

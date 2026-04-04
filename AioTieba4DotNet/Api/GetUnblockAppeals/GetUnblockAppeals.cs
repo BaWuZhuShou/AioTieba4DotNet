@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Admins;
@@ -6,8 +5,6 @@ using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.GetUnblockAppeals;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_unblock_appeals")]
 internal sealed class GetUnblockAppeals(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static Appeals ParseResponse(string body)

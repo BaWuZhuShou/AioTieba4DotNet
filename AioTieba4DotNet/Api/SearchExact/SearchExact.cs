@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Forums;
@@ -6,7 +5,6 @@ using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.SearchExact;
 
-[PythonApi("aiotieba.api.search_exact")]
 internal sealed class SearchExact(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<ExactSearches> RequestAsync(string fname, string query, int pn, int rn,

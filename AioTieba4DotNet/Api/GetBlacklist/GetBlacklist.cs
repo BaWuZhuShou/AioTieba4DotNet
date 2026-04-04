@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Users;
@@ -6,8 +5,6 @@ using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.GetBlacklist;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_blacklist")]
 internal class GetBlacklist(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static BlacklistUsers ParseBody(string body)

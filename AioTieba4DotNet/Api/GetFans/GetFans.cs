@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Shared;
@@ -7,8 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetFans;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_fans")]
 internal class GetFans(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static UserList ParseBody(string body)

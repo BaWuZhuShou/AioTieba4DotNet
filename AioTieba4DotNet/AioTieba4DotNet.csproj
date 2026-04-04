@@ -39,10 +39,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="AioTieba4DotNet.Testing"/>
-        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Deterministic"/>
-        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Integration"/>
-        <InternalsVisibleTo Include="AioTieba4DotNet.Tests.Live"/>
     </ItemGroup>
 
     <ItemGroup>

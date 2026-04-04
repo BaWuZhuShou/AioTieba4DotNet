@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
@@ -8,8 +7,6 @@ namespace AioTieba4DotNet.Api.FollowUser;
 ///     关注用户的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[RequireBduss]
-[PythonApi("aiotieba.api.follow_user")]
 internal class FollowUser(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     /// <summary>

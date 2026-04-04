@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.DelBawuBlacklist;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.del_bawu_blacklist")]
 internal sealed class DelBawuBlacklist(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseResponse(string body)

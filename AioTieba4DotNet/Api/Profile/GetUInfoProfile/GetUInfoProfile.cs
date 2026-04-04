@@ -1,5 +1,4 @@
-﻿using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Internal;
+﻿using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Users;
 using AioTieba4DotNet.Transport;
@@ -12,7 +11,6 @@ namespace AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 /// </summary>
 /// <typeparam name="T">请求参数类型 (支持 int/long 作为 uid，或 string 作为 portrait/用户名)</typeparam>
 /// <param name="httpCore">Http 核心组件</param>
-[PythonApi("aiotieba.api.profile")]
 internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore)
 {
     private const int Cmd = 303012;

@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
@@ -8,8 +7,6 @@ namespace AioTieba4DotNet.Api.UnfollowUser;
 ///     取消关注用户的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[RequireBduss]
-[PythonApi("aiotieba.api.unfollow_user")]
 internal class UnfollowUser(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     /// <summary>

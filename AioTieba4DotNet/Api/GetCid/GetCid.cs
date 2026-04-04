@@ -1,12 +1,9 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetCid;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_cid")]
 internal class GetCid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<int> RequestAsync(string fname, string cname, CancellationToken cancellationToken = default)

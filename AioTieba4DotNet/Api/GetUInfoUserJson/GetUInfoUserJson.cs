@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Shared;
@@ -11,7 +10,6 @@ namespace AioTieba4DotNet.Api.GetUInfoUserJson;
 ///     通过用户名获取用户信息 JSON 的 API (Web端接口，常用于获取用户 uid)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[PythonApi("aiotieba.api.get_uinfo_user_json")]
 internal class GetUInfoUserJson(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static UserInfo ParseBody(string body)

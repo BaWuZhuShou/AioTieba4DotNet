@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.Recommend;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.recommend")]
 internal class Recommend(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseResult(string body)

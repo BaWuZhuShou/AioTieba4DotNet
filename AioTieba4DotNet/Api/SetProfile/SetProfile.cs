@@ -1,12 +1,9 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.SetProfile;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.set_profile")]
 internal sealed class SetProfile(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<bool> RequestAsync(string nickName, string sign, Gender gender,

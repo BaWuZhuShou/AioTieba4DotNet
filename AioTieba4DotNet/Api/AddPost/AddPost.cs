@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 using Google.Protobuf;
@@ -10,8 +9,6 @@ namespace AioTieba4DotNet.Api.AddPost;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
-[RequireBduss]
-[PythonApi("aiotieba.api.add_post")]
 internal class AddPost(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
     private const int Cmd = 309731;

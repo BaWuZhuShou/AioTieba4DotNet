@@ -39,7 +39,7 @@ required_docs = [
     "docs/guide/troubleshooting.md",
     "docs/related/migration-v2-to-v3.md",
     "docs/related/release-notes-v3.md",
-    "docs/related/parity-v3.md",
+    "docs/related/parity.md",
     "docs/archive/todo.md",
     "AGENTS.md",
     ".junie/guidelines.md",
@@ -50,7 +50,7 @@ archived_docs = [
         "path": "docs/archive/todo.md",
         "requiredPhrases": [
             "historical archive",
-            "docs/related/parity-v3.md",
+            "docs/related/parity.md",
             "authoritative parity ledger",
         ],
     },
@@ -61,7 +61,7 @@ legacy_regression_scopes = [
     {"path": "AioTieba4DotNet/AGENTS.md", "includes": []},
     {"path": ".github/workflows/publish.yml", "includes": []},
     {"path": "README.md", "includes": []},
-    {"path": "docs/related/parity-v3.md", "includes": []},
+    {"path": "docs/related/parity.md", "includes": []},
     {"path": "docs/archive/todo.md", "includes": []},
 ]
 
@@ -81,12 +81,12 @@ forbidden_legacy_patterns = [
 
 credential_template_files = [
     {
-        "path": "AioTieba4DotNet.Testing/appsettings.test.json",
-        "requiredBlankKeys": ["TieBa:BDUSS", "TieBa:STOKEN"],
+        "path": "AioTieba4DotNet.Tests.Infrastructure/online-test.safe.template.json",
+        "requiredBlankKeys": ["safe:account:bduss", "safe:account:stoken"],
     },
     {
-        "path": "AioTieba4DotNet.Testing/appsettings.fixtures.example.json",
-        "requiredBlankKeys": ["TieBa:BDUSS", "TieBa:STOKEN"],
+        "path": "AioTieba4DotNet.Tests.Infrastructure/online-test.restricted.template.json",
+        "requiredBlankKeys": ["restricted:account:bduss", "restricted:account:stoken"],
     },
 ]
 
@@ -101,44 +101,7 @@ workflow_content_contracts = [
     },
 ]
 
-evidence_content_contracts = [
-    {
-        "path": ".sisyphus/evidence/local-deterministic-verification.md",
-        "requiredPhrases": [
-            "Command:",
-            "pwsh -File \".\\scripts\\test-lane.ps1\" deterministic",
-            "Coverage collected:",
-            "Lane result: passed",
-            "Result:",
-        ],
-        "forbiddenPhrases": ["Update this file", "sequence-dry-run"],
-    },
-    {
-        "path": ".sisyphus/evidence/local-integration-verification.md",
-        "requiredPhrases": [
-            "Command:",
-            "pwsh -File \".\\scripts\\test-lane.ps1\" integration",
-            "Observed output:",
-            "[integration]",
-            "returned exit 0 in this environment",
-            "real staged integration-lane execution",
-            "Result:",
-        ],
-        "forbiddenPhrases": ["Update this file", "sequence-dry-run"],
-    },
-    {
-        "path": ".sisyphus/evidence/local-live-verification.md",
-        "requiredPhrases": [
-            "Command:",
-            "pwsh -File \".\\scripts\\test-lane.ps1\" sequence-dry-run -Stages ThreadRead,Cleanup",
-            "Observed output:",
-            "cleanup compensations / recorded object ledger",
-            "does not claim that the credentialed live lane itself was executed here",
-            "Result:",
-        ],
-        "forbiddenPhrases": ["Update this file"],
-    },
-]
+evidence_content_contracts = []
 
 local_entrypoints = [
     "scripts/verify-local.ps1",
@@ -147,29 +110,7 @@ local_entrypoints = [
     "scripts/test-lane.sh",
 ]
 
-required_evidence = [
-    {
-        "id": "deterministic-tests-and-coverage",
-        "kind": "local-verification",
-        "ownerTask": "18",
-        "path": ".sisyphus/evidence/local-deterministic-verification.md",
-        "description": "Record deterministic lane execution and coverage evidence outside GitHub Actions.",
-    },
-    {
-        "id": "integration-lane",
-        "kind": "local-verification",
-        "ownerTask": "19",
-        "path": ".sisyphus/evidence/local-integration-verification.md",
-        "description": "Record integration lane execution evidence outside GitHub Actions.",
-    },
-    {
-        "id": "live-lane",
-        "kind": "local-verification",
-        "ownerTask": "19",
-        "path": ".sisyphus/evidence/local-live-verification.md",
-        "description": "Record live lane execution and cleanup evidence outside GitHub Actions.",
-    },
-]
+required_evidence = []
 
 
 def to_full_path(relative_path: str) -> str:

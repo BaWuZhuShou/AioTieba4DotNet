@@ -13,7 +13,7 @@ AioTieba4DotNet/
 ├── Clients/          # direct client entrypoints and internal composition helpers
 ├── Contracts/        # public module contracts, options, enums
 ├── Api/              # internal low-level endpoints, protobuf assets, request families
-├── Attributes/       # PythonApi / RequireBduss markers and similar metadata
+├── Attributes/       # reserved for runtime-consumed metadata only; do not reintroduce parity/auth marker attributes
 ├── Exceptions/       # public exception types stored in-folder, exposed from root namespace
 ├── Internal/         # internal helpers and protocol-to-model mapping glue
 ├── Models/           # public DTOs and enums
@@ -56,8 +56,8 @@ AioTieba4DotNet/
   constructing request classes.
 - Mirror upstream `aiotieba` request semantics, naming, packing, parsing, and observable behavior as closely as the C#
   contract allows.
-- Add `[PythonApi("aiotieba.api....")]` to API implementations so parity tracing remains searchable.
-- Apply `[RequireBduss]` on authenticated API classes.
+- Maintain parity scope, internal implementation mapping, and auth notes in `../docs/related/parity.md` instead of split code attributes or a separate mapping file.
+- Do not add source-only parity/auth marker attributes; authenticated API discoverability lives in request/session code plus `../docs/related/parity.md`.
 - When upstream protocol compatibility depends on legacy or weak hash algorithms, preserve the required algorithm and keep the compatibility story explicit. Prefer narrow method-level suppressions with clear compatibility justifications over broad type-level suppressions or fake algorithm swaps done only to satisfy static analysis.
 - Reuse the existing base classes and `HttpCore.Send*Async` helpers instead of reimplementing transport selection,
   parsing, or response disposal.
@@ -82,9 +82,10 @@ AioTieba4DotNet/
 
 ## TESTING LINKS
 
-- Deterministic coverage for library behavior lives in `../AioTieba4DotNet.Tests.Deterministic/`.
-- Real-link staged verification lives in `../AioTieba4DotNet.Tests.Integration/` and `../AioTieba4DotNet.Tests.Live/`.
-- Shared gates, fixtures, cleanup orchestration, and sequencing truth live in `../AioTieba4DotNet.Testing/`.
+- Online test contracts, environment templates, and shared support live in `../AioTieba4DotNet.Tests.Infrastructure/`.
+- Default local-only scenario coverage lives in `../AioTieba4DotNet.Tests.Online.Safe/`.
+- Explicit restricted moderation and admin coverage lives in `../AioTieba4DotNet.Tests.Online.Restricted/`.
+- Ordered suite execution and legacy-reference eradication contracts live in `../AioTieba4DotNet.Tests.Online.Suite/`.
 
 ## NOTES
 
@@ -92,7 +93,7 @@ AioTieba4DotNet/
 - If library work changes user-visible behavior, ensure the docs contract stays aligned with `README.md`, the task
   guides under `docs/how-to/`, `docs/index.md`, `docs/guide/getting-started.md`, `docs/reference/modules.md`,
   `docs/guide/advanced.md`, `docs/guide/troubleshooting.md`, release notes, migration notes, and
-  `docs/related/parity-v3.md`.
+  `docs/related/parity.md`.
 - If library work changes public usage patterns, install identity, or the consumer-facing module surface, also keep the
   exported skill package under `../skills/aiotieba4dotnet/` aligned, including `SKILL.md`, `skill.json`, and
   `package.json`.

@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Shared;
@@ -7,7 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetSelfInfoMoIndex;
 
-[PythonApi("aiotieba.api.get_selfinfo_moindex")]
 internal class GetSelfInfoMoIndex(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static UserInfo ParseBody(string body)

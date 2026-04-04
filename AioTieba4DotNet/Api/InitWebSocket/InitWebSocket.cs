@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Messages;
 using AioTieba4DotNet.Transport;
@@ -6,8 +5,6 @@ using AioTieba4DotNet.Transport.WebSockets;
 
 namespace AioTieba4DotNet.Api.InitWebSocket;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.init_websocket")]
 internal sealed class InitWebSocket(ITiebaWsCore wsCore)
 {
     private const int Cmd = 1001;

@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Transport;
@@ -6,8 +5,6 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetRoomListByFid;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_roomlist_by_fid")]
 internal sealed class GetRoomListByFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static RoomList ParseRoomList(string body)

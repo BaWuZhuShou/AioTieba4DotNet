@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Forums;
@@ -6,8 +5,6 @@ using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.GetRecomStatus;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_recom_status")]
 internal sealed class GetRecomStatus(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<RecomStatus> RequestAsync(ulong fid, CancellationToken cancellationToken = default)

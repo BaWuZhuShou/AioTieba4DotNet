@@ -1,5 +1,4 @@
 using AioTieba4DotNet.Api.Login.Entities;
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Transport;
@@ -11,8 +10,6 @@ namespace AioTieba4DotNet.Api.Login;
 ///     登录 API (用于获取用户信息和 TBS)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[RequireBduss]
-[PythonApi("aiotieba.api.login")]
 internal class Login(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static (UserInfoLogin User, string Tbs) ParseBody(string body)

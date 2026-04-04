@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Admins;
@@ -6,8 +5,6 @@ using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.GetBlocks;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_blocks")]
 internal sealed class GetBlocks(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static Blocks ParseResponse(string body)

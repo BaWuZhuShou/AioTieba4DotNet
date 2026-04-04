@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.SetMsgReaded;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.set_msg_readed")]
 internal sealed class SetMsgReaded(ITiebaWsCore wsCore)
 {
     private const int Cmd = 205006;

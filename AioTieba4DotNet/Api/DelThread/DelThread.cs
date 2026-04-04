@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
@@ -8,8 +7,6 @@ namespace AioTieba4DotNet.Api.DelThread;
 ///     删除主题帖的 API
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[RequireBduss]
-[PythonApi("aiotieba.api.del_thread")]
 internal class DelThread(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseBody(string body)

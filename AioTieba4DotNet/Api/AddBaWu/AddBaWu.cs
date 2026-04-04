@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.AddBaWu;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.add_bawu")]
 internal sealed class AddBaWu(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static bool ParseResponse(string body)

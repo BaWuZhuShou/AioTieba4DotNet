@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Forums;
@@ -7,8 +6,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetSquareForums;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_square_forums")]
 internal sealed class GetSquareForums(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
     private const int Cmd = 309653;

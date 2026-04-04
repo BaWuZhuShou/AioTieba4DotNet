@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Admins;
@@ -7,8 +6,6 @@ using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.GetBawuUserlogs;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_bawu_userlogs")]
 internal sealed class GetBawuUserlogs(ITiebaHttpCore httpCore)
 {
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",

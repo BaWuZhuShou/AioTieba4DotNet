@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Threads;
@@ -7,8 +6,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetTabMap;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_tab_map")]
 internal sealed class GetTabMap(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
     private const int Cmd = 309466;

@@ -1,0 +1,19 @@
+{
+  "safe": {
+    "account": {
+      "bduss": "",
+      "stoken": ""
+    },
+    "assets": {
+      "forumQuery": "",
+      "forumName": "",
+      "ownedThreadId": 0,
+      "ownedReplyId": 0,
+      "targetUserName": "",
+      "targetUserId": 0,
+      "targetPortrait": "",
+      "messageRecipient": "",
+      "chatroomId": 0
+    }
+  }
+}

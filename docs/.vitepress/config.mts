@@ -70,8 +70,13 @@ export default defineConfig({
         items: [
           { text: '迁移 v2 → v3', link: '/related/migration-v2-to-v3' },
           { text: '发布说明 v3', link: '/related/release-notes-v3' },
-          { text: 'Parity v3', link: '/related/parity-v3' }
+          { text: '对齐台账', link: '/related/parity' }
         ]
+      },
+      {
+        text: '存档',
+        collapsed: true,
+        items: [{ text: '历史 Todo', link: '/archive/todo' }]
       }
     ],
     search: {

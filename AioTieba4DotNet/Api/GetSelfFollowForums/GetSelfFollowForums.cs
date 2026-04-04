@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Forums;
@@ -6,8 +5,6 @@ using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.GetSelfFollowForums;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_self_follow_forums")]
 internal sealed class GetSelfFollowForums(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static SelfFollowForums ParseResponse(string body)

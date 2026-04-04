@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.UndislikeForum;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.undislike_forum")]
 internal sealed class UndislikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<bool> RequestAsync(ulong fid, CancellationToken cancellationToken = default)

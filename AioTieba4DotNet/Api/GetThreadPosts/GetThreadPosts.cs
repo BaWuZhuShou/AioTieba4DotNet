@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Threads;
@@ -13,7 +12,6 @@ namespace AioTieba4DotNet.Api.GetThreadPosts;
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
 /// <param name="wsCore">Websocket 核心组件</param>
-[PythonApi("aiotieba.api.get_posts")]
 internal class GetThreadPosts(
     ITiebaHttpCore httpCore,
     ITiebaWsCore wsCore)

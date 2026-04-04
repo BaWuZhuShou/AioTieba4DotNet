@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Shared;
@@ -11,7 +10,6 @@ namespace AioTieba4DotNet.Api.GetUInfoPanel;
 ///     获取用户面板信息的 API (Web端接口，常用于通过用户名换取 Portrait)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[PythonApi("aiotieba.api.get_uinfo_panel")]
 internal class GetUInfoPanel(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static UserInfo ParseBody(string body)

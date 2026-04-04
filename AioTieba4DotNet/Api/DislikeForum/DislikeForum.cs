@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 using Newtonsoft.Json;
@@ -6,8 +5,6 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.DislikeForum;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.dislike_forum")]
 internal sealed class DislikeForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<bool> RequestAsync(ulong fid, CancellationToken cancellationToken = default)

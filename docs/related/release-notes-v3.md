@@ -104,7 +104,7 @@ v3 的根客户端稳定为:
 4. 五份位于 `docs/how-to/` 的按任务组织页面
 5. `docs/reference/modules.md` 参考索引
 6. `docs/guide/advanced.md` / `docs/guide/troubleshooting.md`
-7. `docs/related/migration-v2-to-v3.md` / `docs/related/release-notes-v3.md` / `docs/related/parity-v3.md`
+7. `docs/related/migration-v2-to-v3.md` / `docs/related/release-notes-v3.md` / `docs/related/parity.md`
 
 `docs/archive/todo.md` 继续保留为历史 archive，只用于旧 backlog 参考，不再属于主用户旅程。
 
@@ -113,7 +113,7 @@ v3 的根客户端稳定为:
 v3 发布线继续采用 **build/codegen/packaging only** 的 GitHub Actions 治理模型。
 
 - GitHub Actions **不运行 `dotnet test`**
-- deterministic、integration、live 验证都通过本地或 agent 环境执行
+- online ordered suite 验证通过本地或 agent 环境执行，默认走 `safe`，受限路径只在显式 `restricted` 选择下运行
 - GitHub Actions release gate 在 pack / publish 之前检查 restore、build、codegen 和 packaging
 
 ## 本地验证契约
@@ -133,17 +133,14 @@ v3 发布线继续采用 **build/codegen/packaging only** 的 GitHub Actions 治
 - `docs/guide/troubleshooting.md`
 - `docs/related/migration-v2-to-v3.md`
 - `docs/related/release-notes-v3.md`
-- `docs/related/parity-v3.md`
+- `docs/related/parity.md`
 - `docs/archive/todo.md`
 - `AGENTS.md`
 - `.junie/guidelines.md`
 
-此外还要保留本地验证 manifest 与三份 lane evidence:
+此外还要保留本地验证 manifest:
 
 - `.sisyphus/evidence/local-verification.manifest.json`
-- `.sisyphus/evidence/local-deterministic-verification.md`
-- `.sisyphus/evidence/local-integration-verification.md`
-- `.sisyphus/evidence/local-live-verification.md`
 
 ## 发布前最小检查清单
 
@@ -153,10 +150,12 @@ v3 发布线继续采用 **build/codegen/packaging only** 的 GitHub Actions 治
 4. `pnpm --dir docs install`
 5. `pnpm --dir docs run build`
 6. `pwsh ./scripts/verify-local.ps1 -ValidateOnly`
-7. 完整检查 README 和 docs 导航链路
+7. `pwsh ./scripts/test-lane.ps1 safe`
+8. 如任务涉及 restricted 场景，再执行 `pwsh ./scripts/test-lane.ps1 restricted`
+9. 完整检查 README 和 docs 导航链路
 
 ## 相关文档
 
 - [Getting Started](../guide/getting-started.md)
 - [Migration v2 to v3](./migration-v2-to-v3.md)
-- [Parity v3](./parity-v3.md)
+- [Parity](./parity.md)

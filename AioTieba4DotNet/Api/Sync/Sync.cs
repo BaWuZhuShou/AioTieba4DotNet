@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
@@ -9,8 +8,6 @@ namespace AioTieba4DotNet.Api.Sync;
 ///     同步客户端状态的 API (用于获取 ClientId 和 SampleId)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[RequireBduss]
-[PythonApi("aiotieba.api.sync")]
 internal class Sync(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static (string ClientId, string SampleId) ParseBody(string body)

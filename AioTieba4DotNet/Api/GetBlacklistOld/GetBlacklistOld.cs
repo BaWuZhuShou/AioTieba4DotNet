@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Users;
@@ -7,8 +6,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetBlacklistOld;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_blacklist_old")]
 internal sealed class GetBlacklistOld(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
     private const int Cmd = 303028;

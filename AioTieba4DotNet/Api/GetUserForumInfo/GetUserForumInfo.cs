@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Users;
@@ -7,8 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetUserForumInfo;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_user_forum_info")]
 internal sealed class GetUserForumInfo(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<UserForumInfo> RequestAsync(ulong fid, string portrait,

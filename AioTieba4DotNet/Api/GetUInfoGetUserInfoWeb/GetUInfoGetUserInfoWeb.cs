@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Shared;
@@ -7,7 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetUInfoGetUserInfoWeb;
 
-[PythonApi("aiotieba.api.get_uinfo_getUserInfo_web")]
 internal sealed class GetUInfoGetUserInfoWeb(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<UserInfo> RequestAsync(int userId, CancellationToken cancellationToken = default)

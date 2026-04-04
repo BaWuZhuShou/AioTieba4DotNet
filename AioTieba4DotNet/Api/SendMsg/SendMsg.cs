@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Transport;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.SendMsg;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.send_msg")]
 internal sealed class SendMsg(ITiebaWsCore wsCore)
 {
     private const int Cmd = 205001;

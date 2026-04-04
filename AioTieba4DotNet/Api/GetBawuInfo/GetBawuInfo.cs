@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Admins;
@@ -7,7 +6,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetBawuInfo;
 
-[PythonApi("aiotieba.api.get_bawu_info")]
 internal sealed class GetBawuInfo(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
     private const int Cmd = 301007;

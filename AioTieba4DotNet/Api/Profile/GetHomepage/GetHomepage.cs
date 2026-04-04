@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Users;
@@ -7,7 +6,6 @@ using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.Profile.GetHomepage;
 
-[PythonApi("aiotieba.api.profile.get_homepage")]
 internal sealed class GetHomepage(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
     private const int Cmd = 303012;

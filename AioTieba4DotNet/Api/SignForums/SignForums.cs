@@ -1,12 +1,9 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.SignForums;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.sign_forums")]
 internal sealed class SignForums(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<bool> RequestAsync(CancellationToken cancellationToken = default)

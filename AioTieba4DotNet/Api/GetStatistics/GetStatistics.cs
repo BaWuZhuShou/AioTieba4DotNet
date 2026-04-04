@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Forums;
@@ -7,8 +6,6 @@ using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.GetStatistics;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_statistics")]
 internal sealed class GetStatistics(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<ForumStatistics> RequestAsync(ulong fid, CancellationToken cancellationToken = default)

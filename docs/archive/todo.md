@@ -1,14 +1,14 @@
 ﻿# docs/archive/todo.md historical archive
 
-本文件现在是 **historical archive**，只保留早期粗粒度 backlog 作为历史参考。
+本文件仅作 **historical archive**，保留早期粗粒度 backlog 作为历史参考。
 
-- `docs/related/parity-v3.md` 才是 v3 的 **authoritative parity ledger** / 当前范围真源。
-- 本页 **不是** 当前 parity 真值、**不是** release gate 判定依据、**不是** v3 完成度清单。
-- 下面保留的旧清单可能缺项、命名过粗、状态过时，不能再和 `docs/related/parity-v3.md` 竞争解释权。
+- `docs/related/parity.md` 是当前唯一的 **authoritative parity ledger** / 当前范围真源。
+- 本页只保留历史快照，**不是** 当前 parity 真值、**不是** release gate 判定依据、**不是**当前完成度清单。
+- 下面保留的旧清单可能缺项、命名过粗、状态过时，不能再和 `docs/related/parity.md` 竞争解释权。
 
 ---
 
-以下内容按原样保留为历史快照：
+以下内容仅保留为历史快照，不代表当前范围：
 
 ## 1. 吧务管理 (Bawu Management)
 - [x] `add_bawu`: 添加吧务 (小吧主/语音小编等)
@@ -56,31 +56,31 @@
 - [x] `get_uinfo_getUserInfo_web`: 获取用户基础信息 (Web 兼容接口)
 - [x] `get_uinfo_panel`: 获取用户信息面板
 - [x] `get_uinfo_user_json`: 通过 JSON 接口获取用户信息
-- [x] `get_profile`: 获取用户详细资料 (个人主页)
+- [x] `profile.get_uinfo_profile`: 获取用户详细资料 (资料页信息)
 - [x] `profile.get_homepage`: 获取用户主页帖子列表与资料页快照
-- [x] `get_user_posts`: 获取用户发表的回复列表
-- [x] `get_user_threads`: 获取用户发表的主题帖列表
+- [x] `get_user_contents.get_posts`: 获取用户发表的回复列表
+- [x] `get_user_contents.get_threads`: 获取用户发表的主题帖列表
 - [x] `get_user_forum_info`: 获取用户在指定贴吧内的信息
 - [x] `get_follows`: 获取用户关注的人列表
-- [x] `follow`: 关注用户
-- [x] `unfollow`: 取消关注用户
-- [ ] `get_ats`: 获取 @我的 消息列表
-- [ ] `get_replys`: 获取 回复我的 消息列表
-- [ ] `get_fans`: 获取用户的粉丝列表
-- [ ] `remove_fan`: 移除粉丝
-- [ ] `get_follow_forums`: 获取他人关注的吧列表
-- [ ] `get_self_follow_forums`: 获取自己关注的吧列表 (Web 接口)
-- [ ] `get_self_follow_forums_v1`: 获取自己关注的吧列表 (Web V1 接口)
-- [ ] `get_dislike_forums`: 获取屏蔽吧列表
-- [ ] `set_blacklist`: 将用户加入黑名单
-- [ ] `get_blacklist`: 获取黑名单列表
-- [ ] `set_profile`: 修改个人资料 (头像/简介等)
-- [ ] `get_selfinfo_initNickname`: 获取初始昵称信息
-- [ ] `get_selfinfo_moindex`: 获取主页索引信息
+- [x] `follow_user`: 关注用户
+- [x] `unfollow_user`: 取消关注用户
+- [x] `get_ats`: 获取 @我的 消息列表
+- [x] `get_replys`: 获取 回复我的 消息列表
+- [x] `get_fans`: 获取用户的粉丝列表
+- [x] `remove_fan`: 移除粉丝
+- [x] `get_follow_forums`: 获取他人关注的吧列表
+- [x] `get_self_follow_forums`: 获取自己关注的吧列表 (Web 接口)
+- [x] `get_self_follow_forums_v1`: 获取自己关注的吧列表 (Web V1 接口)
+- [x] `get_dislike_forums`: 获取屏蔽吧列表
+- [x] `set_blacklist`: 将用户加入黑名单
+- [x] `get_blacklist`: 获取黑名单列表
+- [x] `set_profile`: 修改个人资料
+- [x] `get_selfinfo_initNickname`: 获取初始昵称信息
+- [x] `get_selfinfo_moindex`: 获取主页索引信息
 - [x] `tieba_uid2user_info`: 通过 `tieba_uid` 查询用户信息
 - [x] `get_rank_users`: 获取用户等级排行榜
 
-> 说明：本清单仍是面向贡献者的粗粒度 backlog，不是完整 parity 真值。Task 16 当前只补齐了读接口切片：`get_uinfo_getUserInfo_web`、`get_user_forum_info`、`get_rank_users`、`profile.get_homepage`、`tieba_uid2user_info`。旧版黑名单与资料修改兼容族仍保持待实现状态。
+> 说明：本清单只保留历史阶段的粗粒度 backlog 视角，不代表当前实现状态；当前支持范围、命名与实现归属请以 `docs/related/parity.md` 为准。
 
 ## 4. 搜索与工具 (Search & Tools)
 - [x] `get_fid`: 获取贴吧 ID (Fid)
@@ -96,25 +96,25 @@
 - [x] `get_statistics`: 获取贴吧统计数据
 
 ## 5. 消息与即时通讯 (Messaging & WebSocket)
-- [ ] `get_group_msg`: 获取群聊消息
-- [ ] `send_msg`: 发送私信
-- [ ] `send_chatroom_msg`: 发送聊天室(网页/App版)消息
-- [ ] `set_msg_readed`: 标记消息为已读
-- [ ] `push_notify`: 发送 App 推送通知
-- [ ] `init_websocket`: 手动初始化 WebSocket 连接 (目前已在 Core 自动处理，但可暴露更多控制)
+- [x] `get_group_msg`: 获取群聊消息
+- [x] `send_msg`: 发送私信
+- [x] `send_chatroom_msg`: 发送聊天室(网页/App版)消息
+- [x] `set_msg_readed`: 标记消息为已读
+- [x] `push_notify`: 解析 App 推送通知
+- [x] `init_websocket`: 手动初始化 WebSocket 连接
 
 ## 6. 其他功能 (Misc)
 - [x] `init_z_id`: 初始化 ZID 设备标识
 - [x] `sync`: 同步客户端状态 (ClientId/SampleId)
 - [x] `sign_forum`: 贴吧签到
-- [x] `like_forum`: 关注贴吧
-- [x] `unlike_forum`: 取消关注贴吧
+- [x] `follow_forum`: 关注贴吧
+- [x] `unfollow_forum`: 取消关注贴吧
 - [x] `sign_forums`: 一键签到所有关注的吧
 - [x] `sign_growth`: 签到获取成长值
 - [x] `get_forum_level`: 获取吧等级详细配置
-- [ ] `get_roomlist_by_fid`: 获取吧内直播间/聊天室列表
-- [ ] `dislike_forum`: 屏蔽某个贴吧 (不感兴趣)
-- [ ] `undislike_forum`: 取消屏蔽
+- [x] `get_roomlist_by_fid`: 获取吧内直播间/聊天室列表
+- [x] `dislike_forum`: 屏蔽某个贴吧 (不感兴趣)
+- [x] `undislike_forum`: 取消屏蔽
 
 ---
-*注：以上清单基于 `aiotieba` 最新版本 API 目录整理，部分冷门或已失效接口未予列出。*
+*注：以上清单按历史阶段原始整理思路保留；当前能力范围、命名与实现状态请以 `docs/related/parity.md` 为准。*

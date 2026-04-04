@@ -22,7 +22,7 @@ $requiredDocs = @(
     "docs/guide/troubleshooting.md",
     "docs/related/migration-v2-to-v3.md",
     "docs/related/release-notes-v3.md",
-    "docs/related/parity-v3.md",
+    "docs/related/parity.md",
     "docs/archive/todo.md",
     "AGENTS.md",
     ".junie/guidelines.md"
@@ -33,7 +33,7 @@ $archivedDocs = @(
         path = "docs/archive/todo.md"
         requiredPhrases = @(
             "historical archive",
-            "docs/related/parity-v3.md",
+            "docs/related/parity.md",
             "authoritative parity ledger"
         )
     }
@@ -44,7 +44,7 @@ $legacyRegressionScopes = @(
     [ordered]@{ path = "AioTieba4DotNet/AGENTS.md"; includes = @() },
     [ordered]@{ path = ".github/workflows/publish.yml"; includes = @() },
     [ordered]@{ path = "README.md"; includes = @() },
-    [ordered]@{ path = "docs/related/parity-v3.md"; includes = @() },
+    [ordered]@{ path = "docs/related/parity.md"; includes = @() },
     [ordered]@{ path = "docs/archive/todo.md"; includes = @() }
 )
 
@@ -64,12 +64,12 @@ $forbiddenLegacyPatterns = @(
 
 $credentialTemplateFiles = @(
     [ordered]@{
-        path = "AioTieba4DotNet.Testing/appsettings.test.json"
-        requiredBlankKeys = @("TieBa:BDUSS", "TieBa:STOKEN")
+        path = "AioTieba4DotNet.Tests.Infrastructure/online-test.safe.template.json"
+        requiredBlankKeys = @("safe:account:bduss", "safe:account:stoken")
     },
     [ordered]@{
-        path = "AioTieba4DotNet.Testing/appsettings.fixtures.example.json"
-        requiredBlankKeys = @("TieBa:BDUSS", "TieBa:STOKEN")
+        path = "AioTieba4DotNet.Tests.Infrastructure/online-test.restricted.template.json"
+        requiredBlankKeys = @("restricted:account:bduss", "restricted:account:stoken")
     }
 )
 
@@ -88,44 +88,7 @@ $workflowContentContracts = @(
     }
 )
 
-$evidenceContentContracts = @(
-    [ordered]@{
-        path = ".sisyphus/evidence/local-deterministic-verification.md"
-        requiredPhrases = @(
-            "Command:",
-            'pwsh -File ".\scripts\test-lane.ps1" deterministic',
-            "Coverage collected:",
-            "Lane result: passed",
-            "Result:"
-        )
-        forbiddenPhrases = @("Update this file", "sequence-dry-run")
-    },
-    [ordered]@{
-        path = ".sisyphus/evidence/local-integration-verification.md"
-        requiredPhrases = @(
-            "Command:",
-            'pwsh -File ".\scripts\test-lane.ps1" integration',
-            "Observed output:",
-            "[integration]",
-            "returned exit 0 in this environment",
-            "real staged integration-lane execution",
-            "Result:"
-        )
-        forbiddenPhrases = @("Update this file", "sequence-dry-run")
-    },
-    [ordered]@{
-        path = ".sisyphus/evidence/local-live-verification.md"
-        requiredPhrases = @(
-            "Command:",
-            'pwsh -File ".\scripts\test-lane.ps1" sequence-dry-run -Stages ThreadRead,Cleanup',
-            "Observed output:",
-            "cleanup compensations / recorded object ledger",
-            "does not claim that the credentialed live lane itself was executed here",
-            "Result:"
-        )
-        forbiddenPhrases = @("Update this file")
-    }
-)
+$evidenceContentContracts = @()
 
 $localEntrypoints = @(
     "scripts/verify-local.ps1",
@@ -134,29 +97,7 @@ $localEntrypoints = @(
     "scripts/test-lane.sh"
 )
 
-$requiredEvidence = @(
-    [ordered]@{
-        id = "deterministic-tests-and-coverage"
-        kind = "local-verification"
-        ownerTask = "18"
-        path = ".sisyphus/evidence/local-deterministic-verification.md"
-        description = "Record deterministic lane execution and coverage evidence outside GitHub Actions."
-    },
-    [ordered]@{
-        id = "integration-lane"
-        kind = "local-verification"
-        ownerTask = "19"
-        path = ".sisyphus/evidence/local-integration-verification.md"
-        description = "Record integration lane execution evidence outside GitHub Actions."
-    },
-    [ordered]@{
-        id = "live-lane"
-        kind = "local-verification"
-        ownerTask = "19"
-        path = ".sisyphus/evidence/local-live-verification.md"
-        description = "Record live lane execution and cleanup evidence outside GitHub Actions."
-    }
-)
+$requiredEvidence = @()
 
 function Resolve-RelativePath([string]$relativePath) {
     return Join-Path $repoRoot ($relativePath -replace '/', [IO.Path]::DirectorySeparatorChar)

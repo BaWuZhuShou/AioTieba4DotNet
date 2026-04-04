@@ -1,4 +1,3 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Threads;
@@ -6,8 +5,6 @@ using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.GetRecovers;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.get_recovers")]
 internal sealed class GetRecovers(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     private static Recovers ParseResponse(string body)

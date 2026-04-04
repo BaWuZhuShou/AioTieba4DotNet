@@ -10,10 +10,10 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 ```text
 .
 ├── AioTieba4DotNet/                   # shipping library; library-specific rules live in child AGENTS
-├── AioTieba4DotNet.Testing/           # shared test infrastructure, fixture gates, sequencing manifest
-├── AioTieba4DotNet.Tests.Deterministic/ # offline deterministic and coverage-bearing tests
-├── AioTieba4DotNet.Tests.Integration/ # controlled real-link verification
-├── AioTieba4DotNet.Tests.Live/        # credentialed and mutation-capable verification
+├── AioTieba4DotNet.Tests.Infrastructure/ # online test contracts, environment loading, repo-path helpers
+├── AioTieba4DotNet.Tests.Online.Safe/ # default local-only safe scenarios and ordered-safe stage coverage
+├── AioTieba4DotNet.Tests.Online.Restricted/ # explicit opt-in restricted moderation/admin scenarios
+├── AioTieba4DotNet.Tests.Online.Suite/ # ordered suite host and governance contracts for safe/restricted routing
 ├── ProtoGenerator/                    # protobuf generator for Api/**/*.proto
 ├── docs/                              # VitePress source docs, related governance docs, and archive notes
 ├── skills/                            # exported AI skill packages for external installation and reuse
@@ -27,34 +27,34 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 |------|----------|-------|
 | Durable cross-cutting rules | `.junie/guidelines.md` | Source of truth for stable maintenance, testing, release, and coverage rules |
 | Main library work | `AioTieba4DotNet/` | Start in `AioTieba4DotNet/AGENTS.md` for library boundaries and public surface rules |
-| Shared test sequencing and fixtures | `AioTieba4DotNet.Testing/` | `TestBase`, fixture gates, cleanup orchestration, sequencing manifest |
-| Deterministic verification | `AioTieba4DotNet.Tests.Deterministic/` | Offline tests and coverage-bearing lane |
-| Integration verification | `AioTieba4DotNet.Tests.Integration/` | Staged real-link checks using the sequencing manifest |
-| Live verification | `AioTieba4DotNet.Tests.Live/` | Credentialed, mutation-capable, cleanup-aware scenarios |
+| Online test contracts and environment loading | `AioTieba4DotNet.Tests.Infrastructure/` | Repo topology, online environment templates, suite metadata, shared support |
+| Default safe online scenarios | `AioTieba4DotNet.Tests.Online.Safe/` | Local-only safe ordered stages for read and reversible-write coverage |
+| Explicit restricted online scenarios | `AioTieba4DotNet.Tests.Online.Restricted/` | Restricted moderation/admin scenarios that require dedicated opt-in |
+| Ordered suite host and eradication contracts | `AioTieba4DotNet.Tests.Online.Suite/` | Discoverable suite host for `Suite:SafeOrdered` / `Suite:RestrictedOrdered` plus governance contracts |
 | Generator maintenance | `ProtoGenerator/` | Regenerates `.proto` outputs under `AioTieba4DotNet/Api/**/Protobuf` |
 | Docs contract and IA | `README.md`, `docs/index.md`, `docs/guide/**`, `docs/how-to/**`, `docs/reference/modules.md`, `docs/related/**`, `docs/archive/todo.md` | README bridges into the active VitePress source tree; related and archive docs stay outside the main how-to/reference path |
 | Exported AI skill package | `skills/aiotieba4dotnet/` | Portable consumer-facing skill package with `SKILL.md`, `skill.json`, and `package.json` |
-| Parity truth | `docs/related/parity-v3.md` | Authoritative v3 parity ledger against upstream export scope |
+| Parity truth | `docs/related/parity.md` | Authoritative parity ledger for upstream scope, internal implementation mapping, and auth notes |
 | Historical backlog only | `docs/archive/todo.md` | Stale history and backlog notes, not active product truth |
 | Local verification entrypoints | `scripts/test-lane.*`, `scripts/verify-local.*` | Canonical local and agent-run verification commands |
 
 ## CONVENTIONS
 - Treat this root guide as repo routing only. Put durable cross-cutting rules in `.junie/guidelines.md`, and put local implementation rules in the nearest child `AGENTS.md`.
 - The active product baseline is v3 on `net10.0` only. Do not leave active guide text claiming `net8.0`, `net9.0`, multi-target support, or a live v2 release line.
-- `docs/related/parity-v3.md` is the parity truth. `docs/archive/todo.md` is historical context only and must not be presented as the authoritative parity ledger.
+- `docs/related/parity.md` is the parity truth. `docs/archive/todo.md` is historical context only and must not be presented as an authoritative ledger.
 - The active consumer docs IA is `README.md -> docs/index.md -> docs/guide/getting-started.md -> docs/how-to/*.md -> docs/reference/modules.md -> docs/guide/{advanced,troubleshooting}.md -> docs/related/*.md`; `docs/archive/todo.md` stays archive-only.
 - The user-facing docs contract is anchored by `README.md` and the required docs list enforced locally by `scripts/verify-local.*`.
 - Exported skill packages under `skills/` are distribution artifacts, not repo-local `.agents` helpers. Keep their `SKILL.md`, `skill.json`, `package.json`, and README mentions aligned when install identity or public usage guidance changes.
 - GitHub Actions must stay build-only. They validate restore, build, codegen, and packaging, but they do not run `dotnet test` or invoke local verification contracts.
-- Local and agent-run verification uses four lanes only: `deterministic`, `integration`, `live`, and `sequence-dry-run`.
+- Local and agent-run online verification routes through `AioTieba4DotNet.Tests.Online.Suite`, with default `safe`, explicit `restricted`, and optional `sequence-dry-run` wrapper output only.
 - `aiotieba/` is reference material only. Never treat it as maintained product code, release scope, or coverage scope.
 
 ## ANTI-PATTERNS
 - Treating `docs/archive/todo.md` as current parity truth.
 - Adding stale guide text that claims the repo still ships multi-target or v2-era baselines.
 - Hand-editing generated protobuf C# instead of editing `.proto` files and rerunning `ProtoGenerator`.
-- Putting test-lane or cleanup policy in GitHub Actions instead of the local verification scripts and sequencing manifest.
-- Treating the `Cleanup` sequencing wave as a runnable MSTest category filter instead of a synthetic compensation stage.
+- Reintroducing retired concepts such as `deterministic`, `integration`, `live`, or `Cleanup` as if they were still active runnable test paths after the ordered online suite replaced the old lane split.
+- Treating compensation audit output as a standalone runnable lane instead of a suite-owned reporting responsibility.
 
 ## COMMANDS
 ```bash
@@ -63,9 +63,8 @@ dotnet build AioTieba4DotNet.sln --configuration Release --no-restore
 pnpm --dir docs install
 pnpm --dir docs run build
 pwsh ./scripts/verify-local.ps1
-pwsh ./scripts/test-lane.ps1 deterministic
-pwsh ./scripts/test-lane.ps1 integration
-pwsh ./scripts/test-lane.ps1 live
+pwsh ./scripts/test-lane.ps1 safe
+pwsh ./scripts/test-lane.ps1 restricted
 pwsh ./scripts/test-lane.ps1 sequence-dry-run
 dotnet run --project ProtoGenerator/ProtoGenerator.csproj
 dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=<version> --nologo

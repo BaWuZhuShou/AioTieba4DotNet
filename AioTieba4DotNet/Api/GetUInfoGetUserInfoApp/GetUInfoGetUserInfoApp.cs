@@ -1,5 +1,4 @@
-﻿using AioTieba4DotNet.Attributes;
-using AioTieba4DotNet.Internal;
+﻿using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Shared;
 using AioTieba4DotNet.Transport;
@@ -11,7 +10,6 @@ namespace AioTieba4DotNet.Api.GetUInfoGetUserInfoApp;
 ///     获取用户基础信息的 API (App端)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-[PythonApi("aiotieba.api.get_uinfo_getuserinfo_app")]
 internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore)
 {
     private const int Cmd = 303024;

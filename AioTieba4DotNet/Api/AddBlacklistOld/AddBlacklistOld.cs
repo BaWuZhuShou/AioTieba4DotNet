@@ -1,12 +1,9 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 using Newtonsoft.Json.Linq;
 
 namespace AioTieba4DotNet.Api.AddBlacklistOld;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.add_blacklist_old")]
 internal sealed class AddBlacklistOld(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<bool> RequestAsync(long userId, CancellationToken cancellationToken = default)

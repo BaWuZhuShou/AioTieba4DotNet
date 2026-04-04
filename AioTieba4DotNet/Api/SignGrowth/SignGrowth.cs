@@ -1,11 +1,8 @@
-using AioTieba4DotNet.Attributes;
 using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Transport;
 
 namespace AioTieba4DotNet.Api.SignGrowth;
 
-[RequireBduss]
-[PythonApi("aiotieba.api.sign_growth")]
 internal sealed class SignGrowth(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
     public async Task<bool> RequestAsync(string actType, CancellationToken cancellationToken = default)
