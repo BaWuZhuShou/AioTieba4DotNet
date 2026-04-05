@@ -2,6 +2,8 @@
 
 这份文档面向从 v2 升级到 v3 的调用方。重点不是重复完整 API，而是告诉你升级时最容易改错的地方：目标框架、模块入口、公开名称和异常处理。
 
+这页示例里的 `FORUM_NAME_PLACEHOLDER`、`PORTRAIT_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](../guide/getting-started.md#example-placeholder-glossary)。
+
 ## 先看结论
 
 - v3 只支持 `net10.0`
@@ -160,10 +162,10 @@ var replies = await client.Messages.GetRepliesAsync();
 v3 的标准调用路径是：
 
 ```csharp
-var info = await client.Admins.GetBawuInfoAsync("csharp");
-await client.Admins.BlockAsync("csharp", "目标 portrait", day: 1, reason: "示例");
-await client.Admins.AddBawuAsync("csharp", "目标用户名", BawuType.Manager);
-await client.Admins.DelBawuAsync("csharp", "目标 portrait", BawuType.Manager);
+var info = await client.Admins.GetBawuInfoAsync("FORUM_NAME_PLACEHOLDER");
+await client.Admins.BlockAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER", day: 1, reason: "REASON_PLACEHOLDER");
+await client.Admins.AddBawuAsync("FORUM_NAME_PLACEHOLDER", "USER_NAME_PLACEHOLDER", BawuType.Manager);
+await client.Admins.DelBawuAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER", BawuType.Manager);
 ```
 
 ### Client

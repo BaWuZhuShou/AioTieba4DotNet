@@ -18,9 +18,10 @@ namespace AioTieba4DotNet.Tests.Online.Safe.Features.ForumFoundation.Scenarios;
 public sealed class ForumFoundationReadScenarioTests : OnlineSafeExecutionTestBase
 {
     [TestMethod]
+    [TestCategory(OnlineTestApiCategories.ForumsGetFidAsync)]
     [TestCategory(OnlineTestApiCategories.ForumsGetForumAsync)]
     [TestCategory(OnlineTestApiCategories.ForumsGetDetailAsync)]
-    public Task GetForumAsync_SafeForumQuery_ReturnsCanonicalForumIdentity()
+    public Task GetForumAsyncSafeForumQueryReturnsCanonicalForumIdentity()
     {
         return ExecuteSafeAsync(
             "forum foundation get-forum sample",
@@ -30,13 +31,15 @@ public sealed class ForumFoundationReadScenarioTests : OnlineSafeExecutionTestBa
                 var context = await ResolveDedicatedForumContextAsync(
                     scope,
                     client,
-                    nameof(GetForumAsync_SafeForumQuery_ReturnsCanonicalForumIdentity));
+                    nameof(GetForumAsyncSafeForumQueryReturnsCanonicalForumIdentity));
+                var forumId = await client.Forums.GetFidAsync(context.ForumName);
                 var forumDetail = await client.Forums.GetDetailAsync(context.ForumId);
 
                 Assert.IsNotNull(context.Forum);
                 Assert.IsPositive(context.Forum.Fid);
                 Assert.AreEqual((long)context.ForumId, context.Forum.Fid);
                 Assert.AreEqual(context.ForumName, context.Forum.Fname);
+                Assert.AreEqual(context.ForumId, forumId);
 
                 Assert.IsNotNull(forumDetail);
                 Assert.AreEqual(context.ForumName, forumDetail.Fname);
@@ -48,7 +51,7 @@ public sealed class ForumFoundationReadScenarioTests : OnlineSafeExecutionTestBa
     [TestCategory(OnlineTestApiCategories.ForumsGetFnameAsync)]
     [TestCategory(OnlineTestApiCategories.ForumsGetDetailAsync)]
     [TestCategory(OnlineTestApiCategories.ThreadsGetThreadsAsync)]
-    public Task ForumFoundationReads_StableThreadListingIdentity_ReturnConsistentForumMetadata()
+    public Task ForumFoundationReadsStableThreadListingIdentityReturnConsistentForumMetadata()
     {
         return ExecuteSafeAsync(
             "forum foundation read scenario sample",
@@ -58,7 +61,7 @@ public sealed class ForumFoundationReadScenarioTests : OnlineSafeExecutionTestBa
                 var context = await ResolveDedicatedForumContextAsync(
                     scope,
                     client,
-                    nameof(ForumFoundationReads_StableThreadListingIdentity_ReturnConsistentForumMetadata));
+                    nameof(ForumFoundationReadsStableThreadListingIdentityReturnConsistentForumMetadata));
                 var forumName = await client.Forums.GetFnameAsync(context.ForumId);
                 var forumDetail = await client.Forums.GetDetailAsync(context.ForumName);
                 var threads = await client.Threads.GetThreadsAsync(context.ForumSelector);

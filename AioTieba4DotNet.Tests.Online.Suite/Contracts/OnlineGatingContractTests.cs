@@ -16,7 +16,7 @@ public sealed class OnlineGatingContractTests
     [TestMethod]
     [TestCategory(OnlineTestTierCategories.Safe)]
     [TestCategory(OnlineTestCapabilityCategories.Authenticated)]
-    public void SafeAuthenticatedGate_RequiresDedicatedSafeCredentialsBeforeExecution()
+    public void SafeAuthenticatedGateRequiresDedicatedSafeCredentialsBeforeExecution()
     {
         var environment = CreateEnvironment();
         var mutationAttempted = false;
@@ -36,7 +36,7 @@ public sealed class OnlineGatingContractTests
     [TestMethod]
     [TestCategory(OnlineTestTierCategories.Safe)]
     [TestCategory(OnlineTestCapabilityCategories.Messaging)]
-    public void SafeMessagingGate_RequiresDedicatedSafeCredentialsBeforeExecution()
+    public void SafeMessagingGateRequiresDedicatedSafeCredentialsBeforeExecution()
     {
         var environment = CreateEnvironment();
         var mutationAttempted = false;
@@ -56,7 +56,7 @@ public sealed class OnlineGatingContractTests
     [TestMethod]
     [TestCategory(OnlineTestTierCategories.Restricted)]
     [TestCategory(OnlineTestCapabilityCategories.Moderation)]
-    public void RestrictedModerationGate_RequiresExplicitOptInBeforeCredentialsOrCapability()
+    public void RestrictedModerationGateRequiresExplicitOptInBeforeCredentialsOrCapability()
     {
         var environment = CreateEnvironment(
             (OnlineTestEnvironmentVariables.RestrictedAccountBduss, "restricted-bduss"),
@@ -78,7 +78,7 @@ public sealed class OnlineGatingContractTests
     [TestMethod]
     [TestCategory(OnlineTestTierCategories.Restricted)]
     [TestCategory(OnlineTestCapabilityCategories.Moderation)]
-    public void RestrictedModerationGate_RequiresDedicatedRestrictedCredentialsAfterOptIn()
+    public void RestrictedModerationGateRequiresDedicatedRestrictedCredentialsAfterOptIn()
     {
         var environment = CreateEnvironment(
             (OnlineTestEnvironmentVariables.RestrictedOptIn, "true"),
@@ -100,7 +100,7 @@ public sealed class OnlineGatingContractTests
     [TestMethod]
     [TestCategory(OnlineTestTierCategories.Restricted)]
     [TestCategory(OnlineTestCapabilityCategories.Moderation)]
-    public void RestrictedModerationGate_RequiresCapabilityAfterOptInAndCredentials()
+    public void RestrictedModerationGateRequiresCapabilityAfterOptInAndCredentials()
     {
         var environment = CreateEnvironment(
             (OnlineTestEnvironmentVariables.RestrictedOptIn, "true"),
@@ -122,7 +122,7 @@ public sealed class OnlineGatingContractTests
     [TestMethod]
     [TestCategory(OnlineTestTierCategories.Restricted)]
     [TestCategory(OnlineTestCapabilityCategories.Admin)]
-    public void RestrictedAdminGate_RequiresCapabilityAfterOptInAndCredentials()
+    public void RestrictedAdminGateRequiresCapabilityAfterOptInAndCredentials()
     {
         var environment = CreateEnvironment(
             (OnlineTestEnvironmentVariables.RestrictedOptIn, "true"),
@@ -143,7 +143,7 @@ public sealed class OnlineGatingContractTests
 
     [TestMethod]
     [TestCategory(OnlineTestTierCategories.Safe)]
-    public void SafeReadOnlyGate_AllowsExecutionWithoutCredentials()
+    public void SafeReadOnlyGateAllowsExecutionWithoutCredentials()
     {
         var environment = CreateEnvironment();
         var executed = false;

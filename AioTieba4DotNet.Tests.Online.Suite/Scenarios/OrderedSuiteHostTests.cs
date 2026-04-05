@@ -20,7 +20,7 @@ public sealed class OrderedSuiteHostTests
     [TestMethod]
     [TestCategory(OnlineTestSuiteCategories.SafeOrdered)]
     [TestCategory(OnlineTestTierCategories.Safe)]
-    public Task SafeOrderedSuite_RunsStages01Through06InExactOrder()
+    public Task SafeOrderedSuiteRunsStages01Through06InExactOrder()
     {
         var host = new OrderedSuiteHost(_testContext);
         return host.ExecuteAsync(OnlineSuiteExecutionContract.SafeOrderedSuite, _testContext.CancellationToken);
@@ -29,7 +29,7 @@ public sealed class OrderedSuiteHostTests
     [TestMethod]
     [TestCategory(OnlineTestSuiteCategories.RestrictedOrdered)]
     [TestCategory(OnlineTestTierCategories.Restricted)]
-    public Task RestrictedOrderedSuite_RunsRestrictedStagesOnlyWhenExplicitlySelected()
+    public Task RestrictedOrderedSuiteRunsRestrictedStagesOnlyWhenExplicitlySelected()
     {
         var host = new OrderedSuiteHost(_testContext);
         return host.ExecuteAsync(OnlineSuiteExecutionContract.RestrictedOrderedSuite, _testContext.CancellationToken);

@@ -13,7 +13,7 @@ namespace AioTieba4DotNet.Tests.Online.Suite.Contracts;
 public sealed class OnlineArchitectureContractTests
 {
     [TestMethod]
-    public void SolutionMembership_ContainsCurrentProjectShells()
+    public void SolutionMembershipContainsCurrentProjectShells()
     {
         var solutionText = File.ReadAllText(RepositoryPaths.GetSolutionPath());
 
@@ -32,7 +32,7 @@ public sealed class OnlineArchitectureContractTests
     }
 
     [TestMethod]
-    public void ProjectShells_ContainMinimalSource_And_NewReferencesOnly()
+    public void ProjectShellsContainMinimalSourceAndNewReferencesOnly()
     {
         var infrastructureReference =
             $"..\\{OnlineTestProjectTopology.Infrastructure}\\{OnlineTestProjectTopology.Infrastructure}.csproj";
@@ -60,7 +60,7 @@ public sealed class OnlineArchitectureContractTests
     }
 
     [TestMethod]
-    public void MetadataVocabulary_MatchesCurrentTopologyContract()
+    public void MetadataVocabularyMatchesCurrentTopologyContract()
     {
         CollectionAssert.AreEqual(
             new[]
@@ -118,55 +118,58 @@ public sealed class OnlineArchitectureContractTests
                 OnlineTestCapabilityCategories.Admin
             },
             OnlineTestCapabilityCategories.All);
-        CollectionAssert.AreEqual(
-            new[]
+        CollectionAssert.AreEquivalent(PublicApiCoverageMatrixContract.AllowedFirstClassApiCategories, OnlineTestApiCategories.All);
+        Assert.IsTrue(
+            OnlineTestApiCategories.All.All(OnlineTestApiCategories.IsWellFormedFirstClassCategory),
+            $"Every first-class API category must follow the explicit '{OnlineTestApiCategories.FirstClassNamingRule}' rule.");
+        CollectionAssert.AreEquivalent(
+            PublicApiCoverageMatrixContract.AllowedFirstClassApiCategories,
+            PublicApiCoverageMatrixContract.ClaimedFirstClassApiCategories,
+            "The canonical matrix and the filterable first-class Api:* claims must stay in sync.");
+    }
+
+    [TestMethod]
+    public void PublicApiCoverageMatrixRejectsIndirectOfflineDeferredAndUncoveredApiClaims()
+    {
+        foreach (var row in PublicApiCoverageMatrixContract.Rows)
+        {
+            var claimedCategories = PublicApiCoverageMatrixContract.GetClaimedFirstClassApiCategories(row);
+
+            if (PublicApiCoverageMatrixContract.IsDirectOnlineFirstClassApiEligible(row))
             {
-                OnlineTestApiCategories.ForumsGetForumAsync,
-                OnlineTestApiCategories.ForumsGetDetailAsync,
-                OnlineTestApiCategories.ForumsGetFnameAsync,
-                OnlineTestApiCategories.ForumsSearchExactAsync,
-                OnlineTestApiCategories.ForumsGetLastReplyersAsync,
-                OnlineTestApiCategories.ForumsGetRankForumsAsync,
-                OnlineTestApiCategories.ForumsGetSelfFollowForumsAsync,
-                OnlineTestApiCategories.ForumsFollowAsync,
-                OnlineTestApiCategories.ForumsUnfollowAsync,
-                OnlineTestApiCategories.ThreadsGetThreadsAsync,
-                OnlineTestApiCategories.ThreadsGetPostsAsync,
-                OnlineTestApiCategories.ThreadsGetCommentsAsync,
-                OnlineTestApiCategories.ThreadsAddPostAsync,
-                OnlineTestApiCategories.ThreadsAgreeAsync,
-                OnlineTestApiCategories.ThreadsDelPostAsync,
-                OnlineTestApiCategories.ThreadsUnagreeAsync,
-                OnlineTestApiCategories.ThreadsRecoverAsync,
-                OnlineTestApiCategories.UsersGetProfileAsync,
-                OnlineTestApiCategories.UsersGetUserInfoAppAsync,
-                OnlineTestApiCategories.UsersGetUserInfoWebAsync,
-                OnlineTestApiCategories.UsersGetHomepageAsync,
-                OnlineTestApiCategories.UsersGetSelfInfoAsync,
-                OnlineTestApiCategories.UsersGetFansAsync,
-                OnlineTestApiCategories.UsersGetBlacklistAsync,
-                OnlineTestApiCategories.UsersGetBlacklistOldAsync,
-                OnlineTestApiCategories.UsersGetUserByTiebaUidAsync,
-                OnlineTestApiCategories.UsersGetThreadsAsync,
-                OnlineTestApiCategories.UsersGetPostsAsync,
-                OnlineTestApiCategories.UsersGetUserForumInfoAsync,
-                OnlineTestApiCategories.UsersGetRankUsersAsync,
-                OnlineTestApiCategories.UsersGetPanelInfoAsync,
-                OnlineTestApiCategories.MessagesGetAtsAsync,
-                OnlineTestApiCategories.MessagesGetRepliesAsync,
-                OnlineTestApiCategories.MessagesGetGroupMessagesAsync,
-                OnlineTestApiCategories.MessagesSendMessageAsync,
-                OnlineTestApiCategories.AdminsGetBawuInfoAsync,
-                OnlineTestApiCategories.AdminsGetBlocksAsync,
-                OnlineTestApiCategories.AdminsBlockAsync,
-                OnlineTestApiCategories.AdminsUnblockAsync
-            },
-            OnlineTestApiCategories.All);
+                CollectionAssert.AreEqual(
+                    new[] { PublicApiCoverageMatrixContract.CreateExpectedFirstClassApiCategory(row) },
+                    claimedCategories,
+                    $"Matrix row '{row.ApiMember}' at line {row.LineNumber} must advertise exactly one truthful first-class Api:* category.");
+                continue;
+            }
+
+            Assert.IsEmpty(
+                claimedCategories,
+                $"Matrix row '{row.ApiMember}' at line {row.LineNumber} must not advertise a filterable Api:* claim because it is not a direct online first-class coverage row.");
+        }
+    }
+
+    [TestMethod]
+    public void FirstClassApiCategoriesResolveToDiscoverableRunnableScenarioTests()
+    {
+        CollectionAssert.AreEquivalent(
+            PublicApiCoverageMatrixContract.AllowedFirstClassApiCategories,
+            DiscoverableOnlineTestApiCategoryContract.DiscoverableFirstClassApiCategories,
+            "Matrix-backed first-class Api:* categories must map exactly to discoverable Safe/Restricted test usage with no missing or unexpected filter surface.");
+
+        foreach (var category in PublicApiCoverageMatrixContract.AllowedFirstClassApiCategories)
+        {
+            var tests = DiscoverableOnlineTestApiCategoryContract.GetTestsForCategory(category);
+            Assert.IsTrue(
+                tests.Length > 0,
+                $"First-class Api:* category '{category}' must resolve to at least one discoverable runnable test in the Safe or Restricted scenario projects.");
+        }
     }
 
     [TestMethod]
     [TestCategory(OnlineTestTierCategories.Safe)]
-    public void DefaultExecution_RemainsSafeOnly()
+    public void DefaultExecutionRemainsSafeOnly()
     {
         CollectionAssert.AreEqual(new[] { OnlineTestTierCategories.Safe }, OnlineSuiteExecutionContract.DefaultTierCategories);
         CollectionAssert.AreEqual(new[] { OnlineTestSuiteCategories.SafeOrdered }, OnlineSuiteExecutionContract.DefaultSuiteCategories);
@@ -204,7 +207,7 @@ public sealed class OnlineArchitectureContractTests
 
     [TestMethod]
     [TestCategory(OnlineTestTierCategories.Restricted)]
-    public void RestrictedExecution_RemainsExplicitOptIn()
+    public void RestrictedExecutionRemainsExplicitOptIn()
     {
         var restrictedEntries = OnlineSuiteExecutionContract.FeatureMatrix
             .Where(static entry => entry.TierCategory == OnlineTestTierCategories.Restricted)

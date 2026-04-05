@@ -10,7 +10,7 @@ namespace AioTieba4DotNet.Tests.Online.Suite.Contracts;
 public sealed class RestrictedIsolationContractTests
 {
     [TestMethod]
-    public void DefaultSafeSelection_ExcludesRestrictedTierAndSuiteCategories()
+    public void DefaultSafeSelectionExcludesRestrictedTierAndSuiteCategories()
     {
         CollectionAssert.AreEqual(new[] { OnlineTestTierCategories.Safe }, OnlineSuiteExecutionContract.DefaultTierCategories);
         CollectionAssert.AreEqual(new[] { OnlineTestSuiteCategories.SafeOrdered }, OnlineSuiteExecutionContract.DefaultSuiteCategories);
@@ -20,7 +20,7 @@ public sealed class RestrictedIsolationContractTests
     }
 
     [TestMethod]
-    public void DefaultSafeSelection_ExcludesRestrictedFeaturesAndStagesFromTheRunnableBaseline()
+    public void DefaultSafeSelectionExcludesRestrictedFeaturesAndStagesFromTheRunnableBaseline()
     {
         var defaultFeatures = OnlineSuiteExecutionContract.FeatureMatrix
             .Where(static entry => entry.TierCategory == OnlineTestTierCategories.Safe)

@@ -14,7 +14,7 @@ public sealed class OnlineCleanupContractTests
 {
     [TestMethod]
     [TestCategory(OnlineTestContractCategories.Cleanup)]
-    public async Task CompensationLifecycle_RegistersCreatedAndMutatedArtifacts_AndPublishesCompensationAudit()
+    public async Task CompensationLifecycleRegistersCreatedAndMutatedArtifactsAndPublishesCompensationAudit()
     {
         var executedCompensations = new List<string>();
         var probe = new CompensationAuditProbe();
@@ -73,7 +73,7 @@ public sealed class OnlineCleanupContractTests
 
     [TestMethod]
     [TestCategory(OnlineTestContractCategories.Cleanup)]
-    public async Task CompensationLifecycle_RemainsPerTestScopedWithoutSharedLedgerState()
+    public async Task CompensationLifecycleRemainsPerTestScopedWithoutSharedLedgerState()
     {
         var firstProbe = new CompensationAuditProbe();
         firstProbe.ExecuteSafe("first compensation scope probe", scope =>

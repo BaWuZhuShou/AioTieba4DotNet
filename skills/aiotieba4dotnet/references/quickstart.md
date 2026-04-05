@@ -1,5 +1,7 @@
 # AioTieba4DotNet 快速上手
 
+示例里的 `FORUM_NAME_PLACEHOLDER`、`BDUSS_PLACEHOLDER` 等值统一遵循仓库文档的[示例占位符词汇表](../../../docs/guide/getting-started.md#example-placeholder-glossary)。
+
 ## 包信息
 
 - Package ID: `AioTieba4DotNet`
@@ -36,7 +38,7 @@ using var client = new TiebaClient();
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 ```
 
 ### 显式配置模式
@@ -48,8 +50,8 @@ using System;
 
 using var client = new TiebaClient(new TiebaOptions
 {
-    Bduss = "你的BDUSS",
-    Stoken = "你的STOKEN",
+    Bduss = "BDUSS_PLACEHOLDER",
+    Stoken = "STOKEN_PLACEHOLDER",
     TransportMode = TiebaTransportMode.Http,
     RequestTimeout = TimeSpan.FromSeconds(15),
     MaxReadRetryAttempts = 1,

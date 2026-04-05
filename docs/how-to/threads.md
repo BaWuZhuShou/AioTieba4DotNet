@@ -2,6 +2,8 @@
 
 这页按常见帖子任务组织。要查完整方法和签名，请同时对照 [API 参考](/reference/modules)。
 
+本页示例里的 `FORUM_NAME_PLACEHOLDER`、`THREAD_ID_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](/guide/getting-started#example-placeholder-glossary)。
+
 ## 开始前
 
 - 主题列表、楼层和楼中楼读取属于访客可读路径。
@@ -20,7 +22,7 @@ using AioTieba4DotNet.Models;
 using var client = new TiebaClient();
 
 var threads = await client.Threads.GetThreadsAsync(
-    "csharp",
+    "FORUM_NAME_PLACEHOLDER",
     pn: 1,
     rn: 30,
     sort: ThreadSortType.Reply,
@@ -42,7 +44,7 @@ using AioTieba4DotNet.Models;
 using var client = new TiebaClient();
 
 var posts = await client.Threads.GetPostsAsync(
-    tid: 1234567890,
+    tid: long.Parse("THREAD_ID_PLACEHOLDER"),
     pn: 1,
     rn: 30,
     sort: PostSortType.Asc,
@@ -69,8 +71,8 @@ using AioTieba4DotNet;
 using var client = new TiebaClient();
 
 var comments = await client.Threads.GetCommentsAsync(
-    tid: 1234567890,
-    pid: 9876543210,
+    tid: long.Parse("THREAD_ID_PLACEHOLDER"),
+    pid: long.Parse("POST_ID_PLACEHOLDER"),
     pn: 1);
 
 Console.WriteLine(comments.Objs.Count);
@@ -85,12 +87,12 @@ Console.WriteLine(comments.Objs.Count);
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 await client.Threads.AddPostAsync(
-    fname: "csharp",
-    tid: 1234567890,
-    content: "这是一条来自 v3 文档示例的回复");
+    fname: "FORUM_NAME_PLACEHOLDER",
+    tid: long.Parse("THREAD_ID_PLACEHOLDER"),
+    content: "MESSAGE_TEXT_PLACEHOLDER");
 ```
 
 需要显式传展示名时，再使用 `showName` 参数。这里仍然属于帖子回复路径，不需要切到 `Users` 或 `Admins`。
@@ -102,20 +104,20 @@ await client.Threads.AddPostAsync(
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
-await client.Threads.AgreeAsync(tid: 1234567890);
-await client.Threads.DisagreeAsync(tid: 1234567890);
-await client.Threads.UnagreeAsync(tid: 1234567890);
-await client.Threads.UndisagreeAsync(tid: 1234567890);
+await client.Threads.AgreeAsync(tid: long.Parse("THREAD_ID_PLACEHOLDER"));
+await client.Threads.DisagreeAsync(tid: long.Parse("THREAD_ID_PLACEHOLDER"));
+await client.Threads.UnagreeAsync(tid: long.Parse("THREAD_ID_PLACEHOLDER"));
+await client.Threads.UndisagreeAsync(tid: long.Parse("THREAD_ID_PLACEHOLDER"));
 ```
 
 如果你是对某一层或楼中楼操作，可以这样补充目标信息。
 
 ```csharp
 await client.Threads.AgreeAsync(
-    tid: 1234567890,
-    pid: 9876543210,
+    tid: long.Parse("THREAD_ID_PLACEHOLDER"),
+    pid: long.Parse("POST_ID_PLACEHOLDER"),
     isComment: false);
 ```
 
@@ -126,20 +128,20 @@ await client.Threads.AgreeAsync(
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
-await client.Threads.GoodAsync("csharp", 1234567890, cname: "精华区分类名");
-await client.Threads.TopAsync("csharp", 1234567890, isVip: false);
-await client.Threads.MoveAsync("csharp", 1234567890, toTabId: 2);
-await client.Threads.RecommendAsync("csharp", 1234567890);
+await client.Threads.GoodAsync("FORUM_NAME_PLACEHOLDER", long.Parse("THREAD_ID_PLACEHOLDER"), cname: "THREAD_CATEGORY_NAME_PLACEHOLDER");
+await client.Threads.TopAsync("FORUM_NAME_PLACEHOLDER", long.Parse("THREAD_ID_PLACEHOLDER"), isVip: false);
+await client.Threads.MoveAsync("FORUM_NAME_PLACEHOLDER", long.Parse("THREAD_ID_PLACEHOLDER"), toTabId: 2);
+await client.Threads.RecommendAsync("FORUM_NAME_PLACEHOLDER", long.Parse("THREAD_ID_PLACEHOLDER"));
 
-await client.Threads.DelThreadAsync("csharp", 1234567890);
-await client.Threads.DelPostAsync("csharp", 1234567890, 9876543210);
+await client.Threads.DelThreadAsync("FORUM_NAME_PLACEHOLDER", long.Parse("THREAD_ID_PLACEHOLDER"));
+await client.Threads.DelPostAsync("FORUM_NAME_PLACEHOLDER", long.Parse("THREAD_ID_PLACEHOLDER"), long.Parse("POST_ID_PLACEHOLDER"));
 
 await client.Threads.SetThreadPrivacyAsync(
-    fname: "csharp",
-    tid: 1234567890,
-    pid: 9876543210,
+    fname: "FORUM_NAME_PLACEHOLDER",
+    tid: long.Parse("THREAD_ID_PLACEHOLDER"),
+    pid: long.Parse("POST_ID_PLACEHOLDER"),
     isPrivate: true);
 ```
 
@@ -154,9 +156,9 @@ await client.Threads.SetThreadPrivacyAsync(
 例如，在执行加精或置顶后，你可以保留对应的撤销路径。
 
 ```csharp
-await client.Threads.UngoodAsync("csharp", 1234567890);
-await client.Threads.UntopAsync("csharp", 1234567890, isVip: false);
-await client.Threads.RecoverAsync("csharp", tid: 1234567890);
+await client.Threads.UngoodAsync("FORUM_NAME_PLACEHOLDER", long.Parse("THREAD_ID_PLACEHOLDER"));
+await client.Threads.UntopAsync("FORUM_NAME_PLACEHOLDER", long.Parse("THREAD_ID_PLACEHOLDER"), isVip: false);
+await client.Threads.RecoverAsync("FORUM_NAME_PLACEHOLDER", tid: long.Parse("THREAD_ID_PLACEHOLDER"));
 ```
 
 `RecoverAsync(...)` 也支持按 `pid` 恢复单层内容，必要时还可以结合 `isHide` 区分恢复场景。做这类操作前，建议先把目标帖子、楼层和权限条件固定好，避免把回滚动作打到错误对象上。
@@ -168,11 +170,11 @@ await client.Threads.RecoverAsync("csharp", tid: 1234567890);
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
-var recovers = await client.Threads.GetRecoversAsync("csharp");
-var recoverInfo = await client.Threads.GetRecoverInfoAsync("csharp", tid: 1234567890);
-var tabMap = await client.Threads.GetTabMapAsync("csharp");
+var recovers = await client.Threads.GetRecoversAsync("FORUM_NAME_PLACEHOLDER");
+var recoverInfo = await client.Threads.GetRecoverInfoAsync("FORUM_NAME_PLACEHOLDER", tid: long.Parse("THREAD_ID_PLACEHOLDER"));
+var tabMap = await client.Threads.GetTabMapAsync("FORUM_NAME_PLACEHOLDER");
 
 Console.WriteLine(recovers.Objs.Count);
 Console.WriteLine(recoverInfo.Content);

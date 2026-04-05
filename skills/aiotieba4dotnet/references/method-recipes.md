@@ -1,5 +1,7 @@
 # AioTieba4DotNet 方法与任务速查
 
+示例里的 `FORUM_NAME_PLACEHOLDER`、`USER_ID_PLACEHOLDER` 等值统一遵循仓库文档的[示例占位符词汇表](../../../docs/guide/getting-started.md#example-placeholder-glossary)。
+
 这份速查的目标不是列出全部 API，而是帮助 AI 在回答时快速把“用户目标”映射到正确的公开模块和代表方法。
 
 默认目标是：**直接生成可复制的 C# 代码**，而不是只做 API 讲解。
@@ -23,7 +25,7 @@ using var client = new TiebaClient();
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 ```
 
 ### 显式配置
@@ -36,8 +38,8 @@ using AioTieba4DotNet.Contracts;
 
 using var client = new TiebaClient(new TiebaOptions
 {
-    Bduss = "你的BDUSS",
-    Stoken = "你的STOKEN",
+    Bduss = "BDUSS_PLACEHOLDER",
+    Stoken = "STOKEN_PLACEHOLDER",
     TransportMode = TiebaTransportMode.Http,
     RequestTimeout = TimeSpan.FromSeconds(15),
     MaxReadRetryAttempts = 1,
@@ -63,8 +65,8 @@ using var client = new TiebaClient(new TiebaOptions
 ```csharp
 using var client = new TiebaClient();
 
-var fid = await client.Forums.GetFidAsync("csharp");
-var forum = await client.Forums.GetForumAsync("csharp");
+var fid = await client.Forums.GetFidAsync("FORUM_NAME_PLACEHOLDER");
+var forum = await client.Forums.GetForumAsync("FORUM_NAME_PLACEHOLDER");
 var detail = await client.Forums.GetDetailAsync(fid);
 ```
 
@@ -95,7 +97,7 @@ using AioTieba4DotNet.Models;
 using var client = new TiebaClient();
 
 var threads = await client.Threads.GetThreadsAsync(
-    "csharp",
+    "FORUM_NAME_PLACEHOLDER",
     pn: 1,
     rn: 30,
     sort: ThreadSortType.Reply,
@@ -152,7 +154,7 @@ var threads = await client.Threads.GetThreadsAsync(
 ### 代表用法
 
 ```csharp
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 var ats = await client.Messages.GetAtsAsync();
 var replies = await client.Messages.GetRepliesAsync();

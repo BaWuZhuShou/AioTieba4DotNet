@@ -4,7 +4,7 @@
 
 [![NuGet version (AioTieba4DotNet)](https://img.shields.io/nuget/v/AioTieba4DotNet.svg?style=flat-square)](https://www.nuget.org/packages/AioTieba4DotNet/)
 [![CodeQL](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/codeql-analysis.yml)
-[![QQ Group](https://img.shields.io/badge/QQ%E7%BE%A4-278662447-blue)](https://qm.qq.com/q/a0I1RepoA2)
+[![QQ Group](https://img.shields.io/badge/QQ%E7%BE%A4-QQ_GROUP_ID_PLACEHOLDER-blue)](https://qm.qq.com/q/QQ_GROUP_LINK_CODE_PLACEHOLDER)
 
 ## 这个库能做什么
 
@@ -20,6 +20,8 @@
 dotnet add package AioTieba4DotNet
 ```
 
+仓库里的 README、文档和导出 skill 示例统一使用大写下划线占位符。具体词汇表见[示例占位符词汇表](docs/guide/getting-started.md#example-placeholder-glossary)；在线测试运行模板仍保持空白并 fail-closed，不在仓库里填入真实凭据或线上资产。
+
 ## 最小示例
 
 先用一个不依赖登录态的读取调用确认环境可用：
@@ -29,8 +31,8 @@ using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var forum = await client.Forums.GetForumAsync("csharp");
-var threads = await client.Threads.GetThreadsAsync("csharp");
+var forum = await client.Forums.GetForumAsync("FORUM_NAME_PLACEHOLDER");
+var threads = await client.Threads.GetThreadsAsync("FORUM_NAME_PLACEHOLDER");
 
 Console.WriteLine($"吧名: {forum.Fname}");
 Console.WriteLine($"当前页主题数: {threads.Objs.Count}");

@@ -2,6 +2,8 @@
 
 这页按现象、原因、处理方式整理。先找最接近你的症状，不需要从头读完。
 
+本页示例里的 `FORUM_NAME_PLACEHOLDER`、`BDUSS_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](/guide/getting-started#example-placeholder-glossary)。
+
 ## 创建客户端就报配置错误
 
 ### 常见表现
@@ -35,7 +37,7 @@
 ### 建议处理
 
 - 只读操作继续用访客客户端
-- 写操作改用 `new TiebaClient("BDUSS", "STOKEN")`
+- 写操作改用 `new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER")`
 - 如果是宿主应用，确认 DI 读取到了真实配置值
 
 ## 明明有凭据，但服务端还是拒绝
@@ -99,8 +101,8 @@ using AioTieba4DotNet.Contracts;
 
 using var client = new TiebaClient(new TiebaOptions
 {
-    Bduss = "你的BDUSS",
-    Stoken = "你的STOKEN",
+    Bduss = "BDUSS_PLACEHOLDER",
+    Stoken = "STOKEN_PLACEHOLDER",
     TransportMode = TiebaTransportMode.Http
 });
 ```

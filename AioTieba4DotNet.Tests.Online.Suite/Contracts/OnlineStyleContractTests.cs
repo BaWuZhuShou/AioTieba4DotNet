@@ -25,7 +25,7 @@ public sealed class OnlineStyleContractTests
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     [TestMethod]
-    public void MigratedOnlineTestFiles_UseTestsSuffixes_And_SealedTestClassNames()
+    public void MigratedOnlineTestFilesUseTestsSuffixesAndSealedTestClassNames()
     {
         var testDocuments = EnumerateTestDocuments().ToArray();
 
@@ -48,7 +48,7 @@ public sealed class OnlineStyleContractTests
     }
 
     [TestMethod]
-    public void MigratedOnlineTestFiles_AvoidLegacyMSTestHelpers_And_DataDrivenShapes()
+    public void MigratedOnlineTestFilesAvoidLegacyMSTestHelpersAndDataDrivenShapes()
     {
         foreach (var document in EnumerateTestDocuments())
         {

@@ -19,19 +19,19 @@ dotnet test AioTieba4DotNet.Tests.Online.Safe/AioTieba4DotNet.Tests.Online.Safe.
 dotnet test AioTieba4DotNet.Tests.Online.Safe/AioTieba4DotNet.Tests.Online.Safe.csproj --configuration Release --nologo --filter "TestCategory=Feature:ThreadWrite&TestCategory=Tier:Safe"
 ```
 
-按 API 过滤（首选精确入口）：
+按 API 过滤（只针对矩阵里已经直接覆盖、且已声明为 `safe-api(...)` 的入口）：
 
 ```bash
-dotnet test AioTieba4DotNet.Tests.Online.Safe/AioTieba4DotNet.Tests.Online.Safe.csproj --configuration Release --nologo --filter "TestCategory=Api:Threads.GetPostsAsync&TestCategory=Tier:Safe"
+dotnet test AioTieba4DotNet.Tests.Online.Safe/AioTieba4DotNet.Tests.Online.Safe.csproj --configuration Release --nologo --filter "TestCategory=Api:Client.InitWebSocketAsync&TestCategory=Tier:Safe"
+dotnet test AioTieba4DotNet.Tests.Online.Safe/AioTieba4DotNet.Tests.Online.Safe.csproj --configuration Release --nologo --filter "TestCategory=Api:Forums.GetForumAsync&TestCategory=Tier:Safe"
 dotnet test AioTieba4DotNet.Tests.Online.Safe/AioTieba4DotNet.Tests.Online.Safe.csproj --configuration Release --nologo --filter "TestCategory=Api:Messages.SendMessageAsync&TestCategory=Tier:Safe"
-dotnet test AioTieba4DotNet.Tests.Online.Safe/AioTieba4DotNet.Tests.Online.Safe.csproj --configuration Release --nologo --filter "TestCategory=Api:Users.GetThreadsAsync&TestCategory=Tier:Safe"
 ```
 
 按类或方法过滤：
 
 ```bash
 dotnet test AioTieba4DotNet.Tests.Online.Safe/AioTieba4DotNet.Tests.Online.Safe.csproj --configuration Release --nologo --filter "ClassName~ForumFoundationReadScenarioTests"
-dotnet test AioTieba4DotNet.Tests.Online.Safe/AioTieba4DotNet.Tests.Online.Safe.csproj --configuration Release --nologo --filter "Name=GetForumAsync_SafeForumQuery_ReturnsCanonicalForumIdentity"
+dotnet test AioTieba4DotNet.Tests.Online.Safe/AioTieba4DotNet.Tests.Online.Safe.csproj --configuration Release --nologo --filter "Name=GetForumAsyncSafeForumQueryReturnsCanonicalForumIdentity"
 ```
 
 如果你想看整个 Safe ordered suite 的编排结果，再用兼容包装脚本或 Suite 项目入口：
@@ -44,8 +44,9 @@ pwsh ./scripts/test-lane.ps1 safe
 ## 关键说明
 
 - 这里的场景全部属于 `Tier:Safe`，也是默认本地在线测试档位。
-- API 级别过滤现在是正式支持的开发者入口，使用 `TestCategory=Api:<Module>.<Method>`；`Name=` 只保留给需要精确命中单个测试方法时的兜底场景。
+- API 级别过滤只适用于 `docs/related/public-api-coverage-matrix.md` 里已经有直接 Safe 证据、且验证命令明确写成 `safe-api(...)` 的入口；`Name=` 只保留给需要精确命中单个测试方法时的兜底场景。
 - API 分类使用模块限定名来避免重名冲突，例如 `Api:Threads.GetPostsAsync` 和 `Api:Users.GetPostsAsync` 是两个不同的稳定过滤面。
+- 不是所有公开 API 都能这样过滤：root 构造器、根访问器、factory/DI surface、离线 contract helper，以及仍处于 deferred 的行，都不会作为 Safe 的首类 `Api:*` 入口公开。
 - Safe 资产必须显式提供，例如 `forumQuery`、`forumName`、`ownedThreadId`、`messageRecipient`、`chatroomId`。缺少时测试会明确跳过，不会偷偷改用公共论坛或公共用户。
 - `ForumExtensions`、`Messaging`、`ThreadWrite` 这类会产生副作用的场景，只允许使用专用 Safe 资产，并且要求补偿审计能把可逆写入收回来。
 - 真实在线执行是本地行为，CI 仍然只做构建验证，不跑这里的远程场景。

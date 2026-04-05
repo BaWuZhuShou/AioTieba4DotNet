@@ -12,7 +12,7 @@ public sealed class OnlineCleanupFailureContractTests
 {
     [TestMethod]
     [TestCategory(OnlineTestContractCategories.CleanupFailure)]
-    public async Task CompensationLifecycle_SurfacesUnreconciledArtifacts_WhenCompensationFails()
+    public async Task CompensationLifecycleSurfacesUnreconciledArtifactsWhenCompensationFails()
     {
         var probe = new CompensationAuditProbe();
 
@@ -47,7 +47,7 @@ public sealed class OnlineCleanupFailureContractTests
     [TestMethod]
     [TestCategory(OnlineTestContractCategories.CleanupFailure)]
     [TestCategory(OnlineTestContractCategories.ThreadWriteCleanupFailure)]
-    public async Task CompensationLifecycle_SurfacesThreadWriteDisposableReply_WhenReplyCleanupFails()
+    public async Task CompensationLifecycleSurfacesThreadWriteDisposableReplyWhenReplyCleanupFails()
     {
         var probe = new CompensationAuditProbe();
 

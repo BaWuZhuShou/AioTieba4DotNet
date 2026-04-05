@@ -16,7 +16,7 @@ public sealed class RestrictedModerationEnvironmentContractTests
     : OnlineRestrictedExecutionTestBase
 {
     [TestMethod]
-    public void DefaultLocalEnvironment_StopsBeforeRestrictedModerationMutationAttempt()
+    public void DefaultLocalEnvironmentStopsBeforeRestrictedModerationMutationAttempt()
     {
         var mutationAttempted = false;
 

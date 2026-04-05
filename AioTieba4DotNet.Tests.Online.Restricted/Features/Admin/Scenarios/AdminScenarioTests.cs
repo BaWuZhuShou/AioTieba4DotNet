@@ -31,7 +31,7 @@ public sealed class AdminScenarioTests : OnlineRestrictedExecutionTestBase
     [TestCategory(OnlineTestApiCategories.AdminsGetBlocksAsync)]
     [TestCategory(OnlineTestApiCategories.AdminsBlockAsync)]
     [TestCategory(OnlineTestApiCategories.AdminsUnblockAsync)]
-    public Task BlockAndUnblockAsync_DedicatedRestrictedTarget_UsesCompensationAudit()
+    public Task BlockAndUnblockAsyncDedicatedRestrictedTargetUsesCompensationAudit()
     {
         return ExecuteRestrictedAsync(
             "restricted admin block lifecycle",
@@ -42,13 +42,13 @@ public sealed class AdminScenarioTests : OnlineRestrictedExecutionTestBase
                 var context = await ResolveAdminContextAsync(
                     scope,
                     client,
-                    nameof(BlockAndUnblockAsync_DedicatedRestrictedTarget_UsesCompensationAudit));
+                    nameof(BlockAndUnblockAsyncDedicatedRestrictedTargetUsesCompensationAudit));
                 var existingBlock = await WaitForBlockedUserStateAsync(client, context, shouldExist: true, expectStableBaseline: true);
 
                 if (existingBlock is not null)
                 {
                     Assert.Inconclusive(
-                        $"Skipping {nameof(BlockAndUnblockAsync_DedicatedRestrictedTarget_UsesCompensationAudit)}: restricted admin target '{context.UserName}' is already blocked in '{context.ForumName}'. Clear the fixture before rerunning so the scenario can prove a fresh mutation and compensation cycle.");
+                        $"Skipping {nameof(BlockAndUnblockAsyncDedicatedRestrictedTargetUsesCompensationAudit)}: restricted admin target '{context.UserName}' is already blocked in '{context.ForumName}'. Clear the fixture before rerunning so the scenario can prove a fresh mutation and compensation cycle.");
                 }
 
                 var reason = $"restricted-admin-contract-{DateTimeOffset.UtcNow:yyyyMMddHHmmss}";

@@ -2,6 +2,8 @@
 
 这页解释几个设计重点，适合已经跑通基本调用、开始关心传输策略、生命周期边界和宿主集成的时候阅读。
 
+本页示例里的 `FORUM_NAME_PLACEHOLDER`、`BDUSS_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](/guide/getting-started#example-placeholder-glossary)。
+
 ## 传输策略为什么只公开 `Auto` 和 `Http`
 
 当前公开层的目标，是让调用方表达业务意图，而不是在每个业务方法里手动决定这次到底用 HTTP 还是 WebSocket。因此传输选择继续收敛到 `TiebaOptions.TransportMode`。
@@ -23,7 +25,7 @@
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 await client.Client.InitWebSocketAsync();
 
@@ -52,7 +54,7 @@ builder.Services.AddAioTiebaClient(options =>
 builder.Services.AddHttpClient("TiebaClient")
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
     {
-        Proxy = new WebProxy("http://127.0.0.1:8888"),
+        Proxy = new WebProxy("PROXY_URL_PLACEHOLDER"),
         UseProxy = true
     });
 ```
@@ -69,15 +71,15 @@ public sealed class BotHost(ITiebaClientFactory factory)
 {
     public async Task RunAsync()
     {
-        using var accountA = factory.CreateClient("BDUSS_A", "STOKEN_A");
+        using var accountA = factory.CreateClient("BDUSS_ACCOUNT_A_PLACEHOLDER", "STOKEN_ACCOUNT_A_PLACEHOLDER");
         using var accountB = factory.CreateClient(new TiebaOptions
         {
-            Bduss = "BDUSS_B",
-            Stoken = "STOKEN_B",
+            Bduss = "BDUSS_ACCOUNT_B_PLACEHOLDER",
+            Stoken = "STOKEN_ACCOUNT_B_PLACEHOLDER",
             TransportMode = TiebaTransportMode.Http
         });
 
-        await accountA.Forums.SignAsync("csharp");
+        await accountA.Forums.SignAsync("FORUM_NAME_PLACEHOLDER");
         await accountB.Messages.GetRepliesAsync();
     }
 }
@@ -96,7 +98,7 @@ using var guestClient = new TiebaClient();
 
 try
 {
-    await guestClient.Forums.SignAsync("csharp");
+    await guestClient.Forums.SignAsync("FORUM_NAME_PLACEHOLDER");
 }
 catch (TiebaAuthenticationException ex)
 {

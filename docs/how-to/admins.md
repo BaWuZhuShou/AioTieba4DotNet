@@ -2,6 +2,8 @@
 
 这页按常见吧务任务组织。要查完整方法和签名，请同时对照 [API 参考](/reference/modules)。
 
+本页示例里的 `FORUM_NAME_PLACEHOLDER`、`USER_ID_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](/guide/getting-started#example-placeholder-glossary)。
+
 ## 开始前
 
 - 下面所有示例都以 `client.Admins` 为入口。
@@ -16,10 +18,10 @@
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
-var bawuInfo = await client.Admins.GetBawuInfoAsync("csharp");
-var bawuPerm = await client.Admins.GetBawuPermAsync("csharp", "目标用户 portrait");
+var bawuInfo = await client.Admins.GetBawuInfoAsync("FORUM_NAME_PLACEHOLDER");
+var bawuPerm = await client.Admins.GetBawuPermAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER");
 
 Console.WriteLine(bawuInfo.Managers.Count);
 Console.WriteLine(bawuPerm.Value);
@@ -35,11 +37,11 @@ Console.WriteLine(bawuPerm.Value);
 using AioTieba4DotNet;
 using AioTieba4DotNet.Models;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
-await client.Admins.AddBawuAsync("csharp", "目标用户名", BawuType.Manager);
-await client.Admins.SetBawuPermAsync("csharp", "目标用户 portrait", BawuPermType.All);
-await client.Admins.DelBawuAsync("csharp", "目标用户 portrait", BawuType.Manager);
+await client.Admins.AddBawuAsync("FORUM_NAME_PLACEHOLDER", "USER_NAME_PLACEHOLDER", BawuType.Manager);
+await client.Admins.SetBawuPermAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER", BawuPermType.All);
+await client.Admins.DelBawuAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER", BawuType.Manager);
 ```
 
 适合吧务团队维护或权限同步场景。`AddBawuAsync(...)` / `DelBawuAsync(...)` 管的是角色本身，`SetBawuPermAsync(...)` 管的是已分配吧务的权限集合。
@@ -51,11 +53,11 @@ await client.Admins.DelBawuAsync("csharp", "目标用户 portrait", BawuType.Man
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
-var blacklist = await client.Admins.GetBawuBlacklistAsync("csharp");
-await client.Admins.AddBawuBlacklistAsync("csharp", 123456789);
-await client.Admins.DelBawuBlacklistAsync("csharp", 123456789);
+var blacklist = await client.Admins.GetBawuBlacklistAsync("FORUM_NAME_PLACEHOLDER");
+await client.Admins.AddBawuBlacklistAsync("FORUM_NAME_PLACEHOLDER", long.Parse("USER_ID_PLACEHOLDER"));
+await client.Admins.DelBawuBlacklistAsync("FORUM_NAME_PLACEHOLDER", long.Parse("USER_ID_PLACEHOLDER"));
 
 Console.WriteLine(blacklist.Objs.Count);
 ```
@@ -70,17 +72,17 @@ Console.WriteLine(blacklist.Objs.Count);
 using AioTieba4DotNet;
 using AioTieba4DotNet.Models;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 var postLogs = await client.Admins.GetBawuPostLogsAsync(
-    "csharp",
+    "FORUM_NAME_PLACEHOLDER",
     new BawuPostLogQueryOptions
     {
         PageNumber = 1
     });
 
 var userLogs = await client.Admins.GetBawuUserLogsAsync(
-    "csharp",
+    "FORUM_NAME_PLACEHOLDER",
     new BawuUserLogQueryOptions
     {
         PageNumber = 1
@@ -99,11 +101,11 @@ Console.WriteLine(userLogs.Objs.Count);
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
-var blocks = await client.Admins.GetBlocksAsync("csharp");
-await client.Admins.BlockAsync("csharp", "目标用户 portrait", day: 1, reason: "示例原因");
-await client.Admins.UnblockAsync("csharp", 123456789);
+var blocks = await client.Admins.GetBlocksAsync("FORUM_NAME_PLACEHOLDER");
+await client.Admins.BlockAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER", day: 1, reason: "REASON_PLACEHOLDER");
+await client.Admins.UnblockAsync("FORUM_NAME_PLACEHOLDER", long.Parse("USER_ID_PLACEHOLDER"));
 
 Console.WriteLine(blocks.Objs.Count);
 ```
@@ -117,10 +119,10 @@ Console.WriteLine(blocks.Objs.Count);
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
-var appeals = await client.Admins.GetUnblockAppealsAsync("csharp");
-await client.Admins.HandleUnblockAppealsAsync("csharp", new long[] { 1234567890 }, refuse: false);
+var appeals = await client.Admins.GetUnblockAppealsAsync("FORUM_NAME_PLACEHOLDER");
+await client.Admins.HandleUnblockAppealsAsync("FORUM_NAME_PLACEHOLDER", new long[] { long.Parse("APPEAL_ID_PLACEHOLDER") }, refuse: false);
 
 Console.WriteLine(appeals.Objs.Count);
 ```

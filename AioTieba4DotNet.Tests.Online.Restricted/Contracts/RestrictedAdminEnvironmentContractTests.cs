@@ -16,7 +16,7 @@ public sealed class RestrictedAdminEnvironmentContractTests
     : OnlineRestrictedExecutionTestBase
 {
     [TestMethod]
-    public void DefaultLocalEnvironment_StopsBeforeRestrictedAdminMutationAttempt()
+    public void DefaultLocalEnvironmentStopsBeforeRestrictedAdminMutationAttempt()
     {
         var mutationAttempted = false;
 

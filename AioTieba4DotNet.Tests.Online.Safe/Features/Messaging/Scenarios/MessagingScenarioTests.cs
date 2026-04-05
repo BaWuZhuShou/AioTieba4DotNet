@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AioTieba4DotNet.Contracts;
@@ -22,7 +23,7 @@ public sealed class MessagingScenarioTests : OnlineSafeExecutionTestBase
 {
     [TestMethod]
     [TestCategory(OnlineTestApiCategories.MessagesGetAtsAsync)]
-    public Task GetAtsAsync_AuthenticatedAccount_ReturnsInboxPageShape()
+    public Task GetAtsAsyncAuthenticatedAccountReturnsInboxPageShape()
     {
         return ExecuteSafeAsync(
             "messaging @ inbox read sample",
@@ -40,7 +41,7 @@ public sealed class MessagingScenarioTests : OnlineSafeExecutionTestBase
 
     [TestMethod]
     [TestCategory(OnlineTestApiCategories.MessagesGetRepliesAsync)]
-    public Task GetRepliesAsync_AuthenticatedAccount_ReturnsInboxPageShapeOrExplicitEndpointGate()
+    public Task GetRepliesAsyncAuthenticatedAccountReturnsInboxPageShapeOrExplicitEndpointGate()
     {
         return ExecuteSafeAsync(
             "messaging reply inbox read sample",
@@ -58,7 +59,7 @@ public sealed class MessagingScenarioTests : OnlineSafeExecutionTestBase
 
     [TestMethod]
     [TestCategory(OnlineTestApiCategories.MessagesGetGroupMessagesAsync)]
-    public Task GetGroupMessagesAsync_InitializedWebSocket_ReturnsMessageGroupContainerOrExplicitSkip()
+    public Task GetGroupMessagesAsyncInitializedWebSocketReturnsMessageGroupContainerOrExplicitSkip()
     {
         return ExecuteSafeAsync(
             "messaging websocket group read sample",
@@ -83,16 +84,56 @@ public sealed class MessagingScenarioTests : OnlineSafeExecutionTestBase
     }
 
     [TestMethod]
+    [TestCategory(OnlineTestApiCategories.MessagesGetGroupMessagesAsync)]
+    public Task GetGroupMessagesAsyncKnownGroupIdsReturnsSelectedMessageGroupsOrExplicitSkip()
+    {
+        return ExecuteSafeAsync(
+            "messaging websocket explicit-group read sample",
+            async scope =>
+            {
+                using var client = CreateClient(scope, TiebaTransportMode.Auto);
+
+                var selectedGroups = await RunWebSocketMessagingOrInconclusiveAsync(async () =>
+                {
+                    await client.Client.InitWebSocketAsync();
+                    var groups = await client.Messages.GetGroupMessagesAsync();
+                    var groupIds = groups
+                        .Select(static group => group.GroupId)
+                        .Where(static groupId => groupId > 0)
+                        .Distinct()
+                        .Take(3)
+                        .ToArray();
+                    if (groupIds.Length == 0)
+                    {
+                        Assert.Inconclusive(
+                             $"Skipping {nameof(GetGroupMessagesAsyncKnownGroupIdsReturnsSelectedMessageGroupsOrExplicitSkip)}: the configured safe messaging account did not expose any known websocket group ids to prove the explicit-group overload.");
+                    }
+
+                    return await client.Messages.GetGroupMessagesAsync(groupIds, 1);
+                });
+
+                Assert.IsNotNull(selectedGroups);
+                Assert.IsNotEmpty(selectedGroups);
+                foreach (var group in selectedGroups)
+                {
+                    Assert.IsPositive(group.GroupId);
+                    Assert.IsNotNull(group.Messages);
+                }
+            },
+            OnlineExecutionCapability.Messaging);
+    }
+
+    [TestMethod]
     [TestCategory(OnlineTestApiCategories.UsersGetPanelInfoAsync)]
     [TestCategory(OnlineTestApiCategories.MessagesSendMessageAsync)]
-    public Task SendMessageAsync_DedicatedRecipient_UsesCompensatingFollowUpAndPublishesCompensationAudit()
+    public Task SendMessageAsyncDedicatedRecipientUsesBothOverloadsAndPublishesCompensationAudit()
     {
         return ExecuteSafeAsync(
             "messaging private-message compensation cycle",
             async scope =>
             {
                 var recipient = RequireMessageRecipient(scope,
-                    nameof(SendMessageAsync_DedicatedRecipient_UsesCompensatingFollowUpAndPublishesCompensationAudit));
+                    nameof(SendMessageAsyncDedicatedRecipientUsesBothOverloadsAndPublishesCompensationAudit));
 
                 using var client = CreateClient(scope, TiebaTransportMode.Http);
                 var recipientInfo = await client.Users.GetPanelInfoAsync(recipient);
@@ -101,26 +142,46 @@ public sealed class MessagingScenarioTests : OnlineSafeExecutionTestBase
                 Assert.IsPositive(recipientInfo.UserId);
                 Assert.IsFalse(string.IsNullOrWhiteSpace(recipientInfo.Portrait));
 
-                var messageMarker = CreateMessageMarker("safemsg");
-                var compensationMarker = CreateMessageMarker("safemsgundo");
-                var sentMessageId = await client.Messages.SendMessageAsync(recipientInfo.UserId, messageMarker);
+                var messageMarkerByRecipient = CreateMessageMarker("safemsgname");
+                var messageMarkerByUserId = CreateMessageMarker("safemsgid");
+                var compensationMarkerByRecipient = CreateMessageMarker("safemsgundoname");
+                var compensationMarkerByUserId = CreateMessageMarker("safemsgundoid");
+                var sentMessageIdByRecipient = await client.Messages.SendMessageAsync(recipient, messageMarkerByRecipient);
+                var sentMessageIdByUserId = await client.Messages.SendMessageAsync(recipientInfo.UserId, messageMarkerByUserId);
 
-                Assert.IsPositive(sentMessageId);
+                Assert.IsPositive(sentMessageIdByRecipient);
+                Assert.IsPositive(sentMessageIdByUserId);
 
-                var sentMessageArtifact = scope.Compensation.RecordCreatedArtifact(
+                var sentMessageByRecipientArtifact = scope.Compensation.RecordCreatedArtifact(
                     OnlineTestStageCategories.Messaging,
                     "private-message",
-                    sentMessageId,
-                    $"safe private message '{messageMarker}' to dedicated recipient '{recipient}'");
+                    sentMessageIdByRecipient,
+                    $"safe private message '{messageMarkerByRecipient}' to dedicated recipient '{recipient}' via portrait-or-username overload");
                 scope.Compensation.Register(
-                    sentMessageArtifact,
-                    "send private-message compensation notice",
+                    sentMessageByRecipientArtifact,
+                    "send private-message compensation notice for recipient overload",
                     "compensation notice sent",
                     cancellationToken => SendCompensationMessageAsync(
                         client,
                         recipientInfo.UserId,
-                        compensationMarker,
-                        sentMessageId,
+                        compensationMarkerByRecipient,
+                        sentMessageIdByRecipient,
+                        cancellationToken));
+
+                var sentMessageByUserIdArtifact = scope.Compensation.RecordCreatedArtifact(
+                    OnlineTestStageCategories.Messaging,
+                    "private-message",
+                    sentMessageIdByUserId,
+                    $"safe private message '{messageMarkerByUserId}' to dedicated recipient '{recipient}' via numeric user-id overload");
+                scope.Compensation.Register(
+                    sentMessageByUserIdArtifact,
+                    "send private-message compensation notice for user-id overload",
+                    "compensation notice sent",
+                    cancellationToken => SendCompensationMessageAsync(
+                        client,
+                        recipientInfo.UserId,
+                        compensationMarkerByUserId,
+                        sentMessageIdByUserId,
                         cancellationToken));
 
                 await scope.Compensation.ExecuteAsync();
@@ -128,32 +189,34 @@ public sealed class MessagingScenarioTests : OnlineSafeExecutionTestBase
                 var audit = scope.Compensation.GetLastAudit();
                 Assert.IsNotNull(audit);
                 Assert.IsTrue(audit.Succeeded,
-                    "Expected the Messaging safe scenario to reconcile the private-message mutation via a compensating follow-up message.");
-                Assert.HasCount(1, audit.RecordedArtifacts);
-                Assert.HasCount(1, audit.CompensationResults);
+                    "Expected the Messaging safe scenario to reconcile both private-message mutations via compensating follow-up messages.");
+                Assert.HasCount(2, audit.RecordedArtifacts);
+                Assert.HasCount(2, audit.CompensationResults);
                 Assert.IsEmpty(audit.UnreconciledArtifacts);
                 Assert.AreEqual("compensation notice sent", audit.CompensationResults[0].CompensationOutcome);
+                Assert.AreEqual("compensation notice sent", audit.CompensationResults[1].CompensationOutcome);
 
                 var auditDisplay = string.Join(global::System.Environment.NewLine, audit.ToDisplayLines());
-                Assert.Contains(messageMarker, auditDisplay);
+                Assert.Contains(messageMarkerByRecipient, auditDisplay);
+                Assert.Contains(messageMarkerByUserId, auditDisplay);
                 Assert.Contains("unreconciled: none", auditDisplay);
             },
             OnlineExecutionCapability.Messaging);
     }
 
     [TestMethod]
-    public Task ChatroomMutationAsset_DedicatedChatroomAndForumRequiredBeforeSend()
+    public Task ChatroomMutationAssetDedicatedChatroomAndForumRequiredBeforeSend()
     {
         return ExecuteSafeAsync(
             "messaging chatroom asset gate",
             async scope =>
             {
                 var chatroomId = RequireChatroomId(scope,
-                    nameof(ChatroomMutationAsset_DedicatedChatroomAndForumRequiredBeforeSend));
+                    nameof(ChatroomMutationAssetDedicatedChatroomAndForumRequiredBeforeSend));
 
                 using var client = CreateClient(scope, TiebaTransportMode.Http);
                 var forum = await ResolveDedicatedForumAsync(scope, client,
-                    nameof(ChatroomMutationAsset_DedicatedChatroomAndForumRequiredBeforeSend));
+                    nameof(ChatroomMutationAssetDedicatedChatroomAndForumRequiredBeforeSend));
 
                 Assert.IsPositive(chatroomId);
                 Assert.IsNotNull(forum);
@@ -162,7 +225,7 @@ public sealed class MessagingScenarioTests : OnlineSafeExecutionTestBase
             });
     }
 
-    private static TiebaClient CreateClient(OnlineExecutionScope scope, TiebaTransportMode transportMode)
+    internal static TiebaClient CreateClient(OnlineExecutionScope scope, TiebaTransportMode transportMode)
     {
         var options = new TiebaOptions
         {
@@ -239,7 +302,7 @@ public sealed class MessagingScenarioTests : OnlineSafeExecutionTestBase
                    || exception.Message.Contains("请先登录", StringComparison.Ordinal));
     }
 
-    private static async Task<T> RunWebSocketMessagingOrInconclusiveAsync<T>(Func<Task<T>> action)
+    internal static async Task<T> RunWebSocketMessagingOrInconclusiveAsync<T>(Func<Task<T>> action)
     {
         try
         {

@@ -16,6 +16,28 @@
 
 安装完成后，先不要急着接登录态。先跑通一个不依赖凭据的读取调用，能更快确认 SDK、网络和最小使用姿势都没问题。
 
+### 示例占位符词汇表 {#example-placeholder-glossary}
+
+README、文档站和导出 skill 的示例统一使用大写下划线占位符。把它们替换成你自己的值即可；在线测试运行模板 `online-test.safe.template.json` 和 `online-test.restricted.template.json` 仍必须保持空白并 fail-closed，不在仓库里提交真实凭据或线上资产。
+
+| 占位符 | 含义 |
+| --- | --- |
+| `BDUSS_PLACEHOLDER` / `STOKEN_PLACEHOLDER` | 当前账号的登录凭据 |
+| `BDUSS_ACCOUNT_A_PLACEHOLDER` / `STOKEN_ACCOUNT_A_PLACEHOLDER` | 多账号示例里的额外账号凭据 |
+| `FORUM_NAME_PLACEHOLDER` / `FORUM_ID_PLACEHOLDER` | 贴吧名称与 fid |
+| `THREAD_ID_PLACEHOLDER` / `POST_ID_PLACEHOLDER` | 主题帖 id 与楼层 / 楼中楼 id |
+| `USER_ID_PLACEHOLDER` / `USER_NAME_PLACEHOLDER` | 用户 id 与用户名 |
+| `PORTRAIT_PLACEHOLDER` / `USER_NAME_OR_PORTRAIT_PLACEHOLDER` | portrait 字符串，或同时接受用户名 / portrait 的公开入口值 |
+| `GROUP_ID_PLACEHOLDER` / `CHATROOM_ID_PLACEHOLDER` | 私信分组 id 与吧群聊天室 id |
+| `SEARCH_QUERY_PLACEHOLDER` / `MESSAGE_TEXT_PLACEHOLDER` | 搜索词与消息 / 回复正文 |
+| `NICKNAME_PLACEHOLDER` / `SIGNATURE_PLACEHOLDER` | 资料修改示例值 |
+| `IMAGE_HASH_PLACEHOLDER` / `THREAD_CATEGORY_NAME_PLACEHOLDER` | 图片 hash 与帖子分区 / 分类名 |
+| `REASON_PLACEHOLDER` / `APPEAL_ID_PLACEHOLDER` | 吧务原因与解封申诉 id |
+| `QQ_GROUP_ID_PLACEHOLDER` / `QQ_GROUP_LINK_CODE_PLACEHOLDER` | README 联系方式示例占位符 |
+| `PROXY_URL_PLACEHOLDER` | 自定义代理地址 |
+
+当参数类型不是 `string` 时，示例会用 `int.Parse(...)`、`long.Parse(...)` 或 `ulong.Parse(...)` 包装这些占位符，以保持目标参数类型清晰。
+
 ## 3. 访客读取
 
 访客模式适合查吧、读取帖子列表、读取公开资料这类只读操作。第一次接入时，先从这里开始最稳妥。
@@ -25,8 +47,8 @@ using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var forum = await client.Forums.GetForumAsync("csharp");
-var threads = await client.Threads.GetThreadsAsync("csharp");
+var forum = await client.Forums.GetForumAsync("FORUM_NAME_PLACEHOLDER");
+var threads = await client.Threads.GetThreadsAsync("FORUM_NAME_PLACEHOLDER");
 
 Console.WriteLine($"吧名: {forum.Fname}");
 Console.WriteLine($"当前页主题数: {threads.Objs.Count}");
@@ -41,9 +63,9 @@ Console.WriteLine($"当前页主题数: {threads.Objs.Count}");
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
-await client.Forums.SignAsync("csharp");
+await client.Forums.SignAsync("FORUM_NAME_PLACEHOLDER");
 
 var selfInfo = await client.Users.GetSelfInfoAsync();
 Console.WriteLine(selfInfo.ShowName);
@@ -65,14 +87,14 @@ using AioTieba4DotNet.Contracts;
 
 using var client = new TiebaClient(new TiebaOptions
 {
-    Bduss = "你的BDUSS",
-    Stoken = "你的STOKEN",
+    Bduss = "BDUSS_PLACEHOLDER",
+    Stoken = "STOKEN_PLACEHOLDER",
     TransportMode = TiebaTransportMode.Http,
     RequestTimeout = TimeSpan.FromSeconds(20),
     MaxReadRetryAttempts = 1
 });
 
-var homepage = await client.Users.GetHomepageAsync(1);
+var homepage = await client.Users.GetHomepageAsync(int.Parse("USER_ID_PLACEHOLDER"));
 Console.WriteLine(homepage.Count);
 ```
 
@@ -105,7 +127,7 @@ public sealed class ForumWorker(ITiebaClient client)
 {
     public async Task RunAsync(CancellationToken cancellationToken)
     {
-        var detail = await client.Forums.GetDetailAsync("csharp", cancellationToken);
+        var detail = await client.Forums.GetDetailAsync("FORUM_NAME_PLACEHOLDER", cancellationToken);
         Console.WriteLine(detail.Fname);
     }
 }
@@ -123,15 +145,15 @@ public sealed class MultiAccountJob(ITiebaClientFactory factory)
 {
     public async Task RunAsync()
     {
-        using var signer = factory.CreateClient("BDUSS_A", "STOKEN_A");
+        using var signer = factory.CreateClient("BDUSS_ACCOUNT_A_PLACEHOLDER", "STOKEN_ACCOUNT_A_PLACEHOLDER");
         using var reader = factory.CreateClient(new TiebaOptions
         {
-            Bduss = "BDUSS_B",
-            Stoken = "STOKEN_B",
+            Bduss = "BDUSS_ACCOUNT_B_PLACEHOLDER",
+            Stoken = "STOKEN_ACCOUNT_B_PLACEHOLDER",
             TransportMode = TiebaTransportMode.Http
         });
 
-        await signer.Forums.SignAsync("csharp");
+        await signer.Forums.SignAsync("FORUM_NAME_PLACEHOLDER");
 
         var messages = await reader.Messages.GetAtsAsync();
         Console.WriteLine(messages.Count);

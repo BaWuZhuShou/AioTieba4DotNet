@@ -16,7 +16,7 @@ namespace AioTieba4DotNet.Tests.Online.Suite.Contracts;
 public sealed class OnlineEnvironmentContractTests
 {
     [TestMethod]
-    public void TrackedEnvironmentTemplates_KeepCredentialsAndLiveAssetsBlank()
+    public void TrackedEnvironmentTemplatesKeepCredentialsAndLiveAssetsBlank()
     {
         using var safeDocument = JsonDocument.Parse(File.ReadAllText(OnlineTestEnvironmentFiles.GetSafeTemplatePath(RepositoryPaths.FindRepositoryRoot())));
         using var restrictedDocument = JsonDocument.Parse(File.ReadAllText(OnlineTestEnvironmentFiles.GetRestrictedTemplatePath(RepositoryPaths.FindRepositoryRoot())));
@@ -47,7 +47,7 @@ public sealed class OnlineEnvironmentContractTests
     }
 
     [TestMethod]
-    public void BlankTrackedTemplates_LoadAsExplicitlyUnconfiguredProfiles()
+    public void BlankTrackedTemplatesLoadAsExplicitlyUnconfiguredProfiles()
     {
         var environment = OnlineTestEnvironment.LoadFromRepository(
             RepositoryPaths.FindRepositoryRoot(),
@@ -79,7 +79,7 @@ public sealed class OnlineEnvironmentContractTests
     }
 
     [TestMethod]
-    public void RestrictedModerationContract_RequiresExplicitOptIn()
+    public void RestrictedModerationContractRequiresExplicitOptIn()
     {
         var environment = OnlineTestEnvironment.LoadFromRepository(
             RepositoryPaths.FindRepositoryRoot(),
@@ -93,7 +93,7 @@ public sealed class OnlineEnvironmentContractTests
     }
 
     [TestMethod]
-    public void RestrictedModerationContract_RequiresDedicatedRestrictedCredentialsAfterOptIn()
+    public void RestrictedModerationContractRequiresDedicatedRestrictedCredentialsAfterOptIn()
     {
         var environment = CreateEnvironment(
             (OnlineTestEnvironmentVariables.RestrictedOptIn, "true"),
@@ -107,7 +107,7 @@ public sealed class OnlineEnvironmentContractTests
     }
 
     [TestMethod]
-    public void RestrictedModerationContract_RequiresCapabilityAfterOptInAndCredentials()
+    public void RestrictedModerationContractRequiresCapabilityAfterOptInAndCredentials()
     {
         var environment = CreateEnvironment(
             (OnlineTestEnvironmentVariables.RestrictedOptIn, "true"),
@@ -121,7 +121,7 @@ public sealed class OnlineEnvironmentContractTests
     }
 
     [TestMethod]
-    public void RestrictedAdminContract_RequiresAdminCapabilityAfterOptInAndCredentials()
+    public void RestrictedAdminContractRequiresAdminCapabilityAfterOptInAndCredentials()
     {
         var environment = CreateEnvironment(
             (OnlineTestEnvironmentVariables.RestrictedOptIn, "true"),

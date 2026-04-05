@@ -1,5 +1,7 @@
 # AioTieba4DotNet 场景代码模板
 
+示例里的 `FORUM_NAME_PLACEHOLDER`、`THREAD_ID_PLACEHOLDER` 等值统一遵循仓库文档的[示例占位符词汇表](../../../docs/guide/getting-started.md#example-placeholder-glossary)。
+
 这份模板集专门给“直接生成代码”用。优先挑最接近用户目标的模板，再按需要微调参数或方法。
 
 ## 触发词到模板映射
@@ -40,7 +42,7 @@ using AioTieba4DotNet.Models;
 
 using var client = new TiebaClient();
 
-var forumName = "csharp";
+var forumName = "FORUM_NAME_PLACEHOLDER";
 
 var fid = await client.Forums.GetFidAsync(forumName);
 var detail = await client.Forums.GetDetailAsync(fid);
@@ -71,9 +73,9 @@ Console.WriteLine($"帖子数 = {threads.Objs.Count}");
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
-var forumName = "csharp";
+var forumName = "FORUM_NAME_PLACEHOLDER";
 
 await client.Forums.SignAsync(forumName);
 // await client.Forums.SignForumsAsync();
@@ -106,7 +108,7 @@ using AioTieba4DotNet.Models;
 using var client = new TiebaClient();
 
 var posts = await client.Threads.GetPostsAsync(
-    tid: 1234567890,
+    tid: long.Parse("THREAD_ID_PLACEHOLDER"),
     pn: 1,
     rn: 30,
     sort: PostSortType.Asc,
@@ -121,12 +123,12 @@ Console.WriteLine($"楼层数 = {posts.Objs.Count}");
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 await client.Threads.AddPostAsync(
-    fname: "csharp",
-    tid: 1234567890,
-    content: "这是一条示例回复");
+    fname: "FORUM_NAME_PLACEHOLDER",
+    tid: long.Parse("THREAD_ID_PLACEHOLDER"),
+    content: "MESSAGE_TEXT_PLACEHOLDER");
 
 Console.WriteLine("回复已发送");
 ```
@@ -153,11 +155,11 @@ using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var profile = await client.Users.GetProfileAsync("某个 portrait 或用户名");
+var profile = await client.Users.GetProfileAsync("USER_NAME_OR_PORTRAIT_PLACEHOLDER");
 Console.WriteLine($"用户名 = {profile.ShowName}");
 
 // 如果你要的是主页帖子和主页快照，而不是资料页信息：
-// var homepage = await client.Users.GetHomepageAsync(123456789, pn: 1);
+// var homepage = await client.Users.GetHomepageAsync(int.Parse("USER_ID_PLACEHOLDER"), pn: 1);
 // Console.WriteLine(homepage.Threads.Count);
 ```
 
@@ -184,7 +186,7 @@ Console.WriteLine($"用户名 = {profile.ShowName}");
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 var ats = await client.Messages.GetAtsAsync();
 var replies = await client.Messages.GetRepliesAsync();
@@ -198,11 +200,11 @@ Console.WriteLine($"回复消息数 = {replies.MessageList.Count}");
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 var messageId = await client.Messages.SendMessageAsync(
-    123456789,
-    "你好，这是一条示例私信");
+    long.Parse("USER_ID_PLACEHOLDER"),
+    "MESSAGE_TEXT_PLACEHOLDER");
 
 Console.WriteLine($"消息 ID = {messageId}");
 ```
@@ -232,8 +234,8 @@ using AioTieba4DotNet.Models;
 using var client = new TiebaClient();
 
 var result = await client.Forums.SearchExactAsync(
-    "csharp",
-    query: "HttpClient",
+    "FORUM_NAME_PLACEHOLDER",
+    query: "SEARCH_QUERY_PLACEHOLDER",
     searchType: ForumSearchType.All,
     onlyThread: true);
 
@@ -259,7 +261,7 @@ if (result.Objs.Count > 0)
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 var selfFollowForums = await client.Forums.GetSelfFollowForumsAsync();
 Console.WriteLine($"关注吧数量 = {selfFollowForums.Objs.Count}");
@@ -285,7 +287,7 @@ using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var userId = 123456789;
+var userId = long.Parse("USER_ID_PLACEHOLDER");
 
 var follows = await client.Users.GetFollowsAsync(userId);
 var fans = await client.Users.GetFansAsync(userId);
@@ -312,7 +314,7 @@ Console.WriteLine($"粉丝数 = {fans.Objs.Count}");
 using AioTieba4DotNet;
 using System.Linq;
 
-using var client = new TiebaClient("你的BDUSS", "你的STOKEN");
+using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 var groups = await client.Messages.GetGroupMessagesAsync();
 Console.WriteLine($"消息组数 = {groups.Groups.Count}");

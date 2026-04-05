@@ -11,7 +11,7 @@ namespace AioTieba4DotNet.Tests.Online.Suite.Contracts;
 public sealed class OnlineProjectLayoutContractTests
 {
     [TestMethod]
-    public void DirectoryBuildProps_ClassifiesOnlyTheNewOnlineProjectFamily()
+    public void DirectoryBuildPropsClassifiesOnlyTheNewOnlineProjectFamily()
     {
         var propsText = File.ReadAllText(RepositoryPaths.GetDirectoryBuildPropsPath());
 
@@ -27,7 +27,7 @@ public sealed class OnlineProjectLayoutContractTests
     }
 
     [TestMethod]
-    public void RepoLevelBaseline_CentralizesCommonOnlineTestPackagesAndCompileItems()
+    public void RepoLevelBaselineCentralizesCommonOnlineTestPackagesAndCompileItems()
     {
         var targetsText = File.ReadAllText(RepositoryPaths.GetDirectoryBuildTargetsPath());
         var packagesText = File.ReadAllText(RepositoryPaths.GetDirectoryPackagesPropsPath());
@@ -43,7 +43,7 @@ public sealed class OnlineProjectLayoutContractTests
     }
 
     [TestMethod]
-    public void NewProjectFiles_ConsumeTheCentralizedBaselineWithoutLocalDuplicates()
+    public void NewProjectFilesConsumeTheCentralizedBaselineWithoutLocalDuplicates()
     {
         var productReference = "..\\AioTieba4DotNet\\AioTieba4DotNet.csproj";
         var infrastructureReference =

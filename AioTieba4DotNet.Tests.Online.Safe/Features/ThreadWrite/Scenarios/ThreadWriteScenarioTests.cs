@@ -31,9 +31,11 @@ public sealed class ThreadWriteScenarioTests : OnlineSafeExecutionTestBase
     [TestMethod]
     [TestCategory(OnlineTestApiCategories.ThreadsAddPostAsync)]
     [TestCategory(OnlineTestApiCategories.ThreadsAgreeAsync)]
+    [TestCategory(OnlineTestApiCategories.ThreadsDisagreeAsync)]
     [TestCategory(OnlineTestApiCategories.ThreadsDelPostAsync)]
     [TestCategory(OnlineTestApiCategories.ThreadsUnagreeAsync)]
-    public Task AddPostAndAgreeAsync_DedicatedRootThread_UsesDisposableReplyAndPublishesCompensationAudit()
+    [TestCategory(OnlineTestApiCategories.ThreadsUndisagreeAsync)]
+    public Task AddPostAgreeAndDisagreeAsyncDedicatedRootThreadUsesDisposableReplyAndPublishesCompensationAudit()
     {
         return ExecuteSafeAsync(
             "thread write disposable reply lifecycle",
@@ -43,7 +45,7 @@ public sealed class ThreadWriteScenarioTests : OnlineSafeExecutionTestBase
                 var context = await ResolveDisposableRootThreadAsync(
                     scope,
                     client,
-                    nameof(AddPostAndAgreeAsync_DedicatedRootThread_UsesDisposableReplyAndPublishesCompensationAudit));
+                    nameof(AddPostAgreeAndDisagreeAsyncDedicatedRootThreadUsesDisposableReplyAndPublishesCompensationAudit));
                 var replyMarker = CreateReplyMarker();
 
                 var createdPost = await CreateDisposableReplyAsync(client, context, replyMarker);
@@ -60,17 +62,23 @@ public sealed class ThreadWriteScenarioTests : OnlineSafeExecutionTestBase
 
                 var agreeSucceeded = await client.Threads.AgreeAsync(context.ThreadId, createdPost.Pid);
                 Assert.IsTrue(agreeSucceeded, "Expected the dedicated disposable reply to accept a temporary agree mutation.");
+                var unagreeSucceeded = await client.Threads.UnagreeAsync(context.ThreadId, createdPost.Pid);
+                Assert.IsTrue(unagreeSucceeded,
+                    "Expected the dedicated disposable reply to accept a direct unagree call after the temporary agree mutation.");
 
+                var disagreeSucceeded = await client.Threads.DisagreeAsync(context.ThreadId, createdPost.Pid);
+                Assert.IsTrue(disagreeSucceeded,
+                    "Expected the dedicated disposable reply to accept a temporary disagree mutation once the agree mutation was undone.");
                 var mutatedArtifact = scope.Compensation.RecordMutatedArtifact(
                     OnlineTestStageCategories.ThreadWrite,
-                    "post-agree",
+                    "post-disagree",
                     $"{context.ThreadId}:{createdPost.Pid}",
-                    $"temporary agree on disposable thread-write reply '{replyMarker}'");
+                    $"temporary disagree on disposable thread-write reply '{replyMarker}'");
                 scope.Compensation.Register(
                     mutatedArtifact,
-                    "undo disposable thread-write reply agree",
-                    "reply agree reverted",
-                    cancellationToken => UndoAgreeAsync(client, context.ThreadId, createdPost.Pid, cancellationToken));
+                    "undo disposable thread-write reply disagree",
+                    "reply disagree reverted",
+                    cancellationToken => UndoDisagreeAsync(client, context.ThreadId, createdPost.Pid, cancellationToken));
 
                 await scope.Compensation.ExecuteAsync();
 
@@ -80,14 +88,14 @@ public sealed class ThreadWriteScenarioTests : OnlineSafeExecutionTestBase
                 Assert.HasCount(2, audit.RecordedArtifacts);
                 Assert.HasCount(2, audit.CompensationResults);
                 Assert.IsEmpty(audit.UnreconciledArtifacts);
-                Assert.AreEqual("reply agree reverted", audit.CompensationResults[0].CompensationOutcome);
+                Assert.AreEqual("reply disagree reverted", audit.CompensationResults[0].CompensationOutcome);
                 Assert.AreEqual("reply deleted", audit.CompensationResults[1].CompensationOutcome);
                 Assert.IsTrue(
                     audit.RecordedArtifacts.Any(static artifact => artifact.ArtifactType == "post"),
                     "Expected the compensation audit to record the created disposable reply artifact.");
                 Assert.IsTrue(
-                    audit.RecordedArtifacts.Any(static artifact => artifact.ArtifactType == "post-agree"),
-                    "Expected the compensation audit to record the temporary agree mutation against the disposable reply.");
+                    audit.RecordedArtifacts.Any(static artifact => artifact.ArtifactType == "post-disagree"),
+                    "Expected the compensation audit to record the temporary disagree mutation against the disposable reply.");
 
                 var auditDisplay = string.Join(global::System.Environment.NewLine, audit.ToDisplayLines());
                 Assert.Contains(replyMarker, auditDisplay);
@@ -216,15 +224,15 @@ public sealed class ThreadWriteScenarioTests : OnlineSafeExecutionTestBase
             throw new InvalidOperationException($"Expected to delete disposable thread-write reply {postId} from thread {context.ThreadId}.");
     }
 
-    private static async ValueTask UndoAgreeAsync(
+    private static async ValueTask UndoDisagreeAsync(
         TiebaClient client,
         long threadId,
         long postId,
         CancellationToken cancellationToken)
     {
-        var unagreed = await client.Threads.UnagreeAsync(threadId, postId, false, cancellationToken);
-        if (!unagreed)
-            throw new InvalidOperationException($"Expected to undo the temporary agree mutation on disposable thread-write reply {postId}.");
+        var undisagreed = await client.Threads.UndisagreeAsync(threadId, postId, false, cancellationToken);
+        if (!undisagreed)
+            throw new InvalidOperationException($"Expected to undo the temporary disagree mutation on disposable thread-write reply {postId}.");
     }
 
     private static string CreateReplyMarker()

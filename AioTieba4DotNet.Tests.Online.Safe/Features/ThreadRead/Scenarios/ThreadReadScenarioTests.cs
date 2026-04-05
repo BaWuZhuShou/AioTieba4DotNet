@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AioTieba4DotNet.Contracts;
 using AioTieba4DotNet.Models;
-using AioTieba4DotNet.Tests.Infrastructure.Contracts;
+using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Tests.Infrastructure.Configuration;
+using AioTieba4DotNet.Tests.Infrastructure.Contracts;
 using AioTieba4DotNet.Tests.Infrastructure.Execution;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,33 +29,42 @@ public sealed class ThreadReadScenarioTests : OnlineSafeExecutionTestBase
 
     [TestMethod]
     [TestCategory(OnlineTestApiCategories.ThreadsGetThreadsAsync)]
-    public Task GetThreadsAsync_StableForum_ReturnsStableThreadListingMetadata()
+    [TestCategory(OnlineTestApiCategories.ThreadsGetTabMapAsync)]
+    public Task GetThreadsAndTabMapAsyncStableForumReturnStableMetadataForNameAndFidOverloads()
     {
         return ExecuteSafeAsync(
-            "thread read threads sample",
+            "thread read threads and tab-map sample",
             async scope =>
             {
                 using var client = CreateClient(scope);
                 var context = await ResolveDedicatedForumContextAsync(
                     scope,
                     client,
-                    nameof(GetThreadsAsync_StableForum_ReturnsStableThreadListingMetadata));
-                var threads = await client.Threads.GetThreadsAsync(context.ForumSelector, 1, ThreadDiscoveryPageSize,
+                    nameof(GetThreadsAndTabMapAsyncStableForumReturnStableMetadataForNameAndFidOverloads));
+                var threadsByName = await client.Threads.GetThreadsAsync(context.ForumSelector, 1, ThreadDiscoveryPageSize,
                     ThreadSortType.Reply);
+                var threadsByFid = await client.Threads.GetThreadsAsync(context.ForumId, 1, ThreadDiscoveryPageSize,
+                    ThreadSortType.Reply);
+                var tabMapByName = await client.Threads.GetTabMapAsync(context.ForumName);
+                var tabMapByFid = await client.Threads.GetTabMapAsync(context.ForumId);
 
-                Assert.IsNotNull(threads);
-                Assert.IsNotNull(threads.Page);
-                Assert.IsNotNull(threads.Forum);
-                Assert.IsNotNull(threads.TabDictionary);
-                Assert.AreEqual((long)context.ForumId, threads.Forum.Fid);
-                Assert.AreEqual(context.ForumName, threads.Forum.Fname);
-                Assert.IsNotNull(threads.Objs);
+                AssertThreadsShape(context, threadsByName);
+                AssertThreadsShape(context, threadsByFid);
+
+                Assert.IsNotNull(tabMapByName);
+                Assert.IsNotNull(tabMapByFid);
+                Assert.AreEqual(tabMapByName.Count, tabMapByFid.Count);
+                foreach (var pair in tabMapByName)
+                {
+                    Assert.IsTrue(tabMapByFid.TryGetValue(pair.Key, out var otherValue));
+                    Assert.AreEqual(pair.Value, otherValue);
+                }
             });
     }
 
     [TestMethod]
     [TestCategory(OnlineTestApiCategories.ThreadsGetPostsAsync)]
-    public Task GetPostsAsync_StableForumFirstThread_ReturnsPostPageWithPreviewComments()
+    public Task GetPostsAsyncStableForumFirstThreadReturnsPostPageWithPreviewComments()
     {
         return ExecuteSafeAsync(
             "thread read posts sample",
@@ -64,7 +74,7 @@ public sealed class ThreadReadScenarioTests : OnlineSafeExecutionTestBase
                 var context = await ResolveDedicatedForumContextAsync(
                     scope,
                     client,
-                    nameof(GetPostsAsync_StableForumFirstThread_ReturnsPostPageWithPreviewComments));
+                    nameof(GetPostsAsyncStableForumFirstThreadReturnsPostPageWithPreviewComments));
                 var threads = await client.Threads.GetThreadsAsync(context.ForumSelector, 1, ThreadDiscoveryPageSize,
                     ThreadSortType.Reply);
 
@@ -92,7 +102,7 @@ public sealed class ThreadReadScenarioTests : OnlineSafeExecutionTestBase
 
     [TestMethod]
     [TestCategory(OnlineTestApiCategories.ThreadsGetCommentsAsync)]
-    public Task GetCommentsAsync_StableForumFirstPost_ReturnsCommentPageShape()
+    public Task GetCommentsAsyncStableForumFirstPostReturnsCommentPageShape()
     {
         return ExecuteSafeAsync(
             "thread read comments sample",
@@ -102,11 +112,11 @@ public sealed class ThreadReadScenarioTests : OnlineSafeExecutionTestBase
                 var context = await ResolveDedicatedForumContextAsync(
                     scope,
                     client,
-                    nameof(GetCommentsAsync_StableForumFirstPost_ReturnsCommentPageShape));
+                    nameof(GetCommentsAsyncStableForumFirstPostReturnsCommentPageShape));
                 var sample = await RequireCommentedPostSampleAsync(
                     client,
                     context,
-                    nameof(GetCommentsAsync_StableForumFirstPost_ReturnsCommentPageShape));
+                    nameof(GetCommentsAsyncStableForumFirstPostReturnsCommentPageShape));
                 var comments = await client.Threads.GetCommentsAsync(sample.ThreadId, sample.PostId, 1);
 
                 Assert.IsNotNull(comments);
@@ -119,6 +129,17 @@ public sealed class ThreadReadScenarioTests : OnlineSafeExecutionTestBase
                 Assert.AreEqual(context.ForumName, comments.Forum.Fname);
                 Assert.IsNotNull(comments.Objs);
             });
+    }
+
+    private static void AssertThreadsShape(DedicatedForumContext context, Threads threads)
+    {
+        Assert.IsNotNull(threads);
+        Assert.IsNotNull(threads.Page);
+        Assert.IsNotNull(threads.Forum);
+        Assert.IsNotNull(threads.TabDictionary);
+        Assert.AreEqual((long)context.ForumId, threads.Forum.Fid);
+        Assert.AreEqual(context.ForumName, threads.Forum.Fname);
+        Assert.IsNotNull(threads.Objs);
     }
 
     private static TiebaClient CreateClient(OnlineExecutionScope scope)

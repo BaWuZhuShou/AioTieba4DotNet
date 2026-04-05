@@ -10,7 +10,7 @@ namespace AioTieba4DotNet.Tests.Online.Suite.Contracts;
 public sealed class OrderedSuiteExecutionContractTests
 {
     [TestMethod]
-    public void SafeOrderedExecutionPlan_MapsStages01Through06ToSafeScenarioProject()
+    public void SafeOrderedExecutionPlanMapsStages01Through06ToSafeScenarioProject()
     {
         var suite = OnlineSuiteExecutionContract.SafeOrderedSuite;
 
@@ -46,7 +46,7 @@ public sealed class OrderedSuiteExecutionContractTests
 
     [TestMethod]
     [TestCategory(OnlineTestTierCategories.Restricted)]
-    public void RestrictedOrderedExecutionPlan_RemainsExplicitAndRestrictedOnly()
+    public void RestrictedOrderedExecutionPlanRemainsExplicitAndRestrictedOnly()
     {
         var suite = OnlineSuiteExecutionContract.RestrictedOrderedSuite;
 
