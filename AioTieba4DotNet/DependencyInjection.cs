@@ -27,9 +27,11 @@ public static class DependencyInjection
         services.TryAddEnumerable(ServiceDescriptor
             .Singleton<IValidateOptions<TiebaOptions>, TiebaOptionsValidationService>());
         optionsBuilder.ValidateOnStart();
+        services.TryAddTransient<TiebaHttpParityHandler>();
 
         // 注册专用的 HttpClient，配置连接池、Cookie 容器和 GZip 压缩
         services.AddHttpClient(HttpClientName, client => { TiebaHttpClientFactory.ConfigureNamedClient(client); })
+            .AddHttpMessageHandler<TiebaHttpParityHandler>()
             .ConfigurePrimaryHttpMessageHandler(TiebaHttpClientFactory.CreatePrimaryHandler);
 
         services.TryAddSingleton(sp =>

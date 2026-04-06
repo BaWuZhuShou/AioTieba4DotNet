@@ -11,7 +11,7 @@ public enum ThreadSortType
     /// <summary>
     ///     回复时间
     /// </summary>
-    Reply = 5,
+    Reply = 6,
 
     /// <summary>
     ///     发布时间

@@ -44,8 +44,8 @@ internal static class BawuUserLogsMapper
                 AdminHtmlParsing.ExtractPortraitFromHomeHref(AdminHtmlParsing.GetAttributeValue(cells[0], "href")),
             OperationType = AdminHtmlParsing.NormalizeText(cells[1]),
             OperationDurationDays = durationDays,
-            OperatorUserName = AdminHtmlParsing.NormalizeText(cells[3]),
-            OperationTime = AdminHtmlParsing.ParseFullDateTime(AdminHtmlParsing.NormalizeText(cells[4]))
+            OperatorUserName = AdminHtmlParsing.NormalizeText(cells[^2]),
+            OperationTime = AdminHtmlParsing.ParseFullDateTime(AdminHtmlParsing.NormalizeText(cells[^1]))
         };
     }
 }

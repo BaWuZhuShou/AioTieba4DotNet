@@ -8,7 +8,13 @@ internal static class TiebaHttpClientFactory
     internal static HttpClient CreateClient()
     {
         EnsureEncodingProviderRegistered();
-        return new HttpClient(CreatePrimaryHandler()) { Timeout = Timeout.InfiniteTimeSpan };
+        return new HttpClient(CreateParityHandlerPipeline(), disposeHandler: true) { Timeout = Timeout.InfiniteTimeSpan };
+    }
+
+    internal static HttpMessageHandler CreateParityHandlerPipeline()
+    {
+        EnsureEncodingProviderRegistered();
+        return new TiebaHttpParityHandler(CreatePrimaryHandler());
     }
 
     internal static HttpClientHandler CreatePrimaryHandler()

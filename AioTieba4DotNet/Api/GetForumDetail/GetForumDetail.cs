@@ -20,7 +20,7 @@ internal class GetForumDetail(ITiebaHttpCore httpCore)
         {
             Data = new GetForumDetailReqIdl.Types.DataReq
             {
-                Common = new CommonReq { ClientType = 2, ClientVersion = Const.MainVersion }, ForumId = fid
+                Common = new CommonReq { ClientVersion = Const.MainVersion }, ForumId = fid
             }
         };
         return reqIdl.ToByteArray();
@@ -46,7 +46,7 @@ internal class GetForumDetail(ITiebaHttpCore httpCore)
     {
         var data = PackProto(fid);
         var requestUri =
-            new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/forum/getforumdetail") { Query = $"cmd={Cmd}" }.Uri;
+            new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/forum/getforumdetail") { Query = $"cmd={Cmd}" }.Uri;
 
         var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);

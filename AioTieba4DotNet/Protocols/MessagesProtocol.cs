@@ -21,7 +21,7 @@ namespace AioTieba4DotNet.Protocols;
     Justification =
         "The chatroom send delegate preserves the full message-send contract as discrete values so callers can supply protocol fields without a lossy adapter.")]
 internal delegate Task<bool> SendChatroomMessageHandler(Account account, UserInfo selfInfo, ForumLevelInfo forumLevel,
-    long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds, int robotCode,
+    long chatroomId, ulong forumId, string text, IReadOnlyList<ChatroomMention>? mentions, int robotCode,
     CancellationToken cancellationToken);
 
 internal sealed class MessagesProtocol(
@@ -55,8 +55,9 @@ internal sealed class MessagesProtocol(
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<ReplyMessages>(
                 nameof(GetRepliesAsync),
-                TiebaOperationCapabilities.HttpOnly(true),
-                (session, ct) => new GetReplys(session.HttpCore).RequestAsync(pn, ct)),
+                TiebaOperationCapabilities.WebSocketPreferred(true),
+                ExecuteHttpAsync: (session, ct) => new GetReplys(session.HttpCore, session.WsCore).RequestHttpAsync(pn, ct),
+                ExecuteWebSocketAsync: (session, ct) => new GetReplys(session.HttpCore, session.WsCore).RequestWsAsync(pn, ct)),
             cancellationToken);
     }
 
@@ -139,6 +140,7 @@ internal sealed class MessagesProtocol(
                     var account = session.RequireAuthenticatedAccount(nameof(SendChatroomMessageAsync));
                     var selfInfo = await users.GetSelfInfoAsync(ct);
                     var forumLevel = await new GetForumLevel(session.HttpCore).RequestAsync(forumId, ct);
+                    var mentions = await ResolveChatroomMentionsAsync(atUserIds, ct);
                     if (string.IsNullOrWhiteSpace(account.SampleId) || string.IsNullOrWhiteSpace(account.ClientId))
                     {
                         var identifiers = await session.ExecuteClientSyncAsync(
@@ -149,7 +151,7 @@ internal sealed class MessagesProtocol(
                     }
 
                     return await _sendChatroomMessageAsync(account, selfInfo, forumLevel, chatroomId, forumId,
-                        text, atUserIds, robotCode, ct);
+                        text, mentions, robotCode, ct);
                 }),
             cancellationToken);
     }
@@ -158,12 +160,15 @@ internal sealed class MessagesProtocol(
     {
         cancellationToken.ThrowIfCancellationRequested();
         ArgumentNullException.ThrowIfNull(message);
+        if (message.GroupTypeValue != GroupType.PrivateMessage)
+            throw new TiebaProtocolException("Only private-message websocket items can be marked as read.");
+
         ValidateUserId(message.User.UserId);
         ValidateMessageId(message.MsgId);
 
         await EnsureCursorStoreInitializedAsync(cancellationToken);
 
-        var groupId = _cursorStore.PrivateGroupId > 0 ? _cursorStore.PrivateGroupId : message.GroupId;
+        var groupId = _cursorStore.PrivateGroupId;
         if (groupId <= 0)
             throw new TiebaProtocolException(
                 "Unable to determine the private-message group id for read-state updates.");
@@ -187,11 +192,11 @@ internal sealed class MessagesProtocol(
         Justification =
             "The default chatroom sender forwards the protocol-shaped message contract directly into the BLCP transport implementation.")]
     private static Task<bool> DefaultSendChatroomMessageAsync(Account account, UserInfo selfInfo,
-        ForumLevelInfo forumLevel, long chatroomId, ulong forumId, string text, IReadOnlyList<long>? atUserIds,
+        ForumLevelInfo forumLevel, long chatroomId, ulong forumId, string text, IReadOnlyList<ChatroomMention>? mentions,
         int robotCode, CancellationToken cancellationToken)
     {
         return new BlcpChatroomSender().SendMessageAsync(account, selfInfo, forumLevel, chatroomId, forumId, text,
-            atUserIds, robotCode, cancellationToken);
+            mentions, robotCode, cancellationToken);
     }
 
     private async Task EnsureCursorStoreInitializedAsync(CancellationToken cancellationToken)
@@ -221,6 +226,32 @@ internal sealed class MessagesProtocol(
 
         _cursorStore.Update(groups);
         return groups;
+    }
+
+    private async Task<IReadOnlyList<ChatroomMention>?> ResolveChatroomMentionsAsync(IReadOnlyList<long>? atUserIds,
+        CancellationToken cancellationToken)
+    {
+        if (atUserIds is not { Count: > 0 })
+            return null;
+
+        var mentions = new List<ChatroomMention>(atUserIds.Count);
+        for (var index = 0; index < atUserIds.Count; index++)
+        {
+            var userId = atUserIds[index];
+            var profile = await LoadMentionProfileAsync(userId, cancellationToken);
+            mentions.Add(new ChatroomMention(userId, profile.NickName, profile.Portrait, index));
+        }
+
+        return mentions;
+    }
+
+    private async Task<UserInfoPf> LoadMentionProfileAsync(long userId, CancellationToken cancellationToken)
+    {
+        var profile = await users.GetProfileAsync(checked((int)userId), cancellationToken);
+        if (!string.IsNullOrWhiteSpace(profile.Portrait) && !string.IsNullOrWhiteSpace(profile.NickName))
+            return profile;
+
+        return await users.GetProfileAsync(checked((int)userId), cancellationToken);
     }
 
     private static void ValidateUserId(long userId)

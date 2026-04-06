@@ -7,6 +7,7 @@ namespace AioTieba4DotNet.Internal.Mapping;
 internal static partial class AdminHtmlParsing
 {
     private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
+    private static readonly string[] YearlessDateTimeFormats = ["MM-dd HH:mm", "MM月dd日 HH:mm"];
     private static readonly Regex TagRegex = BuildTagRegex();
     private static readonly Regex TdRegex = BuildTdRegex();
     private static readonly Regex TrRegex = BuildTrRegex();
@@ -94,7 +95,11 @@ internal static partial class AdminHtmlParsing
 
     internal static DateTime ParseYearlessDateTime(string text)
     {
-        var parsed = DateTime.ParseExact(text.Trim(), "MM-dd HH:mm", CultureInfo.InvariantCulture);
+        var normalized = WhitespaceRegex.Replace(text.Trim(), " ");
+        if (!DateTime.TryParseExact(normalized, YearlessDateTimeFormats, CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out var parsed))
+            throw new FormatException($"Unsupported admin yearless datetime format: '{text}'.");
+
         return new DateTime(1904, parsed.Month, parsed.Day, parsed.Hour, parsed.Minute, 0, DateTimeKind.Unspecified);
     }
 

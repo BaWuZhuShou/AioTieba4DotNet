@@ -6,7 +6,7 @@ namespace AioTieba4DotNet.Api.GetImages;
 
 internal sealed class GetImages(ITiebaHttpCore httpCore)
 {
-    private static readonly Uri TiebaReferrer = new UriBuilder("https", "tieba.baidu.com", 443).Uri;
+    private const string TiebaReferrer = "tieba.baidu.com";
 
     public async Task<ForumImageBytes> RequestBytesAsync(Uri imageUri, CancellationToken cancellationToken = default)
     {
@@ -24,7 +24,11 @@ internal sealed class GetImages(ITiebaHttpCore httpCore)
         CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, imageUri);
-        request.Headers.Referrer = TiebaReferrer;
+        request.Headers.TryAddWithoutValidation("User-Agent", $"aiotieba/{AioTieba4DotNet.Internal.Const.Version}");
+        request.Headers.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate");
+        request.Headers.TryAddWithoutValidation("Cache-Control", "no-cache");
+        request.Headers.TryAddWithoutValidation("Connection", "keep-alive");
+        request.Headers.TryAddWithoutValidation("Referer", TiebaReferrer);
 
         using var response = await httpCore.HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead,
             cancellationToken);

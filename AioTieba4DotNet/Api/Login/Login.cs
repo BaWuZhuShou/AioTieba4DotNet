@@ -32,7 +32,7 @@ internal class Login(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
         {
             new("_client_version", Const.MainVersion), new("bdusstoken", HttpCore.Account!.Bduss)
         };
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/s/login").Uri;
+        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/s/login").Uri;
         var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }

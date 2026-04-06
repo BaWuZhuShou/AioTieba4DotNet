@@ -43,8 +43,10 @@ internal static class UserInfoMapper
     }
 
     internal static UserInfo FromTbData(
-        GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo data)
+        GetGroupMsgResIdl.Types.DataRes.Types.GroupMsg.Types.MsgInfo.Types.UserInfo? data)
     {
+        if (data == null) return new UserInfo();
+
         return new UserInfo
         {
             UserId = data.UserId,

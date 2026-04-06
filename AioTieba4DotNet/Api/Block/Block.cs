@@ -42,7 +42,7 @@ internal class Block(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
             new("word", "-"),
             new("z", "6")
         };
-        var requestUri = new UriBuilder(Const.AppSecureScheme, Const.AppBaseHost, 443, "/c/c/bawu/commitprison").Uri;
+        var requestUri = new UriBuilder(Const.AppInsecureScheme, Const.AppBaseHost, 80, "/c/c/bawu/commitprison").Uri;
 
         var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);

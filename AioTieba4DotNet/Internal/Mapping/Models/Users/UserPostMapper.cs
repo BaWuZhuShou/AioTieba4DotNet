@@ -13,7 +13,7 @@ internal static class UserPostMapper
         return new UserPost
         {
             Contents = contents,
-            Pid = (int)dataRes.PostId,
+            Pid = checked((long)dataRes.PostId),
             IsComment = dataRes.PostType != 0,
             CreateTime = (int)dataRes.CreateTime
         };

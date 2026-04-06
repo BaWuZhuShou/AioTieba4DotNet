@@ -30,7 +30,7 @@ internal class GetForum(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
     public async Task<Forum> RequestAsync(string fname, CancellationToken cancellationToken = default)
     {
         var data = new List<KeyValuePair<string, string>> { new("kw", fname) };
-        var requestUri = new UriBuilder("https", Const.WebBaseHost, 443, "/c/f/frs/frsBottom").Uri;
+        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/frs/frsBottom").Uri;
 
         var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);

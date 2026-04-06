@@ -36,7 +36,7 @@ internal sealed class GetHomepage(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
                 Common = new CommonReq { ClientType = 2, ClientVersion = Const.MainVersion },
                 Uid = userId,
                 NeedPostCount = 1,
-                Page = pn
+                Pn = (uint)pn
             }
         };
 

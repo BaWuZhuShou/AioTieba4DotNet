@@ -7,6 +7,8 @@ namespace AioTieba4DotNet.Api.GetRoomListByFid;
 
 internal sealed class GetRoomListByFid(ITiebaHttpCore httpCore) : JsonApiBase(httpCore)
 {
+    private const string ChatVersion = "12.68.1.0";
+
     private static RoomList ParseRoomList(string body)
     {
         var json = ParseBody(body);
@@ -33,7 +35,7 @@ internal sealed class GetRoomListByFid(ITiebaHttpCore httpCore) : JsonApiBase(ht
         var data = new List<KeyValuePair<string, string>>
         {
             new("BDUSS", HttpCore.Account?.Bduss ?? string.Empty),
-            new("_client_version", Const.MainVersion),
+            new("_client_version", ChatVersion),
             new("call_from", "frs"),
             new("fid", fid.ToString())
         };

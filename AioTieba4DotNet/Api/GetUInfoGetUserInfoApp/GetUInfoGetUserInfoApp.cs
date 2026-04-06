@@ -10,7 +10,7 @@ namespace AioTieba4DotNet.Api.GetUInfoGetUserInfoApp;
 ///     获取用户基础信息的 API (App端)
 /// </summary>
 /// <param name="httpCore">Http 核心组件</param>
-internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore)
+internal sealed class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
     private const int Cmd = 303024;
 
@@ -35,12 +35,24 @@ internal class GetUInfoGetUserInfoApp(ITiebaHttpCore httpCore)
     /// <param name="userId">用户 ID (uid)</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>用户基础信息</returns>
-    public async Task<UserInfo> RequestAsync(int userId, CancellationToken cancellationToken = default)
+    public Task<UserInfo> RequestAsync(int userId, CancellationToken cancellationToken = default)
+    {
+        return RequestHttpAsync(userId, cancellationToken);
+    }
+
+    public async Task<UserInfo> RequestHttpAsync(int userId, CancellationToken cancellationToken = default)
     {
         var data = PackProto(userId);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/getuserinfo") { Query = $"cmd={Cmd}" }
             .Uri;
         var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
+    }
+
+    public async Task<UserInfo> RequestWsAsync(int userId, CancellationToken cancellationToken = default)
+    {
+        var data = PackProto(userId);
+        var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

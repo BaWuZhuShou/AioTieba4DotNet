@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using System.Text;
 using AioTieba4DotNet.Internal;
 
 namespace AioTieba4DotNet.Transport.Http;
@@ -33,20 +34,22 @@ internal static class TiebaHttpRequestFactory
 
     private static HttpRequestMessage CreateAppProtoRequest(TiebaHttpRequestDescriptor descriptor)
     {
-        var byteArrayContent = new ByteArrayContent(descriptor.ProtoPayload!);
-        byteArrayContent.Headers.Add("Content-Disposition", "form-data; name=\"data\"; filename=\"file\"");
+        const string boundary = "-*_r1999";
+        var prologue = Encoding.ASCII.GetBytes($"--{boundary}\r\nContent-Disposition: form-data; name=\"data\"; filename=\"file\"\r\n\r\n");
+        var epilogue = Encoding.ASCII.GetBytes($"\r\n--{boundary}--\r\n");
+        var body = new byte[prologue.Length + descriptor.ProtoPayload!.Length + epilogue.Length];
+        Buffer.BlockCopy(prologue, 0, body, 0, prologue.Length);
+        Buffer.BlockCopy(descriptor.ProtoPayload, 0, body, prologue.Length, descriptor.ProtoPayload.Length);
+        Buffer.BlockCopy(epilogue, 0, body, prologue.Length + descriptor.ProtoPayload.Length, epilogue.Length);
 
-        var multipartContent = new MultipartFormDataContent();
-        multipartContent.Add(byteArrayContent);
+        var content = new ByteArrayContent(body);
+        content.Headers.TryAddWithoutValidation("Content-Type", $"multipart/form-data; boundary={boundary}");
 
-        var boundary = multipartContent.Headers.ContentType!.Parameters.First(header => header.Name == "boundary");
-        boundary.Value = boundary.Value!.Replace("\"", string.Empty);
-
-        var request = new HttpRequestMessage(HttpMethod.Post, descriptor.Uri) { Content = multipartContent };
+        var request = new HttpRequestMessage(HttpMethod.Post, descriptor.Uri) { Content = content };
         request.Headers.Add("User-Agent", $"aiotieba/{Const.Version}");
         request.Headers.Add("x_bd_data_type", "protobuf");
-        request.Headers.Accept.ParseAdd("*/*");
         request.Headers.Connection.Add("keep-alive");
+        request.Headers.AcceptEncoding.ParseAdd("gzip");
         request.Headers.Add("Host", Const.AppBaseHost);
         return request;
     }

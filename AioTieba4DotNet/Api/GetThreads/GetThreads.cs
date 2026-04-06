@@ -59,7 +59,7 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
         CancellationToken cancellationToken = default)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/f/frs/page") { Query = $"cmd={Cmd}" }.Uri;
+        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/f/frs/page") { Query = $"cmd={Cmd}" }.Uri;
 
         var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);

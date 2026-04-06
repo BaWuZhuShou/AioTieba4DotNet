@@ -39,7 +39,7 @@ internal sealed class BlcpChatroomSender
             "The BLCP send entrypoint preserves the protocol-shaped message contract as discrete arguments so transport packing remains explicit.")]
     public async Task<bool> SendMessageAsync(Account account, UserInfo selfInfo, ForumLevelInfo forumLevel,
         long chatroomId,
-        ulong forumId, string text, IReadOnlyList<long>? atUserIds, int robotCode, CancellationToken cancellationToken)
+        ulong forumId, string text, IReadOnlyList<ChatroomMention>? mentions, int robotCode, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(account);
         ArgumentNullException.ThrowIfNull(selfInfo);
@@ -59,10 +59,9 @@ internal sealed class BlcpChatroomSender
         var token = await GenerateLcmTokenAsync(account.CuidGalaxy2, cancellationToken);
         await PerformHandshakeAsync(sslStream, account, token, cancellationToken);
         var loginPayload = await PerformLoginAsync(sslStream, account, selfInfo, cancellationToken);
-        var atData = atUserIds is { Count: > 0 } ? BuildAtData(atUserIds) : null;
         return await SendChatroomPayloadAsync(sslStream, account, selfInfo, forumLevel, loginPayload, chatroomId,
             forumId,
-            text, atData, robotCode, cancellationToken);
+            text, mentions, robotCode, cancellationToken);
     }
 
     private async Task<string> GenerateLcmTokenAsync(string cuidGalaxy2, CancellationToken cancellationToken)
@@ -195,8 +194,7 @@ internal sealed class BlcpChatroomSender
         var triggerToken = secondResponse["trigger_id"] as JArray;
         return new LoginPayload(
             triggerToken?.First?.Value<long>() ?? 0,
-            secondResponse["uk"]?.Value<long>() ?? selfInfo.Uk,
-            secondResponse["bd_uid"]?.Value<string>() ?? selfInfo.BdUk);
+            secondResponse["uk"]?.Value<long>() ?? selfInfo.Uk);
     }
 
     [SuppressMessage("Major Code Smell", "S107:Methods should not have too many parameters",
@@ -204,13 +202,21 @@ internal sealed class BlcpChatroomSender
             "The BLCP payload builder keeps required protocol fields explicit so chatroom send packing remains auditable against the upstream message shape.")]
     private async Task<bool> SendChatroomPayloadAsync(SslStream stream, Account account, UserInfo selfInfo,
         ForumLevelInfo forumLevel, LoginPayload loginPayload, long chatroomId, ulong forumId, string text,
-        JArray? atData, int robotCode, CancellationToken cancellationToken)
+        IReadOnlyList<ChatroomMention>? mentions, int robotCode, CancellationToken cancellationToken)
+    {
+        var requestData = BuildChatroomRequestData(account, selfInfo, forumLevel, loginPayload, chatroomId, forumId,
+            text, mentions, robotCode);
+        var response = await SendJsonRpcAsync(stream, 3, 185, requestData, cancellationToken, "err_code");
+        return response["err_code"]?.Value<int>() == 0;
+    }
+
+    private static JObject BuildChatroomRequestData(Account account, UserInfo selfInfo, ForumLevelInfo forumLevel,
+        LoginPayload loginPayload, long chatroomId, ulong forumId, string text, IReadOnlyList<ChatroomMention>? mentions,
+        int robotCode)
     {
         var portraitWithTimestamp = $"{selfInfo.Portrait}?t={DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
         var name = string.IsNullOrWhiteSpace(selfInfo.NickName) ? selfInfo.ShowName : selfInfo.NickName;
-        var bduk = string.IsNullOrWhiteSpace(loginPayload.BdUk)
-            ? GetBdukFromUserId(selfInfo.UserId.ToString())
-            : loginPayload.BdUk;
+        var bduk = GetBdukFromUserId(selfInfo.UserId.ToString());
 
         var contentExt = new JObject
         {
@@ -250,12 +256,12 @@ internal sealed class BlcpChatroomSender
             ["ext"] = JsonConvert.SerializeObject(contentExt, Formatting.None)
         };
 
-        if (atData is not null)
-            textPayload["at_data"] = atData;
+        if (mentions is { Count: > 0 })
+            textPayload["at_data"] = BuildAtData(mentions);
 
         var content = new JObject { ["text"] = JsonConvert.SerializeObject(textPayload, Formatting.None) };
 
-        var requestData = new JObject
+        return new JObject
         {
             ["method"] = 185,
             ["mcast_id"] = chatroomId,
@@ -279,9 +285,6 @@ internal sealed class BlcpChatroomSender
                 new { @event = "CIMSendBegin", timestamp_ms = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() }
             })
         };
-
-        var response = await SendJsonRpcAsync(stream, 3, 185, requestData, cancellationToken, "err_code");
-        return response["err_code"]?.Value<int>() == 0;
     }
 
     [SuppressMessage("Minor Code Smell",
@@ -386,10 +389,18 @@ internal sealed class BlcpChatroomSender
         return rpcMeta.ToByteArray();
     }
 
-    private static JArray BuildAtData(IReadOnlyList<long> atUserIds)
+    private static JArray BuildAtData(IReadOnlyList<ChatroomMention> mentions)
     {
         var array = new JArray();
-        foreach (var userId in atUserIds) array.Add(JObject.FromObject(new { uid = userId.ToString() }));
+        foreach (var mention in mentions)
+            array.Add(JObject.FromObject(new
+            {
+                at_type = "user",
+                at_baidu_uk = GetBdukFromUserId(mention.UserId.ToString()),
+                at_name = mention.Name,
+                at_portrait = mention.Portrait,
+                position = mention.Position.ToString()
+            }));
 
         return array;
     }
@@ -510,8 +521,10 @@ internal sealed class BlcpChatroomSender
         return target.ToArray();
     }
 
-    private sealed record LoginPayload(long TriggerId, long Uk, string BdUk);
+    private sealed record LoginPayload(long TriggerId, long Uk);
 }
+
+internal sealed record ChatroomMention(long UserId, string Name, string Portrait, int Position);
 
 internal static class EnuidCodec
 {

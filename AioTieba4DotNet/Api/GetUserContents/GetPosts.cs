@@ -55,7 +55,7 @@ internal class GetPosts(
         CancellationToken cancellationToken = default)
     {
         var data = PackProto(httpCore.Account!, userId, pn, rn, version);
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/u/feed/userpost") { Query = $"cmd={Cmd}" }
+        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/feed/userpost") { Query = $"cmd={Cmd}" }
             .Uri;
 
         var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);

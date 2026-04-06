@@ -39,7 +39,7 @@ internal sealed class MessageCursorStore
 
     internal IReadOnlyList<long> GetKnownGroupIds()
     {
-        return _pairs.Keys.Where(static groupId => groupId > 0).OrderBy(static groupId => groupId).ToList();
+        return _pairs.Keys.Where(static groupId => groupId > 0).ToList();
     }
 
     internal long GetLastMessageId(long groupId)

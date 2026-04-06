@@ -49,7 +49,13 @@ internal sealed class HttpCore : ITiebaHttpCore, IDisposable
     public async Task<string> SendAsync(Func<HttpRequestMessage> requestFactory, bool allowRetry = false,
         CancellationToken cancellationToken = default)
     {
-        using var response = await _executionPolicy.SendAsync(HttpClient, _ => Task.FromResult(requestFactory()),
+        using var response = await _executionPolicy.SendAsync(HttpClient,
+            _ =>
+            {
+                var request = requestFactory();
+                TiebaHttpRequestMetadata.Apply(request, TiebaHttpRequestKind.Custom, Account);
+                return Task.FromResult(request);
+            },
             allowRetry, TiebaHttpRequestKind.Custom, cancellationToken);
         return await response.Content.ReadAsStringAsync(cancellationToken);
     }
@@ -58,14 +64,14 @@ internal sealed class HttpCore : ITiebaHttpCore, IDisposable
         CancellationToken cancellationToken = default)
     {
         using var response = await _executionPolicy.SendAsync(HttpClient,
-            TiebaHttpRequestDescriptor.AppForm(uri, data), cancellationToken);
+            TiebaHttpRequestDescriptor.AppForm(uri, data), Account, cancellationToken);
         return await response.Content.ReadAsStringAsync(cancellationToken);
     }
 
     public async Task<byte[]> SendAppProtoAsync(Uri uri, byte[] data, CancellationToken cancellationToken = default)
     {
         using var response = await _executionPolicy.SendAsync(HttpClient,
-            TiebaHttpRequestDescriptor.AppProto(uri, data), cancellationToken);
+            TiebaHttpRequestDescriptor.AppProto(uri, data), Account, cancellationToken);
         return await response.Content.ReadAsByteArrayAsync(cancellationToken);
     }
 
@@ -75,6 +81,7 @@ internal sealed class HttpCore : ITiebaHttpCore, IDisposable
         using var response = await _executionPolicy.SendAsync(HttpClient,
             TiebaHttpRequestDescriptor.WebGet(uri, parameters,
                 _executionPolicy.HasReadRetries),
+            Account,
             cancellationToken);
         return await response.Content.ReadAsStringAsync(cancellationToken);
     }
@@ -83,7 +90,7 @@ internal sealed class HttpCore : ITiebaHttpCore, IDisposable
         CancellationToken cancellationToken = default)
     {
         using var response = await _executionPolicy.SendAsync(HttpClient,
-            TiebaHttpRequestDescriptor.WebForm(uri, data), cancellationToken);
+            TiebaHttpRequestDescriptor.WebForm(uri, data), Account, cancellationToken);
         return await response.Content.ReadAsStringAsync(cancellationToken);
     }
 

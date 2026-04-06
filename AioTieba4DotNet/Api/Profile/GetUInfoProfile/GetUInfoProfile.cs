@@ -11,7 +11,7 @@ namespace AioTieba4DotNet.Api.Profile.GetUInfoProfile;
 /// </summary>
 /// <typeparam name="T">请求参数类型 (支持 int/long 作为 uid，或 string 作为 portrait/用户名)</typeparam>
 /// <param name="httpCore">Http 核心组件</param>
-internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore)
+internal sealed class GetUInfoProfile<T>(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
 {
     private const int Cmd = 303012;
 
@@ -54,12 +54,24 @@ internal class GetUInfoProfile<T>(ITiebaHttpCore httpCore)
     /// <param name="requestParams">uid (int/long) 或 portrait/用户名 (string)</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>用户详细主页信息</returns>
-    public async Task<UserInfoPf> RequestAsync(T requestParams, CancellationToken cancellationToken = default)
+    public Task<UserInfoPf> RequestAsync(T requestParams, CancellationToken cancellationToken = default)
+    {
+        return RequestHttpAsync(requestParams, cancellationToken);
+    }
+
+    public async Task<UserInfoPf> RequestHttpAsync(T requestParams, CancellationToken cancellationToken = default)
     {
         var data = PackProto(requestParams);
         var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/u/user/profile") { Query = $"cmd={Cmd}" }
             .Uri;
         var result = await httpCore.SendAppProtoAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
+    }
+
+    public async Task<UserInfoPf> RequestWsAsync(T requestParams, CancellationToken cancellationToken = default)
+    {
+        var data = PackProto(requestParams);
+        var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
+        return ParseBody(response.Payload.Data.ToByteArray());
     }
 }

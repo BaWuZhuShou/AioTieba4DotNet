@@ -26,7 +26,7 @@ public class UserPost
     /// <summary>
     ///     回复id
     /// </summary>
-    public int Pid { get; set; }
+    public long Pid { get; set; }
 
     /// <summary>
     ///     是否为楼中楼

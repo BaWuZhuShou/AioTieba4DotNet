@@ -22,7 +22,7 @@ internal class GetSelfInfoInitNickname(ITiebaHttpCore httpCore) : JsonApiBase(ht
             new("BDUSS", HttpCore.Account?.Bduss ?? string.Empty), new("_client_version", Const.MainVersion)
         };
 
-        var requestUri = new UriBuilder("https", Const.AppBaseHost, 443, "/c/s/initNickname").Uri;
+        var requestUri = new UriBuilder("http", Const.AppBaseHost, 80, "/c/s/initNickname").Uri;
         var result = await HttpCore.SendAppFormAsync(requestUri, data, cancellationToken);
         return ParseBody(result);
     }

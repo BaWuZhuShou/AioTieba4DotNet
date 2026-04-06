@@ -1,3 +1,5 @@
+using AioTieba4DotNet.Session;
+
 namespace AioTieba4DotNet.Transport.Http;
 
 internal sealed class TiebaHttpExecutionPolicy(TimeSpan requestTimeout, int maxReadRetryAttempts)
@@ -12,9 +14,15 @@ internal sealed class TiebaHttpExecutionPolicy(TimeSpan requestTimeout, int maxR
     }
 
     internal async Task<HttpResponseMessage> SendAsync(HttpClient httpClient, TiebaHttpRequestDescriptor descriptor,
+        Account? account,
         CancellationToken cancellationToken = default)
     {
-        return await SendAsync(httpClient, ct => TiebaHttpRequestFactory.CreateMessageAsync(descriptor, ct),
+        return await SendAsync(httpClient, async ct =>
+            {
+                var request = await TiebaHttpRequestFactory.CreateMessageAsync(descriptor, ct);
+                TiebaHttpRequestMetadata.Apply(request, descriptor.Kind, account);
+                return request;
+            },
             descriptor.AllowRetry,
             descriptor.Kind, cancellationToken);
     }
