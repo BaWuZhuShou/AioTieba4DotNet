@@ -3,6 +3,7 @@ using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Transport;
+using AioTieba4DotNet.Transport.WebSockets;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetThreadPosts;
@@ -55,6 +56,29 @@ internal class GetThreadPosts(
         return PostsMapper.FromTbData(resProto.Data);
     }
 
+    private static byte[] ExtractWsBody(WSRes response)
+    {
+        var body = response.Payload?.Data;
+        if (body == null || body.IsEmpty)
+            throw new TiebaWebSocketUnavailableException(
+                "WebSocket returned an empty get-posts payload.");
+
+        return body.ToByteArray();
+    }
+
+    private static Posts ParseWsBody(byte[] body)
+    {
+        try
+        {
+            return ParseBody(body);
+        }
+        catch (InvalidProtocolBufferException exception)
+        {
+            throw new TiebaWebSocketUnavailableException(
+                "WebSocket returned an invalid get-posts payload.", exception);
+        }
+    }
+
     /// <summary>
     ///     通过 HTTP 获取主题帖内回复列表
     /// </summary>
@@ -104,6 +128,6 @@ internal class GetThreadPosts(
         var data = PackProto(tid, pn, rn, sort, onlyThreadAuthor, withComments, commentRn, commentSortByAgree,
             wsCore.Account?.Bduss);
         var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
-        return ParseBody(response.Payload.Data.ToByteArray());
+        return ParseWsBody(ExtractWsBody(response));
     }
 }
