@@ -13,5 +13,10 @@ public enum TiebaTransportMode
     /// <summary>
     ///     仅使用 HTTP
     /// </summary>
-    Http
+    Http,
+
+    /// <summary>
+    ///     对支持 WebSocket 的调用仅使用 WebSocket，不允许回退到 HTTP
+    /// </summary>
+    WebSocketOnly
 }

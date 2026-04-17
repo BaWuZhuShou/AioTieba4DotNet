@@ -64,6 +64,9 @@ internal sealed class TiebaOperationDispatcher(TiebaClientSession session)
             descriptor.ExecuteWebSocketAsync is null)
             return await ExecuteHttpAsync(descriptor, cancellationToken);
 
+        if (session.Options.TransportMode == TiebaTransportMode.WebSocketOnly)
+            return await ExecuteWebSocketOnlyAsync(descriptor, cancellationToken);
+
         try
         {
             await session.WarmUpWebSocketAsync(descriptor.Name, cancellationToken);
