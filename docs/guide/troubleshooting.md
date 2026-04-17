@@ -2,7 +2,7 @@
 
 这页按现象、原因、处理方式整理。先找最接近你的症状，不需要从头读完。
 
-本页示例里的 `FORUM_NAME_PLACEHOLDER`、`BDUSS_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](/guide/getting-started#example-placeholder-glossary)。
+本页示例会直接写成“你的吧名”“你的 BDUSS”这类示意值，阅读时按自己的实际参数替换即可。
 
 ## 创建客户端就报配置错误
 
@@ -37,7 +37,7 @@
 ### 建议处理
 
 - 只读操作继续用访客客户端
-- 写操作改用 `new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER")`
+- 写操作改用 `new TiebaClient("你的 BDUSS", "你的 STOKEN")`
 - 如果是宿主应用，确认 DI 读取到了真实配置值
 
 ## 明明有凭据，但服务端还是拒绝
@@ -101,11 +101,13 @@ using AioTieba4DotNet.Contracts;
 
 using var client = new TiebaClient(new TiebaOptions
 {
-    Bduss = "BDUSS_PLACEHOLDER",
-    Stoken = "STOKEN_PLACEHOLDER",
+    Bduss = "你的 BDUSS",
+    Stoken = "你的 STOKEN",
     TransportMode = TiebaTransportMode.Http
 });
 ```
+
+如果你的目标相反，是想确认支持 WebSocket 的调用绝不会回退到 HTTP，就把 `TiebaOptions.TransportMode` 设成 `TiebaTransportMode.WebSocketOnly`。这样这类调用在链路不可用时会直接抛出 transport 相关异常，而不是悄悄改走 HTTP；没有 WebSocket 路径的 API 仍然按它本来支持的传输执行。
 
 ## 想提前建立 WebSocket 连接
 

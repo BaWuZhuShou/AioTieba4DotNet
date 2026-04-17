@@ -2,21 +2,21 @@
 
 这页解释几个设计重点，适合已经跑通基本调用、开始关心传输策略、生命周期边界和宿主集成的时候阅读。
 
-本页示例里的 `FORUM_NAME_PLACEHOLDER`、`BDUSS_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](/guide/getting-started#example-placeholder-glossary)。
+本页示例会直接写成“你的吧名”“你的 BDUSS”“账号 A 的 BDUSS”这类示意值，阅读时按自己的实际参数替换即可。
 
-## 传输策略为什么只公开 `Auto` 和 `Http`
+## 传输策略为什么公开 `Auto`、`Http` 和 `WebSocketOnly`
 
 当前公开层的目标，是让调用方表达业务意图，而不是在每个业务方法里手动决定这次到底用 HTTP 还是 WebSocket。因此传输选择继续收敛到 `TiebaOptions.TransportMode`。
 
-- `Auto` 是默认值
-- `Http` 是唯一公开覆盖
-- 支持 WebSocket 的调用优先走 WebSocket
-- 当前链路不可用或能力本身不支持 WebSocket 时，再回退到 HTTP
+- `Auto` 是默认值：支持 WebSocket 的调用优先走 WebSocket，链路不可用时再回退到 HTTP
+- `Http` 用来全局关闭 WebSocket
+- `WebSocketOnly` 用来要求支持 WebSocket 的调用必须走 WebSocket；链路不可用时直接失败，不回退到 HTTP
 
-这让两个结果保持稳定。
+这让三个结果保持稳定。
 
 1. 业务 API 的签名不会因为传输实现细节而膨胀
 2. 调用方可以全局切换行为，而不是到处传 `mode`
+3. 需要强约束时，可以显式把支持 WebSocket 的调用锁定在 WebSocket 路径上
 
 ## 什么时候要显式预热 WebSocket
 
@@ -25,7 +25,7 @@
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
 await client.Client.InitWebSocketAsync();
 
@@ -54,7 +54,7 @@ builder.Services.AddAioTiebaClient(options =>
 builder.Services.AddHttpClient("TiebaClient")
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
     {
-        Proxy = new WebProxy("PROXY_URL_PLACEHOLDER"),
+        Proxy = new WebProxy("http://127.0.0.1:7890"),
         UseProxy = true
     });
 ```
@@ -71,15 +71,15 @@ public sealed class BotHost(ITiebaClientFactory factory)
 {
     public async Task RunAsync()
     {
-        using var accountA = factory.CreateClient("BDUSS_ACCOUNT_A_PLACEHOLDER", "STOKEN_ACCOUNT_A_PLACEHOLDER");
+        using var accountA = factory.CreateClient("账号 A 的 BDUSS", "账号 A 的 STOKEN");
         using var accountB = factory.CreateClient(new TiebaOptions
         {
-            Bduss = "BDUSS_ACCOUNT_B_PLACEHOLDER",
-            Stoken = "STOKEN_ACCOUNT_B_PLACEHOLDER",
+            Bduss = "账号 B 的 BDUSS",
+            Stoken = "账号 B 的 STOKEN",
             TransportMode = TiebaTransportMode.Http
         });
 
-        await accountA.Forums.SignAsync("FORUM_NAME_PLACEHOLDER");
+        await accountA.Forums.SignAsync("你的吧名");
         await accountB.Messages.GetRepliesAsync();
     }
 }
@@ -98,7 +98,7 @@ using var guestClient = new TiebaClient();
 
 try
 {
-    await guestClient.Forums.SignAsync("FORUM_NAME_PLACEHOLDER");
+    await guestClient.Forums.SignAsync("你的吧名");
 }
 catch (TiebaAuthenticationException ex)
 {

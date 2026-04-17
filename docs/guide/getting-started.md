@@ -16,27 +16,27 @@
 
 安装完成后，先不要急着接登录态。先跑通一个不依赖凭据的读取调用，能更快确认 SDK、网络和最小使用姿势都没问题。
 
-### 示例占位符词汇表 {#example-placeholder-glossary}
+### 示例里的常见输入值 {#example-values}
 
-README、文档站和导出 skill 的示例统一使用大写下划线占位符。把它们替换成你自己的值即可；在线测试运行模板 `online-test.safe.template.json` 和 `online-test.restricted.template.json` 仍必须保持空白并 fail-closed，不在仓库里提交真实凭据或线上资产。
+文档里的示例会直接写成“你的吧名”“你的 BDUSS”“目标用户 ID”这类示意值。下面这张表说明这些常见写法通常分别代表什么。
 
-| 占位符 | 含义 |
+| 示例写法 | 实际应填写 |
 | --- | --- |
-| `BDUSS_PLACEHOLDER` / `STOKEN_PLACEHOLDER` | 当前账号的登录凭据 |
-| `BDUSS_ACCOUNT_A_PLACEHOLDER` / `STOKEN_ACCOUNT_A_PLACEHOLDER` | 多账号示例里的额外账号凭据 |
-| `FORUM_NAME_PLACEHOLDER` / `FORUM_ID_PLACEHOLDER` | 贴吧名称与 fid |
-| `THREAD_ID_PLACEHOLDER` / `POST_ID_PLACEHOLDER` | 主题帖 id 与楼层 / 楼中楼 id |
-| `USER_ID_PLACEHOLDER` / `USER_NAME_PLACEHOLDER` | 用户 id 与用户名 |
-| `PORTRAIT_PLACEHOLDER` / `USER_NAME_OR_PORTRAIT_PLACEHOLDER` | portrait 字符串，或同时接受用户名 / portrait 的公开入口值 |
-| `GROUP_ID_PLACEHOLDER` / `CHATROOM_ID_PLACEHOLDER` | 私信分组 id 与吧群聊天室 id |
-| `SEARCH_QUERY_PLACEHOLDER` / `MESSAGE_TEXT_PLACEHOLDER` | 搜索词与消息 / 回复正文 |
-| `NICKNAME_PLACEHOLDER` / `SIGNATURE_PLACEHOLDER` | 资料修改示例值 |
-| `IMAGE_HASH_PLACEHOLDER` / `THREAD_CATEGORY_NAME_PLACEHOLDER` | 图片 hash 与帖子分区 / 分类名 |
-| `REASON_PLACEHOLDER` / `APPEAL_ID_PLACEHOLDER` | 吧务原因与解封申诉 id |
-| `QQ_GROUP_ID_PLACEHOLDER` / `QQ_GROUP_LINK_CODE_PLACEHOLDER` | README 联系方式示例占位符 |
-| `PROXY_URL_PLACEHOLDER` | 自定义代理地址 |
+| `你的 BDUSS` / `你的 STOKEN` | 当前账号的登录凭据 |
+| `账号 A 的 BDUSS` / `账号 A 的 STOKEN` | 多账号示例里的账号 A 凭据 |
+| `账号 B 的 BDUSS` / `账号 B 的 STOKEN` | 多账号示例里的账号 B 凭据 |
+| `你的吧名` / `123456789UL` | 贴吧名称与 fid |
+| `123456789L` / `987654321L` | 主题帖 id 与楼层 / 楼中楼 id |
+| `123456789` / `目标用户名` | 用户 id 与用户名 |
+| `目标用户 portrait` / `目标用户名或 portrait` | portrait 字符串，或同时接受用户名 / portrait 的公开入口值 |
+| `123456789L` / `123456789UL` | 私信分组 id 与吧群聊天室 / 吧 id |
+| `关键词` / `消息内容` | 搜索词与消息 / 回复正文 |
+| `新的昵称` / `新的个性签名` | 资料修改示例值 |
+| `图片哈希` / `分类名` | 图片 hash 与帖子分区 / 分类名 |
+| `违规理由` / `123456789L` | 吧务原因与解封申诉 id |
+| `http://127.0.0.1:7890` | 自定义代理地址 |
 
-当参数类型不是 `string` 时，示例会用 `int.Parse(...)`、`long.Parse(...)` 或 `ulong.Parse(...)` 包装这些占位符，以保持目标参数类型清晰。
+当参数类型本身是数字时，示例会直接写成 `123456789`、`123456789L` 或 `123456789UL` 这类字面量，方便你一眼看出目标参数类型。
 
 ## 3. 访客读取
 
@@ -47,11 +47,11 @@ using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var forum = await client.Forums.GetForumAsync("FORUM_NAME_PLACEHOLDER");
-var threads = await client.Threads.GetThreadsAsync("FORUM_NAME_PLACEHOLDER");
+var forum = await client.Forums.GetForumAsync("你的吧名");
+var threads = await client.Threads.GetThreadsAsync("你的吧名");
 
 Console.WriteLine($"吧名: {forum.Fname}");
-Console.WriteLine($"当前页主题数: {threads.Objs.Count}");
+Console.WriteLine($"当前页主题数: {threads.Count}");
 ```
 
 如果这里就失败，通常先看运行环境、网络链路或请求超时设置。排查入口见文末的排障链接。
@@ -63,9 +63,9 @@ Console.WriteLine($"当前页主题数: {threads.Objs.Count}");
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
-await client.Forums.SignAsync("FORUM_NAME_PLACEHOLDER");
+await client.Forums.SignAsync("你的吧名");
 
 var selfInfo = await client.Users.GetSelfInfoAsync();
 Console.WriteLine(selfInfo.ShowName);
@@ -87,21 +87,21 @@ using AioTieba4DotNet.Contracts;
 
 using var client = new TiebaClient(new TiebaOptions
 {
-    Bduss = "BDUSS_PLACEHOLDER",
-    Stoken = "STOKEN_PLACEHOLDER",
+    Bduss = "你的 BDUSS",
+    Stoken = "你的 STOKEN",
     TransportMode = TiebaTransportMode.Http,
     RequestTimeout = TimeSpan.FromSeconds(20),
     MaxReadRetryAttempts = 1
 });
 
-var homepage = await client.Users.GetHomepageAsync(int.Parse("USER_ID_PLACEHOLDER"));
+var homepage = await client.Users.GetHomepageAsync(123456789);
 Console.WriteLine(homepage.Count);
 ```
 
 你可以先记住两条规则：
 
 - 默认 `TransportMode` 是 `Auto`
-- 当链路或接口不适合 WebSocket 时，会回退到 HTTP，但取消、鉴权失败、配置错误和服务端业务错误不属于自动回退信号
+- `Auto` 下，当链路或接口不适合 WebSocket 时会回退到 HTTP，但取消、鉴权失败、配置错误和服务端业务错误不属于自动回退信号；如果你要强制支持 WebSocket 的调用只能走 WebSocket，可以改成 `TiebaTransportMode.WebSocketOnly`
 
 ## 6. 接到依赖注入
 
@@ -127,7 +127,7 @@ public sealed class ForumWorker(ITiebaClient client)
 {
     public async Task RunAsync(CancellationToken cancellationToken)
     {
-        var detail = await client.Forums.GetDetailAsync("FORUM_NAME_PLACEHOLDER", cancellationToken);
+        var detail = await client.Forums.GetDetailAsync("你的吧名", cancellationToken);
         Console.WriteLine(detail.Fname);
     }
 }
@@ -145,15 +145,15 @@ public sealed class MultiAccountJob(ITiebaClientFactory factory)
 {
     public async Task RunAsync()
     {
-        using var signer = factory.CreateClient("BDUSS_ACCOUNT_A_PLACEHOLDER", "STOKEN_ACCOUNT_A_PLACEHOLDER");
+        using var signer = factory.CreateClient("账号 A 的 BDUSS", "账号 A 的 STOKEN");
         using var reader = factory.CreateClient(new TiebaOptions
         {
-            Bduss = "BDUSS_ACCOUNT_B_PLACEHOLDER",
-            Stoken = "STOKEN_ACCOUNT_B_PLACEHOLDER",
+            Bduss = "账号 B 的 BDUSS",
+            Stoken = "账号 B 的 STOKEN",
             TransportMode = TiebaTransportMode.Http
         });
 
-        await signer.Forums.SignAsync("FORUM_NAME_PLACEHOLDER");
+        await signer.Forums.SignAsync("你的吧名");
 
         var messages = await reader.Messages.GetAtsAsync();
         Console.WriteLine(messages.Count);

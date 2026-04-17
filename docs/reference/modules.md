@@ -2,6 +2,8 @@
 
 这页汇总当前公开 API，适合查入口、签名、职责边界和公开模型类型。第一次接入时先看 [快速开始](/guide/getting-started)；已经知道自己要调用什么时，再把这页当成字典使用。
 
+这页是 consumer-facing cross-check，不是 parity truth。公开对齐台账看 [`docs/related/parity.md`](../related/parity.md)，公开覆盖与 discoverability 规则看 [`docs/related/public-api-coverage-matrix.md`](../related/public-api-coverage-matrix.md)。当前执行模型里，`AioTieba4DotNet.Tests.Online` 是唯一 discoverability-scanned scenario assembly，`AioTieba4DotNet.Tests.Governance` 负责 ordered suite 和 wrapper 路由。本地收敛入口 `pwsh ./scripts/verify-local.ps1 -ValidateOnly` 会把这三份文档作为同一个 canonical docs contract 来校验。
+
 除特别说明的同步成员外，下面列出的异步方法都带有尾部参数 `CancellationToken cancellationToken = default`。
 
 ## 根入口
@@ -69,6 +71,7 @@
 | --- | --- |
 | `Auto` | 默认模式；支持 WebSocket 的调用优先走 WebSocket，否则回退 HTTP。 |
 | `Http` | 强制走 HTTP。 |
+| `WebSocketOnly` | 仅对支持 WebSocket 的调用强制走 WebSocket；这类调用在链路不可用时会直接失败，不回退 HTTP。没有 WebSocket 路径的 API 仍按自身受支持的传输执行。 |
 
 ### `TimeoutConfig`
 
@@ -260,6 +263,8 @@
 ## `client.Messages`
 
 适合 inbox、私信、吧群消息和推送通知解析。
+
+其中 `GetRepliesAsync(...)` 会优先走 websocket 路径，并在不可用时退回上游兼容的 HTTP fallback；`SendChatroomMessageAsync(...)` 公开仍按 `atUserIds` 调用，但内部会补全 mention 的昵称、portrait 和位置后再发送 BLCP payload；`SetMessageReadAsync(...)` 只接受私信 `WsMessage`，并复用 websocket 初始化阶段拿到的 private group 游标。
 
 | 方法 | 说明 |
 | --- | --- |
