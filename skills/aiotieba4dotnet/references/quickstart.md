@@ -1,6 +1,6 @@
 # AioTieba4DotNet 快速上手
 
-示例里的 `FORUM_NAME_PLACEHOLDER`、`BDUSS_PLACEHOLDER` 等值统一遵循仓库文档的[示例占位符词汇表](../../../docs/guide/getting-started.md#example-placeholder-glossary)。
+如果你在示例里看到 `BDUSS_PLACEHOLDER`、`FORUM_NAME_PLACEHOLDER`、`USER_ID_PLACEHOLDER` 这类名字，把它们换成你自己的真实值即可；需要对照时，看 [SKILL 里的示例占位符说明](../SKILL.md#example-placeholders)。
 
 ## 包信息
 
@@ -20,7 +20,7 @@ dotnet add package AioTieba4DotNet
 可选的 NuGet 包管理器命令：
 
 ```powershell
-NuGet\Install-Package AioTieba4DotNet -Version 3.0.0
+NuGet\Install-Package AioTieba4DotNet
 ```
 
 ## 客户端初始化方式
@@ -50,8 +50,8 @@ using System;
 
 using var client = new TiebaClient(new TiebaOptions
 {
-    Bduss = "BDUSS_PLACEHOLDER",
-    Stoken = "STOKEN_PLACEHOLDER",
+    Bduss = Environment.GetEnvironmentVariable("TIEBA_BDUSS"),
+    Stoken = Environment.GetEnvironmentVariable("TIEBA_STOKEN"),
     TransportMode = TiebaTransportMode.Http,
     RequestTimeout = TimeSpan.FromSeconds(15),
     MaxReadRetryAttempts = 1,
@@ -87,7 +87,8 @@ using var client = new TiebaClient(new TiebaOptions
 
 - 公开传输模式由 `TiebaOptions.TransportMode` 控制。
 - 默认模式是 `Auto`。
-- 唯一公开覆盖模式是 `Http`。
+- `Http` 用来强制关闭 WebSocket。
+- `WebSocketOnly` 用来要求支持 WebSocket 的调用只能走 WebSocket，不回退到 HTTP；没有 WebSocket 路径的 API 仍按自身受支持的传输执行。
 - 缺少登录凭据却调用需要登录的操作时，可能抛出 `TiebaAuthenticationException`。
 - 配置本身非法时，可能抛出 `TiebaConfigurationException`。
 - 服务端按业务语义拒绝请求时，可能抛出 `TieBaServerException`。
