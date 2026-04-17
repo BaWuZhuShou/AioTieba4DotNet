@@ -2,6 +2,7 @@ using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Transport;
+using AioTieba4DotNet.Transport.WebSockets;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetThreads;
@@ -23,14 +24,13 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
             {
                 Common = new CommonReq { ClientType = 2, ClientVersion = Const.MainVersion },
                 Kw = fname,
+                Pn = pn == 1 ? 0 : pn,
                 Rn = rn,
                 RnNeed = rn + 5,
                 IsGood = isGood,
-                SortType = sort,
-                LoadType = 1
+                SortType = sort
             }
         };
-        if (pn != 1) frsPageResIdl.Data.Pn = pn;
 
         return frsPageResIdl.ToByteArray();
     }
@@ -43,6 +43,29 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
         var dataForum = resProto.Data;
 
         return ThreadsMapper.FromTbData(dataForum);
+    }
+
+    private static byte[] ExtractWsBody(WSRes response)
+    {
+        var body = response.Payload?.Data;
+        if (body == null || body.IsEmpty)
+            throw new TiebaWebSocketUnavailableException(
+                "WebSocket returned an empty get-threads payload.");
+
+        return body.ToByteArray();
+    }
+
+    private static Threads ParseWsBody(byte[] body)
+    {
+        try
+        {
+            return ParseBody(body);
+        }
+        catch (InvalidProtocolBufferException exception)
+        {
+            throw new TiebaWebSocketUnavailableException(
+                "WebSocket returned an invalid get-threads payload.", exception);
+        }
     }
 
     /// <summary>
@@ -80,6 +103,6 @@ internal class GetThreads(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     {
         var data = PackProto(fname, pn, rn, sort, isGood);
         var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
-        return ParseBody(response.Payload.Data.ToByteArray());
+        return ParseWsBody(ExtractWsBody(response));
     }
 }
