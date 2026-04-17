@@ -7,6 +7,7 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
 {
     private readonly TiebaWebSocketEngine _engine;
     private readonly TiebaWebSocketFrameCodec _frameCodec;
+    private readonly object _accountLock = new();
 
     /// <summary>
     ///     初始化 WebsocketCore
@@ -51,11 +52,24 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
         Account = newAccount;
     }
 
+    private Account EnsureRuntimeAccount()
+    {
+        if (Account != null)
+            return Account;
+
+        lock (_accountLock)
+        {
+            Account ??= new Account();
+            return Account;
+        }
+    }
+
     /// <summary>
     ///     建立 WebSocket 连接并执行初始化握手
     /// </summary>
     public Task ConnectAsync(CancellationToken cancellationToken = default)
     {
+        _ = EnsureRuntimeAccount();
         return _engine.ConnectAsync(cancellationToken);
     }
 
@@ -64,6 +78,7 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
     /// </summary>
     public Task SendAsync(WSReq req, CancellationToken cancellationToken = default)
     {
+        _ = EnsureRuntimeAccount();
         return _engine.SendAsync(req, cancellationToken);
     }
 
@@ -73,6 +88,7 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
     public Task<WSRes> SendAsync(int cmd, byte[] data, bool encrypt = true,
         CancellationToken cancellationToken = default)
     {
+        _ = EnsureRuntimeAccount();
         return _engine.SendAsync(cmd, data, encrypt, cancellationToken);
     }
 
@@ -81,6 +97,7 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
     /// </summary>
     public IAsyncEnumerable<WSRes> ListenAsync(CancellationToken cancellationToken = default)
     {
+        _ = EnsureRuntimeAccount();
         return _engine.ListenAsync(cancellationToken);
     }
 
@@ -97,7 +114,7 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
     /// </summary>
     internal byte[] PackWsBytes(byte[] data, int cmd, int reqId, bool encrypt = true)
     {
-        return _frameCodec.Pack(data, cmd, reqId, Account, encrypt);
+        return _frameCodec.Pack(data, cmd, reqId, EnsureRuntimeAccount(), encrypt);
     }
 
     /// <summary>
@@ -105,7 +122,7 @@ internal sealed class WebsocketCore : ITiebaWsCore, IDisposable
     /// </summary>
     internal (byte[] data, int cmd, int reqId) ParseWsBytes(byte[] data)
     {
-        var (payload, cmd, reqId) = _frameCodec.Parse(data, Account);
+        var (payload, cmd, reqId) = _frameCodec.Parse(data, EnsureRuntimeAccount());
         return (payload, cmd, reqId);
     }
 }
