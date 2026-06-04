@@ -13,9 +13,7 @@ internal static class UserInfoGuInfoWebMapper
         if (userName == userId.ToString())
             userName = string.Empty;
 
-        var portrait = data.GetValue("portrait")?.Value<string>() ?? string.Empty;
-        if (portrait.Contains('?', StringComparison.Ordinal))
-            portrait = portrait[..portrait.IndexOf('?', StringComparison.Ordinal)];
+        var portrait = UserProtoMapping.NormalizePortrait(data.GetValue("portrait")?.Value<string>());
 
         return new UserInfo
         {

@@ -15,21 +15,16 @@ internal static class UserInfoPfMapper
 
         var antiStatProto = dataProto.AntiStat;
 
-        var portrait = userProto.Portrait ?? string.Empty;
-
-        if (portrait.Contains('?')) portrait = portrait[..^13];
-
-
         return new UserInfoPf
         {
             UserId = userProto.Id,
-            Portrait = portrait,
+            Portrait = UserProtoMapping.NormalizePortrait(userProto.Portrait),
             UserName = userProto.Name ?? string.Empty,
             NickNameNew = userProto.NameShow ?? string.Empty,
-            TiebaUid = string.IsNullOrEmpty(userProto.TiebaUid) ? 0 : long.Parse(userProto.TiebaUid),
+            TiebaUid = UserProtoMapping.ParseTiebaUid(userProto.TiebaUid),
             GLevel = userProto.UserGrowth != null ? (int)userProto.UserGrowth.LevelId : 0,
             Gender = (Gender)userProto.Gender,
-            Age = string.IsNullOrEmpty(userProto.TbAge) ? 0 : float.Parse(userProto.TbAge),
+            Age = UserProtoMapping.ParseTbAge(userProto.TbAge),
             PostNum = userProto.PostNum,
             AgreeNum = dataProto.UserAgreeInfo != null ? (int)dataProto.UserAgreeInfo.TotalAgreeNum : 0,
             FanNum = userProto.FansNum,
@@ -37,23 +32,15 @@ internal static class UserInfoPfMapper
             ForumNum = userProto.MyLikeNum,
             Sign = userProto.Intro ?? string.Empty,
             Ip = userProto.IpAddress ?? string.Empty,
-            Icons =
-                userProto.Iconinfo != null
-                    ? userProto.Iconinfo.Where(i => !string.IsNullOrEmpty(i.Name)).Select(i => i.Name).ToList()
-                    : [],
+            Icons = UserProtoMapping.MapIconNames(userProto),
             VImage = VirtualImagePfMapper.FromTbData(userProto.VirtualImageInfo),
-            IsVip = userProto.NewTshowIcon != null && userProto.NewTshowIcon.Count != 0,
-            IsGod = userProto.NewGodData != null && userProto.NewGodData.Status == 1,
+            IsVip = UserProtoMapping.MapIsVip(userProto),
+            IsGod = UserProtoMapping.MapIsGod(userProto),
             IsBlocked =
                 antiStatProto != null && antiStatProto.BlockStat != 0 && antiStatProto.HideStat != 0 &&
                 antiStatProto.DaysTofree > 30,
-            PrivLike =
-                userProto.PrivSets != null && userProto.PrivSets.Like != 0
-                    ? (PrivLike)userProto.PrivSets.Like
-                    : PrivLike.Public,
-            PrivReply = userProto.PrivSets != null && userProto.PrivSets.Reply != 0
-                ? (PrivReply)userProto.PrivSets.Reply
-                : PrivReply.All
+            PrivLike = UserProtoMapping.MapPrivLike(userProto.PrivSets),
+            PrivReply = UserProtoMapping.MapPrivReply(userProto.PrivSets)
         };
     }
 }

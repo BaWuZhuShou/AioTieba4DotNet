@@ -60,9 +60,6 @@ internal static class LastReplyersMapper
 
     private static string NormalizePortrait(string portrait)
     {
-        if (portrait.Contains('?', StringComparison.Ordinal) && portrait.Length >= 13)
-            return portrait[..^13];
-
-        return portrait;
+        return UserProtoMapping.NormalizePortrait(portrait);
     }
 }

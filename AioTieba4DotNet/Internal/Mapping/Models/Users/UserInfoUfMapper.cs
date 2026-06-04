@@ -10,9 +10,7 @@ internal static class UserInfoUfMapper
         if (data is null)
             return new UserInfoUf();
 
-        var portrait = data.GetValue("portrait")?.Value<string>() ?? string.Empty;
-        if (portrait.Contains('?', StringComparison.Ordinal))
-            portrait = portrait[..portrait.IndexOf('?', StringComparison.Ordinal)];
+        var portrait = UserProtoMapping.NormalizePortrait(data.GetValue("portrait")?.Value<string>());
 
         return new UserInfoUf
         {

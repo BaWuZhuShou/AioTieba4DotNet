@@ -11,6 +11,8 @@ internal static class UserPostsMapper
 
         var tid = (long)dataRes.ThreadId;
 
+        var user = UserInfoMapper.FromTbData(dataRes);
+
         List<UserPost> objs = [];
 
         foreach (var userPost in dataRes.Content.Select(UserPostMapper.FromTbData))
@@ -19,6 +21,8 @@ internal static class UserPostsMapper
             userPost.Fid = fid;
 
             userPost.Tid = tid;
+
+            userPost.User = user;
 
             objs.Add(userPost);
         }

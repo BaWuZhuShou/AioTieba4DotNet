@@ -1,3 +1,4 @@
+using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Models.Shared;
 using Newtonsoft.Json.Linq;
 
@@ -36,9 +37,24 @@ internal static class UserInfoMapper
         return new UserInfo
         {
             UserId = data.Id,
-            Portrait = NormalizePortrait(data.Portrait ?? string.Empty),
-            UserName = data.Name,
-            NickNameNew = data.NameShow
+            Portrait = UserProtoMapping.NormalizePortrait(data.Portrait),
+            UserName = data.Name ?? string.Empty,
+            NickNameNew = data.NameShow ?? string.Empty,
+            TiebaUid = UserProtoMapping.ParseTiebaUid(data.TiebaUid),
+            GLevel = (int)(data.UserGrowth?.LevelId ?? 0),
+            Gender = (Gender)data.Gender,
+            Age = UserProtoMapping.ParseTbAge(data.TbAge),
+            PostNum = data.PostNum,
+            FanNum = data.FansNum,
+            FollowNum = data.ConcernNum,
+            ForumNum = data.MyLikeNum,
+            Sign = data.Intro ?? string.Empty,
+            Ip = data.IpAddress ?? string.Empty,
+            Icons = UserProtoMapping.MapIconNames(data),
+            IsVip = UserProtoMapping.MapIsVip(data),
+            IsGod = UserProtoMapping.MapIsGod(data),
+            PrivLike = UserProtoMapping.MapPrivLike(data.PrivSets),
+            PrivReply = UserProtoMapping.MapPrivReply(data.PrivSets)
         };
     }
 
@@ -57,8 +73,6 @@ internal static class UserInfoMapper
 
     private static string NormalizePortrait(string portrait)
     {
-        if (portrait.Contains('?')) portrait = portrait[..^13];
-
-        return portrait;
+        return UserProtoMapping.NormalizePortrait(portrait);
     }
 }

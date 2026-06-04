@@ -11,31 +11,29 @@ internal static class UserInfoTMapper
         if (dataProto == null) return null;
 
 
-        var portrait = dataProto.Portrait ?? "";
-
-        if (portrait.Contains('?')) portrait = portrait[..^13];
-
-
         return new UserInfoT
         {
             UserId = dataProto.Id,
-            Portrait = portrait,
-            UserName = dataProto.Name,
-            NickNameNew = dataProto.NameShow,
+            Portrait = UserProtoMapping.NormalizePortrait(dataProto.Portrait),
+            UserName = dataProto.Name ?? string.Empty,
+            NickNameNew = dataProto.NameShow ?? string.Empty,
+            TiebaUid = UserProtoMapping.ParseTiebaUid(dataProto.TiebaUid),
             Level = dataProto.LevelId,
             GLevel = (int)(dataProto.UserGrowth?.LevelId ?? 0),
             Gender = (Gender)dataProto.Gender,
-            Icons = dataProto.Iconinfo?.Where(i => !string.IsNullOrEmpty(i.Name)).Select(i => i.Name).ToList() ?? [],
+            Age = UserProtoMapping.ParseTbAge(dataProto.TbAge),
+            PostNum = dataProto.PostNum,
+            FanNum = dataProto.FansNum,
+            FollowNum = dataProto.ConcernNum,
+            ForumNum = dataProto.MyLikeNum,
+            Sign = dataProto.Intro ?? string.Empty,
+            Ip = dataProto.IpAddress ?? string.Empty,
+            Icons = UserProtoMapping.MapIconNames(dataProto),
             IsBawu = dataProto.IsBawu == 1,
-            IsVip = dataProto.NewTshowIcon.Count != 0,
-            IsGod = dataProto.NewGodData is { Status: 1 },
-            PrivLike = dataProto.PrivSets != null && dataProto.PrivSets.Like != 0
-                ? (PrivLike)dataProto.PrivSets.Like
-                : PrivLike.Public,
-            PrivReply = dataProto.PrivSets != null && dataProto.PrivSets.Reply != 0
-                ? (PrivReply)dataProto.PrivSets.Reply
-                : PrivReply.All,
-            Ip = dataProto.IpAddress
+            IsVip = UserProtoMapping.MapIsVip(dataProto),
+            IsGod = UserProtoMapping.MapIsGod(dataProto),
+            PrivLike = UserProtoMapping.MapPrivLike(dataProto.PrivSets),
+            PrivReply = UserProtoMapping.MapPrivReply(dataProto.PrivSets)
         };
     }
 }

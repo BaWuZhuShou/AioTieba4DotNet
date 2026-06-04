@@ -20,7 +20,7 @@ internal static class FragVoiceMapper
     {
         var md5 = dataProto.VoiceMd5;
 
-        var duration = int.Parse(dataProto.DuringTime) / 1000;
+        var duration = int.TryParse(dataProto.DuringTime, out var parsedDuration) ? parsedDuration / 1000 : 0;
 
         return new FragVoice { Md5 = md5, Duration = duration };
     }

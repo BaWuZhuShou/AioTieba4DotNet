@@ -17,8 +17,6 @@ internal static class UserInfoLoginMapper
 
     private static string NormalizePortrait(string portrait)
     {
-        if (portrait.Contains('?')) portrait = portrait[..^13];
-
-        return portrait;
+        return UserProtoMapping.NormalizePortrait(portrait);
     }
 }

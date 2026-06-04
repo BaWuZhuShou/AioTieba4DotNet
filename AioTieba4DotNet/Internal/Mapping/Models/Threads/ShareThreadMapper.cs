@@ -14,7 +14,7 @@ internal static class ShareThreadMapper
             Title = threadInfo.Title,
             Fid = threadInfo.Fid,
             Fname = threadInfo.Fname,
-            Tid = threadInfo.Tid != null ? Convert.ToInt64(threadInfo.Tid) : 0,
+            Tid = long.TryParse(threadInfo.Tid, out var tid) ? tid : 0,
             Pid = threadInfo.Pid,
             VoteInfo = threadInfo.PollInfo != null ? VoteInfoMapper.FromTbData(threadInfo.PollInfo) : null
         };

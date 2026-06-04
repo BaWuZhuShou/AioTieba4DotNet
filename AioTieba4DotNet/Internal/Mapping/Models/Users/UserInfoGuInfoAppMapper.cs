@@ -7,21 +7,27 @@ internal static class UserInfoGuInfoAppMapper
 {
     internal static UserInfo FromTbData(User dataProto)
     {
-        var dataProtoPortrait = dataProto.Portrait;
-
-        if (dataProtoPortrait.Contains('?'))
-            dataProtoPortrait = dataProtoPortrait[..^13];
-
         return new UserInfo
         {
             UserId = dataProto.Id,
-            Portrait = dataProtoPortrait,
-            UserName = dataProto.Name,
-            NickNameOld = dataProto.NameShow,
+            Portrait = UserProtoMapping.NormalizePortrait(dataProto.Portrait),
+            UserName = dataProto.Name ?? string.Empty,
+            NickNameNew = dataProto.NameShow ?? string.Empty,
+            TiebaUid = UserProtoMapping.ParseTiebaUid(dataProto.TiebaUid),
+            GLevel = (int)(dataProto.UserGrowth?.LevelId ?? 0),
             Gender = (Gender)dataProto.Gender,
-            IsVip = dataProto.VipInfo.VStatus != 0,
-            IsGod = dataProto.NewGodData.Status != 0,
-            Ip = dataProto.IpAddress
+            Age = UserProtoMapping.ParseTbAge(dataProto.TbAge),
+            PostNum = dataProto.PostNum,
+            FanNum = dataProto.FansNum,
+            FollowNum = dataProto.ConcernNum,
+            ForumNum = dataProto.MyLikeNum,
+            Sign = dataProto.Intro ?? string.Empty,
+            Ip = dataProto.IpAddress ?? string.Empty,
+            Icons = UserProtoMapping.MapIconNames(dataProto),
+            IsVip = UserProtoMapping.MapIsVip(dataProto),
+            IsGod = UserProtoMapping.MapIsGod(dataProto),
+            PrivLike = UserProtoMapping.MapPrivLike(dataProto.PrivSets),
+            PrivReply = UserProtoMapping.MapPrivReply(dataProto.PrivSets)
         };
     }
 }

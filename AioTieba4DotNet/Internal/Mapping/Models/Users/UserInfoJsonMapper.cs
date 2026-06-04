@@ -7,8 +7,7 @@ internal static class UserInfoJsonMapper
 {
     internal static UserInfo FromTbData(JObject data)
     {
-        var portrait = data["portrait"]?.ToString() ?? string.Empty;
-        if (portrait.Contains('?')) portrait = portrait[..^13];
+        var portrait = UserProtoMapping.NormalizePortrait(data["portrait"]?.ToString());
 
         return new UserInfo
         {

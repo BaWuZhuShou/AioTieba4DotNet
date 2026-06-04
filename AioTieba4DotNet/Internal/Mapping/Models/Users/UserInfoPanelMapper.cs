@@ -8,8 +8,7 @@ internal static class UserInfoPanelMapper
 {
     internal static UserInfo FromTbData(JObject data)
     {
-        var portrait = data.GetValue("portrait")?.ToObject<string>() ?? string.Empty;
-        if (portrait.Contains('?')) portrait = portrait[..^13];
+        var portrait = UserProtoMapping.NormalizePortrait(data.GetValue("portrait")?.ToObject<string>());
 
         var vipInfoToken = data.GetValue("vipInfo");
         JObject? vipInfoObject = null;

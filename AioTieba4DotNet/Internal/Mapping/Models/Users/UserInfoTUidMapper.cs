@@ -1,3 +1,4 @@
+using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Models.Shared;
 
 namespace AioTieba4DotNet.Internal.Mapping;
@@ -6,20 +7,27 @@ internal static class UserInfoTUidMapper
 {
     internal static UserInfo FromTbData(User data)
     {
-        var portrait = data.Portrait;
-        if (portrait.Contains('?', StringComparison.Ordinal))
-            portrait = portrait[..portrait.IndexOf('?', StringComparison.Ordinal)];
-
         return new UserInfo
         {
             UserId = data.Id,
-            Portrait = portrait,
-            UserName = data.Name,
-            NickNameNew = data.NameShow,
-            TiebaUid = string.IsNullOrEmpty(data.TiebaUid) ? 0 : long.Parse(data.TiebaUid),
-            Age = string.IsNullOrEmpty(data.TbAge) ? 0 : float.Parse(data.TbAge),
-            Sign = data.Intro,
-            IsGod = data.NewGodData?.Status == 1
+            Portrait = UserProtoMapping.NormalizePortrait(data.Portrait),
+            UserName = data.Name ?? string.Empty,
+            NickNameNew = data.NameShow ?? string.Empty,
+            TiebaUid = UserProtoMapping.ParseTiebaUid(data.TiebaUid),
+            GLevel = (int)(data.UserGrowth?.LevelId ?? 0),
+            Gender = (Gender)data.Gender,
+            Age = UserProtoMapping.ParseTbAge(data.TbAge),
+            PostNum = data.PostNum,
+            FanNum = data.FansNum,
+            FollowNum = data.ConcernNum,
+            ForumNum = data.MyLikeNum,
+            Sign = data.Intro ?? string.Empty,
+            Ip = data.IpAddress ?? string.Empty,
+            Icons = UserProtoMapping.MapIconNames(data),
+            IsVip = UserProtoMapping.MapIsVip(data),
+            IsGod = UserProtoMapping.MapIsGod(data),
+            PrivLike = UserProtoMapping.MapPrivLike(data.PrivSets),
+            PrivReply = UserProtoMapping.MapPrivReply(data.PrivSets)
         };
     }
 }

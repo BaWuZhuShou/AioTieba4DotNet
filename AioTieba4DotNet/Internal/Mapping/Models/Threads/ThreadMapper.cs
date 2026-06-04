@@ -20,6 +20,8 @@ internal static class ThreadMapper
         {
             Content = ContentMapper.FromTbData(threadInfo),
             Title = threadInfo.Title,
+            Fid = threadInfo.Fid,
+            Fname = threadInfo.Fname ?? string.Empty,
             Tid = threadInfo.Id,
             Pid = threadInfo.FirstPostId,
             User = UserInfoTMapper.FromTbData(threadInfo.Author),

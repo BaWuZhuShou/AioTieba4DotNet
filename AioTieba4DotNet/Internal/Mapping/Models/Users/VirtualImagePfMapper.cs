@@ -7,9 +7,9 @@ internal static class VirtualImagePfMapper
     internal static VirtualImagePf FromTbData(ThreadInfo dataProto)
 
     {
-        var enabled = dataProto?.CustomFigure?.BackgroundValue != "";
+        var enabled = !string.IsNullOrEmpty(dataProto.CustomFigure?.BackgroundValue);
 
-        var customStateContent = dataProto?.CustomState?.Content ?? "";
+        var customStateContent = dataProto.CustomState?.Content ?? "";
 
         return new VirtualImagePf { Enabled = enabled, State = customStateContent };
     }

@@ -13,7 +13,7 @@ internal static class UserInfoSelfMoIndexMapper
         return new UserInfo
         {
             UserId = data.GetValue("id")?.Value<long>() ?? 0,
-            Portrait = data.GetValue("portrait")?.Value<string>() ?? string.Empty,
+            Portrait = UserProtoMapping.NormalizePortrait(data.GetValue("portrait")?.Value<string>()),
             UserName = data.GetValue("name")?.Value<string>() ?? string.Empty,
             Gender = (Gender)(data.GetValue("user_sex")?.Value<int>() ?? 0),
             PostNum = data.GetValue("post_num")?.Value<int>() ?? 0,

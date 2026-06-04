@@ -25,6 +25,7 @@ internal static class PostMapper
             Content = ContentMapper.FromTbData(dataProto.Content),
             Sign = sign,
             Pid = dataProto.Id,
+            Tid = dataProto.Tid,
             User = UserInfoTMapper.FromTbData(dataProto.Author),
             AuthorId = dataProto.AuthorId,
             Floor = dataProto.Floor,
