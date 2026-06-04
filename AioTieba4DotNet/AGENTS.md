@@ -82,10 +82,9 @@ AioTieba4DotNet/
 
 ## TESTING LINKS
 
-- Online test contracts, environment templates, and shared support live in `../AioTieba4DotNet.Tests.Infrastructure/`.
-- Default local-only scenario coverage lives in `../AioTieba4DotNet.Tests.Online.Safe/`.
-- Explicit restricted moderation and admin coverage lives in `../AioTieba4DotNet.Tests.Online.Restricted/`.
-- Ordered suite execution and legacy-reference eradication contracts live in `../AioTieba4DotNet.Tests.Online.Suite/`.
+- Shared runtime support, environment templates, repo-path helpers, execution bases, and support utilities live in `../AioTieba4DotNet.Tests.Platform/`.
+- The only discoverability-scanned runnable scenario assembly lives in `../AioTieba4DotNet.Tests.Online/`, with Safe and Restricted tiers under `Tiers/`.
+- Ordered suite execution, topology and environment contracts, retained offline contract tests, and wrapper-owned `safe` / `restricted` / `sequence-dry-run` routes live in `../AioTieba4DotNet.Tests.Governance/`.
 
 ## NOTES
 
@@ -95,5 +94,4 @@ AioTieba4DotNet/
   `docs/guide/advanced.md`, `docs/guide/troubleshooting.md`, release notes, migration notes, and
   `docs/related/parity.md`.
 - If library work changes public usage patterns, install identity, or the consumer-facing module surface, also keep the
-  exported skill package under `../skills/aiotieba4dotnet/` aligned, including `SKILL.md`, `skill.json`, and
-  `package.json`.
+  exported skill package under `../skills/aiotieba4dotnet/` aligned, including `SKILL.md` and `references/`.

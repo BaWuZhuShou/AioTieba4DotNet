@@ -2,7 +2,7 @@
 
 这页按常见吧务任务组织。要查完整方法和签名，请同时对照 [API 参考](/reference/modules)。
 
-本页示例里的 `FORUM_NAME_PLACEHOLDER`、`USER_ID_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](/guide/getting-started#example-placeholder-glossary)。
+本页示例会直接写成“你的吧名”“你的 BDUSS”“目标用户 ID”这类示意值，阅读时按自己的实际参数替换即可。
 
 ## 开始前
 
@@ -18,10 +18,10 @@
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
-var bawuInfo = await client.Admins.GetBawuInfoAsync("FORUM_NAME_PLACEHOLDER");
-var bawuPerm = await client.Admins.GetBawuPermAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER");
+var bawuInfo = await client.Admins.GetBawuInfoAsync("你的吧名");
+var bawuPerm = await client.Admins.GetBawuPermAsync("你的吧名", "目标用户 portrait");
 
 Console.WriteLine(bawuInfo.Managers.Count);
 Console.WriteLine(bawuPerm.Value);
@@ -37,11 +37,11 @@ Console.WriteLine(bawuPerm.Value);
 using AioTieba4DotNet;
 using AioTieba4DotNet.Models;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
-await client.Admins.AddBawuAsync("FORUM_NAME_PLACEHOLDER", "USER_NAME_PLACEHOLDER", BawuType.Manager);
-await client.Admins.SetBawuPermAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER", BawuPermType.All);
-await client.Admins.DelBawuAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER", BawuType.Manager);
+await client.Admins.AddBawuAsync("你的吧名", "目标用户名", BawuType.Manager);
+await client.Admins.SetBawuPermAsync("你的吧名", "目标用户 portrait", BawuPermType.All);
+await client.Admins.DelBawuAsync("你的吧名", "目标用户 portrait", BawuType.Manager);
 ```
 
 适合吧务团队维护或权限同步场景。`AddBawuAsync(...)` / `DelBawuAsync(...)` 管的是角色本身，`SetBawuPermAsync(...)` 管的是已分配吧务的权限集合。
@@ -53,13 +53,13 @@ await client.Admins.DelBawuAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
-var blacklist = await client.Admins.GetBawuBlacklistAsync("FORUM_NAME_PLACEHOLDER");
-await client.Admins.AddBawuBlacklistAsync("FORUM_NAME_PLACEHOLDER", long.Parse("USER_ID_PLACEHOLDER"));
-await client.Admins.DelBawuBlacklistAsync("FORUM_NAME_PLACEHOLDER", long.Parse("USER_ID_PLACEHOLDER"));
+var blacklist = await client.Admins.GetBawuBlacklistAsync("你的吧名");
+await client.Admins.AddBawuBlacklistAsync("你的吧名", 123456789L);
+await client.Admins.DelBawuBlacklistAsync("你的吧名", 123456789L);
 
-Console.WriteLine(blacklist.Objs.Count);
+Console.WriteLine(blacklist.Count);
 ```
 
 如果你的目标只是普通用户黑名单，请回到 `client.Users`；这里的黑名单属于吧务管理范围。
@@ -72,24 +72,24 @@ Console.WriteLine(blacklist.Objs.Count);
 using AioTieba4DotNet;
 using AioTieba4DotNet.Models;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
 var postLogs = await client.Admins.GetBawuPostLogsAsync(
-    "FORUM_NAME_PLACEHOLDER",
+    "你的吧名",
     new BawuPostLogQueryOptions
     {
         PageNumber = 1
     });
 
 var userLogs = await client.Admins.GetBawuUserLogsAsync(
-    "FORUM_NAME_PLACEHOLDER",
+    "你的吧名",
     new BawuUserLogQueryOptions
     {
         PageNumber = 1
     });
 
-Console.WriteLine(postLogs.Objs.Count);
-Console.WriteLine(userLogs.Objs.Count);
+Console.WriteLine(postLogs.Count);
+Console.WriteLine(userLogs.Count);
 ```
 
 如果你已经知道筛选范围，可以再补充 `SearchValue`、`StartTime`、`EndTime` 或其他查询字段，把日志读取收窄到更具体的管理动作。
@@ -101,13 +101,13 @@ Console.WriteLine(userLogs.Objs.Count);
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
-var blocks = await client.Admins.GetBlocksAsync("FORUM_NAME_PLACEHOLDER");
-await client.Admins.BlockAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER", day: 1, reason: "REASON_PLACEHOLDER");
-await client.Admins.UnblockAsync("FORUM_NAME_PLACEHOLDER", long.Parse("USER_ID_PLACEHOLDER"));
+var blocks = await client.Admins.GetBlocksAsync("你的吧名");
+await client.Admins.BlockAsync("你的吧名", "目标用户 portrait", day: 1, reason: "违规理由");
+await client.Admins.UnblockAsync("你的吧名", 123456789L);
 
-Console.WriteLine(blocks.Objs.Count);
+Console.WriteLine(blocks.Count);
 ```
 
 执行 `BlockAsync(...)` 前，最好先把理由和时长固定好。解封前也建议先确认目标用户和封禁记录对应的是同一个对象。
@@ -119,12 +119,12 @@ Console.WriteLine(blocks.Objs.Count);
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
-var appeals = await client.Admins.GetUnblockAppealsAsync("FORUM_NAME_PLACEHOLDER");
-await client.Admins.HandleUnblockAppealsAsync("FORUM_NAME_PLACEHOLDER", new long[] { long.Parse("APPEAL_ID_PLACEHOLDER") }, refuse: false);
+var appeals = await client.Admins.GetUnblockAppealsAsync("你的吧名");
+await client.Admins.HandleUnblockAppealsAsync("你的吧名", new long[] { 123456789L }, refuse: false);
 
-Console.WriteLine(appeals.Objs.Count);
+Console.WriteLine(appeals.Count);
 ```
 
 `refuse: false` 表示按通过处理；如果你要拒绝申诉，再显式传 `refuse: true`。

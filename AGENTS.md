@@ -10,10 +10,9 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 ```text
 .
 ├── AioTieba4DotNet/                   # shipping library; library-specific rules live in child AGENTS
-├── AioTieba4DotNet.Tests.Infrastructure/ # online test contracts, environment loading, repo-path helpers
-├── AioTieba4DotNet.Tests.Online.Safe/ # default local-only safe scenarios and ordered-safe stage coverage
-├── AioTieba4DotNet.Tests.Online.Restricted/ # explicit opt-in restricted moderation/admin scenarios
-├── AioTieba4DotNet.Tests.Online.Suite/ # ordered suite host and governance contracts for safe/restricted routing
+├── AioTieba4DotNet.Tests.Platform/       # shared online runtime support, templates, repo-path helpers, and execution bases
+├── AioTieba4DotNet.Tests.Online/         # only discoverability-scanned runnable scenario assembly, with tiers under Tiers/
+├── AioTieba4DotNet.Tests.Governance/     # ordered suite host, governance contracts, retained offline contracts, and wrappers
 ├── ProtoGenerator/                    # protobuf generator for Api/**/*.proto
 ├── docs/                              # VitePress source docs, related governance docs, and archive notes
 ├── skills/                            # exported AI skill packages for external installation and reuse
@@ -27,13 +26,12 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 |------|----------|-------|
 | Durable cross-cutting rules | `.junie/guidelines.md` | Source of truth for stable maintenance, testing, release, and coverage rules |
 | Main library work | `AioTieba4DotNet/` | Start in `AioTieba4DotNet/AGENTS.md` for library boundaries and public surface rules |
-| Online test contracts and environment loading | `AioTieba4DotNet.Tests.Infrastructure/` | Repo topology, online environment templates, suite metadata, shared support |
-| Default safe online scenarios | `AioTieba4DotNet.Tests.Online.Safe/` | Local-only safe ordered stages for read and reversible-write coverage |
-| Explicit restricted online scenarios | `AioTieba4DotNet.Tests.Online.Restricted/` | Restricted moderation/admin scenarios that require dedicated opt-in |
-| Ordered suite host and eradication contracts | `AioTieba4DotNet.Tests.Online.Suite/` | Discoverable suite host for `Suite:SafeOrdered` / `Suite:RestrictedOrdered` plus governance contracts |
+| Shared online runtime support | `AioTieba4DotNet.Tests.Platform/` | Environment templates, repo-path helpers, execution bases, and support utilities |
+| Unified runnable online scenarios | `AioTieba4DotNet.Tests.Online/` | Safe and Restricted scenarios live under `Tiers/`; this is the only discoverability-scanned scenario assembly |
+| Ordered suite host and governance contracts | `AioTieba4DotNet.Tests.Governance/` | Active host for `Suite:SafeOrdered` / `Suite:RestrictedOrdered`, governance contracts, retained offline contracts, and wrapper routes |
 | Generator maintenance | `ProtoGenerator/` | Regenerates `.proto` outputs under `AioTieba4DotNet/Api/**/Protobuf` |
 | Docs contract and IA | `README.md`, `docs/index.md`, `docs/guide/**`, `docs/how-to/**`, `docs/reference/modules.md`, `docs/related/**`, `docs/archive/todo.md` | README bridges into the active VitePress source tree; related and archive docs stay outside the main how-to/reference path |
-| Exported AI skill package | `skills/aiotieba4dotnet/` | Portable consumer-facing skill package with `SKILL.md`, `skill.json`, and `package.json` |
+| Exported AI skill package | `skills/aiotieba4dotnet/` | Portable consumer-facing skill package with `SKILL.md` and `references/` |
 | Parity truth | `docs/related/parity.md` | Authoritative parity ledger for upstream scope, internal implementation mapping, and auth notes |
 | Historical backlog only | `docs/archive/todo.md` | Stale history and backlog notes, not active product truth |
 | Local verification entrypoints | `scripts/test-lane.*`, `scripts/verify-local.*` | Canonical local and agent-run verification commands |
@@ -44,9 +42,11 @@ AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping produc
 - `docs/related/parity.md` is the parity truth. `docs/archive/todo.md` is historical context only and must not be presented as an authoritative ledger.
 - The active consumer docs IA is `README.md -> docs/index.md -> docs/guide/getting-started.md -> docs/how-to/*.md -> docs/reference/modules.md -> docs/guide/{advanced,troubleshooting}.md -> docs/related/*.md`; `docs/archive/todo.md` stays archive-only.
 - The user-facing docs contract is anchored by `README.md` and the required docs list enforced locally by `scripts/verify-local.*`.
-- Exported skill packages under `skills/` are distribution artifacts, not repo-local `.agents` helpers. Keep their `SKILL.md`, `skill.json`, `package.json`, and README mentions aligned when install identity or public usage guidance changes.
+- Exported skill packages under `skills/` are distribution artifacts, not repo-local `.agents` helpers. Keep their `SKILL.md`, `references/`, and README mentions aligned when install identity or public usage guidance changes.
 - GitHub Actions must stay build-only. They validate restore, build, codegen, and packaging, but they do not run `dotnet test` or invoke local verification contracts.
-- Local and agent-run online verification routes through `AioTieba4DotNet.Tests.Online.Suite`, with default `safe`, explicit `restricted`, and optional `sequence-dry-run` wrapper output only.
+- The active test topology is `AioTieba4DotNet.Tests.Platform` + `AioTieba4DotNet.Tests.Online` + `AioTieba4DotNet.Tests.Governance` only.
+- Local and agent-run online verification routes through `AioTieba4DotNet.Tests.Governance`, with default `safe`, explicit `restricted`, and optional `sequence-dry-run` wrapper output only.
+- The retained local verification artifact model is exactly `.sisyphus/evidence/parity-truth-freeze.json`, `.sisyphus/evidence/parity-gap-ledger.json`, `.sisyphus/evidence/local-verification.manifest.json`, and `.sisyphus/evidence/local-verification.manifest.schema.json`.
 - `aiotieba/` is reference material only. Never treat it as maintained product code, release scope, or coverage scope.
 
 ## ANTI-PATTERNS

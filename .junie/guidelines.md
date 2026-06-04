@@ -44,17 +44,18 @@
 - 生成输出属于狭义排除项，不应被写成 coverage 目标，也不该被当成手写产品代码来维护。
 
 ## 6. 测试分层与执行规则
-- 当前测试结构固定拆分为：
-  - `AioTieba4DotNet.Tests.Infrastructure`: online 测试契约、环境模板、suite metadata、repo-path 支撑
-  - `AioTieba4DotNet.Tests.Online.Safe`: 默认本地 safe ordered 场景
-  - `AioTieba4DotNet.Tests.Online.Restricted`: 显式 opt-in 的 restricted moderation/admin 场景
-  - `AioTieba4DotNet.Tests.Online.Suite`: discoverable ordered suite host，以及对治理和旧路径清除的契约测试
-- 本地和 agent 环境统一通过 `scripts/test-lane.*` 指向 ordered online suite reality，默认 `safe`，显式 `restricted`，可选 `sequence-dry-run` 只输出计划，不恢复旧 lane。
+- 当前活动测试拓扑只由这三个项目组成：
+  - `AioTieba4DotNet.Tests.Platform`: shared runtime support、环境模板、repo-path helper、执行基类与 support utility
+  - `AioTieba4DotNet.Tests.Online`: 唯一 discoverability-scanned runnable scenario assembly，Safe/Restricted 场景位于 `Tiers/`
+  - `AioTieba4DotNet.Tests.Governance`: ordered suite host、topology/discoverability/docs/artifact/wrapper/environment/cleanup contract、retained offline contract test，以及 wrapper-owned `safe` / `restricted` / `sequence-dry-run`
+- 任何 legacy test directory 或 compatibility shell 都不能再被写成当前 topology truth。
+- 本地和 agent 环境统一通过 `scripts/test-lane.*` 指向 Governance 驱动的 ordered online suite reality，默认 `safe`，显式 `restricted`，可选 `sequence-dry-run` 只输出计划，不恢复旧 lane。
 - `Suite:SafeOrdered` 是默认可执行 truth，顺序固定为：
   `ForumFoundation -> ForumExtensions -> ThreadRead -> UserSocial -> Messaging -> ThreadWrite`
 - `Suite:RestrictedOrdered` 只在显式选择时执行，顺序固定为：
   `ModerationRestricted -> AdminRestricted`
 - `CompensationAudit` 是 suite-level synthetic reporting truth，不是可直接运行的 MSTest category filter，也不是公开 lane 名称。
+- 任何 README、guide 或示例如果公开宣传可直接使用的在线测试 `Api:*` 过滤面，必须以 `docs/related/public-api-coverage-matrix.md` 为准；deferred、已降级或仅保留在矩阵里的行，不能继续当成稳定首类 `Api:*` 入口对外声明。
 - 需要真实链路或 fixture gate 的测试应复用新的 online environment / contract 体系，而不是私自读取 secrets 或暗中回退到旧 lane 配置。
 - 测试必须断言可观察结果；`Console.WriteLine`、调试输出或仅验证“不抛异常”都不能替代行为断言，除非任务明确只要求 smoke / probe 级证据。
 
@@ -64,14 +65,19 @@
 - 当前 GitHub Actions gate 只允许以下检查族：`restore`、`build`、`codegen`、`packaging`。
 - `docs/` 文档站是本地 pnpm workspace；依赖安装与站点构建命令固定为 `pnpm --dir docs install` 和 `pnpm --dir docs run build`。
 - 测试执行、凭据门控、live cleanup、lane 证据，以及 docs / evidence contract 都属于本地或 agent-run 范围，通过 `scripts/test-lane.*` 与 `scripts/verify-local.*` 管理。
-- `.sisyphus/evidence/local-verification.manifest.json` 与其 schema 是本地验证契约的一部分，不能把它们降级成可选材料。
+- 当前保留的本地验证 artifact tuple 只有这四个文件：
+  - `.sisyphus/evidence/parity-truth-freeze.json`
+  - `.sisyphus/evidence/parity-gap-ledger.json`
+  - `.sisyphus/evidence/local-verification.manifest.json`
+  - `.sisyphus/evidence/local-verification.manifest.schema.json`
+- 这四个文件都属于活动验证契约，不能被降级成可选材料，也不要把 task-era evidence 文件写成同级活动 artifact truth。
 
 ## 8. Coverage scope
 - Coverage truth 是 repo-level total `100/100`，定义在 `Directory.Build.targets`。
 - 当前 coverage scope 只面向维护中的手写代码，重点是 `AioTieba4DotNet/**` 和 `ProtoGenerator/**`。
 - 允许的窄排除项包括：
   - 生成的 protobuf 输出
-  - 测试支持代码 `AioTieba4DotNet.Tests.Infrastructure/**`
+  - 保留的 legacy test-support shell 代码
   - 编译器生成文件，例如 `*.g.cs`、`*.generated.cs`
   - `obj/**`
 - 不要把 docs、`.sisyphus/**`、测试项目、或 `aiotieba/**` 写成 coverage 真源。

@@ -4,7 +4,7 @@
 
 [![NuGet version (AioTieba4DotNet)](https://img.shields.io/nuget/v/AioTieba4DotNet.svg?style=flat-square)](https://www.nuget.org/packages/AioTieba4DotNet/)
 [![CodeQL](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/BaWuZhuShou/AioTieba4DotNet/actions/workflows/codeql-analysis.yml)
-[![QQ Group](https://img.shields.io/badge/QQ%E7%BE%A4-QQ_GROUP_ID_PLACEHOLDER-blue)](https://qm.qq.com/q/QQ_GROUP_LINK_CODE_PLACEHOLDER)
+[![QQ Group](https://img.shields.io/badge/QQ%E7%BE%A4-278662447-blue)](https://qm.qq.com/q/a0I1RepoA2)
 
 ## 这个库能做什么
 
@@ -20,7 +20,7 @@
 dotnet add package AioTieba4DotNet
 ```
 
-仓库里的 README、文档和导出 skill 示例统一使用大写下划线占位符。具体词汇表见[示例占位符词汇表](docs/guide/getting-started.md#example-placeholder-glossary)；在线测试运行模板仍保持空白并 fail-closed，不在仓库里填入真实凭据或线上资产。
+文档里的示例会直接写成“你的吧名”“你的 BDUSS”“目标用户 ID”这类示意值，阅读时按自己的实际参数替换即可。
 
 ## 最小示例
 
@@ -31,11 +31,11 @@ using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var forum = await client.Forums.GetForumAsync("FORUM_NAME_PLACEHOLDER");
-var threads = await client.Threads.GetThreadsAsync("FORUM_NAME_PLACEHOLDER");
+var forum = await client.Forums.GetForumAsync("你的吧名");
+var threads = await client.Threads.GetThreadsAsync("你的吧名");
 
 Console.WriteLine($"吧名: {forum.Fname}");
-Console.WriteLine($"当前页主题数: {threads.Objs.Count}");
+Console.WriteLine($"当前页主题数: {threads.Count}");
 ```
 
 如果你接下来要做签到、私信、消息读取或吧务操作，再继续看文档里的登录态示例和对应场景页。
@@ -76,7 +76,8 @@ npx skills add https://github.com/BaWuZhuShou/AioTieba4DotNet/tree/master/skills
   版 [aiotieba](https://github.com/lumina37/aiotieba)。
 - 修改 `.proto` 后，请运行 `dotnet run --project ProtoGenerator/ProtoGenerator.csproj`，不要手改生成的 `.cs` 文件。
 - 文档站源码位于 `docs/`，本地构建使用 `pnpm --dir docs install` 和 `pnpm --dir docs run build`。
-- 本地验证入口包括 `scripts/verify-local.*` 与 `scripts/test-lane.*`，其中 `test-lane` 现在路由到 `AioTieba4DotNet.Tests.Online.Suite` 的 `safe` / `restricted` ordered suite reality。
+- 测试 guidance 现在只以三项目拓扑为准：`AioTieba4DotNet.Tests.Platform` 负责共享运行时支撑，`AioTieba4DotNet.Tests.Online` 是唯一 discoverability-scanned scenario assembly，`AioTieba4DotNet.Tests.Governance` 负责 ordered suite、治理契约，以及 `safe` / `restricted` / `sequence-dry-run` wrapper。
+- 本地验证入口包括 `scripts/verify-local.*` 与 `scripts/test-lane.*`。当前保留的 evidence contract 只认 `.sisyphus/evidence/parity-truth-freeze.json`、`.sisyphus/evidence/parity-gap-ledger.json`、`.sisyphus/evidence/local-verification.manifest.json` 和 `.sisyphus/evidence/local-verification.manifest.schema.json`。
 
 ## 开源协议
 

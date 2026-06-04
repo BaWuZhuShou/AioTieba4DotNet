@@ -1,6 +1,6 @@
 # AioTieba4DotNet 方法与任务速查
 
-示例里的 `FORUM_NAME_PLACEHOLDER`、`USER_ID_PLACEHOLDER` 等值统一遵循仓库文档的[示例占位符词汇表](../../../docs/guide/getting-started.md#example-placeholder-glossary)。
+如果你在示例里看到 `BDUSS_PLACEHOLDER`、`FORUM_NAME_PLACEHOLDER`、`USER_ID_PLACEHOLDER` 这类名字，把它们换成你自己的真实值即可；需要对照时，看 [SKILL 里的示例占位符说明](../SKILL.md#example-placeholders)。
 
 这份速查的目标不是列出全部 API，而是帮助 AI 在回答时快速把“用户目标”映射到正确的公开模块和代表方法。
 

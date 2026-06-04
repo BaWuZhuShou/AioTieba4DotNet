@@ -1,0 +1,25 @@
+{
+  "safe": {
+    "account": {
+      "bduss": "",
+      "stoken": ""
+    },
+    "assets": {
+      "forumQuery": "",
+      "forumName": "",
+      "forumId": 0,
+      "managerOwnedForumName": "",
+      "forumImageUrl": "",
+      "forumImageHash": "",
+      "ownedThreadId": 0,
+      "ownedRootPostId": 0,
+      "ownedReplyId": 0,
+      "targetUserName": "",
+      "targetUserId": 0,
+      "targetTiebaUid": 0,
+      "targetPortrait": "",
+      "messageRecipient": "",
+      "chatroomId": 0
+    }
+  }
+}

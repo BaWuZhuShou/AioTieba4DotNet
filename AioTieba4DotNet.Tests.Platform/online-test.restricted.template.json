@@ -1,0 +1,22 @@
+{
+  "restricted": {
+    "optIn": false,
+    "account": {
+      "bduss": "",
+      "stoken": ""
+    },
+    "capabilities": {
+      "moderation": false,
+      "admin": false
+    },
+    "assets": {
+      "moderationForumName": "",
+      "moderationForumId": 0,
+      "moderationThreadId": 0,
+      "moderationReplyId": 0,
+      "adminUserName": "",
+      "adminUserId": 0,
+      "adminPortrait": ""
+    }
+  }
+}

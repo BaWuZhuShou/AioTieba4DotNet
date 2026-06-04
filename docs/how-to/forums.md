@@ -2,7 +2,7 @@
 
 这页按常见论坛任务组织。要查完整方法和签名，请同时对照 [API 参考](/reference/modules)。
 
-本页示例里的 `FORUM_NAME_PLACEHOLDER`、`USER_ID_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](/guide/getting-started#example-placeholder-glossary)。
+本页示例会直接写成“你的吧名”“你的 BDUSS”“目标用户 ID”这类示意值，阅读时按自己的实际参数替换即可。
 
 ## 开始前
 
@@ -19,8 +19,8 @@ using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var fid = await client.Forums.GetFidAsync("FORUM_NAME_PLACEHOLDER");
-var forum = await client.Forums.GetForumAsync("FORUM_NAME_PLACEHOLDER");
+var fid = await client.Forums.GetFidAsync("你的吧名");
+var forum = await client.Forums.GetForumAsync("你的吧名");
 var detail = await client.Forums.GetDetailAsync(fid);
 
 Console.WriteLine($"fid = {fid}");
@@ -37,10 +37,10 @@ Console.WriteLine($"成员数 = {detail.MemberNum}");
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
-await client.Forums.FollowAsync("FORUM_NAME_PLACEHOLDER");
-await client.Forums.UnfollowAsync("FORUM_NAME_PLACEHOLDER");
+await client.Forums.FollowAsync("你的吧名");
+await client.Forums.UnfollowAsync("你的吧名");
 ```
 
 按吧名调用最直接。适合把“用户点关注”或“同步关注状态”这类流程收敛到同一组 API。
@@ -52,11 +52,11 @@ await client.Forums.UnfollowAsync("FORUM_NAME_PLACEHOLDER");
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
 var selfFollowForums = await client.Forums.GetSelfFollowForumsAsync();
 var selfFollowForumsV1 = await client.Forums.GetSelfFollowForumsV1Async();
-var anotherUserForums = await client.Forums.GetFollowForumsAsync(long.Parse("USER_ID_PLACEHOLDER"));
+var anotherUserForums = await client.Forums.GetFollowForumsAsync(123456789L);
 
 Console.WriteLine(selfFollowForums.Count);
 Console.WriteLine(selfFollowForumsV1.Count);
@@ -76,9 +76,9 @@ Console.WriteLine(anotherUserForums.Count);
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
-await client.Forums.SignAsync("FORUM_NAME_PLACEHOLDER");
+await client.Forums.SignAsync("你的吧名");
 await client.Forums.SignForumsAsync();
 await client.Forums.SignGrowthAsync();
 ```
@@ -102,8 +102,8 @@ using AioTieba4DotNet.Models;
 using var client = new TiebaClient();
 
 var result = await client.Forums.SearchExactAsync(
-    "FORUM_NAME_PLACEHOLDER",
-    query: "SEARCH_QUERY_PLACEHOLDER",
+    "你的吧名",
+    query: "关键词",
     searchType: ForumSearchType.All,
     onlyThread: true);
 
@@ -120,12 +120,12 @@ Console.WriteLine(result.Count);
 using AioTieba4DotNet;
 using AioTieba4DotNet.Models;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
-var statistics = await client.Forums.GetStatisticsAsync("FORUM_NAME_PLACEHOLDER");
-var rankForums = await client.Forums.GetRankForumsAsync("FORUM_NAME_PLACEHOLDER");
-var image = await client.Forums.GetImageByHashAsync("IMAGE_HASH_PLACEHOLDER", ForumImageSize.Large);
-var portrait = await client.Forums.GetPortraitAsync("PORTRAIT_PLACEHOLDER", ForumImageSize.Small);
+var statistics = await client.Forums.GetStatisticsAsync("你的吧名");
+var rankForums = await client.Forums.GetRankForumsAsync("你的吧名");
+var image = await client.Forums.GetImageByHashAsync("图片哈希", ForumImageSize.Large);
+var portrait = await client.Forums.GetPortraitAsync("目标用户 portrait", ForumImageSize.Small);
 
 Console.WriteLine($"浏览统计点数 = {statistics.View.Count}");
 Console.WriteLine($"排行条目数 = {rankForums.Count}");

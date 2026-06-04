@@ -2,7 +2,7 @@
 
 这页按常见用户任务组织。要查完整方法和签名，请同时对照 [API 参考](/reference/modules)。
 
-本页示例里的 `USER_ID_PLACEHOLDER`、`PORTRAIT_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](/guide/getting-started#example-placeholder-glossary)。
+本页示例会直接写成“目标用户 ID”“目标用户 portrait”“你的 BDUSS”这类示意值，阅读时按自己的实际参数替换即可。
 
 ## 开始前
 
@@ -20,8 +20,8 @@ using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var appInfo = await client.Users.GetUserInfoAppAsync(int.Parse("USER_ID_PLACEHOLDER"));
-var webInfo = await client.Users.GetUserInfoWebAsync(int.Parse("USER_ID_PLACEHOLDER"));
+var appInfo = await client.Users.GetUserInfoAppAsync(123456789);
+var webInfo = await client.Users.GetUserInfoWebAsync(123456789);
 
 Console.WriteLine(appInfo.ShowName);
 Console.WriteLine(webInfo.ShowName);
@@ -45,8 +45,8 @@ using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var profile = await client.Users.GetProfileAsync("USER_NAME_OR_PORTRAIT_PLACEHOLDER");
-var homepage = await client.Users.GetHomepageAsync(int.Parse("USER_ID_PLACEHOLDER"), pn: 1);
+var profile = await client.Users.GetProfileAsync("目标用户名或 portrait");
+var homepage = await client.Users.GetHomepageAsync(123456789, pn: 1);
 
 Console.WriteLine(profile.ShowName);
 Console.WriteLine(homepage.Count);
@@ -61,11 +61,11 @@ Console.WriteLine(homepage.Count);
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
 var tbs = await client.Users.GetTbsAsync();
 var selfInfo = await client.Users.GetSelfInfoAsync();
-var panel = await client.Users.GetPanelInfoAsync("USER_NAME_OR_PORTRAIT_PLACEHOLDER");
+var panel = await client.Users.GetPanelInfoAsync("目标用户名或 portrait");
 
 Console.WriteLine(tbs);
 Console.WriteLine(selfInfo.ShowName);
@@ -87,16 +87,16 @@ Console.WriteLine(panel.ShowName);
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
-await client.Users.FollowAsync("PORTRAIT_PLACEHOLDER");
-await client.Users.UnfollowAsync("PORTRAIT_PLACEHOLDER");
+await client.Users.FollowAsync("目标用户 portrait");
+await client.Users.UnfollowAsync("目标用户 portrait");
 
-var follows = await client.Users.GetFollowsAsync(long.Parse("USER_ID_PLACEHOLDER"));
-var fans = await client.Users.GetFansAsync(long.Parse("USER_ID_PLACEHOLDER"));
+var follows = await client.Users.GetFollowsAsync(123456789L);
+var fans = await client.Users.GetFansAsync(123456789L);
 
-Console.WriteLine(follows.Objs.Count);
-Console.WriteLine(fans.Objs.Count);
+Console.WriteLine(follows.Count);
+Console.WriteLine(fans.Count);
 ```
 
 如果你要移除粉丝，还可以使用 `RemoveFanAsync(...)`。这仍然是社交关系管理，不是黑名单接口。
@@ -109,12 +109,12 @@ Console.WriteLine(fans.Objs.Count);
 using AioTieba4DotNet;
 using AioTieba4DotNet.Models;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
 var blacklist = await client.Users.GetBlacklistAsync();
-await client.Users.SetBlacklistAsync(long.Parse("USER_ID_PLACEHOLDER"), BlacklistType.All);
+await client.Users.SetBlacklistAsync(123456789L, BlacklistType.All);
 
-Console.WriteLine(blacklist.Objs.Count);
+Console.WriteLine(blacklist.Count);
 ```
 
 如果你的业务需要的是“设置一组权限项”，优先使用这组 `Blacklist` 接口，而不是 `_old` 接口组。
@@ -126,11 +126,11 @@ Console.WriteLine(blacklist.Objs.Count);
 ```csharp
 using AioTieba4DotNet;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
 var oldBlacklist = await client.Users.GetBlacklistOldAsync(1, 20);
-await client.Users.AddBlacklistOldAsync(long.Parse("USER_ID_PLACEHOLDER"));
-await client.Users.RemoveBlacklistOldAsync(long.Parse("USER_ID_PLACEHOLDER"));
+await client.Users.AddBlacklistOldAsync(123456789L);
+await client.Users.RemoveBlacklistOldAsync(123456789L);
 
 Console.WriteLine(oldBlacklist.Page.CurrentPage);
 ```
@@ -148,14 +148,14 @@ Console.WriteLine(oldBlacklist.Page.CurrentPage);
 using AioTieba4DotNet;
 using AioTieba4DotNet.Models;
 
-using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
+using var client = new TiebaClient("你的 BDUSS", "你的 STOKEN");
 
 await client.Users.SetProfileAsync(
-    nickName: "NICKNAME_PLACEHOLDER",
-    sign: "SIGNATURE_PLACEHOLDER",
+    nickName: "新的昵称",
+    sign: "新的个性签名",
     gender: Gender.Male);
 
-await client.Users.SetNicknameAsync("NICKNAME_PLACEHOLDER");
+await client.Users.SetNicknameAsync("新的昵称");
 ```
 
 如果你只改一个昵称字段，用 `SetNicknameAsync(...)` 更直接。如果你要同步更新资料页上的多个字段，使用 `SetProfileAsync(...)`。
@@ -169,15 +169,15 @@ using AioTieba4DotNet;
 
 using var client = new TiebaClient();
 
-var forumInfo = await client.Users.GetUserForumInfoAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER");
-var rankUsers = await client.Users.GetRankUsersAsync("FORUM_NAME_PLACEHOLDER");
-var userThreads = await client.Users.GetThreadsAsync(int.Parse("USER_ID_PLACEHOLDER"));
-var userPosts = await client.Users.GetPostsAsync(int.Parse("USER_ID_PLACEHOLDER"));
+var forumInfo = await client.Users.GetUserForumInfoAsync("你的吧名", "目标用户 portrait");
+var rankUsers = await client.Users.GetRankUsersAsync("你的吧名");
+var userThreads = await client.Users.GetThreadsAsync(123456789);
+var userPosts = await client.Users.GetPostsAsync(123456789);
 
 Console.WriteLine(forumInfo.User.ShowName);
-Console.WriteLine(rankUsers.Objs.Count);
-Console.WriteLine(userThreads.Objs.Count);
-Console.WriteLine(userPosts.Objs.Count);
+Console.WriteLine(rankUsers.Count);
+Console.WriteLine(userThreads.Count);
+Console.WriteLine(userPosts.Count);
 ```
 
 如果你还需要从 Tieba UID 反查用户，可以补充使用 `GetUserByTiebaUidAsync(...)`。这属于用户身份映射，不是资料页或主页读取。

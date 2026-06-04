@@ -16,12 +16,10 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <IsOnlineTestInfrastructureProject Condition="'$(MSBuildProjectName)' == 'AioTieba4DotNet.Tests.Infrastructure'">true</IsOnlineTestInfrastructureProject>
-        <IsOnlineSafeTestProject Condition="'$(MSBuildProjectName)' == 'AioTieba4DotNet.Tests.Online.Safe'">true</IsOnlineSafeTestProject>
-        <IsOnlineRestrictedTestProject Condition="'$(MSBuildProjectName)' == 'AioTieba4DotNet.Tests.Online.Restricted'">true</IsOnlineRestrictedTestProject>
-        <IsOnlineSuiteTestProject Condition="'$(MSBuildProjectName)' == 'AioTieba4DotNet.Tests.Online.Suite'">true</IsOnlineSuiteTestProject>
-        <IsOnlineScenarioProject Condition="'$(IsOnlineSafeTestProject)' == 'true' Or '$(IsOnlineRestrictedTestProject)' == 'true'">true</IsOnlineScenarioProject>
-        <IsOnlineContractProject Condition="'$(IsOnlineTestInfrastructureProject)' == 'true' Or '$(IsOnlineSuiteTestProject)' == 'true'">true</IsOnlineContractProject>
+        <IsOnlineMergedScenarioTestProject Condition="'$(MSBuildProjectName)' == 'AioTieba4DotNet.Tests.Online'">true</IsOnlineMergedScenarioTestProject>
+        <IsOnlineGovernanceTestProject Condition="'$(MSBuildProjectName)' == 'AioTieba4DotNet.Tests.Governance'">true</IsOnlineGovernanceTestProject>
+        <IsOnlineScenarioProject Condition="'$(IsOnlineMergedScenarioTestProject)' == 'true'">true</IsOnlineScenarioProject>
+        <IsOnlineContractProject Condition="'$(IsOnlineGovernanceTestProject)' == 'true'">true</IsOnlineContractProject>
         <IsOnlineTestProject Condition="'$(IsOnlineScenarioProject)' == 'true' Or '$(IsOnlineContractProject)' == 'true'">true</IsOnlineTestProject>
     </PropertyGroup>
 

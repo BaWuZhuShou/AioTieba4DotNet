@@ -22,6 +22,7 @@ import re
 import subprocess
 import sys
 from datetime import datetime, timezone
+from typing import Optional
 
 repo_root, manifest_path, schema_path, mode, docs_install_command, docs_build_command = sys.argv[1:7]
 
@@ -35,6 +36,7 @@ required_docs = [
     "docs/how-to/messages.md",
     "docs/how-to/admins.md",
     "docs/reference/modules.md",
+    "docs/related/public-api-coverage-matrix.md",
     "docs/guide/advanced.md",
     "docs/guide/troubleshooting.md",
     "docs/related/migration-v2-to-v3.md",
@@ -81,11 +83,11 @@ forbidden_legacy_patterns = [
 
 credential_template_files = [
     {
-        "path": "AioTieba4DotNet.Tests.Infrastructure/online-test.safe.template.json",
+        "path": "AioTieba4DotNet.Tests.Platform/online-test.safe.template.json",
         "requiredBlankKeys": ["safe:account:bduss", "safe:account:stoken"],
     },
     {
-        "path": "AioTieba4DotNet.Tests.Infrastructure/online-test.restricted.template.json",
+        "path": "AioTieba4DotNet.Tests.Platform/online-test.restricted.template.json",
         "requiredBlankKeys": ["restricted:account:bduss", "restricted:account:stoken"],
     },
 ]
@@ -103,6 +105,16 @@ workflow_content_contracts = [
 
 evidence_content_contracts = []
 
+truth_freeze_evidence_contract = {
+    "path": ".sisyphus/evidence/parity-truth-freeze.json",
+    "repoId": "lumina37/aiotieba",
+    "canonicalRepoUrl": "https://github.com/lumina37/aiotieba",
+    "preferredTag": "v4.6.4",
+    "upstreamSha": "04f8e431f87507a6228b42061c70d298b34317ff",
+    "comparisonSource": "https://github.com/lumina37/aiotieba/tree/04f8e431f87507a6228b42061c70d298b34317ff",
+    "sourcePathPolicy": "Authoritative parity truth is the frozen lumina37/aiotieba tuple above. Treat repository-local aiotieba/ as reference-only unless explicit snapshot metadata matches repo id, canonical repo URL, preferred tag, and upstream SHA exactly; missing, mixed, or stale metadata must fail closed.",
+}
+
 local_entrypoints = [
     "scripts/verify-local.ps1",
     "scripts/verify-local.sh",
@@ -110,7 +122,32 @@ local_entrypoints = [
     "scripts/test-lane.sh",
 ]
 
-required_evidence = []
+required_evidence = [
+    {
+        "id": "parity-truth-freeze",
+        "kind": "parity-truth-freeze",
+        "path": truth_freeze_evidence_contract["path"],
+        "description": "Frozen upstream aiotieba truth-source tuple and comparison policy for parity evidence.",
+    },
+    {
+        "id": "parity-gap-ledger",
+        "kind": "gap-ledger",
+        "path": ".sisyphus/evidence/parity-gap-ledger.json",
+        "description": "Canonical unresolved public parity ledger for the active retained artifact model.",
+    },
+    {
+        "id": "local-verification-manifest",
+        "kind": "local-verification-manifest",
+        "path": ".sisyphus/evidence/local-verification.manifest.json",
+        "description": "Active local verification manifest for the retained docs, entrypoints, and evidence surface.",
+    },
+    {
+        "id": "local-verification-manifest-schema",
+        "kind": "json-schema",
+        "path": ".sisyphus/evidence/local-verification.manifest.schema.json",
+        "description": "JSON schema for the active local verification manifest.",
+    }
+]
 
 
 def to_full_path(relative_path: str) -> str:
@@ -139,7 +176,7 @@ def get_legacy_scan_files(relative_path: str, includes: list[str]) -> list[str]:
     return []
 
 
-def get_json_path_value(document: object, path: str) -> object | None:
+def get_json_path_value(document: object, path: str) -> Optional[object]:
     current = document
     for segment in path.split(":"):
         if not isinstance(current, dict) or segment not in current:
@@ -288,6 +325,37 @@ for evidence_contract in evidence_content_contracts:
     for phrase in evidence_contract["forbiddenPhrases"]:
         if phrase in content:
             errors.append(f"Evidence record {relative_path} must not contain placeholder phrase: {phrase}")
+
+if exists_non_empty(truth_freeze_evidence_contract["path"]):
+    with open(to_full_path(truth_freeze_evidence_contract["path"]), encoding="utf-8") as handle:
+        truth_freeze_document = json.load(handle)
+
+    for field_name in [
+        "repoId",
+        "canonicalRepoUrl",
+        "preferredTag",
+        "upstreamSha",
+        "comparisonSource",
+        "sourcePathPolicy",
+        "generatedAtUtc",
+    ]:
+        value = truth_freeze_document.get(field_name)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"Truth-freeze evidence field '{field_name}' must be a non-empty string.")
+
+    for field_name in [
+        "repoId",
+        "canonicalRepoUrl",
+        "preferredTag",
+        "upstreamSha",
+        "comparisonSource",
+        "sourcePathPolicy",
+    ]:
+        value = truth_freeze_document.get(field_name)
+        if isinstance(value, str) and value != truth_freeze_evidence_contract[field_name]:
+            errors.append(
+                f"Truth-freeze evidence field '{field_name}' must equal '{truth_freeze_evidence_contract[field_name]}'."
+            )
 
 for scope in legacy_regression_scopes:
     for file_path in get_legacy_scan_files(scope["path"], scope["includes"]):

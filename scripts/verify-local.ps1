@@ -18,6 +18,7 @@ $requiredDocs = @(
     "docs/how-to/messages.md",
     "docs/how-to/admins.md",
     "docs/reference/modules.md",
+    "docs/related/public-api-coverage-matrix.md",
     "docs/guide/advanced.md",
     "docs/guide/troubleshooting.md",
     "docs/related/migration-v2-to-v3.md",
@@ -64,11 +65,11 @@ $forbiddenLegacyPatterns = @(
 
 $credentialTemplateFiles = @(
     [ordered]@{
-        path = "AioTieba4DotNet.Tests.Infrastructure/online-test.safe.template.json"
+        path = "AioTieba4DotNet.Tests.Platform/online-test.safe.template.json"
         requiredBlankKeys = @("safe:account:bduss", "safe:account:stoken")
     },
     [ordered]@{
-        path = "AioTieba4DotNet.Tests.Infrastructure/online-test.restricted.template.json"
+        path = "AioTieba4DotNet.Tests.Platform/online-test.restricted.template.json"
         requiredBlankKeys = @("restricted:account:bduss", "restricted:account:stoken")
     }
 )
@@ -90,6 +91,16 @@ $workflowContentContracts = @(
 
 $evidenceContentContracts = @()
 
+$truthFreezeEvidenceContract = [ordered]@{
+    path = ".sisyphus/evidence/parity-truth-freeze.json"
+    repoId = "lumina37/aiotieba"
+    canonicalRepoUrl = "https://github.com/lumina37/aiotieba"
+    preferredTag = "v4.6.4"
+    upstreamSha = "04f8e431f87507a6228b42061c70d298b34317ff"
+    comparisonSource = "https://github.com/lumina37/aiotieba/tree/04f8e431f87507a6228b42061c70d298b34317ff"
+    sourcePathPolicy = "Authoritative parity truth is the frozen lumina37/aiotieba tuple above. Treat repository-local aiotieba/ as reference-only unless explicit snapshot metadata matches repo id, canonical repo URL, preferred tag, and upstream SHA exactly; missing, mixed, or stale metadata must fail closed."
+}
+
 $localEntrypoints = @(
     "scripts/verify-local.ps1",
     "scripts/verify-local.sh",
@@ -97,7 +108,32 @@ $localEntrypoints = @(
     "scripts/test-lane.sh"
 )
 
-$requiredEvidence = @()
+$requiredEvidence = @(
+    [ordered]@{
+        id = "parity-truth-freeze"
+        kind = "parity-truth-freeze"
+        path = $truthFreezeEvidenceContract.path
+        description = "Frozen upstream aiotieba truth-source tuple and comparison policy for parity evidence."
+    },
+    [ordered]@{
+        id = "parity-gap-ledger"
+        kind = "gap-ledger"
+        path = ".sisyphus/evidence/parity-gap-ledger.json"
+        description = "Canonical unresolved public parity ledger for the active retained artifact model."
+    },
+    [ordered]@{
+        id = "local-verification-manifest"
+        kind = "local-verification-manifest"
+        path = ".sisyphus/evidence/local-verification.manifest.json"
+        description = "Active local verification manifest for the retained docs, entrypoints, and evidence surface."
+    },
+    [ordered]@{
+        id = "local-verification-manifest-schema"
+        kind = "json-schema"
+        path = ".sisyphus/evidence/local-verification.manifest.schema.json"
+        description = "JSON schema for the active local verification manifest."
+    }
+)
 
 function Resolve-RelativePath([string]$relativePath) {
     return Join-Path $repoRoot ($relativePath -replace '/', [IO.Path]::DirectorySeparatorChar)
@@ -313,6 +349,26 @@ foreach ($evidenceContract in $evidenceContentContracts) {
     foreach ($phrase in $evidenceContract.forbiddenPhrases) {
         if ($content.Contains($phrase)) {
             $errors.Add("Evidence record $relativePath must not contain placeholder phrase: $phrase")
+        }
+    }
+}
+
+if (Test-NonEmptyFile $truthFreezeEvidenceContract.path) {
+    $truthFreezeDocument = Get-Content -Raw (Resolve-RelativePath $truthFreezeEvidenceContract.path) | ConvertFrom-Json -AsHashtable
+    foreach ($requiredField in @('repoId', 'canonicalRepoUrl', 'preferredTag', 'upstreamSha', 'comparisonSource', 'sourcePathPolicy', 'generatedAtUtc')) {
+        if (-not $truthFreezeDocument.Contains($requiredField)) {
+            $errors.Add("Truth-freeze evidence must contain field: $requiredField")
+            continue
+        }
+
+        if ([string]::IsNullOrWhiteSpace([string]$truthFreezeDocument[$requiredField])) {
+            $errors.Add("Truth-freeze evidence field '$requiredField' must be a non-empty string.")
+        }
+    }
+
+    foreach ($fieldName in @('repoId', 'canonicalRepoUrl', 'preferredTag', 'upstreamSha', 'comparisonSource', 'sourcePathPolicy')) {
+        if ($truthFreezeDocument.Contains($fieldName) -and [string]$truthFreezeDocument[$fieldName] -ne [string]$truthFreezeEvidenceContract[$fieldName]) {
+            $errors.Add("Truth-freeze evidence field '$fieldName' must equal '$($truthFreezeEvidenceContract[$fieldName])'.")
         }
     }
 }

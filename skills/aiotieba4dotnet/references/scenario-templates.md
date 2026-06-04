@@ -1,6 +1,6 @@
 # AioTieba4DotNet 场景代码模板
 
-示例里的 `FORUM_NAME_PLACEHOLDER`、`THREAD_ID_PLACEHOLDER` 等值统一遵循仓库文档的[示例占位符词汇表](../../../docs/guide/getting-started.md#example-placeholder-glossary)。
+如果你在示例里看到 `BDUSS_PLACEHOLDER`、`FORUM_NAME_PLACEHOLDER`、`USER_ID_PLACEHOLDER` 这类名字，把它们换成你自己的真实值即可；需要对照时，看 [SKILL 里的示例占位符说明](../SKILL.md#example-placeholders)。
 
 这份模板集专门给“直接生成代码”用。优先挑最接近用户目标的模板，再按需要微调参数或方法。
 
@@ -55,7 +55,7 @@ var threads = await client.Threads.GetThreadsAsync(
 
 Console.WriteLine($"fid = {fid}");
 Console.WriteLine($"成员数 = {detail.MemberNum}");
-Console.WriteLine($"帖子数 = {threads.Objs.Count}");
+Console.WriteLine($"帖子数 = {threads.Count}");
 ```
 
 默认理由：这是最常见的只读入门路径，不需要登录态。
@@ -115,7 +115,7 @@ var posts = await client.Threads.GetPostsAsync(
     withComments: true,
     commentRn: 3);
 
-Console.WriteLine($"楼层数 = {posts.Objs.Count}");
+Console.WriteLine($"楼层数 = {posts.Count}");
 ```
 
 ### 3B. 回复帖子
@@ -191,8 +191,8 @@ using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 var ats = await client.Messages.GetAtsAsync();
 var replies = await client.Messages.GetRepliesAsync();
 
-Console.WriteLine($"@ 消息数 = {ats.MessageList.Count}");
-Console.WriteLine($"回复消息数 = {replies.MessageList.Count}");
+Console.WriteLine($"@ 消息数 = {ats.Count}");
+Console.WriteLine($"回复消息数 = {replies.Count}");
 ```
 
 ### 5B. 发送私信
@@ -239,10 +239,10 @@ var result = await client.Forums.SearchExactAsync(
     searchType: ForumSearchType.All,
     onlyThread: true);
 
-Console.WriteLine($"命中数 = {result.Objs.Count}");
-if (result.Objs.Count > 0)
+Console.WriteLine($"命中数 = {result.Count}");
+if (result.Count > 0)
 {
-    Console.WriteLine($"第一条标题 = {result.Objs[0].Title}");
+    Console.WriteLine($"第一条标题 = {result[0].Title}");
 }
 ```
 
@@ -264,7 +264,7 @@ using AioTieba4DotNet;
 using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 var selfFollowForums = await client.Forums.GetSelfFollowForumsAsync();
-Console.WriteLine($"关注吧数量 = {selfFollowForums.Objs.Count}");
+Console.WriteLine($"关注吧数量 = {selfFollowForums.Count}");
 
 // 如果你需要保留更明确的分页形状，可以改用：
 // var selfFollowForumsV1 = await client.Forums.GetSelfFollowForumsV1Async();
@@ -292,8 +292,8 @@ var userId = long.Parse("USER_ID_PLACEHOLDER");
 var follows = await client.Users.GetFollowsAsync(userId);
 var fans = await client.Users.GetFansAsync(userId);
 
-Console.WriteLine($"关注数 = {follows.Objs.Count}");
-Console.WriteLine($"粉丝数 = {fans.Objs.Count}");
+Console.WriteLine($"关注数 = {follows.Count}");
+Console.WriteLine($"粉丝数 = {fans.Count}");
 ```
 
 默认理由：这属于 `Users` 的关系读取，不应和“关注用户/取关用户”的写操作混在同一个模板里。
@@ -317,9 +317,9 @@ using System.Linq;
 using var client = new TiebaClient("BDUSS_PLACEHOLDER", "STOKEN_PLACEHOLDER");
 
 var groups = await client.Messages.GetGroupMessagesAsync();
-Console.WriteLine($"消息组数 = {groups.Groups.Count}");
+Console.WriteLine($"消息组数 = {groups.Count}");
 
-var firstMessage = groups.Groups
+var firstMessage = groups
     .SelectMany(group => group.Messages)
     .FirstOrDefault();
 

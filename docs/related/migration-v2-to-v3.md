@@ -2,7 +2,7 @@
 
 这份文档面向从 v2 升级到 v3 的调用方。重点不是重复完整 API，而是告诉你升级时最容易改错的地方：目标框架、模块入口、公开名称和异常处理。
 
-这页示例里的 `FORUM_NAME_PLACEHOLDER`、`PORTRAIT_PLACEHOLDER` 等值统一遵循[示例占位符词汇表](../guide/getting-started.md#example-placeholder-glossary)。
+这页示例会直接写成“你的吧名”“目标用户 portrait”“违规理由”这类示意值，阅读时按自己的实际参数替换即可。
 
 ## 先看结论
 
@@ -162,10 +162,10 @@ var replies = await client.Messages.GetRepliesAsync();
 v3 的标准调用路径是：
 
 ```csharp
-var info = await client.Admins.GetBawuInfoAsync("FORUM_NAME_PLACEHOLDER");
-await client.Admins.BlockAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER", day: 1, reason: "REASON_PLACEHOLDER");
-await client.Admins.AddBawuAsync("FORUM_NAME_PLACEHOLDER", "USER_NAME_PLACEHOLDER", BawuType.Manager);
-await client.Admins.DelBawuAsync("FORUM_NAME_PLACEHOLDER", "PORTRAIT_PLACEHOLDER", BawuType.Manager);
+var info = await client.Admins.GetBawuInfoAsync("你的吧名");
+await client.Admins.BlockAsync("你的吧名", "目标用户 portrait", day: 1, reason: "违规理由");
+await client.Admins.AddBawuAsync("你的吧名", "目标用户名", BawuType.Manager);
+await client.Admins.DelBawuAsync("你的吧名", "目标用户 portrait", BawuType.Manager);
 ```
 
 ### Client
