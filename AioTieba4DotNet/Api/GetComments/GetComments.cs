@@ -2,6 +2,7 @@
 using AioTieba4DotNet.Internal.Mapping;
 using AioTieba4DotNet.Models.Threads;
 using AioTieba4DotNet.Transport;
+using AioTieba4DotNet.Transport.WebSockets;
 using Google.Protobuf;
 
 namespace AioTieba4DotNet.Api.GetComments;
@@ -40,9 +41,32 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     private static Comments ParseBody(byte[] body)
     {
         var resProto = PbFloorResIdl.Parser.ParseFrom(body);
-        ApiResponseValidator.CheckError(resProto.Error.Errorno, resProto.Error.Errmsg);
+        ApiResponseValidator.CheckError(resProto.Error?.Errorno ?? 0, resProto.Error?.Errmsg);
 
         return CommentsMapper.FromTbData(resProto.Data);
+    }
+
+    private static byte[] ExtractWsBody(WSRes response)
+    {
+        var body = response.Payload?.Data;
+        if (body == null || body.IsEmpty)
+            throw new TiebaWebSocketUnavailableException(
+                "WebSocket returned an empty get-comments payload.");
+
+        return body.ToByteArray();
+    }
+
+    private static Comments ParseWsBody(byte[] body)
+    {
+        try
+        {
+            return ParseBody(body);
+        }
+        catch (InvalidProtocolBufferException exception)
+        {
+            throw new TiebaWebSocketUnavailableException(
+                "WebSocket returned an invalid get-comments payload.", exception);
+        }
     }
 
     /// <summary>
@@ -78,6 +102,6 @@ internal class GetComments(ITiebaHttpCore httpCore, ITiebaWsCore wsCore)
     {
         var data = PackProto(tid, pid, pn, isComment, wsCore.Account?.Bduss);
         var response = await wsCore.SendAsync(Cmd, data, cancellationToken: cancellationToken);
-        return ParseBody(response.Payload.Data.ToByteArray());
+        return ParseWsBody(ExtractWsBody(response));
     }
 }

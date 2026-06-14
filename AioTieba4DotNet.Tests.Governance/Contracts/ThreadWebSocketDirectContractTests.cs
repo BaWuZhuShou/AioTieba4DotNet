@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using AioTieba4DotNet.Api.GetComments;
 using AioTieba4DotNet.Api.GetThreadPosts;
 using AioTieba4DotNet.Api.GetThreads;
 using AioTieba4DotNet.Contracts;
@@ -271,6 +272,26 @@ public sealed class ThreadWebSocketDirectContractTests
         Assert.AreEqual(1, wsCore.SendCount, "Direct WS execution should send exactly one websocket request.");
     }
 
+    [TestMethod]
+    public async Task GetCommentsRequestWsAsyncPayloadWithoutErrorReturnsCommentsWithoutHttpFallback()
+    {
+        var responseBytes = CreateValidCommentsResponseWithoutError(ForumName, ForumId, ThreadId, RootPostId, AuthorId);
+        var httpCore = new RecordingHttpCore(responseBytes);
+        var wsCore = new RecordingWsCore(() => CreateWsResponse(responseBytes));
+        var api = new GetComments(httpCore, wsCore);
+
+        var comments = await api.RequestWsAsync(ThreadId, RootPostId, 1, false);
+
+        Assert.AreEqual(ThreadId, comments.Thread.Tid);
+        Assert.AreEqual(RootPostId, comments.Post.Pid);
+        Assert.AreEqual(ForumName, comments.Forum.Fname);
+        Assert.AreEqual(ForumId, comments.Forum.Fid);
+        Assert.IsEmpty(comments.Objs);
+        Assert.AreEqual(0, httpCore.SendAppProtoCount,
+            "A valid WS get-comments response without an error field must not rely on HTTP fallback.");
+        Assert.AreEqual(1, wsCore.SendCount, "Direct WS execution should send exactly one websocket request.");
+    }
+
     private static WSRes CreateWsResponse(byte[] responseBytes)
     {
         return new WSRes
@@ -356,6 +377,52 @@ public sealed class ThreadWebSocketDirectContractTests
                         SubPostNumber = 0,
                         Time = 1
                     }
+                }
+            }
+        }.ToByteArray();
+    }
+
+    private static byte[] CreateValidCommentsResponseWithoutError(string forumName, long forumId, long threadId,
+        long rootPostId, long authorId)
+    {
+        return new PbFloorResIdl
+        {
+            Data = new PbFloorResIdl.Types.DataRes
+            {
+                Forum = new SimpleForum
+                {
+                    Id = forumId,
+                    Name = forumName,
+                    FirstClass = "游戏",
+                    SecondClass = "网游",
+                    MemberNum = 1,
+                    PostNum = 1
+                },
+                Page = new Page
+                {
+                    PageSize = 10,
+                    CurrentPage = 1,
+                    TotalCount = 0,
+                    TotalPage = 1,
+                    HasMore = 0,
+                    HasPrev = 0
+                },
+                Thread = new ThreadInfo
+                {
+                    Id = threadId,
+                    FirstPostId = rootPostId,
+                    AuthorId = authorId,
+                    Title = "测试主题",
+                    ReplyNum = 1,
+                    ViewNum = 1
+                },
+                Post = new global::Post
+                {
+                    Id = rootPostId,
+                    AuthorId = authorId,
+                    Floor = 1,
+                    SubPostNumber = 0,
+                    Time = 1
                 }
             }
         }.ToByteArray();
