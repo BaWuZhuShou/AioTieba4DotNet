@@ -20,7 +20,7 @@
 | 阶段 B 独立检查 | 80/80 通过，0 跳过；A 原有 79 项 + 1 项窄依赖结构检查 |
 | 产物新鲜度 | B 的产品/Online/Governance 三处产品 DLL 散列一致 |
 | 格式与风格 | 各阶段修改范围内检查及 Git 空白检查通过 |
-| 任务/规范检查 | 子任务上下文清单、变更规范链接与空白检查通过；归档后再检查任务链接 |
+| 任务/规范检查 | 变更规范链接与空白检查通过；归档后 17 份任务 Markdown 链接、3 个 completed 状态及全部上下文清单检查通过。跨任务研究路径已同步至归档位置 |
 
 详细记录分别见 [A 的验证与检查](../09-26-architecture-compatibility-baseline/verification.md)、[B 的验证与检查](../09-26-forum-lookup-decoupling/verification.md)。临时 TRX 路径写在子任务记录中，Git 保存文本结果与来源，不提交缓存/二进制。
 

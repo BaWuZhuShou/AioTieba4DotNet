@@ -7,5 +7,5 @@
 {"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "离线筛选、环境前置、证据和提交检查"}
 {"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "跨层数据流和状态变更顺序检查"}
 {"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "复用既有接缝并避免过度抽象"}
-{"file": ".trellis/tasks/09-26-internal-architecture-evolution/research/protocol-dependencies.md", "reason": "查询责任、窄接口与精确兼容行为"}
-{"file": ".trellis/tasks/09-26-internal-architecture-evolution/research/compatibility-baseline.md", "reason": "现有验证能力、离线白名单和环境限制"}
+{"file": ".trellis/tasks/archive/2026-09/09-26-internal-architecture-evolution/research/protocol-dependencies.md", "reason": "查询责任、窄接口与精确兼容行为"}
+{"file": ".trellis/tasks/archive/2026-09/09-26-internal-architecture-evolution/research/compatibility-baseline.md", "reason": "现有验证能力、离线白名单和环境限制"}
