@@ -24,6 +24,8 @@
 
 详细记录分别见 [A 的验证与检查](../09-26-architecture-compatibility-baseline/verification.md)、[B 的验证与检查](../09-26-forum-lookup-decoupling/verification.md)。临时 TRX 路径写在子任务记录中，Git 保存文本结果与来源，不提交缓存/二进制。
 
+工作提交：A 为 `9b1afc1`，B 为 `2491c86`。最终产品实现对应 `2491c86`；其后仅执行任务归档、上下文路径维护与日志记录，不修改经过 80 项检查的产品或测试源码。
+
 ## 保留限制
 
 - 四个既有 `.sisyphus/evidence/` 产物缺失，`verify-local.sh --validate-only` 实际因缺少 manifest 退出 1；没有伪造或降低门槛，不能称所有治理检查通过。
