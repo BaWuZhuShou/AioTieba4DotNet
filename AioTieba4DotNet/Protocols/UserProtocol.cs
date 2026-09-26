@@ -30,7 +30,8 @@ using GetHomepageApi = AioTieba4DotNet.Api.Profile.GetHomepage.GetHomepage;
 
 namespace AioTieba4DotNet.Protocols;
 
-internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumProtocol forums) : IUserProtocol
+internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumIdentityResolver forumIdentities)
+    : IUserProtocol
 {
     public async Task<string> GetTbsAsync(CancellationToken cancellationToken = default)
     {
@@ -333,7 +334,7 @@ internal sealed class UserProtocol(TiebaOperationDispatcher dispatcher, IForumPr
         await dispatcher.EnsureCanExecuteAsync(nameof(GetUserForumInfoAsync),
             TiebaOperationCapabilities.HttpOnly(true), cancellationToken);
 
-        var fid = await forums.GetFidAsync(fname, cancellationToken);
+        var fid = await forumIdentities.GetFidAsync(fname, cancellationToken);
         return await GetUserForumInfoAsync(fid, portrait, cancellationToken);
     }
 

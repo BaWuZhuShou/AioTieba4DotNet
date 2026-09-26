@@ -36,10 +36,11 @@ internal sealed class TiebaClientComposition
         var session = new TiebaClientSession(options, _createHttpClient());
         var dispatcher = new TiebaOperationDispatcher(session);
         var forumCache = new ForumInfoCache();
-        var adminProtocol = new AdminProtocol(dispatcher, forumCache);
-        var forumProtocol = new ForumProtocol(dispatcher, forumCache);
-        var threadProtocol = new ThreadProtocol(dispatcher, forumProtocol);
-        var userProtocol = new UserProtocol(dispatcher, forumProtocol);
+        var forumIdentityResolver = new ForumIdentityResolver(dispatcher, forumCache);
+        var adminProtocol = new AdminProtocol(dispatcher, forumIdentityResolver);
+        var forumProtocol = new ForumProtocol(dispatcher, forumIdentityResolver);
+        var threadProtocol = new ThreadProtocol(dispatcher, forumIdentityResolver, forumProtocol);
+        var userProtocol = new UserProtocol(dispatcher, forumIdentityResolver);
         var messagesProtocol = new MessagesProtocol(dispatcher, userProtocol);
         var clientProtocol = new ClientProtocol(dispatcher);
 

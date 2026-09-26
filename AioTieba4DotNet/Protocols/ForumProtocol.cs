@@ -1,9 +1,7 @@
 using AioTieba4DotNet.Api.GetCid;
 using AioTieba4DotNet.Api.GetDislikeForums;
-using AioTieba4DotNet.Api.GetFid;
 using AioTieba4DotNet.Api.GetFollowForums;
 using AioTieba4DotNet.Api.GetForum;
-using AioTieba4DotNet.Api.GetForumDetail;
 using AioTieba4DotNet.Api.GetForumLevel;
 using AioTieba4DotNet.Api.GetImages;
 using AioTieba4DotNet.Api.GetLastReplyers;
@@ -24,7 +22,6 @@ using AioTieba4DotNet.Api.SignForums;
 using AioTieba4DotNet.Api.SignGrowth;
 using AioTieba4DotNet.Api.UndislikeForum;
 using AioTieba4DotNet.Api.UnlikeForum;
-using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Models;
 using AioTieba4DotNet.Models.Forums;
 using AioTieba4DotNet.Transport;
@@ -32,55 +29,25 @@ using DislikeForumApi = AioTieba4DotNet.Api.DislikeForum.DislikeForum;
 
 namespace AioTieba4DotNet.Protocols;
 
-internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumInfoCache cache) : IForumProtocol
+internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIdentityResolver identityResolver)
+    : IForumProtocol, IForumCategoryResolver
 {
-    private readonly ForumInfoCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+    private readonly ForumIdentityResolver _identityResolver =
+        identityResolver ?? throw new ArgumentNullException(nameof(identityResolver));
 
-    public async Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default)
+    public Task<ulong> GetFidAsync(string fname, CancellationToken cancellationToken = default)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var forumId = _cache.GetForumId(fname);
-        if (forumId != 0)
-            return forumId;
-
-        forumId = await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<ulong>(
-                nameof(GetFidAsync),
-                TiebaOperationCapabilities.HttpOnly(),
-                (session, ct) => new GetFid(session.HttpCore).RequestAsync(fname, ct)),
-            cancellationToken);
-
-        CacheForum(forumId, fname);
-        return forumId;
+        return _identityResolver.GetFidAsync(fname, cancellationToken);
     }
 
-    public async Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default)
+    public Task<string> GetFnameAsync(ulong fid, CancellationToken cancellationToken = default)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var forumName = _cache.GetForumName(fid);
-        if (!string.IsNullOrEmpty(forumName))
-            return forumName;
-
-        var detail = await GetDetailAsync(fid, cancellationToken);
-        _cache.SetForumName(fid, detail.Fname);
-        return detail.Fname;
+        return _identityResolver.GetFnameAsync(fid, cancellationToken);
     }
 
-    public async Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default)
+    public Task<ForumDetail> GetDetailAsync(ulong fid, CancellationToken cancellationToken = default)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var detail = await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<ForumDetail>(
-                nameof(GetDetailAsync),
-                TiebaOperationCapabilities.HttpOnly(),
-                (session, ct) => new GetForumDetail(session.HttpCore).RequestAsync((long)fid, ct)),
-            cancellationToken);
-
-        CacheForum(detail.Fid, detail.Fname);
-        return detail;
+        return _identityResolver.GetDetailAsync(fid, cancellationToken);
     }
 
     public async Task<ForumDetail> GetDetailAsync(string fname, CancellationToken cancellationToken = default)
@@ -189,7 +156,7 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
                 (session, ct) => new GetForum(session.HttpCore).RequestAsync(fname, ct)),
             cancellationToken);
 
-        CacheForum((ulong)forum.Fid, forum.Fname);
+        _identityResolver.RememberForum((ulong)forum.Fid, forum.Fname);
         return forum;
     }
 
@@ -625,14 +592,6 @@ internal sealed class ForumProtocol(TiebaOperationDispatcher dispatcher, ForumIn
                 (session, ct) => new GetDislikeForums(session.HttpCore, session.WsCore).RequestHttpAsync(pn, rn, ct),
                 (session, ct) => new GetDislikeForums(session.HttpCore, session.WsCore).RequestWsAsync(pn, rn, ct)),
             cancellationToken);
-    }
-
-    private void CacheForum(ulong forumId, string forumName)
-    {
-        if (forumId == 0 || string.IsNullOrWhiteSpace(forumName))
-            return;
-
-        _cache.SetForumName(forumId, forumName);
     }
 
     private static void ValidateForumId(ulong fid)

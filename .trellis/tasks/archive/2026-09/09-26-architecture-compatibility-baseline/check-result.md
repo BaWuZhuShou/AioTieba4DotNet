@@ -21,7 +21,7 @@
 
 - SDK：`10.0.201`，符合未修改的 `global.json`。
 - 锁定还原：`dotnet restore AioTieba4DotNet.sln --locked-mode` 通过。
-- 类型检查／编译：完整解决方案 `dotnet build AioTieba4DotNet.sln --configuration Release --no-restore` 通过，本次增量构建 0 警告、0 错误。原始干净构建中的 55 个既有 CS1591 警告未在本任务修复。
+- 类型检查／编译：完整解决方案 `dotnet build AioTieba4DotNet.sln --configuration Release --no-restore` 通过，本次增量构建 0 警告、0 错误。原始干净构建中的 55 个既有警告未在本任务修复；经主会话核对完整原日志，分别为 CS1591 47 项、CS1573 2 项、CS9107 6 项。
 - Lint：针对本轮四个新增 C# 文件及 Mapping 夹具文件的 `dotnet format style ... --no-restore --verify-no-changes --severity warn --include <绝对路径>` 通过；`dotnet format whitespace ... --verify-no-changes` 通过。此结论限于所列文件和检查配置，不代表全仓库分析器／所有建议均通过。
 - 空白检查：`git diff --check` 通过；额外对新文件使用 `git diff --no-index --check /dev/null <文件>`，避免普通 diff 漏掉未跟踪文件。
 - 离线测试：按 [执行计划](implement.md) 的七类完整名称过滤，使用 `--configuration Release --no-build --no-restore -p:CollectCoverage=false`，**79 通过、0 失败、0 跳过**。修复取消等待和换行后重建并重跑相同白名单；没有运行整个 Governance 套件或 `safe`／`restricted`。

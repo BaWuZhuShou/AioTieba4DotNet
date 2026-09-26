@@ -2,9 +2,9 @@
 
 ## 前置门槛
 
-- [ ] 用户已批准父任务最新摘要；A 已完成检查并有工作提交及基线来源。
-- [ ] 确认 A 的预期基线尚未修改，先加载其最终验证记录。
-- [ ] 激活本子任务并派发 `trellis-implement`；同一产品文件由一个实施代理负责，测试/检查代理不得覆盖他人改动。
+- [x] 用户已批准父任务最新摘要；A 已完成检查，工作提交为 `9b1afc1`，归档于 `.trellis/tasks/archive/2026-09/09-26-architecture-compatibility-baseline`。
+- [x] 确认 A 的预期基线尚未修改，先加载其最终验证记录。
+- [x] 激活本子任务并派发 `trellis-implement`；同一产品文件由一个实施代理负责，测试/检查代理不得覆盖他人改动。
 
 ## 有序迁移
 
@@ -19,14 +19,14 @@
 
 ## 必查清单
 
-- [ ] 无公开 API 快照差异；原基线没有被重新生成。
-- [ ] `ThreadProtocol`、`UserProtocol` 不再引用完整 `IForumProtocol`。
-- [ ] ID 请求只有一处组装，普通/管理路径仍有不同的显式策略。
-- [ ] GetFname 两次写入及不同过滤条件保留，GetForum 的回填来源保留。
-- [ ] Admin 缓存命中、未命中与认证准备期间缓存被填入三种路径均保持。
-- [ ] Thread.GoodAsync 的分类请求未遗漏；不出现 resolver↔ForumProtocol 循环。
-- [ ] 没有 Session/Transport/Api/Models/生成代码、缓存策略、包版本或 CI 的无关变更。
-- [ ] 运行 `git diff --check`，将文档/证据前置缺失单独报告，不声称线上或覆盖率已通过。
+- [x] 无公开 API 快照差异；原基线没有被重新生成。
+- [x] `ThreadProtocol`、`UserProtocol` 不再引用完整 `IForumProtocol`。
+- [x] ID 请求只有一处组装，普通/管理路径仍有不同的显式策略。
+- [x] GetFname 两次写入及不同过滤条件保留，GetForum 的回填来源保留。
+- [x] Admin 缓存命中、未命中与认证准备期间缓存被填入三种路径均保持。
+- [x] Thread.GoodAsync 的分类请求未遗漏；不出现 resolver↔ForumProtocol 循环。
+- [x] 没有 Session/Transport/Api/Models/生成代码、缓存策略、包版本或 CI 的无关变更。
+- [x] 运行 `git diff --check`，将文档/证据前置缺失单独报告，不声称线上或覆盖率已通过。
 
 ## 回退点
 

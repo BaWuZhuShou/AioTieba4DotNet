@@ -58,6 +58,7 @@
 - 任何 README、guide 或示例如果公开宣传可直接使用的在线测试 `Api:*` 过滤面，必须以 `docs/related/public-api-coverage-matrix.md` 为准；deferred、已降级或仅保留在矩阵里的行，不能继续当成稳定首类 `Api:*` 入口对外声明。
 - 需要真实链路或 fixture gate 的测试应复用新的 online environment / contract 体系，而不是私自读取 secrets 或暗中回退到旧 lane 配置。
 - 测试必须断言可观察结果；`Console.WriteLine`、调试输出或仅验证“不抛异常”都不能替代行为断言，除非任务明确只要求 smoke / probe 级证据。
+- 内部架构调整先保留未重构产品的公开元数据基线与对应离线行为表征，再迁移实现；测试不得自动接受新快照。窄接口、每客户端状态所有权和验证入口见 [.trellis 库规范](../.trellis/spec/backend/index.md)，静态基线不能替代运行时或真实在线证据。
 
 ## 7. CI 与本地验证边界
 - GitHub Actions 必须保持 **build-only**。

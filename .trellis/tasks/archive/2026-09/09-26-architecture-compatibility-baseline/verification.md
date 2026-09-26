@@ -7,7 +7,7 @@
 - 原产品提交：`b9a86af79cf94db6d7f33abe8bd1e04e41f63678`。阶段 A 未修改产品、`global.json`、构建属性或依赖版本。
 - 主机默认 SDK 为 `10.0.112`。使用 Microsoft 官方安装脚本将 SDK `10.0.201` 安装至 `/tmp/aiotieba-dotnet-10.0.201`；命令先 `source /tmp/aiotieba-task-env.sh`，CLI 目录和 NuGet 包缓存也隔离在 `/tmp`。
 - `dotnet restore AioTieba4DotNet.sln --locked-mode`：5 个项目成功还原。
-- 原始完整 Release 构建成功，0 错误、55 个既有 CS1591 XML 文档警告；日志 `/tmp/aiotieba-original-build.log`。后续增量构建的 0 警告不意味着这些旧警告已修复。
+- 原始完整 Release 构建成功，0 错误、55 个既有警告（CS1591 47 项、CS1573 2 项、CS9107 6 项）；日志 `/tmp/aiotieba-original-build.log`。后续增量构建的 0 警告不意味着这些旧警告已修复。
 - 原始产品输出保存在 `/tmp/aiotieba-original-product/`；DLL SHA-256：`cb074149d844004e1959936d9a9a51e804a59540d7d0aa2bc0d675dd903fd5eb`。该副本用于生成基线。
 
 ## 原始行为与夹具修正

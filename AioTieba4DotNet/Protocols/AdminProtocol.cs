@@ -8,21 +8,21 @@ using AioTieba4DotNet.Api.GetBawuPerm;
 using AioTieba4DotNet.Api.GetBawuPostlogs;
 using AioTieba4DotNet.Api.GetBawuUserlogs;
 using AioTieba4DotNet.Api.GetBlocks;
-using AioTieba4DotNet.Api.GetFid;
 using AioTieba4DotNet.Api.GetUnblockAppeals;
 using AioTieba4DotNet.Api.HandleUnblockAppeals;
 using AioTieba4DotNet.Api.SetBawuPerm;
 using AioTieba4DotNet.Api.Unblock;
-using AioTieba4DotNet.Internal;
 using AioTieba4DotNet.Models.Admins;
 using AioTieba4DotNet.Transport;
 using BlockApi = AioTieba4DotNet.Api.Block.Block;
 
 namespace AioTieba4DotNet.Protocols;
 
-internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumInfoCache cache) : IAdminProtocol
+internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIdentityResolver identityResolver)
+    : IAdminProtocol
 {
-    private readonly ForumInfoCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+    private readonly ForumIdentityResolver _identityResolver =
+        identityResolver ?? throw new ArgumentNullException(nameof(identityResolver));
 
     public async Task<bool> AddBawuAsync(string fname, string userName, BawuType bawuType,
         CancellationToken cancellationToken = default)
@@ -33,7 +33,8 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateEnum(bawuType, nameof(bawuType));
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(true, true);
-        var fid = await ResolveForumIdAsync(nameof(AddBawuAsync), capabilities, fname, cancellationToken);
+        var fid = await _identityResolver.ResolveFidForOperationAsync(nameof(AddBawuAsync), capabilities, fname,
+            cancellationToken);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
@@ -53,7 +54,8 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateEnum(bawuType, nameof(bawuType));
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(true);
-        var fid = await ResolveForumIdAsync(nameof(DelBawuAsync), capabilities, fname, cancellationToken);
+        var fid = await _identityResolver.ResolveFidForOperationAsync(nameof(DelBawuAsync), capabilities, fname,
+            cancellationToken);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
@@ -114,8 +116,8 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         cancellationToken.ThrowIfCancellationRequested();
         ValidateForumName(fname);
 
-        var fid = await ResolveForumIdAsync(nameof(GetBawuInfoAsync), TiebaOperationCapabilities.HttpOnly(), fname,
-            cancellationToken);
+        var fid = await _identityResolver.ResolveFidForOperationAsync(nameof(GetBawuInfoAsync),
+            TiebaOperationCapabilities.HttpOnly(), fname, cancellationToken);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<BawuInfo>(
@@ -134,7 +136,8 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateRequiredText(portrait, nameof(portrait));
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(true);
-        var fid = await ResolveForumIdAsync(nameof(GetBawuPermAsync), capabilities, fname, cancellationToken);
+        var fid = await _identityResolver.ResolveFidForOperationAsync(nameof(GetBawuPermAsync), capabilities, fname,
+            cancellationToken);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<BawuPerm>(
@@ -152,7 +155,8 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateRequiredText(portrait, nameof(portrait));
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(true);
-        var fid = await ResolveForumIdAsync(nameof(SetBawuPermAsync), capabilities, fname, cancellationToken);
+        var fid = await _identityResolver.ResolveFidForOperationAsync(nameof(SetBawuPermAsync), capabilities, fname,
+            cancellationToken);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<bool>(
@@ -213,7 +217,8 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidatePageSize(rn);
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(true, true);
-        var fid = await ResolveForumIdAsync(nameof(GetUnblockAppealsAsync), capabilities, fname, cancellationToken);
+        var fid = await _identityResolver.ResolveFidForOperationAsync(nameof(GetUnblockAppealsAsync), capabilities, fname,
+            cancellationToken);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<Appeals>(
@@ -231,7 +236,7 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateAppealIds(appealIds);
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(true, true);
-        var fid = await ResolveForumIdAsync(nameof(HandleUnblockAppealsAsync), capabilities, fname,
+        var fid = await _identityResolver.ResolveFidForOperationAsync(nameof(HandleUnblockAppealsAsync), capabilities, fname,
             cancellationToken);
 
         return await dispatcher.ExecuteAsync(
@@ -250,7 +255,8 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidatePageNumber(pn);
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(true);
-        var fid = await ResolveForumIdAsync(nameof(GetBlocksAsync), capabilities, fname, cancellationToken);
+        var fid = await _identityResolver.ResolveFidForOperationAsync(nameof(GetBlocksAsync), capabilities, fname,
+            cancellationToken);
 
         return await dispatcher.ExecuteAsync(
             new TiebaOperationDescriptor<Blocks>(
@@ -283,7 +289,8 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateForumName(fname);
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(true, true);
-        var fid = await ResolveForumIdAsync(nameof(BlockAsync), capabilities, fname, cancellationToken);
+        var fid = await _identityResolver.ResolveFidForOperationAsync(nameof(BlockAsync), capabilities, fname,
+            cancellationToken);
         return await BlockAsync(fid, portrait, day, reason, cancellationToken);
     }
 
@@ -307,30 +314,9 @@ internal sealed class AdminProtocol(TiebaOperationDispatcher dispatcher, ForumIn
         ValidateForumName(fname);
 
         var capabilities = TiebaOperationCapabilities.HttpOnly(true, true);
-        var fid = await ResolveForumIdAsync(nameof(UnblockAsync), capabilities, fname, cancellationToken);
-        return await UnblockAsync(fid, userId, cancellationToken);
-    }
-
-    private async Task<ulong> ResolveForumIdAsync(string operationName, TiebaOperationCapabilities capabilities,
-        string fname, CancellationToken cancellationToken)
-    {
-        var forumId = _cache.GetForumId(fname);
-        if (forumId != 0)
-            return forumId;
-
-        await dispatcher.EnsureCanExecuteAsync(operationName, capabilities, cancellationToken);
-
-        forumId = await dispatcher.ExecuteAsync(
-            new TiebaOperationDescriptor<ulong>(
-                $"{operationName}ResolveFid",
-                TiebaOperationCapabilities.HttpOnly(),
-                (session, ct) => new GetFid(session.HttpCore).RequestAsync(fname, ct)),
+        var fid = await _identityResolver.ResolveFidForOperationAsync(nameof(UnblockAsync), capabilities, fname,
             cancellationToken);
-
-        if (forumId != 0)
-            _cache.SetForumName(forumId, fname);
-
-        return forumId;
+        return await UnblockAsync(fid, userId, cancellationToken);
     }
 
     private static void ValidateForumId(ulong fid)

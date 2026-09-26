@@ -3,7 +3,7 @@
   "name": "forum-lookup-decoupling",
   "title": "收敛吧信息查询职责与协议依赖",
   "description": "在兼容性基线通过后，集中吧信息查询与缓存加载逻辑，缩小论坛、主题、用户及管理协议之间的依赖并保持既有行为。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": null,
   "package": null,

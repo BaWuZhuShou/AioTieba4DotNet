@@ -54,6 +54,7 @@ AioTieba4DotNet/
   Folder placement does not automatically mean a consumer-facing namespace.
 - Keep low-level `Api/*` classes `internal`. Public callers should reach behavior through modules and contracts, not by
   constructing request classes.
+- 跨协议吧信息查询通过 `IForumIdentityResolver` / `IForumCategoryResolver` 协作；Thread/User 不依赖完整 `IForumProtocol`。身份服务和缓存由统一组合根按客户端创建，认证与回填顺序遵循 [会话与缓存规范](../.trellis/spec/backend/session-and-cache.md)。
 - Mirror upstream `aiotieba` request semantics, naming, packing, parsing, and observable behavior as closely as the C#
   contract allows.
 - Maintain parity scope, internal implementation mapping, and auth notes in `../docs/related/parity.md` instead of split code attributes or a separate mapping file.

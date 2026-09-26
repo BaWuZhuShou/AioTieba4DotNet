@@ -46,6 +46,10 @@ Contracts/IThreadModule.cs -> Modules/ThreadModule.cs
 
 [TiebaClientComposition.CreateRuntime](../../../AioTieba4DotNet/Clients/TiebaClientComposition.cs) 为所有入口构建会话、调度器、协议、缓存和模块。DI 将 `ITiebaClient` 注册为 scoped，将 `ITiebaClientFactory` 注册为 singleton；工厂创建的客户端获得独立运行时。组合逻辑应统一收敛于此，参见[组合契约](../../../AioTieba4DotNet.Tests.Governance/Contracts/ClientLifecycleAndCompositionContractTests.cs)。
 
+跨协议的吧信息协作使用既有 `Protocols/` 层内的窄接口：[IForumIdentityResolver](../../../AioTieba4DotNet/Protocols/IForumIdentityResolver.cs) 提供吧 ID/名称查询，[IForumCategoryResolver](../../../AioTieba4DotNet/Protocols/IForumCategoryResolver.cs) 提供字符串分类查询。Thread 依赖两者，User 只依赖身份接口，不依赖完整 `IForumProtocol`。分类实现仍由 ForumProtocol 提供。
+
+[ForumIdentityResolver](../../../AioTieba4DotNet/Protocols/ForumIdentityResolver.cs) 统一身份查询、详情读取及对应缓存写入；Forum/Admin 按其协作需要使用具体服务。组合根每客户端创建一份 resolver 和原 ForumInfoCache。resolver 不依赖业务协议，避免 GetFname → GetDetail 产生反向循环；缓存与认证顺序见[会话与缓存规范](./session-and-cache.md)。
+
 ## 代码归属规则
 
 - 扩展公开行为时，修改对应接口、模块和协议；传输协议操作放在内部 `Api/<UpstreamFamily>/` 中。

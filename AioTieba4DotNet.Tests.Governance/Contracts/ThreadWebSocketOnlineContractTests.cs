@@ -49,8 +49,9 @@ public sealed class ThreadWebSocketOnlineContractTests
 
                 using var session = new TiebaClientSession(options, httpClient);
                 var dispatcher = new TiebaOperationDispatcher(session);
-                var forumProtocol = new ForumProtocol(dispatcher, new ForumInfoCache());
-                var threads = new ThreadModule(new ThreadProtocol(dispatcher, forumProtocol));
+                var identityResolver = new ForumIdentityResolver(dispatcher, new ForumInfoCache());
+                var forumProtocol = new ForumProtocol(dispatcher, identityResolver);
+                var threads = new ThreadModule(new ThreadProtocol(dispatcher, identityResolver, forumProtocol));
 
                 var result = await RunWebSocketThreadReadOrInconclusiveAsync(
                     () => threads.GetThreadsAsync(fixture.ForumSelector, 1, 10, ThreadSortType.Reply, false));
@@ -84,8 +85,9 @@ public sealed class ThreadWebSocketOnlineContractTests
 
                 using var session = new TiebaClientSession(options, httpClient);
                 var dispatcher = new TiebaOperationDispatcher(session);
-                var forumProtocol = new ForumProtocol(dispatcher, new ForumInfoCache());
-                var threads = new ThreadModule(new ThreadProtocol(dispatcher, forumProtocol));
+                var identityResolver = new ForumIdentityResolver(dispatcher, new ForumInfoCache());
+                var forumProtocol = new ForumProtocol(dispatcher, identityResolver);
+                var threads = new ThreadModule(new ThreadProtocol(dispatcher, identityResolver, forumProtocol));
 
                 var threadListing = await RunWebSocketThreadReadOrInconclusiveAsync(
                     () => threads.GetThreadsAsync(fixture.ForumSelector, 1, 10, ThreadSortType.Reply, false));
