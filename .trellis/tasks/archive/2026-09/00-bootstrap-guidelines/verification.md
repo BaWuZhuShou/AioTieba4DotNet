@@ -55,11 +55,12 @@ remain open in this task's scope.
   coverage policy and current collector wiring. Specs record these distinctions;
   modifying product code or existing policy files is outside this bootstrap.
 
-## Completion Gate
+## Completion
 
 All PRD acceptance criteria are met. The user approved the scoped work commit,
 archive, and session journal on 2026-09-26 by replying `提交` to the presented
-plan. Task status remains `in_progress` until archive bookkeeping completes.
+plan. The work commit is `4dedce5`; the task is completed and archived under
+`.trellis/tasks/archive/2026-09/00-bootstrap-guidelines/`.
 The user selected the existing task; no replacement task was created.
 
 Approved work commit: `docs(spec): 补齐项目开发规范`.
@@ -69,3 +70,7 @@ PRD, context manifests, research, metadata, and verification record. Existing
 unrelated initialization changes in `AGENTS.md`, `.codex/`, `.gitattributes`,
 Trellis runtime files, shared thinking guides, and workspace files are excluded
 from that work commit unless the user explicitly changes the scope.
+
+Archive bookkeeping updates the two context manifests to their archived research
+paths. The task metadata records the work commit and a task-relative verification
+report path. Session journaling is handled separately from the work/archive commits.

@@ -3,7 +3,7 @@
   "name": "00-bootstrap-guidelines",
   "title": "Bootstrap Guidelines",
   "description": "Fill in project development guidelines for AI agents",
-  "status": "in_progress",
+  "status": "completed",
   "dev_type": "docs",
   "scope": null,
   "package": null,
@@ -11,11 +11,11 @@
   "creator": "Juicpt",
   "assignee": "Juicpt",
   "createdAt": "2026-09-26",
-  "completedAt": null,
+  "completedAt": "2026-09-26",
   "branch": "master",
   "base_branch": null,
   "worktree_path": null,
-  "commit": null,
+  "commit": "4dedce5eac94add8c3ca228d809faa54f2e0c237",
   "pr_url": null,
   "subtasks": [],
   "children": [],
@@ -32,8 +32,7 @@
       "authored_specs": 14,
       "verified_local_links": 187,
       "preserved_source_runtime_files": 686,
-      "report": "verification.md",
-      "next_step": "archive and session journal after authorized work commit"
+      "report": "verification.md"
     },
     "commit_authorized": true
   }

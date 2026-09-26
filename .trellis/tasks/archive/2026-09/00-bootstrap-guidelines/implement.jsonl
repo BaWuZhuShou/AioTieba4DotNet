@@ -1,0 +1,3 @@
+{"file": ".trellis/tasks/archive/2026-09/00-bootstrap-guidelines/research/bootstrap-scope.md", "reason": "Source inventory, documentation boundaries, initial dirty state, and verification contract"}
+{"file": ".trellis/spec/guides/index.md", "reason": "Existing shared cross-layer and source verification thinking guidance"}
+{"file": ".trellis/tasks/archive/2026-09/00-bootstrap-guidelines/research/validation-evidence.md", "reason": "Current validation commands, live-test boundaries, coverage and CI discrepancies"}
