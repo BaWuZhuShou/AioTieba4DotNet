@@ -42,6 +42,50 @@ dotnet test AioTieba4DotNet.Tests.Governance/AioTieba4DotNet.Tests.Governance.cs
 
 断言传输协议形态、公开属性、错误、回滚和传输选择。参照[映射](../../../AioTieba4DotNet.Tests.Governance/Contracts/MappingCoverageContractTests.cs)、[WS 测试替身](../../../AioTieba4DotNet.Tests.Governance/Contracts/ThreadWebSocketDirectContractTests.cs)和[组合](../../../AioTieba4DotNet.Tests.Governance/Contracts/ClientLifecycleAndCompositionContractTests.cs)示例。单条日志或未抛异常的调用本身不能证明行为。
 
+## 内部重构的兼容性基线
+
+### 1. 范围与触发条件
+
+调整内部依赖、组合或共享实现时，先在未重构的产品上建立行为表征，再迁移。公开 API 静态基线由 [PublicApiBaselineContractTests](../../../AioTieba4DotNet.Tests.Governance/Contracts/PublicApiBaselineContractTests.cs) 比较；固定文件位于 [public-api.txt](../../../AioTieba4DotNet.Tests.Governance/Contracts/Baselines/public-api.txt)。它保护指定元数据维度，不等于全部二进制、运行时或真实在线兼容性证明。
+
+### 2. 验证入口
+
+```bash
+dotnet build AioTieba4DotNet.sln --configuration Release --no-restore
+dotnet test AioTieba4DotNet.Tests.Governance/AioTieba4DotNet.Tests.Governance.csproj --configuration Release --no-build --no-restore --filter 'FullyQualifiedName~AioTieba4DotNet.Tests.Governance.Contracts.PublicApiBaselineContractTests|FullyQualifiedName~AioTieba4DotNet.Tests.Governance.Contracts.ForumLookupBehaviorContractTests' -p:CollectCoverage=false
+```
+
+先完成锁定还原。整个解决方案的 Release 构建可避免既有反射测试从 Online 输出目录加载旧产品副本。检查实际发现和执行的用例，零用例或跳过不算通过。
+
+### 3. 静态与行为契约
+
+快照以确定性格式记录对外可见类型、成员、参数名/默认值/修饰、泛型约束、可空性、访问器、枚举/常量及调用或序列化相关属性。参考 [提取器](../../../AioTieba4DotNet.Tests.Governance/Contracts/PublicApiSnapshot.cs) 和 [维护说明](../../../AioTieba4DotNet.Tests.Governance/Contracts/Baselines/README.md) 的具体维度与局限。测试只比较，不自动接受变化；内部重构要求零差异。
+
+吧信息查询使用 [ForumLookupBehaviorContractTests](../../../AioTieba4DotNet.Tests.Governance/Contracts/ForumLookupBehaviorContractTests.cs) 和拒绝未声明请求的受控 handler，通过实际组合入口断言结果、错误、取消、顺序和缓存。Governance 已有 `InternalsVisibleTo`，优先使用该接缝，不为测试新增公开产品类型或重复构建一套协议对象图。
+
+### 4. 错误矩阵
+
+| 情况 | 处理 |
+| --- | --- |
+| 公开元数据出现差异 | 测试失败并显示首处差异；调查变更，不重写预期以通过 |
+| 基线不存在、空白或读取失败 | 失败；不能从当前产品自动生成后继续成功 |
+| 新增签名形状暂不支持 | 扩展提取规则和有效性样本，再评审基线 |
+| 缺 SDK、还原资产或治理证据 | 记录具体前置缺失，不降低版本/门槛或伪造结果 |
+
+### 5. 场景
+
+良好场景：新旧内部实现通过同一份 API 基线和查询行为用例。基准场景：表征在原实现上先通过，并记录源码提交与程序集来源。错误场景：将旧实现的实际输出改成“更合理”的值，再重新生成快照掩盖变化。
+
+### 6. 必需断言
+
+公开快照的有效性样本应能区分默认值、可空性、访问器和枚举变化。查询表征覆盖冷热缓存、跨协议共享/跨客户端隔离、认证先后、取消和失败，保留不同入口的缓存条件和操作名。静态快照不能替代行为断言，WireParity/SignatureParity 的既有通过也不能单独证明所有请求/签名已冻结。
+
+### 7. 正误示例
+
+相对 URL 夹具应使用 `relative/path` 或 `./relative`；`/relative` 在 Linux 上可被 `UriKind.Absolute` 解析为文件 URI，不能据此断言它在所有平台都走相对 URL 回退。修正夹具时保留原断言与产品行为，并记录重构前既有失败。
+
+错误做法：失败时写回 `public-api.txt` 再比较。正确做法：从独立保存的未重构程序集显式生成基线，记录来源；后续测试仅比较并由人工审阅任何改变。
+
 ## 在线通道会真实执行操作
 
 [test-lane.sh](../../../scripts/test-lane.sh)／[test-lane.ps1](../../../scripts/test-lane.ps1) 要求显式提供通道参数。指南中关于默认 safe 通道的说法描述的是规则，不是包装脚本无参数时的行为。

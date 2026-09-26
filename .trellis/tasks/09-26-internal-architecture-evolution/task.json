@@ -1,0 +1,29 @@
+{
+  "id": "internal-architecture-evolution",
+  "name": "internal-architecture-evolution",
+  "title": "保持对外兼容的内部架构演进",
+  "description": "在保持 v3 公开契约和可观察行为稳定的前提下，研究并分阶段改善客户端内部职责、依赖边界和维护性。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "Juicpt",
+  "assignee": "Juicpt",
+  "createdAt": "2026-09-26",
+  "completedAt": null,
+  "branch": "refactor/internal-architecture",
+  "base_branch": "master",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-26-architecture-compatibility-baseline",
+    "09-26-forum-lookup-decoupling"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {}
+}

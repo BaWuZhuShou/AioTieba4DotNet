@@ -5,4 +5,8 @@
         <ProjectReference Include="..\AioTieba4DotNet.Tests.Platform\AioTieba4DotNet.Tests.Platform.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <EmbeddedResource Include="Contracts\Baselines\public-api.txt" />
+    </ItemGroup>
+
 </Project>

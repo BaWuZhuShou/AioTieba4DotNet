@@ -220,14 +220,14 @@ public sealed class MappingCoverageContractTests
         {
             Type = 1,
             Text = "abstract title",
-            Link = "/relative"
+            Link = "./relative"
         });
 
         Assert.AreEqual("pb title", pbLink.Title);
         Assert.AreEqual(string.Empty, pbLink.Text);
         Assert.AreEqual("about:blank", pbLink.RawUrl.ToString());
         Assert.AreEqual("abstract title", abstractLink.Title);
-        Assert.AreEqual("/relative", abstractLink.Text);
+        Assert.AreEqual("./relative", abstractLink.Text);
         Assert.AreEqual("about:blank", abstractLink.RawUrl.ToString());
     }
 
