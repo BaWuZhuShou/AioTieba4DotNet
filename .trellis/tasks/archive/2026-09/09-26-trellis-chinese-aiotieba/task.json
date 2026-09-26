@@ -3,7 +3,7 @@
   "name": "trellis-chinese-aiotieba",
   "title": "Trellis 中文化、aiotieba 对齐定位与自动提交",
   "description": "统一本地 Trellis 可读内容为中文，明确 aiotieba Python 版的 C# 实现定位，并在检查通过后自动完成本地 Git 提交。",
-  "status": "in_progress",
+  "status": "completed",
   "dev_type": "tooling",
   "scope": "trellis",
   "package": null,
@@ -11,11 +11,11 @@
   "creator": "Juicpt",
   "assignee": "Juicpt",
   "createdAt": "2026-09-26",
-  "completedAt": null,
+  "completedAt": "2026-09-26",
   "branch": "chore/trellis-zh-aiotieba",
   "base_branch": "master",
   "worktree_path": null,
-  "commit": null,
+  "commit": "5b6ed1fd4aed59e32941decfb1e2e510d3d72505",
   "pr_url": null,
   "subtasks": [],
   "children": [],
@@ -37,7 +37,8 @@
       "python_files": 35,
       "python_sha256": "61201fb2422794962cfe60c7f63f6f0fe45f059907f6226d9018568edaa0c4c9",
       "protected_files": 637,
-      "report": "verification.md"
+      "report": "verification.md",
+      "work_commit_verified": true
     }
   }
 }
