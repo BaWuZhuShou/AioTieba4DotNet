@@ -1,0 +1,40 @@
+{
+  "id": "00-bootstrap-guidelines",
+  "name": "00-bootstrap-guidelines",
+  "title": "Bootstrap Guidelines",
+  "description": "Fill in project development guidelines for AI agents",
+  "status": "in_progress",
+  "dev_type": "docs",
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "Juicpt",
+  "assignee": "Juicpt",
+  "createdAt": "2026-09-26",
+  "completedAt": null,
+  "branch": "master",
+  "base_branch": null,
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [
+    ".trellis/spec/index.md",
+    ".trellis/spec/backend/",
+    ".trellis/spec/frontend/"
+  ],
+  "notes": "Bootstrap selected by the user on 2026-09-26. Source-backed .NET 10 library and VitePress documentation specs; no runtime code changes.",
+  "meta": {
+    "bootstrap_verification": {
+      "status": "passed",
+      "authored_specs": 14,
+      "verified_local_links": 187,
+      "preserved_source_runtime_files": 686,
+      "report": "verification.md",
+      "next_step": "archive and session journal after authorized work commit"
+    },
+    "commit_authorized": true
+  }
+}
