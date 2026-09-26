@@ -1,34 +1,34 @@
-# Bootstrap Project Development Guidelines
+# 初始化项目开发规范
 
-## Goal
+## 目标
 
-Replace the initial Trellis spec scaffolding with practical, source-backed guidance for the maintained AioTieba4DotNet v3 repository.
+用实用、具有源码依据的指南替换初始 Trellis 规范模板，覆盖正在维护的 AioTieba4DotNet v3 仓库。
 
-## Scope
+## 范围
 
-- Write English guidelines under `.trellis/spec/` for the .NET library, its protobuf generator and test support, and the VitePress documentation site.
-- Import existing conventions from `AioTieba4DotNet/AGENTS.md`, `ProtoGenerator/AGENTS.md`, `.junie/guidelines.md`, `.editorconfig`, project manifests, and maintained documentation; verify claims against representative source and tests.
-- Adapt or remove template topics that do not describe this repository. Document session/cache ownership instead of inventing database conventions; describe the documentation frontend instead of inventing a React application.
-- Preserve the existing shared thinking guides unless a concrete incompatibility requires a change.
-- Maintain task artifacts and verification evidence for this bootstrap.
+- 本任务当时要求在 `.trellis/spec/` 下用英文编写 .NET 库、protobuf 生成器、测试支持和 VitePress 文档站的指南。此处保留历史要求；当前语言规则以新的中文规范为准。
+- 从 `AioTieba4DotNet/AGENTS.md`、`ProtoGenerator/AGENTS.md`、`.junie/guidelines.md`、`.editorconfig`、项目清单和维护文档中提取现有约定，并用代表性源码和测试核实。
+- 调整或移除不适用于本仓库的模板主题。记录会话/缓存的归属，不虚构数据库约定；描述文档站前端，不虚构 React 应用。
+- 保留现有共享思考指南，除非发现必须修改的具体不兼容点。
+- 维护本次初始化的任务产物和验证证据。
 
-## Constraints
+## 约束
 
-- This is a documentation-only task. Do not change product code, generated code, test behavior, build configuration, existing guides outside Trellis, or unrelated initialization changes.
-- Preserve the .NET 10-only public contract and the six public modules, upstream parity ownership, and current test topology.
-- Cite real repository paths and concise examples. Distinguish observed behavior from desired future architecture and note material discrepancies in existing guides.
-- Use direct source inspection when optional repository-analysis integrations are unavailable.
-- Do not execute live online lanes, mutate service fixtures, or regenerate protobuf outputs for this documentation task.
+- 这是纯文档任务。不修改产品代码、生成代码、测试行为、构建配置、Trellis 之外的现有指南或无关初始化改动。
+- 保留仅支持 .NET 10 的公开契约、六个公开模块、上游对齐台账归属和当前测试拓扑。
+- 引用真实仓库路径并使用简明示例。区分当前行为和未来目标，指出现有指南中的实质差异。
+- 可选仓库分析集成不可用时，直接检查源码。
+- 不执行在线测试通道、不修改服务端测试资源、不为文档任务重新生成 protobuf。
 
-## Acceptance Criteria
+## 验收标准
 
-- [x] Backend/library guidelines explain architecture, public contracts, request/transport behavior, mapping/code generation, state ownership, exceptions, logging, and verification.
-- [x] Frontend guidelines describe the actual VitePress documentation site; irrelevant component/hook/state boilerplate is removed or replaced.
-- [x] Important rules and examples are backed by current source, tests, or existing policy documents.
-- [x] Spec indexes match their files and provide pre-development and quality-check entry points.
-- [x] No unfilled template sections or broken local references remain in the authored specs.
-- [x] Review and documentation checks are recorded; product source and unrelated initial work remain unchanged.
+- [x] 后端/库指南说明架构、公开契约、请求/传输行为、映射/代码生成、状态归属、异常、日志与验证。
+- [x] 前端指南描述实际 VitePress 文档站；移除或替换无关组件/hook/状态模板。
+- [x] 重要规则和示例有当前源码、测试或现有政策文档依据。
+- [x] 规范索引与实际文件一致，提供开发前检查和质量检查入口。
+- [x] 编写的规范中没有未填模板或无效本地引用。
+- [x] 审查和文档检查已有记录；产品源码和无关初始工作保持不变。
 
-## Execution Boundary
+## 执行边界
 
-The user selected this existing bootstrap task on 2026-09-26. It was already marked `in_progress`, but was not bound to this session. This is a bounded documentation bootstrap with no runtime design change; the PRD and research/context manifests are sufficient planning artifacts.
+用户于 2026-09-26 选择了这项已有初始化任务。当时它已标记 `in_progress`，但尚未绑定本会话。这是边界明确、无运行时设计变化的文档初始化；PRD、研究和上下文清单足以作为规划产物。

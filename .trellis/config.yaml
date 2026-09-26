@@ -1,0 +1,144 @@
+# Trellis 配置
+# Trellis 工作流系统的项目级设置
+#
+# 所有设置均有合理默认值，只覆盖需要调整的项。
+
+#-------------------------------------------------------------------------------
+# 会话记录
+#-------------------------------------------------------------------------------
+
+# 运行 add_session.py 后，自动提交日志和索引变更所用的提交说明
+session_commit_message: "chore: 记录开发日志"
+
+# 单个日志文件超过此行数后轮换到新文件
+max_journal_lines: 2000
+
+#-------------------------------------------------------------------------------
+# 会话自动提交
+#-------------------------------------------------------------------------------
+
+# 会话日志和任务归档操作的自动提交行为。
+# - true（默认）：add_session.py / task.py archive 执行后，
+#   脚本自动暂存并提交对应日志或任务变更。
+# - false：脚本不操作 Git。日志和任务归档文件仍写入磁盘，
+#   由你决定是否 git add / commit。
+#
+# 若项目 .gitignore 有意排除 .trellis/，希望会话数据只留本地，
+# 或希望逐次人工审查暂存内容，可使用 false。
+# 本项目已授权自动提交，因此显式启用；工作代码提交仍由主会话按阶段 3.4 处理。
+#
+# 可用值：true / false / yes / no / 1 / 0 / on / off（不区分大小写）。
+session_auto_commit: true
+
+#-------------------------------------------------------------------------------
+# 任务生命周期钩子
+#-------------------------------------------------------------------------------
+
+# 任务生命周期事件后执行的 Shell 命令。
+# 每个钩子都会收到指向 task.json 的 TASK_JSON_PATH 环境变量。
+# 钩子失败会打印警告，但不会阻止主操作。
+#
+# hooks:
+#   after_create:
+#     - "echo '任务已创建'"
+#   after_start:
+#     - "echo '任务已启动'"
+#   after_finish:
+#     - "echo '当前任务已结束'"
+#   after_archive:
+#     - "echo '任务已归档'"
+
+#-------------------------------------------------------------------------------
+# 单仓库多包布局
+#-------------------------------------------------------------------------------
+
+# 为单仓库多包项目声明包。
+# trellis init 时会自动检测工作区，也可以在此手工配置。
+#
+# packages:
+#   frontend:
+#     path: packages/frontend
+#   backend:
+#     path: packages/backend
+#   docs:
+#     path: docs-site
+#     type: submodule
+#   # 多仓库或元仓库布局（每个子目录有独立 .git）中，将包标记为 git: true。
+#   # 运行时会在 Git 上下文展示等场景把它视为独立仓库。
+#   webapp:
+#     path: ./webapp
+#     git: true
+
+# 未指定 --package 时使用的默认包。
+# default_package: frontend
+
+#-------------------------------------------------------------------------------
+# Channel 工作代理内存耗尽保护
+#-------------------------------------------------------------------------------
+# trellis channel spawn 工作代理的默认保护措施。
+# 启动时先清理超时空闲代理，再限制存活代理数量；各监督进程也会在代理
+# 连续空闲超过 idle_timeout 后终止该代理。
+#
+# 优先级：CLI 参数 > 环境变量（TRELLIS_CHANNEL_WORKER_IDLE_TIMEOUT /
+# TRELLIS_CHANNEL_MAX_LIVE_WORKERS）> 本配置 > 内置默认值。
+#
+# idle_timeout: 0 禁用空闲清理；除非明确终止或指定 --timeout，代理可一直空闲。
+# max_live_workers: 0 禁用启动时的数量限制。
+#
+# trusted_context_dirs 将 --file / --jsonl / --agent 的路径包含检查扩展到
+# 工作代理 cwd 之外；适用于 .trellis/tasks 或 .trellis/workspace 符号链接到
+# 外部目录的情况。除 cwd 外，也接受列表中目录包含的真实路径。
+# auto_trust_trellis_symlinks: false 禁用针对 .trellis/tasks / .trellis/workspace
+# 顶层符号链接的有限自动信任；默认开启该自动信任。
+#
+channel:
+  worker_guard:
+    idle_timeout: 5m
+    max_live_workers: 6
+  # trusted_context_dirs:
+  #   - /work/user/trellis_workspace
+  # auto_trust_trellis_symlinks: false
+
+#-------------------------------------------------------------------------------
+# Codex 派发行为
+#-------------------------------------------------------------------------------
+# 仅 Codex 使用，其他平台忽略。默认 auto 派发 trellis-implement /
+# trellis-check / trellis-research 子代理。此行为不依赖继承父会话记录：
+# fork_turns 仍由调用方控制；可信时 Codex 原生 SubagentStart 钩子注入任务上下文，
+# 不可用时由子代理自行读取兜底。只有希望在主会话实施和检查时才设为 inline。
+# sub-agent 是兼容旧配置的 auto 别名；显式提供无效值时安全退回 inline。
+#
+# auto 模式下，未固定模型的子代理继承主会话模型。
+# 如需为实施、检查或研究工作指定更便宜或更快的模型，直接编辑生成的
+# .codex/agents/trellis-*.toml 中的 model / model_reasoning_effort，
+# 参见对应文件的注释提示；config.yaml 没有此设置。
+# trellis update 重新生成时会保留这些修改。
+#
+# codex:
+#   dispatch_mode: auto  # 或 inline；旧别名为 sub-agent
+
+#-------------------------------------------------------------------------------
+# 子代理上下文注入上限
+#-------------------------------------------------------------------------------
+# 限制首条子代理提示内联的任务上下文大小：implement.jsonl / check.jsonl
+# 所引用文件，加上 prd.md / design.md / implement.md。
+# 超大文件会截断并提示；达到总上限后，剩余文件降级为索引行
+# （路径、原因和大小），不再内联全文。
+#
+# 数值均以字节计；0 禁用对应限制。
+#
+# context_injection:
+#   max_file_bytes: 32768        # 每个 implement.jsonl / check.jsonl 引用文件
+#   max_artifact_bytes: 65536    # 每份任务文档（prd.md / design.md / implement.md）
+#   max_total_bytes: 131072      # 全部注入内容；超出后降级为索引行
+
+#-------------------------------------------------------------------------------
+# 每轮提示注入
+#-------------------------------------------------------------------------------
+# 每轮 <workflow-state> 状态提示的跳过入口。
+# 用户提示中包含独立的跳过关键词时（不区分大小写，按单词边界匹配，
+# no-trellisfoo 不算），仅跳过本轮状态提示。
+# 不影响 SessionStart 或子代理上下文注入。
+#
+# prompt_injection:
+#   skip_keyword: "no-trellis"   # 空字符串禁用此跳过入口

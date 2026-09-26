@@ -1,0 +1,34 @@
+# Trellis 工作流的项目级 Codex 默认设置。
+# 项目标记为可信后，Codex 会在用户级配置之后合并本层配置。
+# 要信任本项目，在 ~/.codex/config.toml 的 [projects] 下添加，例如：
+#
+#   [projects."/abs/path/to/this/repo"]
+#   trust_level = "trusted"
+
+# 以 AGENTS.md 作为主要项目指令文件。
+project_doc_fallback_filenames = ["AGENTS.md"]
+
+# Codex 钩子（本目录的 hooks.json）只在用户级配置启用后触发：
+# 在 ~/.codex/config.toml 设置 [features].hooks = true。
+# 适用于 Codex 0.129+；旧名称 codex_hooks = true 仍可使用，
+# 但在 0.129+ 会提示弃用。项目级 config.toml 不能设置特性开关，必须在用户级设置。
+# Codex 0.129+ 还要求每个安装的钩子通过一次 /hooks TUI 评审；
+# 用户批准前，钩子保持未激活。
+
+# 注意：Trellis 有意不在此写入 [features.multi_agent_v2] 块。
+# Codex CLI 在 0.130 到 0.131 之间修改了 features 反序列化：
+# 含 max_concurrent_threads_per_session / *_wait_timeout_ms 的结构化表格
+# 只有 0.131+ 支持。0.130 及更早版本（包括 Codex 桌面应用捆绑的 CLI）
+# 会报原始错误 data did not match any variant of untagged enum FeatureToml，
+# 导致整个配置加载失败，阻止 Codex 启动。
+# 因此使用 Codex 自身的 multi_agent_v2 默认值；需要时在用户级配置调整。
+
+# 显式固定子代理递归深度，避免依赖 Codex 默认值。
+# 上游 #445 移除了各代理内 [features] multi_agent = false 的保护
+# （此前用于解决 #240/#241 的 wait_agent 死锁），因为原生子代理派发
+# 已通过 agents.max_depth 限制递归；但该键是全局或用户级设置，
+# 不能写在单个代理的 .toml 中。在此固定后，上游默认值变化或用户全局覆盖
+# 就不能悄悄重新开启 #240/#241 修复关闭的递归。
+# 项目配置（本文件）的优先级高于用户级 ~/.codex/config.toml。
+[agents]
+max_depth = 1

@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/09-26-trellis-chinese-aiotieba/research/localization-scope.md", "reason": "中文化范围、机器标记、阶段与日志兼容性、自动提交职责及验证边界"}
+{"file": ".trellis/tasks/09-26-trellis-chinese-aiotieba/research/aiotieba-alignment.md", "reason": "aiotieba 固定基线、C# 项目定位、语义对齐与验证证据要求"}
+{"file": ".trellis/spec/project-positioning.md", "reason": "复核 C# 库定位、固定上游基线与语义对齐证据边界"}
+{"file": ".trellis/spec/trellis-localization.md", "reason": "复核中文生成读取兼容及自动提交范围契约"}

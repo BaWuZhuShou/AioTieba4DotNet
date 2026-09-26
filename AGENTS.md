@@ -1,76 +1,27 @@
-# PROJECT KNOWLEDGE BASE
+<!-- TRELLIS:START -->
+# Trellis 项目指引
 
-**Generated:** 2026-03-31
-**Branch:** master
+本指引用于在本项目工作的 AI 助手。
 
-## OVERVIEW
-AioTieba4DotNet is the maintained .NET 10 Tieba client line. The shipping product is the C# solution rooted in `AioTieba4DotNet/`; `aiotieba/` stays in the repo only as an upstream Python reference for parity checks and implementation comparison.
+项目由 Trellis 管理，工作所需知识位于 `.trellis/`：
 
-## STRUCTURE
-```text
-.
-├── AioTieba4DotNet/                   # shipping library; library-specific rules live in child AGENTS
-├── AioTieba4DotNet.Tests.Platform/       # shared online runtime support, templates, repo-path helpers, and execution bases
-├── AioTieba4DotNet.Tests.Online/         # only discoverability-scanned runnable scenario assembly, with tiers under Tiers/
-├── AioTieba4DotNet.Tests.Governance/     # ordered suite host, governance contracts, retained offline contracts, and wrappers
-├── ProtoGenerator/                    # protobuf generator for Api/**/*.proto
-├── docs/                              # VitePress source docs, related governance docs, and archive notes
-├── skills/                            # exported AI skill packages for external installation and reuse
-├── .github/                           # build, publish, and release automation
-├── .junie/                            # durable maintenance rules and architecture knowledge
-└── aiotieba/                          # upstream Python reference only
-```
+- `.trellis/workflow.md` — 开发阶段、创建任务的时机和技能路由
+- `.trellis/spec/` — 按包和层组织的编码指南（修改对应层前必须阅读）
+- `.trellis/workspace/` — 每位开发者的日志和会话轨迹
+- `.trellis/tasks/` — 活动及归档任务（PRD、研究和 JSONL 上下文）
 
-## WHERE TO LOOK
-| Task | Location | Notes |
-|------|----------|-------|
-| Durable cross-cutting rules | `.junie/guidelines.md` | Source of truth for stable maintenance, testing, release, and coverage rules |
-| Main library work | `AioTieba4DotNet/` | Start in `AioTieba4DotNet/AGENTS.md` for library boundaries and public surface rules |
-| Shared online runtime support | `AioTieba4DotNet.Tests.Platform/` | Environment templates, repo-path helpers, execution bases, and support utilities |
-| Unified runnable online scenarios | `AioTieba4DotNet.Tests.Online/` | Safe and Restricted scenarios live under `Tiers/`; this is the only discoverability-scanned scenario assembly |
-| Ordered suite host and governance contracts | `AioTieba4DotNet.Tests.Governance/` | Active host for `Suite:SafeOrdered` / `Suite:RestrictedOrdered`, governance contracts, retained offline contracts, and wrapper routes |
-| Generator maintenance | `ProtoGenerator/` | Regenerates `.proto` outputs under `AioTieba4DotNet/Api/**/Protobuf` |
-| Docs contract and IA | `README.md`, `docs/index.md`, `docs/guide/**`, `docs/how-to/**`, `docs/reference/modules.md`, `docs/related/**`, `docs/archive/todo.md` | README bridges into the active VitePress source tree; related and archive docs stay outside the main how-to/reference path |
-| Exported AI skill package | `skills/aiotieba4dotnet/` | Portable consumer-facing skill package with `SKILL.md` and `references/` |
-| Parity truth | `docs/related/parity.md` | Authoritative parity ledger for upstream scope, internal implementation mapping, and auth notes |
-| Historical backlog only | `docs/archive/todo.md` | Stale history and backlog notes, not active product truth |
-| Local verification entrypoints | `scripts/test-lane.*`, `scripts/verify-local.*` | Canonical local and agent-run verification commands |
+如果当前平台提供 Trellis 命令（例如 `/trellis:finish-work`、`/trellis:continue`），优先使用命令而不是手动操作。并非所有平台都提供全部命令。
 
-## CONVENTIONS
-- Treat this root guide as repo routing only. Put durable cross-cutting rules in `.junie/guidelines.md`, and put local implementation rules in the nearest child `AGENTS.md`.
-- The active product baseline is v3 on `net10.0` only. Do not leave active guide text claiming `net8.0`, `net9.0`, multi-target support, or a live v2 release line.
-- `docs/related/parity.md` is the parity truth. `docs/archive/todo.md` is historical context only and must not be presented as an authoritative ledger.
-- The active consumer docs IA is `README.md -> docs/index.md -> docs/guide/getting-started.md -> docs/how-to/*.md -> docs/reference/modules.md -> docs/guide/{advanced,troubleshooting}.md -> docs/related/*.md`; `docs/archive/todo.md` stays archive-only.
-- The user-facing docs contract is anchored by `README.md` and the required docs list enforced locally by `scripts/verify-local.*`.
-- Exported skill packages under `skills/` are distribution artifacts, not repo-local `.agents` helpers. Keep their `SKILL.md`, `references/`, and README mentions aligned when install identity or public usage guidance changes.
-- GitHub Actions must stay build-only. They validate restore, build, codegen, and packaging, but they do not run `dotnet test` or invoke local verification contracts.
-- The active test topology is `AioTieba4DotNet.Tests.Platform` + `AioTieba4DotNet.Tests.Online` + `AioTieba4DotNet.Tests.Governance` only.
-- Local and agent-run online verification routes through `AioTieba4DotNet.Tests.Governance`, with default `safe`, explicit `restricted`, and optional `sequence-dry-run` wrapper output only.
-- The retained local verification artifact model is exactly `.sisyphus/evidence/parity-truth-freeze.json`, `.sisyphus/evidence/parity-gap-ledger.json`, `.sisyphus/evidence/local-verification.manifest.json`, and `.sisyphus/evidence/local-verification.manifest.schema.json`.
-- `aiotieba/` is reference material only. Never treat it as maintained product code, release scope, or coverage scope.
+使用 Codex 或其他支持代理的工具时，项目级辅助内容还可能位于：
+- `.agents/skills/` — 可复用的 Trellis 技能
+- `.codex/agents/` — 可选的自定义子代理
 
-## ANTI-PATTERNS
-- Treating `docs/archive/todo.md` as current parity truth.
-- Adding stale guide text that claims the repo still ships multi-target or v2-era baselines.
-- Hand-editing generated protobuf C# instead of editing `.proto` files and rerunning `ProtoGenerator`.
-- Reintroducing retired concepts such as `deterministic`, `integration`, `live`, or `Cleanup` as if they were still active runnable test paths after the ordered online suite replaced the old lane split.
-- Treating compensation audit output as a standalone runnable lane instead of a suite-owned reporting responsibility.
+本区块由 Trellis 管理。区块外的修改会保留；区块内的修改可能被后续 `trellis update` 覆盖。
 
-## COMMANDS
-```bash
-dotnet restore --nologo
-dotnet build AioTieba4DotNet.sln --configuration Release --no-restore
-pnpm --dir docs install
-pnpm --dir docs run build
-pwsh ./scripts/verify-local.ps1
-pwsh ./scripts/test-lane.ps1 safe
-pwsh ./scripts/test-lane.ps1 restricted
-pwsh ./scripts/test-lane.ps1 sequence-dry-run
-dotnet run --project ProtoGenerator/ProtoGenerator.csproj
-dotnet pack --configuration Release --no-build --output ./nupkg -p:Version=<version> --nologo
-```
+<!-- TRELLIS:END -->
 
-## NOTES
-- If a task changes stable maintenance rules, coverage scope, release policy, or test-lane governance, sync that knowledge into `.junie/guidelines.md`.
-- If a task changes library boundaries or public surface expectations, sync the local guidance in `AioTieba4DotNet/AGENTS.md`.
-- Keep child guides concise and local. Avoid copying large rule blocks across repo root, library, testing, and generator guides.
+## 本项目长期约定
+
+- Trellis 人类可读内容统一使用简体中文，包括需求、设计、执行计划、研究、规范、提示和会话记录。命令、路径、代码标识、配置键、状态枚举、协议标记及真实历史证据保留原样。维护与升级规则见 [.trellis/spec/trellis-localization.md](.trellis/spec/trellis-localization.md)。
+- AioTieba4DotNet 的核心定位是参考并对齐 [aiotieba Python 版](https://github.com/lumina37/aiotieba) 的 C#/.NET 实现，便于 C# 用户在不同宿主和使用场景中调用。功能语义、上游固定基线、.NET 使用习惯及验证边界以 [.trellis/spec/project-positioning.md](.trellis/spec/project-positioning.md) 为准；目标不能当作已经完整对齐的证明。
+- 用户已授权主会话在相关检查通过后，按任务范围自主创建本地 Git 提交，无需再次确认提交。提交说明使用 Conventional Commit 类型前缀和中文说明；子代理只回报，由主会话统一提交。先工作提交，再归档和会话记录提交，不夹带无关修改、凭据或缓存。该授权不包含远程推送、历史改写或跳过检查，具体顺序见工作流阶段 3.4。

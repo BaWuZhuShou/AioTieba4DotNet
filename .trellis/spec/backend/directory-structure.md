@@ -1,39 +1,39 @@
-# Directory Structure and Public Contracts
+# 目录结构与公开契约
 
-## Package Boundaries
+## 包边界
 
-| Repository path | Responsibility |
+| 仓库路径 | 职责 |
 | --- | --- |
-| `AioTieba4DotNet/Clients/` | Root-namespace client/factory interfaces, implementations, composition |
-| `AioTieba4DotNet/Contracts/` | Module interfaces, options, public account input, transport mode |
-| `AioTieba4DotNet/Modules/` | Public facades delegating to internal protocols |
-| `AioTieba4DotNet/Protocols/` | Internal orchestration, validation, capability declarations |
-| `AioTieba4DotNet/Api/` | Internal upstream request families, packing/parsing, protobuf assets |
-| `AioTieba4DotNet/Transport/` | Dispatcher and HTTP/WebSocket machinery |
-| `AioTieba4DotNet/Session/` | Internal credentials, device identity, authentication, lifecycle state |
-| `AioTieba4DotNet/Models/` | Consumer-facing DTOs and enums |
-| `AioTieba4DotNet/Internal/` | Shared helpers and `Mapping/` conversions |
-| `AioTieba4DotNet/Exceptions/` | Public exceptions declared in the root namespace |
-| `ProtoGenerator/` | Handwritten discovery, planning, execution, console reporting |
-| `AioTieba4DotNet.Tests.Platform/` | Shared runtime, environment templates, execution bases, support |
-| `AioTieba4DotNet.Tests.Online/` | Discoverability-scanned scenarios under `Tiers/` |
-| `AioTieba4DotNet.Tests.Governance/` | Ordered suite host, governance contracts, retained offline tests |
-| `aiotieba/` | Upstream comparison source; outside .NET delivery and coverage scope |
+| `AioTieba4DotNet/Clients/` | 根命名空间中的客户端／工厂接口、实现与组合 |
+| `AioTieba4DotNet/Contracts/` | 模块接口、选项、公开账号输入和传输模式 |
+| `AioTieba4DotNet/Modules/` | 委托内部协议执行的公开门面 |
+| `AioTieba4DotNet/Protocols/` | 内部编排、校验和能力声明 |
+| `AioTieba4DotNet/Api/` | 内部上游请求族系、打包／解析和 protobuf 文件 |
+| `AioTieba4DotNet/Transport/` | 调度器及 HTTP/WebSocket 机制 |
+| `AioTieba4DotNet/Session/` | 内部凭据、设备标识、认证和生命周期状态 |
+| `AioTieba4DotNet/Models/` | 面向使用者的 DTO 与枚举 |
+| `AioTieba4DotNet/Internal/` | 共用辅助逻辑和 `Mapping/` 转换 |
+| `AioTieba4DotNet/Exceptions/` | 声明在根命名空间中的公开异常 |
+| `ProtoGenerator/` | 手写的发现、规划、执行和控制台报告逻辑 |
+| `AioTieba4DotNet.Tests.Platform/` | 共用运行时、环境模板、执行基类和支持逻辑 |
+| `AioTieba4DotNet.Tests.Online/` | `Tiers/` 下由可发现性扫描识别的场景 |
+| `AioTieba4DotNet.Tests.Governance/` | 有序套件宿主、治理契约和保留的离线测试 |
+| `aiotieba/` | 上游对照源码目录，不属于 .NET 交付和覆盖率范围；当前检出未包含此目录 |
 
-The SDK baseline is in [global.json](../../../global.json); [Directory.Build.props](../../../Directory.Build.props) selects `net10.0` and C# 14. [Directory.Packages.props](../../../Directory.Packages.props) owns package versions. Do not introduce multi-targeting as incidental cleanup.
+SDK 基线见 [global.json](../../../global.json)；[Directory.Build.props](../../../Directory.Build.props) 选择 `net10.0` 和 C# 14。[Directory.Packages.props](../../../Directory.Packages.props) 管理包版本。不要借顺手清理引入多目标框架。
 
-## Public Entry Points
+## 公开入口
 
-[TiebaClient](../../../AioTieba4DotNet/Clients/TiebaClient.cs), [ITiebaClient](../../../AioTieba4DotNet/Clients/ITiebaClient.cs), [AddAioTiebaClient](../../../AioTieba4DotNet/DependencyInjection.cs), and the [factory](../../../AioTieba4DotNet/Clients/TiebaClientFactory.cs) are the supported entry points. Six module properties remain: `Forums`, `Threads`, `Users`, `Admins`, `Messages`, `Client`.
+[TiebaClient](../../../AioTieba4DotNet/Clients/TiebaClient.cs)、[ITiebaClient](../../../AioTieba4DotNet/Clients/ITiebaClient.cs)、[AddAioTiebaClient](../../../AioTieba4DotNet/DependencyInjection.cs) 和[工厂](../../../AioTieba4DotNet/Clients/TiebaClientFactory.cs) 是受支持的入口。保留六个模块属性：`Forums`、`Threads`、`Users`、`Admins`、`Messages`、`Client`。
 
-- `Messages` owns reads, sends, read-state updates, and push parsing; `Client` owns lifecycle helpers such as websocket initialization, z-id initialization, and sync.
-- Public contracts use DTOs/enums from `Models/` and `Contracts/`. Requests, session/transport types, and generated protobuf types remain internal.
-- Preserve names, defaults, overloads, exceptions, and namespaces. Folder placement does not define the namespace: clients/exceptions use `AioTieba4DotNet`; module implementations currently use `AioTieba4DotNet.Modules`.
-- Existing library/cross-cutting guides mention a retained `Client.cs` compatibility facade, but this checkout has no such file. Do not advertise or recreate that absent entry point from guide text. Removing promised contracts still requires an explicit compatibility/migration decision.
+- `Messages` 负责消息读取、发送、已读状态更新和推送解析；`Client` 负责 WebSocket 初始化、z-id 初始化和同步等生命周期辅助操作。
+- 公开契约使用 `Models/` 与 `Contracts/` 中的 DTO／枚举。请求、会话／传输类型及生成的 protobuf 类型保持内部可见。
+- 保留名称、默认值、重载、异常和命名空间。目录位置不决定命名空间：客户端／异常使用 `AioTieba4DotNet`；模块实现当前使用 `AioTieba4DotNet.Modules`。
+- 既有库规范和跨目录指南提及保留 `Client.cs` 兼容门面，但当前检出没有该文件。不要依据指南文字宣传或重建这个不存在的入口。删除已承诺的契约仍需明确的兼容性／迁移决策。
 
-## Feature Flow
+## 功能调用流程
 
-Follow the existing thread-read path (paths below are relative to the library):
+遵循现有主题读取路径（以下路径相对于库目录）：
 
 ```text
 Contracts/IThreadModule.cs -> Modules/ThreadModule.cs
@@ -42,13 +42,13 @@ Contracts/IThreadModule.cs -> Modules/ThreadModule.cs
   -> Models/Threads/Threads.cs
 ```
 
-[ThreadModule](../../../AioTieba4DotNet/Modules/ThreadModule.cs) supplies defaults and forwards to [ThreadProtocol](../../../AioTieba4DotNet/Protocols/ThreadProtocol.cs). Protocols select capabilities and executors; API families own wire details. Avoid HTTP calls, protobuf parsing, or duplicated authentication in facades.
+[ThreadModule](../../../AioTieba4DotNet/Modules/ThreadModule.cs) 提供默认值，并转发至 [ThreadProtocol](../../../AioTieba4DotNet/Protocols/ThreadProtocol.cs)。协议选择能力与执行器，API 族系负责传输协议细节。避免在门面中加入 HTTP 调用、protobuf 解析或重复认证。
 
-[TiebaClientComposition.CreateRuntime](../../../AioTieba4DotNet/Clients/TiebaClientComposition.cs) builds the session, dispatcher, protocols, cache, and modules for all entry paths. DI registers `ITiebaClient` scoped and `ITiebaClientFactory` singleton; factory clients receive separate runtimes. Keep composition converged here; see [composition contracts](../../../AioTieba4DotNet.Tests.Governance/Contracts/ClientLifecycleAndCompositionContractTests.cs).
+[TiebaClientComposition.CreateRuntime](../../../AioTieba4DotNet/Clients/TiebaClientComposition.cs) 为所有入口构建会话、调度器、协议、缓存和模块。DI 将 `ITiebaClient` 注册为 scoped，将 `ITiebaClientFactory` 注册为 singleton；工厂创建的客户端获得独立运行时。组合逻辑应统一收敛于此，参见[组合契约](../../../AioTieba4DotNet.Tests.Governance/Contracts/ClientLifecycleAndCompositionContractTests.cs)。
 
-## Placement Rules
+## 代码归属规则
 
-- Extend the corresponding interface, module, and protocol for public behavior; add internal `Api/<UpstreamFamily>/` code for wire operations.
-- Search existing mappers/request helpers before adding a layer. Preserve upstream export semantics; [parity.md](../../../docs/related/parity.md) is the mapping authority.
-- Do not add source-only parity/auth attributes, expose generated types, or infer authentication from method names alone.
-- Keep legacy deletion separate from unrelated cleanup; a spec bootstrap does not authorize removing supported contracts.
+- 扩展公开行为时，修改对应接口、模块和协议；传输协议操作放在内部 `Api/<UpstreamFamily>/` 中。
+- 增加层次前先查找已有 mapper／请求辅助逻辑。保留上游导出语义；[parity.md](../../../docs/related/parity.md) 是映射的权威来源。
+- 不添加仅存在于源码的对齐／认证属性标记，不公开生成类型，也不只凭方法名推断认证需求。
+- 将旧代码删除与无关清理分开；规范初始化不构成删除受支持契约的授权。

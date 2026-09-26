@@ -1,8 +1,8 @@
 {
   "id": "00-bootstrap-guidelines",
   "name": "00-bootstrap-guidelines",
-  "title": "Bootstrap Guidelines",
-  "description": "Fill in project development guidelines for AI agents",
+  "title": "初始化开发规范",
+  "description": "补齐面向 AI 助手的项目开发规范",
   "status": "completed",
   "dev_type": "docs",
   "scope": null,
@@ -25,7 +25,7 @@
     ".trellis/spec/backend/",
     ".trellis/spec/frontend/"
   ],
-  "notes": "Bootstrap selected by the user on 2026-09-26. Source-backed .NET 10 library and VitePress documentation specs; no runtime code changes.",
+  "notes": "用户于 2026-09-26 选择此初始化任务。编写具有源码依据的 .NET 10 库和 VitePress 文档规范；未修改运行代码。",
   "meta": {
     "bootstrap_verification": {
       "status": "passed",

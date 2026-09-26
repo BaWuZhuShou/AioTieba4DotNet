@@ -271,7 +271,14 @@ __pycache__/
 aiotieba
 
 .output.txt
-.agents
+# 保留 Trellis 中文技能文档；其余本地代理文件继续忽略。
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/trellis-*/
+.agents/skills/trellis-*/**
+!.agents/skills/trellis-*/**/
+!.agents/skills/trellis-*/**/*.md
 
 # Local agent and packaging artifacts
 .sisyphus/

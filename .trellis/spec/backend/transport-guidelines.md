@@ -1,22 +1,22 @@
-# Transport and Requests
+# 传输与请求
 
-## Operation Dispatch
+## 操作调度
 
-[TiebaOperationDescriptor](../../../AioTieba4DotNet/Transport/TiebaOperationDescriptor.cs) carries a name, [capabilities](../../../AioTieba4DotNet/Transport/TiebaOperationCapabilities.cs), HTTP/WS executors, and optional successful session mutation. Declare authentication/TBS requirements there. Use `EnsureCanExecuteAsync` before preparatory lookups when authentication must fail first; see [ThreadProtocol.GetRecoversAsync](../../../AioTieba4DotNet/Protocols/ThreadProtocol.cs).
+[TiebaOperationDescriptor](../../../AioTieba4DotNet/Transport/TiebaOperationDescriptor.cs) 携带名称、[能力](../../../AioTieba4DotNet/Transport/TiebaOperationCapabilities.cs)、HTTP／WS 执行器和可选的成功后会话修改。应在此声明认证／TBS 要求。需要先因认证失败退出时，在准备性查询前调用 `EnsureCanExecuteAsync`；参见 [ThreadProtocol.GetRecoversAsync](../../../AioTieba4DotNet/Protocols/ThreadProtocol.cs)。
 
-[TiebaOperationDispatcher](../../../AioTieba4DotNet/Transport/TiebaOperationDispatcher.cs) owns selection:
+[TiebaOperationDispatcher](../../../AioTieba4DotNet/Transport/TiebaOperationDispatcher.cs) 负责路径选择：
 
-| Capability | Current behavior |
+| 能力 | 当前行为 |
 | --- | --- |
-| `HttpOnly` | Uses HTTP regardless of configured mode |
-| `WebSocketPreferred` | HTTP for `Http` mode or absent WS executor; otherwise warms WS, with `WebSocketOnly` disabling fallback |
-| `WebSocketOnly` | Requires WS executor/warmup; does not create an HTTP path |
+| `HttpOnly` | 无论配置模式为何都使用 HTTP |
+| `WebSocketPreferred` | `Http` 模式或缺少 WS 执行器时使用 HTTP；否则预热 WS，`WebSocketOnly` 模式禁用回退 |
+| `WebSocketOnly` | 必须具备 WS 执行器并完成预热，不会创建 HTTP 路径 |
 
-In `Auto`, preferred operations fall back only for `WebSocketException` or internal `TiebaWebSocketUnavailableException`. Cancellation/server errors do not trigger fallback. HTTP replay after a business error could duplicate work. `ApplySessionMutation` runs after success; see [session ownership](./session-and-cache.md).
+在 `Auto` 模式下，优先使用 WS 的操作仅因 `WebSocketException` 或内部 `TiebaWebSocketUnavailableException` 回退。取消／服务端错误不会触发回退。业务错误后的 HTTP 重放可能重复执行操作。`ApplySessionMutation` 在成功后运行，参见[会话所有权](./session-and-cache.md)。
 
-## Endpoint Pattern
+## 端点模式
 
-Pack upstream fields, call `ITiebaHttpCore`/`ITiebaWsCore`, check server errors, and map to public models. Prefer protobuf when supported upstream. [GetThreads](../../../AioTieba4DotNet/Api/GetThreads/GetThreads.cs) demonstrates:
+打包上游字段，调用 `ITiebaHttpCore`／`ITiebaWsCore`，检查服务端错误，再映射为公开模型。上游支持时优先采用 protobuf。[GetThreads](../../../AioTieba4DotNet/Api/GetThreads/GetThreads.cs) 示例：
 
 ```csharp
 Common = new CommonReq { ClientType = 2, ClientVersion = Const.MainVersion },
@@ -24,21 +24,21 @@ Pn = pn == 1 ? 0 : pn,
 RnNeed = rn + 5,
 ```
 
-These are family-specific wire rules. Preserve parameter order, special values, command IDs, packing, and auth requirements. Check the [parity ledger](../../../docs/related/parity.md) before copying endpoints.
+这些是特定族系的传输协议规则。保留参数顺序、特殊值、命令 ID、打包和认证要求。复制端点前核对[对齐台账](../../../docs/related/parity.md)，并按[项目定位与上游对齐](../project-positioning.md)记录默认值、认证、回退等语义，不能自行改变。
 
-[JsonApiBase](../../../AioTieba4DotNet/Api/JsonApiBase.cs) delegates to [ApiResponseValidator](../../../AioTieba4DotNet/Api/ApiResponseValidator.cs), including configurable error-field names. For protobuf, check family errors before mapping. Do not assume a universal response envelope.
+[JsonApiBase](../../../AioTieba4DotNet/Api/JsonApiBase.cs) 委托 [ApiResponseValidator](../../../AioTieba4DotNet/Api/ApiResponseValidator.cs) 校验，支持配置错误字段名。对于 protobuf，应先检查族系错误再映射。不要假定存在通用响应封装。
 
-## HTTP Ownership and Compatibility
+## HTTP 所有权与兼容性
 
-- [HttpCore](../../../AioTieba4DotNet/Transport/Http/HttpCore.cs) exposes app-form, app-protobuf, web-GET, web-form, and custom sends. Helpers read/dispose responses; [execution policy](../../../AioTieba4DotNet/Transport/Http/TiebaHttpExecutionPolicy.cs) creates/disposes each attempt's request. Reuse those boundaries.
-- [Descriptors](../../../AioTieba4DotNet/Transport/Http/TiebaHttpRequestDescriptor.cs) snapshot inputs. [Request factory](../../../AioTieba4DotNet/Transport/Http/TiebaHttpRequestFactory.cs) owns encoding/multipart framing. Use custom-send factories for different requests rather than bypassing the pipeline.
-- [TiebaHttpParityHandler](../../../AioTieba4DotNet/Transport/Http/TiebaHttpParityHandler.cs) normalizes headers, explicit web cookies, and image referers. [TiebaHttpClientFactory](../../../AioTieba4DotNet/Transport/Http/TiebaHttpClientFactory.cs) configures cookies, gzip, code-page support, and infinite `HttpClient.Timeout`; operation policy supplies timeouts.
-- Preserve ordered signing in [TiebaHttpRequestSigner](../../../AioTieba4DotNet/Transport/Http/TiebaHttpRequestSigner.cs). Keep compatibility hashes and narrowly justified suppressions instead of swapping algorithms or suppressing whole types. [Signature contracts](../../../AioTieba4DotNet.Tests.Governance/Contracts/SignatureParityContractTests.cs) detect input-order drift.
+- [HttpCore](../../../AioTieba4DotNet/Transport/Http/HttpCore.cs) 提供 app-form、app-protobuf、web-GET、web-form 和自定义发送。辅助方法读取／释放响应；[执行策略](../../../AioTieba4DotNet/Transport/Http/TiebaHttpExecutionPolicy.cs) 创建／释放每次尝试的请求。复用这些边界。
+- [描述符](../../../AioTieba4DotNet/Transport/Http/TiebaHttpRequestDescriptor.cs) 快照输入。[请求工厂](../../../AioTieba4DotNet/Transport/Http/TiebaHttpRequestFactory.cs) 负责编码／multipart 封装。不同请求使用自定义发送工厂，不要绕过流水线。
+- [TiebaHttpParityHandler](../../../AioTieba4DotNet/Transport/Http/TiebaHttpParityHandler.cs) 归一化请求头、显式 web cookie 和图片 Referer。[TiebaHttpClientFactory](../../../AioTieba4DotNet/Transport/Http/TiebaHttpClientFactory.cs) 配置 cookie、gzip、代码页支持及无限的 `HttpClient.Timeout`；超时由操作策略提供。
+- 保留 [TiebaHttpRequestSigner](../../../AioTieba4DotNet/Transport/Http/TiebaHttpRequestSigner.cs) 中按顺序签名的行为。保留兼容性哈希及有充分理由的局部警告抑制，不要替换算法或抑制整个类型。[签名契约](../../../AioTieba4DotNet.Tests.Governance/Contracts/SignatureParityContractTests.cs) 检测输入顺序漂移。
 
-## Retry and Timeout Limits
+## 重试与超时限制
 
-[TimeoutConfig](../../../AioTieba4DotNet/Contracts/TimeoutConfig.cs) defaults to 30 seconds and zero retries. Policy uses one linked timeout budget across send attempts. Eligible send exceptions retry only if allowed and neither caller cancellation nor policy timeout occurred. There is no status-code retry/backoff.
+[TimeoutConfig](../../../AioTieba4DotNet/Contracts/TimeoutConfig.cs) 默认超时为 30 秒，重试次数为零。策略在多次发送尝试之间共用一个关联的超时预算。只有在允许重试、调用者未取消且策略未超时时，符合条件的发送异常才会重试。没有按状态码重试或退避机制。
 
-`SendWebGetAsync` opts into configured retries; app-form, app-protobuf, and web-form descriptors do not. Custom sends default to `allowRetry: false`. Thus `MaxReadRetryAttempts` does not guarantee every read-only public API retries. Never enable retries globally for writes or rebuild them per endpoint.
+`SendWebGetAsync` 主动启用所配置的重试；app-form、app-protobuf 和 web-form 描述符不启用。自定义发送默认 `allowRetry: false`。因此，`MaxReadRetryAttempts` 不保证每个只读公开 API 都会重试。不得对写入全局启用重试，也不要逐端点重建重试机制。
 
-Examples: [wire parity contracts](../../../AioTieba4DotNet.Tests.Governance/Contracts/WireParityContractTests.cs) and [direct WS contracts](../../../AioTieba4DotNet.Tests.Governance/Contracts/ThreadWebSocketDirectContractTests.cs) use controlled transports. Preserve [error boundaries](./error-handling.md).
+示例：[传输协议对齐契约](../../../AioTieba4DotNet.Tests.Governance/Contracts/WireParityContractTests.cs)和[直接 WS 契约](../../../AioTieba4DotNet.Tests.Governance/Contracts/ThreadWebSocketDirectContractTests.cs)使用受控传输。保留[错误边界](./error-handling.md)。

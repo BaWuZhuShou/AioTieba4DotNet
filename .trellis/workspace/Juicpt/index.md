@@ -1,41 +1,41 @@
-# Workspace Index - Juicpt
+# 工作区索引 - Juicpt
 
-> Journal tracking for AI development sessions.
+> 跟踪 AI 开发会话的日志。
 
 ---
 
-## Current Status
+## 当前状态
 
 <!-- @@@auto:current-status -->
-- **Active File**: `journal-1.md`
-- **Total Sessions**: 1
-- **Last Active**: 2026-09-26
+- **当前文件**: `journal-1.md`
+- **会话总数**: 1
+- **最后活动日期**: 2026-09-26
 <!-- @@@/auto:current-status -->
 
 ---
 
-## Active Documents
+## 当前文档
 
 <!-- @@@auto:active-documents -->
-| File | Lines | Status |
+| 文件 | 行数 | 状态 |
 |------|-------|--------|
-| `journal-1.md` | ~39 | Active |
+| `journal-1.md` | ~39 | 当前 |
 <!-- @@@/auto:active-documents -->
 
 ---
 
-## Session History
+## 会话历史
 
 <!-- @@@auto:session-history -->
-| # | Date | Title | Commits | Branch |
+| # | 日期 | 标题 | 提交 | 分支 |
 |---|------|-------|---------|--------|
-| 1 | 2026-09-26 | Bootstrap project development guidelines | `4dedce5` | `master` |
+| 1 | 2026-09-26 | 初始化项目开发规范 | `4dedce5` | `master` |
 <!-- @@@/auto:session-history -->
 
 ---
 
-## Notes
+## 说明
 
-- Sessions are appended to journal files
-- New journal file created when current exceeds 2000 lines
-- Use `add_session.py` to record sessions
+- 会话以追加方式写入日志文件
+- 当前日志超过 2000 行时创建新文件
+- 使用 `add_session.py` 记录会话

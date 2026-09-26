@@ -1,0 +1,6 @@
+# Trellis：开发日志只追加新会话块，使用 union 合并以支持并行会话和工作树。
+#
+# 不要给 workspace/*/index.md 添加同一规则；索引会在每次会话时重新生成。
+# 索引冲突应结合保留的日志重新生成或核对；任务状态以 task.json 为准。
+# 本地维护约定见 .trellis/spec/trellis-localization.md。
+.trellis/workspace/*/journal-*.md merge=union

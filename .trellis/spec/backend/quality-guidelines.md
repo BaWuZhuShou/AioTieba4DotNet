@@ -1,71 +1,73 @@
-# Quality and Verification
+# 质量与验证
 
-## Source Conventions
+## 源码约定
 
-[.editorconfig](../../../.editorconfig) owns style: four spaces, CRLF, UTF-8, final newline, trimmed trailing whitespace, file-scoped C# namespaces, `_camelCase` private fields, PascalCase constants/static readonly fields, and system usings first. It favors `var`, primary constructors, and collection expressions. Follow nearby handwritten code without reformatting generated/unrelated files.
+[.editorconfig](../../../.editorconfig) 管理风格：四空格、CRLF、UTF-8、文件末尾换行、去除行尾空白、文件范围 C# 命名空间、`_camelCase` 私有字段、PascalCase 常量／静态只读字段，以及优先排列 system using。它倾向使用 `var`、主构造函数和集合表达式。遵循附近手写代码的风格，不要重排生成文件或无关文件。
 
-[Directory.Build.props](../../../Directory.Build.props) selects C# 14/.NET 10 and deterministic builds. Analyzer execution and code-style enforcement during builds are currently disabled; compilation does not prove editor suggestions passed. Nullable/implicit-using settings are project-specific; library/generator enable them. [Directory.Packages.props](../../../Directory.Packages.props) owns dependency versions; shared props enable lock files.
+[Directory.Build.props](../../../Directory.Build.props) 选择 C# 14／.NET 10 和确定性构建。当前禁用了构建时分析器执行和代码风格强制检查；编译成功不能证明编辑器建议已通过。可空引用／隐式 using 配置由项目分别决定，库与生成器启用这些配置。[Directory.Packages.props](../../../Directory.Packages.props) 管理依赖版本；共用 props 启用锁文件。
 
-Keep public XML docs and defaults aligned. Preserve protocol-required algorithms with narrow suppressions, as in [Session.Account](../../../AioTieba4DotNet/Session/Account.cs). Avoid public DTO data fields, broad suppressions, source-only parity/auth markers, and hand-edited protobuf outputs.
+保持公开 XML 文档与默认值一致。使用局部警告抑制保留协议要求的算法，参见 [Session.Account](../../../AioTieba4DotNet/Session/Account.cs)。避免公开 DTO 数据字段、大范围警告抑制、仅存在于源码的对齐／认证标记，以及手改 protobuf 输出。
 
-## Build and Documentation Checks
+## 构建与文档检查
 
-Run from the repository root using the SDK allowed by [global.json](../../../global.json). These commands describe checks; they do not claim execution. Restore needs NuGet access or cached packages.
+使用 [global.json](../../../global.json) 允许的 SDK，在仓库根目录运行。下列命令描述检查方式，不代表已执行。还原需要访问 NuGet 或拥有缓存包。
 
-| Purpose | Command | Effect / prerequisite |
+| 目的 | 命令 | 效果／前置条件 |
 | --- | --- | --- |
-| Locked restore | `dotnet restore AioTieba4DotNet.sln --locked-mode` | Fails on manifest/lock disagreement |
-| Compile | `dotnet build AioTieba4DotNet.sln --configuration Release --no-restore` | Requires restore; runs no tests |
-| Read-only docs/evidence validation | `bash scripts/verify-local.sh --validate-only` | Requires `python` resolving to Python 3 |
-| PowerShell equivalent | `pwsh -File scripts/verify-local.ps1 -ValidateOnly` | Same validation intent |
-| Ordered plan inspection | `bash scripts/test-lane.sh sequence-dry-run` | Prints plan without executing tests |
+| 锁定还原 | `dotnet restore AioTieba4DotNet.sln --locked-mode` | 清单与锁文件不一致时失败 |
+| 编译 | `dotnet build AioTieba4DotNet.sln --configuration Release --no-restore` | 需要已还原依赖，不运行测试 |
+| 只读文档／证据验证 | `bash scripts/verify-local.sh --validate-only` | 需要 `python` 指向 Python 3 |
+| PowerShell 等价检查 | `pwsh -File scripts/verify-local.ps1 -ValidateOnly` | 验证目的相同 |
+| 查看有序执行计划 | `bash scripts/test-lane.sh sequence-dry-run` | 只打印计划，不执行测试 |
 
-[verify-local.sh](../../../scripts/verify-local.sh) and [verify-local.ps1](../../../scripts/verify-local.ps1) normally rewrite the manifest; use validation-only mode for read-only checks. They print docs commands but do not install/build the site or execute tests. See [frontend guidance](../frontend/index.md) for VitePress verification.
+[verify-local.sh](../../../scripts/verify-local.sh) 和 [verify-local.ps1](../../../scripts/verify-local.ps1) 通常会重写清单；只读检查应使用仅验证模式。它们会打印文档命令，但不会安装／构建站点或执行测试。VitePress 验证参见[前端指南](../frontend/index.md)。
 
-The verifiers' Bash `required_docs` and PowerShell `$requiredDocs` lists own mandatory documentation paths. Validation also requires four retained artifacts under `.sisyphus/evidence/`: `parity-truth-freeze.json`, `parity-gap-ledger.json`, `local-verification.manifest.json`, and `local-verification.manifest.schema.json`. This ignored directory may be absent from a checkout; all four files were absent during this bootstrap. Report missing prerequisites without fabricating evidence or weakening validation. Manifest synchronization does not recreate the other artifacts, and historical task evidence cannot replace them.
+验证器中的 Bash `required_docs` 和 PowerShell `$requiredDocs` 列表管理必需文档路径。验证还要求 `.sisyphus/evidence/` 下保留四个产物：`parity-truth-freeze.json`、`parity-gap-ledger.json`、`local-verification.manifest.json` 和 `local-verification.manifest.schema.json`。这个被忽略的目录可能未随检出提供；本次规范初始化时四个文件均不存在。应报告缺失的前置条件，不得伪造证据或削弱验证。清单同步不会重建其他产物，历史任务证据也不能替代它们。
 
-## Test Topology and Selection
+## 测试拓扑与选择
 
-[OnlineTestProjectTopology](../../../AioTieba4DotNet.Tests.Governance/Contracts/OnlineTestProjectTopology.cs) and shared build files define:
+[OnlineTestProjectTopology](../../../AioTieba4DotNet.Tests.Governance/Contracts/OnlineTestProjectTopology.cs) 和共用构建文件定义：
 
-- Platform: shared support/environment/fixture gates/execution helpers, not the runnable scenario assembly.
-- Online: the discoverability-scanned Safe/Restricted scenario assembly.
-- Governance: ordered live suites plus retained offline contracts. Neither its project name nor `Contract:*` categories guarantee offline execution. [ThreadWebSocketOnlineContractTests](../../../AioTieba4DotNet.Tests.Governance/Contracts/ThreadWebSocketOnlineContractTests.cs) is both `Contract:Architecture` and live `Tier:Safe`.
+- Platform：共用支持／环境／测试夹具门控／执行辅助逻辑，不是可运行场景程序集。
+- Online：由可发现性扫描识别的 Safe／Restricted 场景程序集。
+- Governance：有序在线套件及保留的离线契约。项目名和 `Contract:*` 分类都不能保证离线执行。[ThreadWebSocketOnlineContractTests](../../../AioTieba4DotNet.Tests.Governance/Contracts/ThreadWebSocketOnlineContractTests.cs) 同时属于 `Contract:Architecture` 和在线 `Tier:Safe`。
 
-For mapping changes, a specifically inspected offline selection is:
+对于映射变更，已具体检查过的离线选择如下：
 
 ```bash
 dotnet test AioTieba4DotNet.Tests.Governance/AioTieba4DotNet.Tests.Governance.csproj --configuration Release --filter "FullyQualifiedName~AioTieba4DotNet.Tests.Governance.Contracts.MappingCoverageContractTests" -p:CollectCoverage=false
 ```
 
-This class maps in-memory protobuf/JSON fixtures; it builds/restores as needed but proves neither full-suite success nor coverage. Inspect other selections before running them. Avoid unfiltered Governance/all-solution tests for presumed offline work. Reflection-based contracts can require fresh Release library/Online assemblies; a solution build supplies those outputs.
+此类映射内存中的 protobuf／JSON 测试夹具；它会按需构建／还原，但不能证明整个套件成功或覆盖率达标。其他选择应先检查再执行。不要将未筛选的 Governance／整个解决方案测试当作离线工作运行。基于反射的契约可能需要最新的 Release 库／Online 程序集；解决方案构建会提供这些输出。
 
-Assert wire shape, public properties, errors, rollback, and transport selection. Follow [mapping](../../../AioTieba4DotNet.Tests.Governance/Contracts/MappingCoverageContractTests.cs), [WS doubles](../../../AioTieba4DotNet.Tests.Governance/Contracts/ThreadWebSocketDirectContractTests.cs), and [composition](../../../AioTieba4DotNet.Tests.Governance/Contracts/ClientLifecycleAndCompositionContractTests.cs) examples. A log line or nonthrowing call alone does not establish behavior.
+断言传输协议形态、公开属性、错误、回滚和传输选择。参照[映射](../../../AioTieba4DotNet.Tests.Governance/Contracts/MappingCoverageContractTests.cs)、[WS 测试替身](../../../AioTieba4DotNet.Tests.Governance/Contracts/ThreadWebSocketDirectContractTests.cs)和[组合](../../../AioTieba4DotNet.Tests.Governance/Contracts/ClientLifecycleAndCompositionContractTests.cs)示例。单条日志或未抛异常的调用本身不能证明行为。
 
-## Online Lanes Are Live
+## 在线通道会真实执行操作
 
-[test-lane.sh](../../../scripts/test-lane.sh) / [test-lane.ps1](../../../scripts/test-lane.ps1) require explicit lane arguments. Guide wording about a default safe lane describes policy, not no-argument wrapper behavior.
+[test-lane.sh](../../../scripts/test-lane.sh)／[test-lane.ps1](../../../scripts/test-lane.ps1) 要求显式提供通道参数。指南中关于默认 safe 通道的说法描述的是规则，不是包装脚本无参数时的行为。
 
-| Lane | Execution |
+| 通道 | 执行内容 |
 | --- | --- |
-| `safe` | `Suite:SafeOrdered`: ForumFoundation, ForumExtensions, ThreadRead, UserSocial, Messaging, ThreadWrite |
-| `restricted` | `Suite:RestrictedOrdered`: ModerationRestricted, AdminRestricted |
-| `sequence-dry-run` | Plan only |
+| `safe` | `Suite:SafeOrdered`：ForumFoundation、ForumExtensions、ThreadRead、UserSocial、Messaging、ThreadWrite |
+| `restricted` | `Suite:RestrictedOrdered`：ModerationRestricted、AdminRestricted |
+| `sequence-dry-run` | 仅计划 |
 
-Use `bash scripts/test-lane.sh safe` or `pwsh -File scripts/test-lane.ps1 -Lane safe` only for in-scope live execution with satisfied fixture gates; use `restricted` only when explicitly selected. Safe includes real messages/thread writes and compensation; it is not read-only. Missing credentials do not guarantee no network because guest-safe capabilities can execute. Reuse [OnlineExecutionGate](../../../AioTieba4DotNet.Tests.Platform/Execution/OnlineExecutionGate.cs) and existing environment loading, not ad hoc secrets. Gated/inconclusive results do not prove successful live behavior.
+仅在真实在线执行属于任务范围且满足测试夹具门控时，使用 `bash scripts/test-lane.sh safe` 或 `pwsh -File scripts/test-lane.ps1 -Lane safe`；仅在明确选择时使用 `restricted`。Safe 包含真实消息／主题写入及补偿，并非只读。缺少凭据也不能保证没有网络请求，因为访客可执行的安全能力仍可能运行。复用 [OnlineExecutionGate](../../../AioTieba4DotNet.Tests.Platform/Execution/OnlineExecutionGate.cs) 及既有环境加载方式，不要临时拼凑密钥。被门控阻止／inconclusive 的结果不能证明真实在线行为成功。
 
-`CompensationAudit` is synthetic suite reporting, not a runnable lane/filter. Advertise direct `Api:*` filters only when supported by the [public API coverage matrix](../../../docs/related/public-api-coverage-matrix.md), excluding deferred rows.
+`CompensationAudit` 是套件综合报告，不是可运行通道／筛选条件。只有[公开 API 覆盖矩阵](../../../docs/related/public-api-coverage-matrix.md)支持且不属于延期行时，才能公布直接 `Api:*` 筛选条件。
 
-## Coverage and CI
+## 覆盖率与 CI
 
-[Directory.Build.targets](../../../Directory.Build.targets) declares repository-total 100% line/branch coverage with narrow generated-code exclusions. Policy scopes maintained handwritten library/generator code, not tests/docs/evidence/upstream Python. Do not lower thresholds or broaden exclusions for a pass.
+[Directory.Build.targets](../../../Directory.Build.targets) 声明仓库总行／分支覆盖率目标为 100%，仅对生成代码作有限排除。规则范围是维护中的手写库／生成器代码，不包括测试／文档／证据／上游 Python。不要为使检查通过而降低阈值或扩大排除范围。
 
-Declared policy is not proof of achieved/enforced coverage: central packages list a `coverlet.msbuild` version, but active projects do not reference it; wrappers disable collection. Verify collector wiring and actual reports before coverage claims.
+声明的规则不等于已达成／已强制执行的覆盖率证据：中央包列表列有 `coverlet.msbuild` 版本，但当前有效项目没有引用它，包装脚本也禁用了采集。宣称覆盖率前，核对采集器接入和实际报告。
 
-[GitHub workflows](../../../.github/workflows/) keep validation to restore/build/codegen/packaging, with CodeQL analysis and release publishing alongside those checks. They do not run `dotnet test` or secret-backed lanes. Local live evidence remains separate from CI build success.
+[GitHub 工作流](../../../.github/workflows/) 的验证集中于还原／构建／代码生成／打包，同时包含 CodeQL 分析和发布。它们不运行 `dotnet test` 或需要密钥的通道。本地真实在线证据与 CI 构建成功保持分开。
 
-## Public Change Review
+按[项目定位与上游对齐](../project-positioning.md)分别报告对齐目标、实现记录、离线契约、在线行为和覆盖率证据；这些层次不能相互替代。
 
-Review [README](../../../README.md), [module reference](../../../docs/reference/modules.md), task guides, [parity ledger](../../../docs/related/parity.md), and release/migration notes for public behavior changes. Usage/package identity changes also require the [consumer skill](../../../skills/aiotieba4dotnet/SKILL.md) and references to stay aligned. Durable cross-cutting rules go in nearest policy plus [.junie/guidelines.md](../../../.junie/guidelines.md), without duplicating entire guides.
+## 公开变更审查
 
-Assess SemVer from signatures, exception contracts, defaults, documented behavior, and supported TFMs. Spec-only work needs prose/reference/navigation/whitespace checks, not live fixtures or protobuf regeneration.
+公开行为变更需审查 [README](../../../README.md)、[模块参考](../../../docs/reference/modules.md)、任务指南、[对齐台账](../../../docs/related/parity.md)及发布／迁移说明。用法／包身份变化还要求同步[使用者技能](../../../skills/aiotieba4dotnet/SKILL.md)及其引用。长期跨目录规则写入最近的规则文件和 [.junie/guidelines.md](../../../.junie/guidelines.md)，不要重复整份指南。
+
+依据签名、异常契约、默认值、文档行为和受支持的 TFM 评估 SemVer。仅修改规范需要文字／引用／导航／空白格式检查，不需要真实在线测试夹具或 protobuf 重新生成。

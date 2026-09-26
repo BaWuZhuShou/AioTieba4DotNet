@@ -1,76 +1,48 @@
-# Bootstrap Verification
+# 初始化验证记录
 
-## Result
+## 结果
 
-Documentation implementation and full-scope review completed on 2026-09-26 against
-the working tree based on commit `c0d53fb`. No product source, generated code,
-runtime configuration, site content, or existing external policy files changed.
+2026-09-26，针对基于提交 `c0d53fb` 的工作区完成了文档编写和全范围审查。未修改产品源码、生成代码、运行配置、站点内容或现有外部政策文件。
 
-## Delivered Specs
+## 交付规范
 
-- `.trellis/spec/index.md`: repository-wide navigation and policy ownership.
-- `.trellis/spec/backend/`: eight files covering directory/public boundaries,
-  transport, mapping/codegen, session/cache ownership, exceptions, logging, and
-  quality/verification, including the layer index.
-- `.trellis/spec/frontend/`: five files covering documentation structure,
-  content contracts, VitePress configuration, and quality/verification, including
-  the layer index.
-- Removed the non-applicable database, component, hook, application-state, and
-  standalone type-safety scaffold files. The actual state and config boundaries
-  are documented in the appropriate replacement topics.
-- Existing `.trellis/spec/guides/` files were preserved.
+- `.trellis/spec/index.md`：全仓库导航和规则归属。
+- `.trellis/spec/backend/`：含索引共八个文件，覆盖目录/公开边界、传输、映射/代码生成、会话/缓存归属、异常、日志和质量/验证。
+- `.trellis/spec/frontend/`：含索引共五个文件，覆盖文档结构、内容契约、VitePress 配置和质量/验证。
+- 移除不适用的数据库、组件、hook、应用状态和独立类型安全模板。实际状态与配置边界记录在相应替代主题中。
+- 保留当时已有的 `.trellis/spec/guides/` 文件。
 
-## Checks Executed
+## 已执行检查
 
-| Check | Result |
+| 检查 | 结果 |
 | --- | --- |
-| Source-backed independent review | Passed across all authored specs |
-| Local Markdown links | Passed: 187 links in 14 authored specs |
-| Layer index completeness and required entry sections | Passed |
-| Template residue, trailing whitespace, final newlines | Passed |
-| Context-manifest paths and reasons | Passed: three entries in each manifest |
-| `python3 .trellis/scripts/task.py validate .trellis/tasks/00-bootstrap-guidelines` | Passed |
-| Source/runtime snapshot comparison | Passed: 686 files preserved |
-| `git diff --check` | Passed; untracked authored specs also checked explicitly |
+| 具有源码依据的独立审查 | 全部新编写规范通过 |
+| 本地 Markdown 链接 | 通过：14 份规范中的 187 个链接 |
+| 分层索引完整性和必需入口章节 | 通过 |
+| 模板残留、行尾空白、末尾换行 | 通过 |
+| 上下文清单的路径与原因 | 通过：每份清单三个条目 |
+| `python3 .trellis/scripts/task.py validate .trellis/tasks/00-bootstrap-guidelines` | 通过 |
+| 源码/运行文件快照比较 | 通过：686 个文件保持不变 |
+| `git diff --check` | 通过；未跟踪的新规范另行明确检查 |
 
-Structural checks used a temporary Python validator in this session; they are
-documentation checks, not additional product tests. No persistent test framework
-or dependency was added.
+结构检查使用本会话的临时 Python 校验器，属于文档检查，不是额外产品测试。未新增持久测试框架或依赖。
 
-## Review Fix
+## 审查修复
 
-The reviewer replaced four backend links to absent `.sisyphus/evidence/` files
-with explicit prerequisite paths and missing-artifact guidance. The same edit
-distinguishes Bash `required_docs` from PowerShell `$requiredDocs`. No findings
-remain open in this task's scope.
+审查者将四个指向缺失 `.sisyphus/evidence/` 文件的后端链接，改为明确前置条件路径与缺失产物说明。同次修改区分了 Bash `required_docs` 与 PowerShell `$requiredDocs`。本任务范围内没有未解决发现。
 
-## Validation Limits
+## 验证限制
 
-- No .NET build, unit/live tests, VitePress build, dependency installation, or
-  protobuf generation ran; this task only changes Trellis documents.
-- The four retained evidence artifacts are absent in this checkout. The specs
-  describe this prerequisite without fabricating evidence or claiming the local
-  verifier passed.
-- Source inspection found stale `Client.cs` guidance and a gap between declared
-  coverage policy and current collector wiring. Specs record these distinctions;
-  modifying product code or existing policy files is outside this bootstrap.
+- 未执行 .NET 构建、单元/在线测试、VitePress 构建、依赖安装或 protobuf 生成；当时任务只修改 Trellis 文档。
+- 当时 checkout 缺少四份保留证据产物。规范如实描述前置条件，没有伪造证据或声称本地校验器通过。
+- 源码检查发现过时的 `Client.cs` 指引，以及声明的覆盖率政策与实际收集器接入之间的差异。规范记录了这些区别；产品代码和现有政策文件修改不属于该初始化范围。
 
-## Completion
+## 完成情况
 
-All PRD acceptance criteria are met. The user approved the scoped work commit,
-archive, and session journal on 2026-09-26 by replying `提交` to the presented
-plan. The work commit is `4dedce5`; the task is completed and archived under
-`.trellis/tasks/archive/2026-09/00-bootstrap-guidelines/`.
-The user selected the existing task; no replacement task was created.
+全部 PRD 验收标准达成。用户于 2026-09-26 对展示的方案回复 `提交`，批准限定范围的工作提交、归档和会话日志。工作提交为 `4dedce5`；任务已完成并归档到 `.trellis/tasks/archive/2026-09/00-bootstrap-guidelines/`。用户选择的是已有任务，没有新建替代任务。
 
-Approved work commit: `docs(spec): 补齐项目开发规范`.
+批准的原始工作提交标题：`docs(spec): 补齐项目开发规范`。
 
-Include the authored spec index, backend/frontend directories, and this task's
-PRD, context manifests, research, metadata, and verification record. Existing
-unrelated initialization changes in `AGENTS.md`, `.codex/`, `.gitattributes`,
-Trellis runtime files, shared thinking guides, and workspace files are excluded
-from that work commit unless the user explicitly changes the scope.
+该工作提交包含新规范索引、backend/frontend 目录，以及本任务 PRD、上下文清单、研究、元数据和验证记录。当时已有的 `AGENTS.md`、`.codex/`、`.gitattributes`、Trellis 运行文件、共享思考指南和 workspace 等无关初始化改动不包含在内，除非用户明确调整范围。
 
-Archive bookkeeping updates the two context manifests to their archived research
-paths. The task metadata records the work commit and a task-relative verification
-report path. Session journaling is handled separately from the work/archive commits.
+归档记录将两份上下文清单更新为归档后的研究路径。任务元数据记录工作提交和任务相对验证报告路径。会话日志单独记录，不与工作/归档提交混合。
